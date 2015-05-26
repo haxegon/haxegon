@@ -1,0 +1,245 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+TerryLib:                             v003
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+TerryLib is a tiny haxe programming library for beginners.
+
+Here's a complete list of what you can do with it!
+
+Graphics:
+----------
+Load in images and draw them, draw simple shapes, and divide images into tilesets!
+
+Fonts:
+----------
+Load in different fonts at different sizes and display them! Take in simple string input!
+
+Music:
+----------
+Load in music and sound effects! Play them back!
+
+Input:
+----------
+Read in Keyboard and Mouse input!
+
+Basic structure:
+-------------------------
+TerryLib sets everything up in the background, and starts you with a single class, Main.hx.
+
+Main.hx contains two functions: new() and update().
+
+new() is called once at the start of the program. update() is called 60 times a second. (You can change the framerate if you like in project.xml.)
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+FULL COMMAND LIST:
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Graphics:
+-------------------------
+
+//Setup
+Gfx.createscreen(width, height, scale);
+ 
+  - By default, TerryLib has a 768x480 screen with 1:1 scaling. If you want something different,
+    call this function in Main.new(). E.g:
+    
+    public function new() {
+      Gfx.createscreen(384, 240, 2); // Create a 384x240 screen at 2:1 scaling.
+    }
+  
+    You might also need to change the actual window size - this is in project.xml.
+
+Gfx.cls();                     // Clears the screen to 0x000000
+
+//Images
+Gfx.addimage("imagename");
+  
+  - Place .PNG images in data/graphics/, and call this function to load them in. e.g:
+    
+    Gfx.addimage("titlescreen");  // Loads in data/graphics/titlescreen.png
+
+drawimage(x, y, "imagename");
+drawimage_scale(x, y, "imagename", scale, pivotx, pivoty);
+drawimage_freescale(x, y, "imagename", xscale, yscale, pivotx, pivoty);
+drawimage_rotate(x, y, "imagename", rotation, pivotx, pivoty);
+drawimage_scale_rotate(x, y, "imagename", scale, rotation, pivotx, pivoty);
+drawimage_freescale_rotate(x, y, "imagename", xscale, yscale, rotation, pivotx, pivoty);
+drawimage_col(x, y, "imagename", col);
+drawimage_scale_col(x, y, "imagename", scale, pivotx, pivoty, col);
+drawimage_freescale_col(x, y, "imagename", xscale, yscale, pivotx, pivoty, col);
+drawimage_rotate_col(x, y, "imagename", rotation, pivotx, pivoty, col);
+drawimage_scale_rotate_col(x, y, "imagename", scale, rotation, pivotx, pivoty, col);
+drawimage_freescale_rotate_col(x, y, "imagename", xscale, yscale, rotation, pivotx, pivoty, col);
+
+  - drawimage functions can take the following arguments:
+     x - x position on screen
+     y - y position on screen
+     "imagename" - name of the image you've loaded in (same as the one you pass to addimage())
+     scale - float, 1.0 is original size.
+     scalex, scaley - freescale functions have different x and y scale values
+     col - Hexcode colour in haxe format - e.g. 0xFF0000 draws the image in red.
+     rotate - rotation between 0-359
+     pivotx, pivoty - position in image to rotate and scale from.
+     
+   - You can use the following constants for values of x, y, pivotx and pivoty:
+     Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT, Gfx.CENTER
+
+//Tilesets
+Gfx.maketiles("imagename", tilewidth, tileheight);
+  
+  - Place .PNG images in data/graphics/, and call this function to load them in. e.g:
+    Gfx.make("forest", 16, 16);  // Loads in data/graphics/forest.png and makes 16x16 tiles.
+
+Gfx.changetileset("newtileset");
+ 
+  - Changes the tileset that all subsequent Gfx.drawtile() commands refer to. e.g.
+    Gfx.changetileset("forest"); drawtile(0, 0, 4); // Draws tile 4 from the "forest" tileset at 0,0
+    Gfx.changetileset("city"); drawtile(10, 20, 7); // Draws tile 7 from the "city" tileset at 10,20
+  
+drawtile(x, y, tilenumber);
+drawtile_scale(x, y, tilenumber, scale, pivotx, pivoty);
+drawtile_freescale(x, y, tilenumber, xscale, yscale, pivotx, pivoty);
+drawtile_rotate(x, y, tilenumber, rotation, pivotx, pivoty);
+drawtile_scale_rotate(x, y, tilenumber, scale, rotation, pivotx, pivoty);
+drawtile_freescale_rotate(x, y, tilenumber, xscale, yscale, rotation, pivotx, pivoty);
+drawtile_col(x, y, tilenumber, col);
+drawtile_scale_col(x, y, tilenumber, scale, pivotx, pivoty, col);
+drawtile_freescale_col(x, y, tilenumber, xscale, yscale, pivotx, pivoty, col);
+drawtile_rotate_col(x, y, tilenumber, rotation, pivotx, pivoty, col);
+drawtile_scale_rotate_col(x, y, tilenumber, scale, rotation, pivotx, pivoty, col);
+drawtile_freescale_rotate_col(x, y, tilenumber, xscale, yscale, rotation, pivotx, pivoty, col);
+
+  - drawtiles functions take all the same arguments as drawimage functions. 
+  
+//Primatives
+Gfx.drawbox(x, y, width, height, col);
+Gfx.fillbox(x, y, width, height, col);
+Gfx.drawtri(x1, y1, x2, y2, x3, y3, col);
+Gfx.filltri(x1, y1, x2, y2, x3, y3, col);
+Gfx.drawline(x1, y1, x2, y2, col);
+
+  - "col" is a haxe HexCol, which is an int written like e.g this: 0xFFFFFF
+    Or you could use the functions below:
+
+//Colours
+t = Gfx.RGB(red, green, blue);
+redvalue = Gfx.getred(col);
+greenvalue = Gfx.getgreen(col);
+bluevalue = Gfx.getblue(col);
+
+Text:
+-------------------------
+
+//Load fonts:
+Text.addfont("fontname", defaultsize);
+
+  - Place .TTF fonts in data/fonts/, and call this function to load them in. e.g:
+  
+  Text.addfont("arial", 16);
+  
+  Default font is verdana, size 24.
+
+Text.cachefont("fontname", size1, size2, ...);
+
+  - You can preload different font sizes if you like for speed, but you don't have to.
+  
+Text.changefont("fontname");
+Text.changesize(fontsize);
+
+Text.print(x, y, "thing to print", col);
+Text.print_scale(x, y, "thing to print", col, scale, pivotx, pivoty);
+Text.print_freescale(x, y, "thing to print", col, scalex, scaley, pivotx, pivoty);
+Text.print_rotate(x, y, "thing to print", col, rotate, pivotx, pivoty);
+Text.print_scale_rotate(x, y, "thing to print", col, scale, rotate, pivotx, pivoty);
+Text.print_freescale_rotate(x, y, "thing to print", col, scalex, scaley, rotate, pivotx, pivoty);
+
+  - Text print functions take all the same arguments as Drawimage.
+  - You can use the following constants for values of x, y, pivotx and pivoty:
+    Text.TOP, Text.BOTTOM, Text.LEFT, Text.RIGHT, Text.CENTER
+
+if (Text.input(x, y, "Question: ", question_colour, answer_colour)) {
+  Debug.log(Text.getinput());
+}
+
+  - Text.input is TRUE when the user presses ENTER. Text.getinput() returns your response.
+
+Music:
+-------------------------
+
+Music.addsong("songname");
+
+  - Place .MP3 files in data/music/mp3/ (for flash), or place .OGG files data/music/ogg/ 
+    (for non-flash), and call this function to load them in. e.g:
+    
+  Music.addsong("uptownfunk"); //Loads in data/music/mp3/uptownfunk.mp3 in flash, or
+                               //data/music/ogg/uptownfunk.ogg in anything else.
+  
+  Can take a volume level between 0.0 and 1.0 as a second option. e.g:
+  
+  Music.addsong("shakeitoff", 0.5);
+  
+
+Music.addeffect("effectname");
+ 
+  - Loads in a sound effect from the data/sounds/ folder. Same mp3 and ogg deal as with music.
+    Also takes an optional volume option, which defaults to 1.0.
+    
+Music.play("songname");
+Music.playef("effectname");
+Music.stop();
+Music.fadeout();
+  
+Input:
+-------------------------
+
+Keyboard keys are identified with strings. Here's a full list:
+
+//Letters
+"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+
+//Numbers
+"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"
+
+//Function keys
+"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"
+
+//Punctuation
+"MINUS", "PLUS", "DELETE", "BACKSPACE", "LBRACKET", "RBRACKET", "BACKSLASH"
+"CAPSLOCK", "SEMICOLON", "QUOTE", "COMMA", "PERIOD", "SLASH"
+
+//Control characters
+"ESCAPE", "ENTER", "SHIFT", "CONTROL", "ALT", "SPACE"
+"UP", "DOWN", "LEFT", "RIGHT"
+
+Key.justpressed("ENTER");    // True when the key has been pressed this frame
+
+Key.pressed("LEFT");         // True if this key is held down
+
+Key.justreleased("SPACE");   // True if the key has been released this frame
+
+Key.delaypressed("Z", 5);    // True if Z is pressed this frame, then false if Z is held 
+                             // for five frames. Just a handy shortcut for key delay rates!
+
+Mouse.x                      // Mouse x position.
+Mouse.y                      // Mouse y position.
+
+Mouse.justleftpressed()      // True if you've just clicked left this frame
+Mouse.justleftreleased()     // True if you've just released left-click this frame
+
+Mouse.justrightpressed()     // True if you've just clicked right this frame
+Mouse.justrightreleased()    // True if you've just released right-click this frame
+                             // Right mouse checks don't work in flash!
+
+Mouse.mousewheel             // An int between -3 and +3 for the scrollwheel value.
+                             // For most mice it seems best to just check ==0, <0 and >0.
+                             
+Debug:
+-------------------------
+//Displays 
+
+Debug.clearlog();                      //Clears debug lines from the screen
+Debug.log("thing to output");          //Outputs a string to the screen, pushing other strings down
+Debug.teststring("thing to display");  //Clears the debug log and shows a single string
+
+//To output debug info to the console, use Haxe's build in trace() function instead.
