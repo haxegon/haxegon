@@ -192,7 +192,8 @@ Music.fadeout();
 Input:
 -------------------------
 
-Keyboard keys are identified with strings. Here's a full list:
+Keyboard keys are identified like this: Key.ENTER, Key.SPACE, Key.W, etc. Here's a full list
+of allowed keys:
 
 //Letters
 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -212,24 +213,30 @@ Keyboard keys are identified with strings. Here's a full list:
 "ESCAPE", "ENTER", "SHIFT", "CONTROL", "ALT", "SPACE"
 "UP", "DOWN", "LEFT", "RIGHT"
 
-Key.justpressed("ENTER");    // True when the key has been pressed this frame
+Input.justpressed(Key.ENTER);    // True when the key has been pressed this frame
 
-Key.pressed("LEFT");         // True if this key is held down
+Input.pressed(Key.LEFT);         // True if this key is held down
 
-Key.justreleased("SPACE");   // True if the key has been released this frame
+Input.justreleased(Key.SPACE);   // True if the key has been released this frame
 
-Key.delaypressed("Z", 5);    // True if Z is pressed this frame, then false if Z is held 
-                             // for five frames. Just a handy shortcut for key delay rates!
+Input.delaypressed(Key.Z, 5);    // True if Z is pressed, but only every fifth frame.
+                                 // Just a handy shortcut for key delay rates!
 
 Mouse.x                      // Mouse x position.
 Mouse.y                      // Mouse y position.
 
-Mouse.justleftpressed()      // True if you've just clicked left this frame
-Mouse.justleftreleased()     // True if you've just released left-click this frame
+Mouse.leftclick()        // True if you've just clicked left this frame
+Mouse.leftheld()         // True if you're holding down left click.
+Mouse.leftreleased()     // True if you've just released left-click this frame
 
-Mouse.justrightpressed()     // True if you've just clicked right this frame
-Mouse.justrightreleased()    // True if you've just released right-click this frame
-                             // Right mouse checks don't work in flash!
+Mouse.middleclick()      // True if you've just clicked middle this frame
+Mouse.middleheld()       // True if you're holding down middle click.
+Mouse.middlereleased()   // True if you've just released middle-click this frame
+
+Mouse.rightclick()       // True if you've just clicked right this frame
+Mouse.rightheld()        // True if you're holding down right click.
+Mouse.rightreleased()    // True if you've just released right-click this frame
+                         // *** Right mouse checks don't work in flash!
 
 Mouse.mousewheel             // An int between -3 and +3 for the scrollwheel value.
                              // For most mice it seems best to just check ==0, <0 and >0.

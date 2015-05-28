@@ -10,27 +10,20 @@ import openfl.Lib;
 class Mouse{		
 	public static var x:Int;
 	public static var y:Int;
-	public static var leftheld:Bool;
-	public static var _current:Int;
-	public static var _last:Int;
+	private static var _current:Int;
+	private static var _last:Int;
 	
 	public static var mouseoffstage:Bool;
 	public static var isdragging:Bool;
 	
-	public static var _rightcurrent:Int;
-	public static var _rightlast:Int;
-	public static var rightheld:Bool;
-	public static var gotosite:String = "";
-	
-	public static function rightpressed():Bool { return _rightcurrent > 0; }
-	public static function justrightpressed():Bool { return _rightcurrent == 2; }	
-	public static function justrightreleased():Bool { return _rightcurrent == -1; }
-	#if !flash
-		public static function handleRightMouseDown(event:MouseEvent):Void {	if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
-		public static function handleRightMouseUp(event:MouseEvent):Void {	if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
-  #end
-	
-	public static function init(stage:DisplayObject):Void {
+	private static var _middlecurrent:Int;
+	private static var _middlelast:Int;
+	private static var _rightcurrent:Int;
+	private static var _rightlast:Int;
+	private static var gotosite:String = "";
+	public static var mousewheel:Int = 0;
+
+	private static function init(stage:DisplayObject):Void {
 		//Right mouse stuff
 		#if !flash
 		stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
@@ -39,6 +32,8 @@ class Mouse{
 		
 		stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 		stage.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+		stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
+		stage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
 		stage.addEventListener(MouseEvent.MOUSE_WHEEL, mousewheelHandler);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
 		stage.addEventListener(Event.MOUSE_LEAVE, mouseLeave);
@@ -46,6 +41,8 @@ class Mouse{
 		y = 0;
 		_rightcurrent = 0;
 		_rightlast = 0;
+		_middlecurrent = 0;
+		_middlelast = 0;
 		_current = 0;
 		_last = 0;
 	}		
@@ -57,21 +54,21 @@ class Mouse{
 		isdragging = false;
 		_rightcurrent = 0;
 		_rightlast = 0;
+		_middlecurrent = 0;
+		_middlelast = 0;
 	}
 	
 	private static function mouseOver(e:MouseEvent) :Void {
 		mouseoffstage = false;
 	}
 	
-	public static function mousewheelHandler( e:MouseEvent ):Void {
+	private static function mousewheelHandler( e:MouseEvent ):Void {
 		mousewheel = e.delta;
 	}
 	
 	public static function visitsite(t:String):Void {
 		gotosite = t;
 	}
-	
-	public static var mousewheel:Int = 0;
 	
 	public static function update(X:Int,Y:Int):Void{
 		x = X;
@@ -88,21 +85,44 @@ class Mouse{
 		else if((_rightlast == 2) && (_rightcurrent == 2))
 			_rightcurrent = 1;
 		_rightlast = _rightcurrent;
+		
+		if((_middlelast == -1) && (_middlecurrent == -1))
+			_middlecurrent = 0;
+		else if((_middlelast == 2) && (_middlecurrent == 2))
+			_middlecurrent = 1;
+		_middlelast = _middlecurrent;
 	}
 	
-	public static function reset():Void{
+	private static function reset():Void{
 		_current = 0;
 		_last = 0;
 		_rightcurrent = 0;
 		_rightlast = 0;
+		_middlecurrent = 0;
+		_middlelast = 0;
 	}
 	
-	public static function leftpressed():Bool { return _current > 0; }
-	public static function justleftpressed():Bool { return _current == 2; }
-	public static function justleftreleased():Bool { return _current == -1; }
+		
+	public static function rightheld():Bool { return _rightcurrent > 0; }
+	public static function rightclick():Bool { return _rightcurrent == 2; }	
+	public static function rightreleased():Bool { return _rightcurrent == -1; }
+	#if !flash
+		private static function handleRightMouseDown(event:MouseEvent):Void {	if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
+		private static function handleRightMouseUp(event:MouseEvent):Void {	if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
+  #end
 	
-	public static function handleMouseDown(event:MouseEvent):Void {
-		if (Key.pressed("CONTROL")) {
+	public static function middleheld():Bool { return _middlecurrent > 0; }
+	public static function middleclick():Bool { return _middlecurrent == 2; }	
+	public static function middlereleased():Bool { return _middlecurrent == -1; }
+	private static function handleMiddleMouseDown(event:MouseEvent):Void {	if (_middlecurrent > 0) { _middlecurrent = 1; } else { _middlecurrent = 2; } }
+	private static function handleMiddleMouseUp(event:MouseEvent):Void {	if (_middlecurrent > 0) { _middlecurrent = -1; } else { _middlecurrent = 0; }	}
+	
+	public static function leftheld():Bool { return _current > 0; }
+	public static function leftclick():Bool { return _current == 2; }
+	public static function leftreleased():Bool { return _current == -1; }
+	
+	private static function handleMouseDown(event:MouseEvent):Void {
+		if (Input.pressed(Key.CONTROL)) {
 			if(_rightcurrent > 0) _rightcurrent = 1;
 			else _rightcurrent = 2;
 		}else{
@@ -119,7 +139,7 @@ class Mouse{
 		}
 	}
 	
-	public static function handleMouseUp(event:MouseEvent):Void {		
+	private static function handleMouseUp(event:MouseEvent):Void {		
 		if(_rightcurrent > 0) _rightcurrent = -1;
 		else _rightcurrent = 0;
 		
