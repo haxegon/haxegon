@@ -38,6 +38,7 @@ class Gfx {
 		trect = new Rectangle(); tpoint = new Point();
 		tbuffer = new BitmapData(1, 1, true);
 		ct = new ColorTransform(0, 0, 0, 1, 255, 255, 255, 1); //Set to white
+		hslval.push(0.0); hslval.push(0.0); hslval.push(0.0);
 		
 		backbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
 		screenbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
@@ -519,6 +520,39 @@ class Gfx {
 		return (blue | (green << 8) | (red << 16));
 	}
 	
+	/** Picks a colour given Hue, Saturation and Lightness values. 
+	 *  Hue is between 0-359, Saturation and Lightness between 0.0 and 1.0. */
+	public static function HSL(hue:Float, saturation:Float, lightness:Float):Int{
+		var q:Float = if (lightness < 1 / 2) {
+			lightness * (1 + saturation);
+		}else {
+			lightness + saturation - (lightness * saturation);
+		}
+		
+		var p:Float = 2 * lightness - q;
+		
+		var hk:Float = (hue % 360) / 360;
+		
+		hslval[0] = hk + 1 / 3;
+		hslval[1] = hk;
+		hslval[2] = hk - 1 / 3;
+		for (n in 0 ... 3){
+			if (hslval[n] < 0) hslval[n] += 1;
+			if (hslval[n] > 1) hslval[n] -= 1;
+			hslval[n] = if (hslval[n] < 1 / 6){
+				p + ((q - p) * 6 * hslval[n]);
+			}else if (hslval[n] < 1 / 2)	{
+				q;
+			}else if (hslval[n] < 2 / 3){
+				p + ((q - p) * 6 * (2 / 3 - hslval[n]));
+			}else{
+				p;
+			}
+		}
+		
+		return RGB(Std.int(hslval[0] * 255), Std.int(hslval[1] * 255), Std.int(hslval[2] * 255));
+	}
+	
 	//Render functions
 	public static function screenrender():Void {
 		backbuffer.unlock();
@@ -609,6 +643,9 @@ class Gfx {
 	
 	private static var alphamult:Int;
 	private static var gfxstage:Stage;
+	
+	//HSL conversion variables 
+	private static var hslval:Array<Float> = new Array<Float>();
 	
 	public static var LEFT:Int = -20000;
 	public static var RIGHT:Int = -20001;
