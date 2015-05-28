@@ -98,20 +98,9 @@ Gfx.changetileset("newtileset");
     Gfx.changetileset("forest"); drawtile(0, 0, 4); // Draws tile 4 from the "forest" tileset at 0,0
     Gfx.changetileset("city"); drawtile(10, 20, 7); // Draws tile 7 from the "city" tileset at 10,20
   
-drawtile(x, y, tilenumber);
-drawtile_scale(x, y, tilenumber, scale, pivotx, pivoty);
-drawtile_freescale(x, y, tilenumber, xscale, yscale, pivotx, pivoty);
-drawtile_rotate(x, y, tilenumber, rotation, pivotx, pivoty);
-drawtile_scale_rotate(x, y, tilenumber, scale, rotation, pivotx, pivoty);
-drawtile_freescale_rotate(x, y, tilenumber, xscale, yscale, rotation, pivotx, pivoty);
-drawtile_col(x, y, tilenumber, col);
-drawtile_scale_col(x, y, tilenumber, scale, pivotx, pivoty, col);
-drawtile_freescale_col(x, y, tilenumber, xscale, yscale, pivotx, pivoty, col);
-drawtile_rotate_col(x, y, tilenumber, rotation, pivotx, pivoty, col);
-drawtile_scale_rotate_col(x, y, tilenumber, scale, rotation, pivotx, pivoty, col);
-drawtile_freescale_rotate_col(x, y, tilenumber, xscale, yscale, rotation, pivotx, pivoty, col);
+drawtile(x, y, tilenumber, optional parameters);
 
-  - drawtiles functions take all the same arguments as drawimage functions. 
+  - Drawtiles functions take all the same arguments as drawimage functions. 
   
 //Primatives
 Gfx.drawbox(x, y, width, height, col);
@@ -147,10 +136,6 @@ Text.addfont("fontname", defaultsize);
   Text.addfont("arial", 16);
   
   Default font is verdana, size 24.
-
-Text.cachefont("fontname", size1, size2, ...);
-
-  - You can preload different font sizes if you like for speed, but you don't have to.
   
 Text.changefont("fontname");
 Text.changesize(fontsize);

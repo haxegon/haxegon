@@ -308,24 +308,6 @@ class Text {
 		typefaceindex.set(_name+"_" + Std.string(_size), typeface.length - 1);
 	}
 	
-	public static function cachefont(_name:String, _s1:Int, _s2:Int = -1, _s3:Int = -1,
-															_s4:Int = -1, _s5:Int = -1, _s6:Int = -1, _s7:Int = -1,
-															_s8:Int = -1, _s9:Int = -1, _s10:Int = -1, _s11:Int = -1, _s12:Int = -1) {
-    changefont(_name);
-		changesize(_s1);
-		if (_s2 > -1) changesize(_s2);
-		if (_s3 > -1) changesize(_s3);
-		if (_s4 > -1) changesize(_s4);
-		if (_s5 > -1) changesize(_s5);
-		if (_s6 > -1) changesize(_s6);
-		if (_s7 > -1) changesize(_s7);
-		if (_s8 > -1) changesize(_s8);
-		if (_s9 > -1) changesize(_s9);
-		if (_s10 > -1) changesize(_s10);
-		if (_s11 > -1) changesize(_s11);
-		if (_s12 > -1) changesize(_s12);
-	}
-	
 	/** Return a font's internal TTF name. Used for loading in fonts during setup. */
 	public static function getfonttypename(fontname:String):String {
 		return fontfile[Text.fontfileindex.get(fontname)].typename;
