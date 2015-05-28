@@ -114,8 +114,13 @@ drawtile_freescale_rotate_col(x, y, tilenumber, xscale, yscale, rotation, pivotx
 //Primatives
 Gfx.drawbox(x, y, width, height, col);
 Gfx.fillbox(x, y, width, height, col);
+
 Gfx.drawtri(x1, y1, x2, y2, x3, y3, col);
 Gfx.filltri(x1, y1, x2, y2, x3, y3, col);
+
+Gfx.drawcircle(x, y, radius, col);
+Gfx.fillcircle(x, y, radius, col);
+
 Gfx.drawline(x1, y1, x2, y2, col);
 
   - "col" is a haxe HexCol, which is an int written like e.g this: 0xFFFFFF

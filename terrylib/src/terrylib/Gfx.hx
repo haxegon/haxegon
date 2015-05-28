@@ -54,7 +54,7 @@ class Gfx {
 	}
 	
 	/** Sets the values for the temporary rect structure. Probably better than making a new one, idk */
-	private static function settrect(x:Int, y:Int, w:Int, h:Int):Void {
+	private static function settrect(x:Float, y:Float, w:Float, h:Float):Void {
 		trect.x = x;
 		trect.y = y;
 		trect.width = w;
@@ -62,7 +62,7 @@ class Gfx {
 	}
 	
 	/** Sets the values for the temporary point structure. Probably better than making a new one, idk */
-	private static function settpoint(x:Int, y:Int):Void {
+	private static function settpoint(x:Float, y:Float):Void {
 		tpoint.x = x;
 		tpoint.y = y;
 	}
@@ -426,7 +426,7 @@ class Gfx {
 		drawto.draw(tiles[currenttileset].tiles[t], shapematrix, ct);
 	}
 	
-	public static function drawline(x1:Int, y1:Int, x2:Int, y2:Int, col:Int):Void {
+	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int):Void {
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(1, col);
 		tempshape.graphics.lineTo(x2 - x1, y2 - y1);
@@ -436,13 +436,35 @@ class Gfx {
 		shapematrix.translate(-x1, -y1);
 	}
 	
-	public static function drawtri(x1:Int, y1:Int, x2:Int, y2:Int, x3:Int, y3:Int, col:Int):Void {
+	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int):Void {
+		tempshape.graphics.clear();
+		tempshape.graphics.lineStyle(1, col);
+		tempshape.graphics.drawCircle(0, 0, radius);
+		
+		shapematrix.translate(x, y);
+		backbuffer.draw(tempshape, shapematrix);
+		shapematrix.translate(-x, -y);
+	}
+	
+	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int):Void {
+		tempshape.graphics.clear();
+		tempshape.graphics.lineStyle(1, col);
+		tempshape.graphics.beginFill(col);
+		tempshape.graphics.drawCircle(0, 0, radius);
+		tempshape.graphics.endFill();
+		
+		shapematrix.translate(x, y);
+		backbuffer.draw(tempshape, shapematrix);
+		shapematrix.translate(-x, -y);
+	}
+	
+	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int):Void {
 		drawline(x1, y1, x2, y2, col);
 		drawline(x2, y2, x3, y3, col);
 		drawline(x3, y3, x1, y1, col);
 	}
 	
-	public static function filltri(x1:Int, y1:Int, x2:Int, y2:Int, x3:Int, y3:Int, col:Int):Void {
+	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int):Void {
 		tempshape.graphics.clear();
 		tempshape.graphics.beginFill(col);
 		tempshape.graphics.lineTo(0, 0);
@@ -457,27 +479,27 @@ class Gfx {
 		shapematrix.translate(-x1, -y1);
 	}
 
-	public static function drawbox(x1:Int, y1:Int, w1:Int, h1:Int, col:Int):Void {
-		if (w1 < 0) {
-			w1 = -w1;
-			x1 = x1 - w1;
+	public static function drawbox(x:Float, y:Float, width:Float, height:Float, col:Int):Void {
+		if (width < 0) {
+			width = -width;
+			x = x - width;
 		}
-		if (h1 < 0) {
-			h1 = -h1;
-			y1 = y1 - h1;
+		if (height < 0) {
+			height = -height;
+			y = y - height;
 		}
-		settrect(x1, y1, w1, 1); backbuffer.fillRect(trect, col);
-		settrect(x1, y1 + h1 - 1, w1, 1); backbuffer.fillRect(trect, col);
-		settrect(x1, y1, 1, h1); backbuffer.fillRect(trect, col);
-		settrect(x1 + w1 - 1, y1, 1, h1); backbuffer.fillRect(trect, col);
+		settrect(x, y, width, 1); backbuffer.fillRect(trect, col);
+		settrect(x, y + height - 1, width, 1); backbuffer.fillRect(trect, col);
+		settrect(x, y, 1, height); backbuffer.fillRect(trect, col);
+		settrect(x + width - 1, y, 1, height); backbuffer.fillRect(trect, col);
 	}
 
 	public static function cls():Void {
 		fillbox(0, 0, screenwidth, screenheight, 0x000000);
 	}
 
-	public static function fillbox(x1:Int, y1:Int, w1:Int, h1:Int, col:Int):Void {
-		settrect(x1, y1, w1, h1);
+	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int):Void {
+		settrect(x, y, width, height);
 		backbuffer.fillRect(trect, col);
 	}
 	
