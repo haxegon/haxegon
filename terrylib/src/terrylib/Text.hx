@@ -86,7 +86,7 @@ class Text {
 		input_responsecol = responsecol;
 		input_checkfortext();
 		
-		if (Key.justpressed("ENTER") && inputtext != "") {
+		if (Input.justpressed(Key.ENTER) && inputtext != "") {
 			return true;
 		}
 		return false;

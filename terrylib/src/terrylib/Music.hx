@@ -102,10 +102,10 @@ class Music {
 	
 	public static function processmute():Void {
 		if (Text.input_show == 0) {
-			if (Key.justpressed("M") && mutebutton <= 0) {
+			if (Input.justpressed(Key.M) && mutebutton <= 0) {
 				mutebutton = 2; if (muted) { muted = false; }else { muted = true;}
 			}
-			if (mutebutton > 0 && !Key.pressed("M")) mutebutton--;
+			if (mutebutton > 0 && !Input.pressed(Key.M)) mutebutton--;
 		}
 		
 		if (muted) {

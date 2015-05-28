@@ -5,6 +5,8 @@ import openfl.events.*;
 import openfl.Lib;
 
 @:access(Main)
+@:access(terrylib.Mouse)
+@:access(terrylib.Input)
 class Core extends Sprite {
 	public function new() {
 		super();
@@ -14,7 +16,7 @@ class Core extends Sprite {
 	
 	public function init():Void {
 		//Init library classes
-		Key.init(this.stage);
+		Input.init(this.stage);
 		Mouse.init(this.stage);
 		Gfx.init(this.stage);
 		Music.init();
