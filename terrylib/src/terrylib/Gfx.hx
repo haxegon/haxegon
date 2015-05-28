@@ -10,6 +10,17 @@ import openfl.Assets;
 import openfl.Lib;
 import openfl.system.Capabilities;
 
+typedef Drawparams = {
+  @:optional var scale:Float;
+  @:optional var xscale:Float;
+  @:optional var yscale:Float;
+  @:optional var rotation:Float;
+  @:optional var xpivot:Float;
+  @:optional var ypivot:Float;
+	@:optional var alpha:Float;
+	@:optional var col:Int;
+}
+
 class Gfx {
 	/** Just gives Gfx access to the stage. */
 	public static function init(stage:Stage):Void {
@@ -112,7 +123,7 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealignx(x:Int):Int {
+	private static function imagealignx(x:Float):Float {
 		if (x == CENTER) return Gfx.screenwidthmid - Std.int(images[imagenum].width / 2);
 		if (x == LEFT || x == TOP) return 0;
 		if (x == RIGHT || x == BOTTOM) return images[imagenum].width;
@@ -120,7 +131,7 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealigny(y:Int):Int {
+	private static function imagealigny(y:Float):Float {
 		if (y == CENTER) return Gfx.screenheightmid - Std.int(images[imagenum].height / 2);
 		if (y == LEFT || y == TOP) return 0;
 		if (y == RIGHT || y == BOTTOM) return images[imagenum].height;
@@ -128,7 +139,7 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealignonimagex(x:Int):Int {
+	private static function imagealignonimagex(x:Float):Float {
 		if (x == CENTER) return Std.int(images[imagenum].width / 2);
 		if (x == LEFT || x == TOP) return 0;
 		if (x == RIGHT || x == BOTTOM) return images[imagenum].width;
@@ -136,295 +147,111 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealignonimagey(y:Int):Int {
+	private static function imagealignonimagey(y:Float):Float {
 		if (y == CENTER) return Std.int(images[imagenum].height / 2);
 		if (y == LEFT || y == TOP) return 0;
 		if (y == RIGHT || y == BOTTOM) return images[imagenum].height;
 		return y;
 	}
-	
+		
 	/** Draws image by name. 
-	 * x and y can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage(x:Int, y:Int, imagename:String):Void {
+	 * Parameters can be: rotation, scale, xscale, yscale, xpivot, ypivoy, alpha
+	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
+	 * */
+	public static function drawimage(x:Float, y:Float, imagename:String, ?parameters:Drawparams):Void {
 		imagenum = imageindex.get(imagename);
 		
-		x = imagealignx(x); y = imagealigny(y);
-		shapematrix.identity();
-		shapematrix.translate(x, y);
-		backbuffer.draw(images[imagenum], shapematrix);
-	}
-	
-	/** Draws image by name, with a single scale value.
-	 * x, y, pivotx and pivoty can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage_scale(x:Int, y:Int, imagename:String, scale:Float, pivotx:Int, pivoty:Int):Void {
-		imagenum = imageindex.get(imagename);
+		tempxpivot = 0;
+		tempypivot = 0;
+		tempxscale = 1.0;
+		tempyscale = 1.0;
+		temprotate = 0;
+		tempalpha = 1.0;
 		
 		x = imagealignx(x); y = imagealigny(y);
-		pivotx = imagealignonimagex(pivotx); pivoty = imagealignonimagey(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.scale(scale, scale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		drawto.draw(images[imagenum], shapematrix);
-	}
-	
-	/** Draws image by name, with individual x and y scales.
-	 * x, y, pivotx and pivoty can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage_freescale(x:Int, y:Int, imagename:String, xscale:Float, yscale:Float, pivotx:Int, pivoty:Int):Void {
-		imagenum = imageindex.get(imagename);
-		
-		x = imagealignx(x); y = imagealigny(y);
-		pivotx = imagealignonimagex(pivotx); pivoty = imagealignonimagey(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.scale(xscale, yscale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		drawto.draw(images[imagenum], shapematrix);
-	}
-	
-	/** Draws image by name, with rotation around point pivotx, pivoty.
-	 * x, y, pivotx and pivoty can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage_rotate(x:Int, y:Int, imagename:String, rotate:Int, pivotx:Int, pivoty:Int):Void {
-		imagenum = imageindex.get(imagename);
-		
-		x = imagealignx(x); y = imagealigny(y);
-		pivotx = imagealignonimagex(pivotx); pivoty = imagealignonimagey(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.rotate((rotate * 3.1415) / 180);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		drawto.draw(images[imagenum], shapematrix);
-	}
-	
-	/** Draws image by name, with single scale value and rotation.
-	 * x, y, pivotx and pivoty can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage_scale_rotate(x:Int, y:Int, imagename:String, scale:Float, rotate:Int, pivotx:Int, pivoty:Int):Void {
-		drawimage_freescale_rotate(x, y, imagename, scale, scale, rotate, pivotx, pivoty);
-	}
-	
-	/** Draws image by name, with individual x and y scales and rotation.
-	 * x, y, pivotx and pivoty can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage_freescale_rotate(x:Int, y:Int, imagename:String, xscale:Float, yscale:Float, rotate:Int, pivotx:Int, pivoty:Int):Void {
-		imagenum = imageindex.get(imagename);
-		
-		x = imagealignx(x); y = imagealigny(y);
-		pivotx = imagealignonimagex(pivotx); pivoty = imagealignonimagey(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.rotate((rotate * 3.1415) / 180);
-		shapematrix.scale(xscale, yscale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		drawto.draw(images[imagenum], shapematrix);
-	}
-	
-	/** Draws image by name, with colour transform.
-	 * x and y can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage_col(x:Int, y:Int, imagename:String, col:Int):Void {
-		imagenum = imageindex.get(imagename);
-		
-		x = imagealignx(x); y = imagealigny(y);
-		
-  	shapematrix.identity();
-		shapematrix.translate(x, y);
-		ct.color = col;
-		drawto.draw(images[imagenum], shapematrix, ct);
-	}
-	
-	/** Draws image by name, with single scale value and colour transform.
-	 * x, y, pivotx and pivoty can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage_scale_col(x:Int, y:Int, imagename:String, scale:Float, pivotx:Int, pivoty:Int, col:Int):Void {
-		drawimage_freescale_col(x, y, imagename, scale, scale, pivotx, pivoty, col);
-	}
-	
-	/** Draws image by name, with individual x and y scales and colour transform.
-	 * x, y, pivotx and pivoty can be: CENTER, TOP, BOTTOM, LEFT, RIGHT. */
-	public static function drawimage_freescale_col(x:Int, y:Int, imagename:String, xscale:Float, yscale:Float, pivotx:Int, pivoty:Int, col:Int):Void {
-		imagenum = imageindex.get(imagename);
-		
-		x = imagealignx(x); y = imagealigny(y);
-		pivotx = imagealignonimagex(pivotx); pivoty = imagealignonimagey(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.scale(xscale, yscale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		ct.color = col;
-		drawto.draw(images[imagenum], shapematrix, ct);
-	}
-	
-	public static function drawimage_rotate_col(x:Int, y:Int, imagename:String, rotate:Int, pivotx:Int, pivoty:Int, col:Int):Void {
-		imagenum = imageindex.get(imagename);
-		
-		x = imagealignx(x); y = imagealigny(y);
-		pivotx = imagealignonimagex(pivotx); pivoty = imagealignonimagey(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.rotate((rotate * 3.1415) / 180);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		ct.color = col;
-		drawto.draw(images[imagenum], shapematrix, ct);
-	}
-	
-	public static function drawimage_scale_rotate_col(x:Int, y:Int, imagename:String, scale:Float, rotate:Int, pivotx:Int, pivoty:Int, col:Int):Void {
-		drawimage_freescale_rotate_col(x, y, imagename, scale, scale, rotate, pivotx, pivoty, col);
-	}
-	
-	public static function drawimage_freescale_rotate_col(x:Int, y:Int, imagename:String, xscale:Float, yscale:Float, rotate:Int, pivotx:Int, pivoty:Int, col:Int):Void {
-		imagenum = imageindex.get(imagename);
-		
-		x = imagealignx(x); y = imagealigny(y);
-		pivotx = imagealignonimagex(pivotx); pivoty = imagealignonimagey(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.rotate((rotate * 3.1415) / 180);
-		shapematrix.scale(xscale, yscale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		ct.color = col;
-		drawto.draw(images[imagenum], shapematrix, ct);
-	}
-	
-	public static function drawtile(x:Int, y:Int, t:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
+		if(parameters != null){
+			if (parameters.xpivot != null) tempxpivot = imagealignonimagex(parameters.xpivot);
+			if (parameters.ypivot != null) tempypivot = imagealignonimagey(parameters.ypivot); 
+			if (parameters.scale != null) {
+				tempxscale = parameters.scale;
+				tempyscale = parameters.scale;
+			}else{
+				if (parameters.xscale != null) tempxscale = parameters.xscale;
+				if (parameters.yscale != null) tempyscale = parameters.yscale;
+			}
+			if (parameters.rotation != null) temprotate = parameters.rotation;
+			if (parameters.alpha != null) tempalpha = parameters.alpha;
+		}
 			
 		shapematrix.identity();
-		shapematrix.translate(x, y);
+		shapematrix.translate( -tempxpivot, -tempypivot);
+		if (temprotate != 0) shapematrix.rotate((temprotate * 3.1415) / 180);
+		if (tempxscale != 1.0 || tempyscale != 1.0) shapematrix.scale(tempxscale, tempyscale);
+		shapematrix.translate(x + tempxpivot, y + tempypivot);
+		drawto.draw(images[imagenum], shapematrix);
+	}
+	
+	/** Draws tile number t from current tileset.
+	 * Parameters can be: rotation, scale, xscale, yscale, xpivot, ypivoy, alpha
+	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
+	 * */
+	public static function drawtile(x:Float, y:Float, t:Int, ?parameters:Drawparams):Void {
+		tempxpivot = 0;
+		tempypivot = 0;
+		tempxscale = 1.0;
+		tempyscale = 1.0;
+		temprotate = 0;
+		tempalpha = 1.0;
+		
+		x = tilealignx(x); y = tilealigny(y);
+		if (parameters != null) {
+			if (parameters.xpivot != null) tempxpivot = tilealignontilex(parameters.xpivot);
+			if (parameters.ypivot != null) tempypivot = tilealignontiley(parameters.ypivot); 
+			if (parameters.scale != null) {
+				tempxscale = parameters.scale;
+				tempyscale = parameters.scale;
+			}else{
+				if (parameters.xscale != null) tempxscale = parameters.xscale;
+				if (parameters.yscale != null) tempyscale = parameters.yscale;
+			}
+			if (parameters.rotation != null) temprotate = parameters.rotation;
+			if (parameters.alpha != null) tempalpha = parameters.alpha;
+		}
+		
+		shapematrix.identity();
+		shapematrix.translate( -tempxpivot, -tempypivot);
+		if (temprotate != 0) shapematrix.rotate((temprotate * 3.1415) / 180);
+		if (tempxscale != 1.0 || tempyscale != 1.0) shapematrix.scale(tempxscale, tempyscale);
+		shapematrix.translate(x + tempxpivot, y + tempypivot);
 		drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
 	}
 	
-	private static function tilealignx(x:Int):Int {
+	private static function tilealignx(x:Float):Float {
 		if (x == CENTER) return Gfx.screenwidthmid - Std.int(tiles[currenttileset].width / 2);
 		if (x == LEFT || x == TOP) return 0;
 		if (x == RIGHT || x == BOTTOM) return tiles[currenttileset].width;
 		return x;
 	}
 	
-	private static function tilealigny(y:Int):Int {
+	private static function tilealigny(y:Float):Float {
 		if (y == CENTER) return Gfx.screenheightmid - Std.int(tiles[currenttileset].height / 2);
 		if (y == LEFT || y == TOP) return 0;
 		if (y == RIGHT || y == BOTTOM) return tiles[currenttileset].height;
 		return y;
 	}
 	
-	private static function tilealignontilex(x:Int):Int {
+	private static function tilealignontilex(x:Float):Float {
 		if (x == CENTER) return Std.int(tiles[currenttileset].width / 2);
 		if (x == LEFT || x == TOP) return 0;
 		if (x == RIGHT || x == BOTTOM) return tiles[currenttileset].width;
 		return x;
 	}
 	
-	private static function tilealignontiley(y:Int):Int {
+	private static function tilealignontiley(y:Float):Float {
 		if (y == CENTER) return Std.int(tiles[currenttileset].height / 2);
 		if (y == LEFT || y == TOP) return 0;
 		if (y == RIGHT || y == BOTTOM) return tiles[currenttileset].height;
 		return y;
-	}
-	
-	public static function drawtile_scale(x:Int, y:Int, t:Int, scale:Float, pivotx:Int, pivoty:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
-		pivotx = tilealignontilex(pivotx); pivoty = tilealignontilex(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.scale(scale, scale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
-	}
-	
-	public static function drawtile_freescale(x:Int, y:Int, t:Int, xscale:Float, yscale:Float, pivotx:Int, pivoty:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
-		pivotx = tilealignontilex(pivotx); pivoty = tilealignontilex(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.scale(xscale, yscale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
-	}
-	
-	public static function drawtile_rotate(x:Int, y:Int, t:Int, rotate:Int, pivotx:Int, pivoty:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
-		pivotx = tilealignontilex(pivotx); pivoty = tilealignontilex(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.rotate((rotate * 3.1415) / 180);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
-	}
-	
-	public static function drawtile_scale_rotate(x:Int, y:Int, t:Int, scale:Float, rotate:Int, pivotx:Int, pivoty:Int):Void {
-	  drawtile_freescale_rotate(x, y, t, scale, scale, rotate, pivotx, pivoty);
-	}
-	
-	public static function drawtile_freescale_rotate(x:Int, y:Int, t:Int, xscale:Float, yscale:Float, rotate:Int, pivotx:Int, pivoty:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
-		pivotx = tilealignontilex(pivotx); pivoty = tilealignontilex(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.rotate((rotate * 3.1415) / 180);
-		shapematrix.scale(xscale, yscale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
-	}
-	
-	public static function drawtile_col(x:Int, y:Int, t:Int, col:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
-		
-		shapematrix.identity();
-		shapematrix.translate(x, y);
-		ct.color = col;
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix, ct);
-	}
-	
-	public static function drawtile_scale_col(x:Int, y:Int, t:Int, scale:Float, pivotx:Int, pivoty:Int, col:Int):Void {
-		drawtile_freescale_col(x, y, t, scale, scale, pivotx, pivoty, col);
-	}
-	
-	public static function drawtile_freescale_col(x:Int, y:Int, t:Int, xscale:Float, yscale:Float, pivotx:Int, pivoty:Int, col:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
-		pivotx = tilealignontilex(pivotx); pivoty = tilealignontilex(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.scale(xscale, yscale);
-		shapematrix.translate(x, y);
-		ct.color = col;
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix, ct);
-	}
-	
-	public static function drawtile_rotate_col(x:Int, y:Int, t:Int, rotate:Int, pivotx:Int, pivoty:Int, col:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.rotate((rotate * 3.1415) / 180);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		ct.color = col;
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix, ct);
-	}
-	
-	public static function drawtile_scale_rotate_col(x:Int, y:Int, t:Int, scale:Float, rotate:Int, pivotx:Int, pivoty:Int, col:Int):Void {
-	  drawtile_freescale_rotate_col(x, y, t, scale, scale, rotate, pivotx, pivoty, col);
-	}
-	
-	
-	public static function drawtile_freescale_rotate_col(x:Int, y:Int, t:Int, xscale:Float, yscale:Float, rotate:Int, pivotx:Int, pivoty:Int, col:Int):Void {
-		x = tilealignx(x); y = tilealigny(y);
-		pivotx = tilealignontilex(pivotx); pivoty = tilealignontilex(pivoty);
-		
-		shapematrix.identity();
-		shapematrix.translate(-pivotx, -pivoty);
-		shapematrix.rotate((rotate * 3.1415) / 180);
-		shapematrix.scale(xscale, yscale);
-		shapematrix.translate(x + pivotx, y + pivoty);
-		ct.color = col;
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix, ct);
 	}
 	
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int):Void {
@@ -531,7 +358,7 @@ class Gfx {
 		
 		var p:Float = 2 * lightness - q;
 		
-		var hk:Float = (hue % 360) / 360;
+		var hk:Float = ((hue % 360) / 360);
 		
 		hslval[0] = hk + 1 / 3;
 		hslval[1] = hk;
@@ -630,6 +457,13 @@ class Gfx {
 	private static var tpoint:Point;
 	private static var tbuffer:BitmapData;
 	private static var imageindex:Map<String, Int> = new Map<String, Int>();
+	
+	private static var temprotate:Float;
+	private static var tempxscale:Float;
+	private static var tempyscale:Float;
+	private static var tempxpivot:Float;
+	private static var tempypivot:Float;
+	private static var tempalpha:Float;
 	
 	private static var buffer:BitmapData;
 	

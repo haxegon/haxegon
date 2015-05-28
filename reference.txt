@@ -58,31 +58,33 @@ Gfx.addimage("imagename");
     
     Gfx.addimage("titlescreen");  // Loads in data/graphics/titlescreen.png
 
-drawimage(x, y, "imagename");
-drawimage_scale(x, y, "imagename", scale, pivotx, pivoty);
-drawimage_freescale(x, y, "imagename", xscale, yscale, pivotx, pivoty);
-drawimage_rotate(x, y, "imagename", rotation, pivotx, pivoty);
-drawimage_scale_rotate(x, y, "imagename", scale, rotation, pivotx, pivoty);
-drawimage_freescale_rotate(x, y, "imagename", xscale, yscale, rotation, pivotx, pivoty);
-drawimage_col(x, y, "imagename", col);
-drawimage_scale_col(x, y, "imagename", scale, pivotx, pivoty, col);
-drawimage_freescale_col(x, y, "imagename", xscale, yscale, pivotx, pivoty, col);
-drawimage_rotate_col(x, y, "imagename", rotation, pivotx, pivoty, col);
-drawimage_scale_rotate_col(x, y, "imagename", scale, rotation, pivotx, pivoty, col);
-drawimage_freescale_rotate_col(x, y, "imagename", xscale, yscale, rotation, pivotx, pivoty, col);
+drawimage(x, y, "imagename", optional parameters);
 
-  - drawimage functions can take the following arguments:
-     x - x position on screen
-     y - y position on screen
-     "imagename" - name of the image you've loaded in (same as the one you pass to addimage())
-     scale - float, 1.0 is original size.
-     scalex, scaley - freescale functions have different x and y scale values
-     col - Hexcode colour in haxe format - e.g. 0xFF0000 draws the image in red.
-     rotate - rotation between 0-359
-     pivotx, pivoty - position in image to rotate and scale from.
+  - e.g. 
+      Gfx.drawimage(0, 0, "monalisa");
+
+  - drawimage functions can also take the following arguments as optional parameters:
+      scale          - float, 1.0 is original size.
+      xscale, yscale - you can have different x and y scale values if you like
+      rotation       - rotation between 0-359
+      xpivot, ypivot - position in image to rotate and scale from.
+      alpha          - between 0.0 and 1.0, the transparancy of the image. 1.0 is solid.
+    
+    These parameters should be grouped together and labeled like this:
+      
+    e.g. 
+      Gfx.drawimage(50, 50, "monalisa", { scale: 2 });
+      Gfx.drawimage(50, 50, "monabart", { xscale: 2.5, alpha:0.5 });
+      Gfx.drawimage(0, 0, "monamaggie", { rotation: 45, xpivot: 250, ypivot: 100 });
+   
+  - You can use the following constants for values of x, y, pivotx and pivoty:
+      Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT, Gfx.CENTER
      
-   - You can use the following constants for values of x, y, pivotx and pivoty:
-     Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT, Gfx.CENTER
+    e.g
+      Gfx.drawimage(Gfx.CENTER, Gfx.CENTER, "logo");
+      
+      t = t + 1;
+      Gfx.drawimage(200, 100, "star", { rotation: t, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER });
 
 //Tilesets
 Gfx.maketiles("imagename", tilewidth, tileheight);
@@ -127,7 +129,9 @@ Gfx.drawline(x1, y1, x2, y2, col);
     Or you could use the functions below:
 
 //Colours
-t = Gfx.RGB(red, green, blue);
+t = Gfx.RGB(red, green, blue);                 //Red, Green and Blue are between 0-255.
+t = Gfx.HSL(hue, saturation, lightness);       //Hue is between 0-360. 
+                                               //Saturation and lightness are between 0.0 and 1.0.
 redvalue = Gfx.getred(col);
 greenvalue = Gfx.getgreen(col);
 bluevalue = Gfx.getblue(col);
