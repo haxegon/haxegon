@@ -184,13 +184,13 @@ Music.addsong("songname");
   Music.addsong("shakeitoff", 0.5);
   
 
-Music.addeffect("effectname");
+Music.addsound("effectname");
  
   - Loads in a sound effect from the data/sounds/ folder. Same mp3 and ogg deal as with music.
     Also takes an optional volume option, which defaults to 1.0.
     
 Music.play("songname");
-Music.playef("effectname");
+Music.playsound("effectname");
 Music.stop();
 Music.fadeout();
   

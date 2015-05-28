@@ -123,7 +123,7 @@ class Music {
 	}
 	
 	//Play a sound effect! There are 16 channels, which iterate
-	public static function playef(t:String, offset:Int = 0):Void {
+	public static function playsound(t:String, offset:Int = 0):Void {
 		temptransform = new SoundTransform(volumelevels[Std.int(effectindex.get(t))] * globalsound);
 		efchannel[currentefchan] = efchan[Std.int(effectindex.get(t))].play(offset);
 		efchannel[currentefchan].soundTransform = temptransform;
@@ -131,7 +131,7 @@ class Music {
 		if (currentefchan > 15) currentefchan -= 16;
 	}
 	
-	public static function addeffect(t:String, vol:Float = 1.0):Void {
+	public static function addsound(t:String, vol:Float = 1.0):Void {
 		effectindex.set(t, numeffects);
 		volumelevels.push(vol);
 		#if flash
