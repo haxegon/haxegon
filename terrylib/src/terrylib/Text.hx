@@ -8,6 +8,18 @@ import openfl.events.*;
 import openfl.net.*;
 import openfl.text.*;
 
+typedef Drawparamstext = {
+  @:optional var scale:Float;
+  @:optional var xscale:Float;
+  @:optional var yscale:Float;
+  @:optional var rotation:Float;
+  @:optional var xpivot:Float;
+  @:optional var ypivot:Float;
+	@:optional var alpha:Float;
+	@:optional var col:Int;
+	@:optional var rightalign:Bool;
+}
+
 class Text {
 	public static function init(stage:Stage):Void {
 		drawto = Gfx.backbuffer;
@@ -66,7 +78,7 @@ class Text {
 		input_show = 0;
 	}
 	
-	public static function input(x:Int, y:Int, text:String, col:Int = 0xFFFFFF, responsecol:Int = 0xCCCCCC):Bool {
+	public static function input(x:Float, y:Float, text:String, col:Int = 0xFFFFFF, responsecol:Int = 0xCCCCCC):Bool {
 		input_show = 2;
 		
 		input_font = currentfont;
@@ -77,7 +89,7 @@ class Text {
 		input_textyp = y;
 		
 		typeface[currentindex].tf.text = text;
-		input_responsexp = input_textxp + Std.int(typeface[currentindex].tf.textWidth);
+		input_responsexp = input_textxp + Math.floor(typeface[currentindex].tf.textWidth);
 		input_responseyp = y;
 		
 		input_text = text;
@@ -123,148 +135,97 @@ class Text {
 	}
 	
 	//Text Print functions
-	public static function rprint(x:Int, y:Int, text:String, col:Int):Void {
-		x = Std.int(x - len(text));
-		print(x, y, text, col);
-	}
-	
-	public static function len(t:String):Int {
+	public static function len(t:String):Float {
 		typeface[currentindex].tf.text = t;
-		return Std.int(typeface[currentindex].tf.textWidth);
+		return typeface[currentindex].tf.textWidth;
 	}
 	
-	public static function height():Int {
+	public static function height():Float {
 		typeface[currentindex].tf.text = "???";
-		return Std.int(typeface[currentindex].tf.textHeight);
+		return typeface[currentindex].tf.textHeight;
 	}
 	
-	private static function alignx(x:Int):Int {
-		if (x == CENTER) return Gfx.screenwidthmid - Std.int(typeface[currentindex].tf.textWidth / 2);
+	private static function alignx(x:Float):Float {
+		if (x == CENTER) return Math.floor(Gfx.screenwidthmid - (typeface[currentindex].tf.textWidth / 2));
 		if (x == LEFT || x == TOP) return 0;
-		if (x == RIGHT || x == BOTTOM) return Gfx.screenwidth - Std.int(typeface[currentindex].tf.textWidth);
+		if (x == RIGHT || x == BOTTOM) return Math.floor(Gfx.screenwidth - (typeface[currentindex].tf.textWidth));
 		
 		return x;
 	}
 	
-	private static function aligny(y:Int):Int {
-		if (y == CENTER) return Gfx.screenheightmid - Std.int(typeface[currentindex].tf.textHeight / 2);
+	private static function aligny(y:Float):Float {
+		if (y == CENTER) return Math.floor(Gfx.screenheightmid - (typeface[currentindex].tf.textHeight / 2));
 		if (y == LEFT || y == TOP) return 0;
-		if (y == RIGHT || y == BOTTOM) return Gfx.screenheight - Std.int(typeface[currentindex].tf.textHeight);
+		if (y == RIGHT || y == BOTTOM) return Math.floor(Gfx.screenheight - (typeface[currentindex].tf.textHeight));
 		
 		return y;
 	}
 	
-	private static function aligntextx(t:String, x:Int):Int {
-		if (x == CENTER) return Std.int(len(t) / 2);
+	private static function aligntextx(t:String, x:Float):Float {
+		if (x == CENTER) return Math.floor(len(t) / 2);
 		if (x == LEFT || x == TOP) return 0;
 		if (x == RIGHT || x == BOTTOM) return len(t);
 		return x;
 	}
 	
-	private static function aligntexty(y:Int):Int {
-		if (y == CENTER) return Std.int(height() / 2);
+	private static function aligntexty(y:Float):Float {
+		if (y == CENTER) return Math.floor(height() / 2);
 		if (y == TOP || y == LEFT) return 0;
 		if (y == BOTTOM || y == RIGHT) return height();
 		return y;
 	}
 	
-	public static function print(x:Int, y:Int, t:String, col:Int = 0xFFFFFF):Void {
-		typeface[currentindex].tf.textColor = col;
-		typeface[currentindex].tf.text = t;
-		
-		x = alignx(x); y = aligny(y);
-		
-		fontmatrix.identity();
-		fontmatrix.translate(x, y);
-		typeface[currentindex].tf.textColor = col;
-		drawto.draw(typeface[currentindex].tf, fontmatrix);
-	}
-	
-	public static function print_scale(x:Int, y:Int, t:String, col:Int, scale:Float, pivotx:Int, pivoty:Int):Void {
-	  drawto = typeface[currentindex].tfbitmap;
-		typeface[currentindex].clearbitmap();
-		
-		print(0, 0, t, col);
-		
-		x = alignx(x); y = aligny(y);
-		pivotx = aligntextx(t, pivotx); pivoty = aligntexty(pivoty);
-		
-		fontmatrix.identity();
-		fontmatrix.translate(-pivotx, -pivoty);
-		fontmatrix.scale(scale, scale);
-		fontmatrix.translate(x + pivotx, y + pivoty);
-		drawto = Gfx.backbuffer;
-		drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);
-	}
-	
-	public static function print_freescale(x:Int, y:Int, t:String, col:Int, xscale:Float, yscale:Float, pivotx:Int, pivoty:Int):Void {
-	  drawto = typeface[currentindex].tfbitmap;
-		typeface[currentindex].clearbitmap();
-		
-		print(0, 0, t, col);
-		
-		x = alignx(x); y = aligny(y);
-		pivotx = aligntextx(t, pivotx); pivoty = aligntexty(pivoty);
-		
-		fontmatrix.identity();
-		fontmatrix.translate(-pivotx, -pivoty);
-		fontmatrix.scale(xscale, yscale);
-		fontmatrix.translate(x + pivotx, y + pivoty);
-		drawto = Gfx.backbuffer;
-		drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);
-	}
-	
-	public static function print_rotate(x:Int, y:Int, t:String, col:Int, rotate:Int, pivotx:Int, pivoty:Int):Void {
-	  drawto = typeface[currentindex].tfbitmap;
-		typeface[currentindex].clearbitmap();
-		
-		print(0, 0, t, col);
-		
-		x = alignx(x); y = aligny(y);
-		pivotx = aligntextx(t, pivotx); pivoty = aligntexty(pivoty);
-		
-		fontmatrix.identity();
-		fontmatrix.translate(-pivotx, -pivoty);
-		fontmatrix.rotate((rotate * 3.1415) / 180);
-		fontmatrix.translate(x + pivotx, y + pivoty);
-		drawto = Gfx.backbuffer;
-		drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);
-	}
-	
-	public static function print_scale_rotate(x:Int, y:Int, t:String, col:Int, scale:Float, rotate:Int, pivotx:Int, pivoty:Int):Void {
-	  drawto = typeface[currentindex].tfbitmap;
-		typeface[currentindex].clearbitmap();
-		
-		print(0, 0, t, col);
-		
-		x = alignx(x); y = aligny(y);
-		pivotx = aligntextx(t, pivotx); pivoty = aligntexty(pivoty);
-		
-		fontmatrix.identity();
-		fontmatrix.translate(-pivotx, -pivoty);
-		fontmatrix.scale(scale, scale);
-		fontmatrix.rotate((rotate * 3.1415) / 180);
-		fontmatrix.translate(x + pivotx, y + pivoty);
-		drawto = Gfx.backbuffer;
-		drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);
-	}
-	
-	public static function print_freescale_rotate(x:Int, y:Int, t:String, col:Int, xscale:Float, yscale:Float, rotate:Int, pivotx:Int, pivoty:Int):Void {
-	  drawto = typeface[currentindex].tfbitmap;
-		typeface[currentindex].clearbitmap();
-		
-		print(0, 0, t, col);
-		
-		x = alignx(x); y = aligny(y);
-		pivotx = aligntextx(t, pivotx); pivoty = aligntexty(pivoty);
-		
-		fontmatrix.identity();
-		fontmatrix.translate(-pivotx, -pivoty);
-		fontmatrix.scale(xscale, yscale);
-		fontmatrix.rotate((rotate * 3.1415) / 180);
-		fontmatrix.translate(x + pivotx, y + pivoty);
-		drawto = Gfx.backbuffer;
-		drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);
+	public static function print(x:Float, y:Float, t:String, col:Int = 0xFFFFFF, ?parameters:Drawparamstext):Void {
+		if (parameters == null) {
+			typeface[currentindex].tf.textColor = col;
+			typeface[currentindex].tf.text = t;
+			
+			x = alignx(x); y = aligny(y);
+			
+			fontmatrix.identity();
+			fontmatrix.translate(x, y);
+			typeface[currentindex].tf.textColor = col;
+			drawto.draw(typeface[currentindex].tf, fontmatrix);
+		}else {
+			drawto = typeface[currentindex].tfbitmap;
+			typeface[currentindex].clearbitmap();
+			
+			tempxpivot = 0;
+			tempypivot = 0;
+			tempxscale = 1.0;
+			tempyscale = 1.0;
+			temprotate = 0;
+			tempalpha = 1.0;
+			
+			print(0, 0, t, col);
+			
+			x = alignx(x); y = aligny(y);
+			if (parameters.rightalign != null) {
+				if (parameters.rightalign) {
+					x = Math.floor(x - len(t));
+				}
+			}
+			
+			if (parameters.xpivot != null) tempxpivot = aligntextx(t, parameters.xpivot);
+		  if (parameters.ypivot != null) tempypivot = aligntexty(parameters.ypivot);		
+			if (parameters.scale != null) {
+				tempxscale = parameters.scale;
+				tempyscale = parameters.scale;
+			}else{
+				if (parameters.xscale != null) tempxscale = parameters.xscale;
+				if (parameters.yscale != null) tempyscale = parameters.yscale;
+			}
+			if (parameters.rotation != null) temprotate = parameters.rotation;
+			if (parameters.alpha != null) tempalpha = parameters.alpha;
+			
+			fontmatrix.identity();
+			fontmatrix.translate(-tempxpivot, -tempypivot);
+			fontmatrix.scale(tempxscale, tempyscale);
+			fontmatrix.rotate((temprotate * 3.1415) / 180);
+			fontmatrix.translate(x + tempxpivot, y + tempypivot);
+			drawto = Gfx.backbuffer;
+			drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);
+		}
 	}
 	
 	public static function changefont(t:String):Void {
@@ -333,15 +294,22 @@ class Text {
 	public static var BOTTOM:Int = -20003;
 	public static var CENTER:Int = -20004;
 	
+	private static var temprotate:Float;
+	private static var tempxscale:Float;
+	private static var tempyscale:Float;
+	private static var tempxpivot:Float;
+	private static var tempypivot:Float;
+	private static var tempalpha:Float;
+	
 	//Text input variables
 	private static var inputField:TextField = new TextField();
 	private static var inputtext:String;
 	private static var lastentry:String;
 	
-	private static var input_textxp:Int;
-	private static var input_textyp:Int;
-	private static var input_responsexp:Int;
-	private static var input_responseyp:Int;
+	private static var input_textxp:Float;
+	private static var input_textyp:Float;
+	private static var input_responsexp:Float;
+	private static var input_responseyp:Float;
 	private static var input_textcol:Int;
 	private static var input_responsecol:Int;
 	private static var input_text:String;
