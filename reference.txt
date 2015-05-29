@@ -125,6 +125,15 @@ redvalue = Gfx.getred(col);
 greenvalue = Gfx.getgreen(col);
 bluevalue = Gfx.getblue(col);
 
+There are 16 preset colours (based on Arne's famous 16 colour palette) that you can use with the following constants:
+
+Col.BLACK, Col.GREY, Col.WHITE, Col.RED, Col.PINK, Col.DARKBROWN, Col.BROWN, Col.ORANGE,
+Col.YELLOW, Col.DARKGREEN, Col.GREEN, Col.LIGHTGREEN, Col.NIGHTBLUE, Col.DARKBLUE,
+Col.BLUE, Col.LIGHTBLUE, Col.MAGENTA
+
+In flashdevelop and other editors with tab completion, you should see the full list 
+after you type "Col." in your editor.
+
 Text:
 -------------------------
 
@@ -140,14 +149,12 @@ Text.addfont("fontname", defaultsize);
 Text.changefont("fontname");
 Text.changesize(fontsize);
 
-Text.print(x, y, "thing to print", col);
-Text.print_scale(x, y, "thing to print", col, scale, pivotx, pivoty);
-Text.print_freescale(x, y, "thing to print", col, scalex, scaley, pivotx, pivoty);
-Text.print_rotate(x, y, "thing to print", col, rotate, pivotx, pivoty);
-Text.print_scale_rotate(x, y, "thing to print", col, scale, rotate, pivotx, pivoty);
-Text.print_freescale_rotate(x, y, "thing to print", col, scalex, scaley, rotate, pivotx, pivoty);
+Text.print(x, y, "thing to print", col, optional parameters);
 
-  - Text print functions take all the same arguments as Drawimage.
+  - Text print functions take all the same arguments as Drawimage, and also the following:
+    rightalign : Set to true if you want the text to align from the right of this point, eg
+    Text.print(700, 0, "top right corner", 0xFFFFFF, {rightalign: true});
+  
   - You can use the following constants for values of x, y, pivotx and pivoty:
     Text.TOP, Text.BOTTOM, Text.LEFT, Text.RIGHT, Text.CENTER
 
@@ -207,6 +214,9 @@ of allowed keys:
 "ESCAPE", "ENTER", "SHIFT", "CONTROL", "ALT", "SPACE"
 "UP", "DOWN", "LEFT", "RIGHT"
 
+In flashdevelop and other editors with tab completion, you should see the full list 
+after you type "Key." in your editor.
+
 Input.justpressed(Key.ENTER);    // True when the key has been pressed this frame
 
 Input.pressed(Key.LEFT);         // True if this key is held down
@@ -234,11 +244,30 @@ Mouse.rightreleased()    // True if you've just released right-click this frame
 
 Mouse.mousewheel             // An int between -3 and +3 for the scrollwheel value.
                              // For most mice it seems best to just check ==0, <0 and >0.
-                             
-Debug:
--------------------------
-//Displays 
 
+Other useful functions:
+-------------------------
+Convert.tostring(1234);         // Returns a string, in this case: "1234"
+Convert.toint("15");            // Returns an int, in this case: 15
+Convert.tofloat("3.1417826");   // Returns a float, in this case: 3.1417826
+
+Random.int(from, to);           // Returns a random int between "from" and "to", inclusive.
+Random.float(from, to);         // Returns a random float between "from" and "to", inclusive.
+Random.string(length);          // Returns a random string of regular characters, of given length.
+
+Random.bool();                  // Returns a bool, 50% chance of either true of false.
+Random.occasional();            // Returns a bool, 20% chance of true, 80% false. 
+Random.rare();                  // Returns a bool, 5% chance of true, 95% false. 
+
+Random.pickstring("this one", "or this one?", "maybe this one?");
+  //Pick between a list of strings. Can list up to 12!
+  
+Random.pickint(5, 14, 72, 92, 1, -723, 8);
+  // Pick between a list of ints. Can list up to 12!
+
+Random.pickfloat(5.1, 14.2, 72.3, 92.4, 1.5, -723.6, 8.7);
+  // Pick between a list of Floats. Can list up to 12!
+  
 Debug.clearlog();                      //Clears debug lines from the screen
 Debug.log("thing to output");          //Outputs a string to the screen, pushing other strings down
 Debug.teststring("thing to display");  //Clears the debug log and shows a single string

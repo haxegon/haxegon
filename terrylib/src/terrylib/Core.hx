@@ -16,6 +16,7 @@ class Core extends Sprite {
 	
 	public function init():Void {
 		//Init library classes
+		Random.setseed(Std.int(Math.random() * 233280));
 		Input.init(this.stage);
 		Mouse.init(this.stage);
 		Gfx.init(this.stage);

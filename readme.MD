@@ -47,3 +47,12 @@ http://www.increpare.com/2015/05/hair-game/
 TerryLib is a Haxe Library, and is built on top of OpenFL. Here is a good starting point for installing Haxe and OpenFL on your machine:
 
 http://www.openfl.org/documentation/getting-started/installing-openfl/
+
+## Roadmap to 1.0
+
+To do: 
+ - make some changes to bitmap drawing to make bitmap manipulation (like in stephen's games) possible without having to mess with openFL.
+ - Make alpha blending actually work
+ - Also do proper tinting
+ - Animation?
+ - Finish tutorial and make some examples!
