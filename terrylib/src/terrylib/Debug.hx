@@ -17,9 +17,9 @@ class Debug {
 	}
 	
 	/** Outputs a string to the screen for testing. */
-	public static function log(t:String):Void {
-		debuglog.push(t);
-		test = true;
+	public static function log(t:Dynamic):Void {
+		debuglog.push(Convert.tostring(t));
+		showtest = true;
 		if (debuglog.length > 20) {
 			debuglog.reverse();
 			debuglog.pop();
@@ -28,13 +28,13 @@ class Debug {
 	}
 	
 	/** Shows a single test string. */
-	public static function teststring(t:String):Void {
-		debuglog[0] = t;
-		test = true;
+	public static function test(t:Dynamic):Void {
+		debuglog[0] = Convert.tostring(t);
+		showtest = true;
 	}
 	
 	public static function showlog():Void {
-		if (test) {
+		if (showtest) {
 			for (k in 0 ... debuglog.length) {
 				for (j in -1 ... 2) {
 					for (i in -1 ... 2) {
@@ -46,6 +46,6 @@ class Debug {
 		}
 	}
 	
-	public static var test:Bool;
+	public static var showtest:Bool;
 	public static var debuglog:Array<String> = new Array<String>();
 }
