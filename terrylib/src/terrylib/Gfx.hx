@@ -52,17 +52,15 @@ class Gfx {
 		hslval.push(0.0); hslval.push(0.0); hslval.push(0.0);
 		
 		backbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
-		screenbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
-		
 		drawto = backbuffer;
 		
-		screen = new Bitmap(screenbuffer);
+		screen = new Bitmap(backbuffer);
 		screen.width = screenwidth * scale;
 		screen.height = screenheight * scale;
 		
 		fullscreen = false;
 		
-		Debug.test = false;
+		Debug.showtest = false;
 	}
 	
 	/** Sets the values for the temporary rect structure. Probably better than making a new one, idk */
@@ -88,7 +86,7 @@ class Gfx {
 	}
 		
 	/** Makes a tile array from a given image. */
-	public static function maketiles(imagename:String, width:Int, height:Int):Void {
+	public static function loadtiles(imagename:String, width:Int, height:Int):Void {
 		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
 		
 		var tiles_rect:Rectangle = new Rectangle(0, 0, width, height);
@@ -109,10 +107,32 @@ class Gfx {
 				tiles[currenttileset].tiles.push(t);
 			}
 		}
-	}	
+	}
+	
+	/** Creates a blank tileset, with the name "imagename", with each tile a given width and height, containing "amount" tiles. */
+	public static function createtiles(imagename:String, width:Float, height:Float, amount:Int):Void {
+		tiles.push(new Tileset(imagename, Std.int(width), Std.int(height)));
+		tilesetindex.set(imagename, tiles.length - 1);
+		currenttileset = tiles.length - 1;
+		
+		for (i in 0 ... amount) {
+			var t:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0x000000);
+			tiles[currenttileset].tiles.push(t);
+		}
+	}
+	
+	/** Returns the width of a tile in the current tileset. */
+	public static function tilewidth():Int {
+		return tiles[currenttileset].tiles[0].width;
+	}
+	
+	/** Returns the height of a tile in the current tileset. */
+	public static function tileheight():Int {
+		return return tiles[currenttileset].tiles[0].height;
+	}
 	
 	/** Loads an image into the game. */
-	public static function addimage(imagename:String):Void {
+	public static function loadimage(imagename:String):Void {
 		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
 		imageindex.set(imagename, images.length);
 		
@@ -120,6 +140,51 @@ class Gfx {
 		settrect(0, 0, buffer.width, buffer.height);			
 		t.copyPixels(buffer, trect, tl);
 		images.push(t);
+	}
+	
+	/** Creates a blank image, with the name "imagename", with given width and height. */
+	public static function createimage(imagename:String, width:Float, height:Float):Void {
+		imageindex.set(imagename, images.length);
+		
+		var t:BitmapData = new BitmapData(Math.floor(width), Math.floor(height), true, 0x000000);
+		images.push(t);
+	}
+	
+	/** Returns the width of the image. */
+	public static function imagewidth(imagename:String):Int {
+		imagenum = imageindex.get(imagename);
+		
+		return images[imagenum].width;
+	}
+	
+	/** Returns the height of the image. */
+	public static function imageheight(imagename:String):Int {
+		imagenum = imageindex.get(imagename);
+		
+		return images[imagenum].height;
+	}
+	
+	/** Tell draw commands to draw to the actual screen. */
+	public static function drawtoscreen():Void {
+		drawto.unlock();
+		drawto = backbuffer;
+		drawto.lock();
+	}
+	
+	/** Tell draw commands to draw to the given image. */
+	public static function drawtoimage(imagename:String):Void {
+		imagenum = imageindex.get(imagename);
+		
+		drawto.unlock();
+		drawto = images[imagenum];
+		drawto.lock();
+	}
+	
+	/** Tell draw commands to draw to the given tile in the current tileset. */
+	public static function drawtotile(tilenumber:Int):Void {
+		drawto.unlock();
+		drawto = tiles[currenttileset].tiles[tilenumber];
+		drawto.lock();
 	}
 	
 	/** Helper function for image drawing functions. */
@@ -260,7 +325,7 @@ class Gfx {
 		tempshape.graphics.lineTo(x2 - x1, y2 - y1);
 		
 		shapematrix.translate(x1, y1);
-		backbuffer.draw(tempshape, shapematrix);
+		drawto.draw(tempshape, shapematrix);
 		shapematrix.translate(-x1, -y1);
 	}
 	
@@ -270,7 +335,7 @@ class Gfx {
 		tempshape.graphics.drawCircle(0, 0, radius);
 		
 		shapematrix.translate(x, y);
-		backbuffer.draw(tempshape, shapematrix);
+		drawto.draw(tempshape, shapematrix);
 		shapematrix.translate(-x, -y);
 	}
 	
@@ -282,7 +347,7 @@ class Gfx {
 		tempshape.graphics.endFill();
 		
 		shapematrix.translate(x, y);
-		backbuffer.draw(tempshape, shapematrix);
+		drawto.draw(tempshape, shapematrix);
 		shapematrix.translate(-x, -y);
 	}
 	
@@ -303,7 +368,7 @@ class Gfx {
 		
 		
 		shapematrix.translate(x1, y1);
-		backbuffer.draw(tempshape, shapematrix);
+		drawto.draw(tempshape, shapematrix);
 		shapematrix.translate(-x1, -y1);
 	}
 
@@ -316,10 +381,10 @@ class Gfx {
 			height = -height;
 			y = y - height;
 		}
-		settrect(x, y, width, 1); backbuffer.fillRect(trect, col);
-		settrect(x, y + height - 1, width, 1); backbuffer.fillRect(trect, col);
-		settrect(x, y, 1, height); backbuffer.fillRect(trect, col);
-		settrect(x + width - 1, y, 1, height); backbuffer.fillRect(trect, col);
+		settrect(x, y, width, 1); drawto.fillRect(trect, col);
+		settrect(x, y + height - 1, width, 1); drawto.fillRect(trect, col);
+		settrect(x, y, 1, height); drawto.fillRect(trect, col);
+		settrect(x + width - 1, y, 1, height); drawto.fillRect(trect, col);
 	}
 
 	public static function cls():Void {
@@ -328,7 +393,7 @@ class Gfx {
 
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int):Void {
 		settrect(x, y, width, height);
-		backbuffer.fillRect(trect, col);
+		drawto.fillRect(trect, col);
 	}
 	
 	public static function getred(c:Int):Int {
@@ -380,17 +445,6 @@ class Gfx {
 		return RGB(Std.int(hslval[0] * 255), Std.int(hslval[1] * 255), Std.int(hslval[2] * 255));
 	}
 	
-	//Render functions
-	public static function screenrender():Void {
-		backbuffer.unlock();
-		
-		screenbuffer.lock();
-		screenbuffer.copyPixels(backbuffer, backbuffer.rect, tl, null, null, false);
-		screenbuffer.unlock();
-		
-		backbuffer.lock();
-	}
-	
 	private static function setzoom(t:Int):Void {
 		screen.width = screenwidth * t;
 		screen.height = screenheight * t;
@@ -433,8 +487,6 @@ class Gfx {
 	public static var screenheight:Int;
 	public static var screenwidthmid:Int;
 	public static var screenheightmid:Int;
-	public static var screentilewidth:Int;
-	public static var screentileheight:Int;
 	
 	public static var screenscale:Int;
 	public static var devicexres:Int;
@@ -470,7 +522,6 @@ class Gfx {
 	private static var temptile:BitmapData;
 	//Actual backgrounds
 	public static var backbuffer:BitmapData;
-	private static var screenbuffer:BitmapData;
 	private static var screen:Bitmap;
 	private static var tempshape:Shape = new Shape();
 	private static var shapematrix:Matrix = new Matrix();

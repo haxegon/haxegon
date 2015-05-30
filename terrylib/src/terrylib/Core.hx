@@ -33,13 +33,15 @@ class Core extends Sprite {
 	
 	public function update(t:Event):Void {
 		Mouse.update(Std.int(Lib.current.mouseX / Gfx.screenscale), Std.int(Lib.current.mouseY / Gfx.screenscale));
-			
+		
 		Gfx.backbuffer.lock();
+		
 		Gfx.cls();
 		main.update();
 		Text.drawstringinput();
 		Debug.showlog();
-		Gfx.screenrender();
+		
+		Gfx.backbuffer.unlock();
 	}
 	
 	public var main:Main;
