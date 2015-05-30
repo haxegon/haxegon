@@ -52,7 +52,7 @@ Gfx.createscreen(width, height, scale);
 Gfx.cls();                     // Clears the screen to 0x000000
 
 //Images
-Gfx.addimage("imagename");
+Gfx.loadimage("imagename");
   
   - Place .PNG images in data/graphics/, and call this function to load them in. e.g:
     
@@ -87,7 +87,7 @@ drawimage(x, y, "imagename", optional parameters);
       Gfx.drawimage(200, 100, "star", { rotation: t, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER });
 
 //Tilesets
-Gfx.maketiles("imagename", tilewidth, tileheight);
+Gfx.loadtiles("imagename", tilewidth, tileheight);
   
   - Place .PNG images in data/graphics/, and call this function to load them in. e.g:
     Gfx.make("forest", 16, 16);  // Loads in data/graphics/forest.png and makes 16x16 tiles.
@@ -133,6 +133,28 @@ Col.BLUE, Col.LIGHTBLUE, Col.MAGENTA
 
 In flashdevelop and other editors with tab completion, you should see the full list 
 after you type "Col." in your editor.
+
+Some advanced drawing functions that you might eventually be interested in, but probably don't need to worry about when you're starting out:
+                    
+t = Gfx.screenwidth;                  // Width of the screen.
+t = Gfx.screenheight;                 // Height of the screen.
+
+t = Gfx.imagewidth("imagename");             // Returns the width of an image.
+t = Gfx.imageheight("imagename");            // Returns the height of an image.
+t = Gfx.tilewidth();                         // Returns the width of a tile in the current tileset.
+t = Gfx.tileheight();                        // Returns the height of a tile in the current tileset.
+
+Gfx.createimage("imagename", width, height); 
+  // Creates a blank image, with the name "imagename", with given width and height. */
+
+Gfx.createtiles("imagename", width, height, amount); 
+  // Creates a blank tileset, with the tileset name "imagename", with each tile a given 
+     width and height, containing "amount" tiles.
+
+Gfx.drawtoscreen();                   // Tell future draw commands to draw to the actual screen.
+Gfx.drawtoimage("imagename");         // Tell future draw commands to draw to the given image.
+Gfx.drawtotile(tilenumber);           // Tell future draw commands to draw to the given tile 
+                                      // in the current tileset.
 
 Text:
 -------------------------
@@ -270,6 +292,6 @@ Random.pickfloat(5.1, 14.2, 72.3, 92.4, 1.5, -723.6, 8.7);
   
 Debug.clearlog();                      //Clears debug lines from the screen
 Debug.log("thing to output");          //Outputs a string to the screen, pushing other strings down
-Debug.teststring("thing to display");  //Clears the debug log and shows a single string
+Debug.test("thing to display");        //Clears the debug log and shows a single string
 
 //To output debug info to the console, use Haxe's build in trace() function instead.
