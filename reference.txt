@@ -114,6 +114,11 @@ Gfx.fillcircle(x, y, radius, col);
 
 Gfx.drawline(x1, y1, x2, y2, col);
 
+Gfx.setlinethickness(linethickness);       // Default value is 1 pixel.
+
+  - All primative draw functions (line, triangle, circle, box) can take an optional alpha
+    value between 0.0 and 1.0. It's 1.0 by default.
+
   - "col" is a haxe HexCol, which is an int written like e.g this: 0xFFFFFF
     Or you could use the functions below:
 

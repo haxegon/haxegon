@@ -412,9 +412,9 @@ class Gfx {
 		return y;
 	}
 	
-	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int):Void {
+	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int, alpha:Float = 1.0):Void {
 		tempshape.graphics.clear();
-		tempshape.graphics.lineStyle(1, col);
+		tempshape.graphics.lineStyle(linethickness, col, alpha);
 		tempshape.graphics.lineTo(x2 - x1, y2 - y1);
 		
 		shapematrix.translate(x1, y1);
@@ -422,9 +422,9 @@ class Gfx {
 		shapematrix.translate(-x1, -y1);
 	}
 	
-	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int):Void {
+	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0):Void {
 		tempshape.graphics.clear();
-		tempshape.graphics.lineStyle(1, col);
+		tempshape.graphics.lineStyle(linethickness, col, alpha);
 		tempshape.graphics.drawCircle(0, 0, radius);
 		
 		shapematrix.translate(x, y);
@@ -432,10 +432,9 @@ class Gfx {
 		shapematrix.translate(-x, -y);
 	}
 	
-	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int):Void {
+	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0):Void {
 		tempshape.graphics.clear();
-		tempshape.graphics.lineStyle(1, col);
-		tempshape.graphics.beginFill(col);
+		tempshape.graphics.beginFill(col, alpha);
 		tempshape.graphics.drawCircle(0, 0, radius);
 		tempshape.graphics.endFill();
 		
@@ -444,15 +443,23 @@ class Gfx {
 		shapematrix.translate(-x, -y);
 	}
 	
-	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int):Void {
-		drawline(x1, y1, x2, y2, col);
-		drawline(x2, y2, x3, y3, col);
-		drawline(x3, y3, x1, y1, col);
+	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0):Void {
+		tempshape.graphics.clear();
+		tempshape.graphics.lineStyle(linethickness, col, alpha);
+		tempshape.graphics.lineTo(0, 0);
+		tempshape.graphics.lineTo(x2 - x1, y2 - y1);
+		tempshape.graphics.lineTo(x3 - x1, y3 - y1);
+		tempshape.graphics.lineTo(0, 0);
+		tempshape.graphics.endFill();
+		
+		shapematrix.translate(x1, y1);
+		drawto.draw(tempshape, shapematrix);
+		shapematrix.translate(-x1, -y1);
 	}
 	
-	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int):Void {
+	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0):Void {
 		tempshape.graphics.clear();
-		tempshape.graphics.beginFill(col);
+		tempshape.graphics.beginFill(col, alpha);
 		tempshape.graphics.lineTo(0, 0);
 		tempshape.graphics.lineTo(x2 - x1, y2 - y1);
 		tempshape.graphics.lineTo(x3 - x1, y3 - y1);
@@ -465,7 +472,7 @@ class Gfx {
 		shapematrix.translate(-x1, -y1);
 	}
 
-	public static function drawbox(x:Float, y:Float, width:Float, height:Float, col:Int):Void {
+	public static function drawbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0):Void {
 		if (width < 0) {
 			width = -width;
 			x = x - width;
@@ -474,19 +481,41 @@ class Gfx {
 			height = -height;
 			y = y - height;
 		}
-		settrect(x, y, width, 1); drawto.fillRect(trect, col);
-		settrect(x, y + height - 1, width, 1); drawto.fillRect(trect, col);
-		settrect(x, y, 1, height); drawto.fillRect(trect, col);
-		settrect(x + width - 1, y, 1, height); drawto.fillRect(trect, col);
+		
+		tempshape.graphics.clear();
+		tempshape.graphics.lineStyle(linethickness, col, alpha);
+		tempshape.graphics.lineTo(width, 0);
+		tempshape.graphics.lineTo(width, height);
+		tempshape.graphics.lineTo(0, height);
+		tempshape.graphics.lineTo(0, 0);
+		
+		shapematrix.translate(x, y);
+		drawto.draw(tempshape, shapematrix);
+		shapematrix.translate( -x, -y);
 	}
 
+	public static function setlinethickness(size:Float):Void {
+		linethickness = Std.int(size);
+		if (linethickness < 1) linethickness = 1;
+		if (linethickness > 255) linethickness = 255;
+	}
+	
 	public static function cls():Void {
-		fillbox(0, 0, screenwidth, screenheight, 0x000000);
+		backbuffer.fillRect(backbuffer.rect, 0x00000000);
 	}
 
-	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int):Void {
-		settrect(x, y, width, height);
-		drawto.fillRect(trect, col);
+	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0):Void {
+		tempshape.graphics.clear();
+		tempshape.graphics.beginFill(col, alpha);
+		tempshape.graphics.lineTo(width, 0);
+		tempshape.graphics.lineTo(width, height);
+		tempshape.graphics.lineTo(0, height);
+		tempshape.graphics.lineTo(0, 0);
+		tempshape.graphics.endFill();
+		
+		shapematrix.translate(x, y);
+		drawto.draw(tempshape, shapematrix);
+		shapematrix.translate(-x, -y);
 	}
 	
 	public static function getred(c:Int):Int {
@@ -615,6 +644,8 @@ class Gfx {
 	private static var tempalpha:Float;
 	private static var tempframe:Int;
 	private static var oldtileset:String;
+	
+	private static var linethickness:Int;
 	
 	private static var buffer:BitmapData;
 	

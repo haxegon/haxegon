@@ -53,4 +53,5 @@ http://www.openfl.org/documentation/getting-started/installing-openfl/
 To do: 
  - Make alpha blending actually work
  - Also do proper tinting
+ - Make sure TerryLib gives good error messages in as many places as possible.
  - Finish tutorial and make some examples!
