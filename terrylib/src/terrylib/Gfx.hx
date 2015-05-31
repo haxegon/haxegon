@@ -28,8 +28,8 @@ class Gfx {
 	}
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
-	public static function createscreen(width:Int, height:Int, scale:Int = 1):Void {
-		initgfx(width, height, scale);
+	public static function createscreen(width:Float, height:Float, scale:Int = 1):Void {
+		initgfx(Std.int(width), Std.int(height), scale);
 		Text.init(gfxstage);
 		gfxstage.addChild(screen);
 		
@@ -49,6 +49,7 @@ class Gfx {
 		trect = new Rectangle(); tpoint = new Point();
 		tbuffer = new BitmapData(1, 1, true);
 		ct = new ColorTransform(0, 0, 0, 1, 255, 255, 255, 1); //Set to white
+		alphact = new ColorTransform();
 		hslval.push(0.0); hslval.push(0.0); hslval.push(0.0);
 		
 		backbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
@@ -236,6 +237,7 @@ class Gfx {
 		tempyscale = 1.0;
 		temprotate = 0;
 		tempalpha = 1.0;
+		alphact.alphaMultiplier = tempalpha;
 		
 		x = imagealignx(x); y = imagealigny(y);
 		if(parameters != null){
@@ -249,7 +251,10 @@ class Gfx {
 				if (parameters.yscale != null) tempyscale = parameters.yscale;
 			}
 			if (parameters.rotation != null) temprotate = parameters.rotation;
-			if (parameters.alpha != null) tempalpha = parameters.alpha;
+			if (parameters.alpha != null) {
+				tempalpha = parameters.alpha;
+				alphact.alphaMultiplier = tempalpha;
+			}
 		}
 			
 		shapematrix.identity();
@@ -257,7 +262,7 @@ class Gfx {
 		if (temprotate != 0) shapematrix.rotate((temprotate * 3.1415) / 180);
 		if (tempxscale != 1.0 || tempyscale != 1.0) shapematrix.scale(tempxscale, tempyscale);
 		shapematrix.translate(x + tempxpivot, y + tempypivot);
-		drawto.draw(images[imagenum], shapematrix);
+		drawto.draw(images[imagenum], shapematrix, alphact);
 	}
 	
 	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float):Void {
@@ -323,6 +328,7 @@ class Gfx {
 		tempyscale = 1.0;
 		temprotate = 0;
 		tempalpha = 1.0;
+		alphact.alphaMultiplier = tempalpha;
 		
 		x = tilealignx(x); y = tilealigny(y);
 		if (parameters != null) {
@@ -336,7 +342,10 @@ class Gfx {
 				if (parameters.yscale != null) tempyscale = parameters.yscale;
 			}
 			if (parameters.rotation != null) temprotate = parameters.rotation;
-			if (parameters.alpha != null) tempalpha = parameters.alpha;
+			if (parameters.alpha != null) {
+				tempalpha = parameters.alpha;
+				alphact.alphaMultiplier = tempalpha;
+			}
 		}
 		
 		shapematrix.identity();
@@ -344,7 +353,7 @@ class Gfx {
 		if (temprotate != 0) shapematrix.rotate((temprotate * 3.1415) / 180);
 		if (tempxscale != 1.0 || tempyscale != 1.0) shapematrix.scale(tempxscale, tempyscale);
 		shapematrix.translate(x + tempxpivot, y + tempypivot);
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
+		drawto.draw(tiles[currenttileset].tiles[t], shapematrix, alphact);
 	}
 	
 	/** Returns the current animation frame of the current tileset. */
@@ -629,6 +638,7 @@ class Gfx {
 	private static var images:Array<BitmapData> = new Array<BitmapData>();
 	private static var imagenum:Int;
 	private static var ct:ColorTransform;
+	private static var alphact:ColorTransform;
 	private static var images_rect:Rectangle;
 	private static var tl:Point = new Point(0, 0);
 	private static var trect:Rectangle;
