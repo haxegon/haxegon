@@ -30,7 +30,7 @@ class Gfx {
 	}
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
-	public static function createscreen(width:Float, height:Float, scale:Int = 1):Void {
+	public static function resizescreen(width:Float, height:Float, scale:Int = 1):Void {
 		initgfx(Std.int(width), Std.int(height), scale);
 		Text.init(gfxstage);
 		gfxstage.addChild(screen);
@@ -38,7 +38,7 @@ class Gfx {
 		updategraphicsmode();
 	}
 	
-	/** Called from createscreen(). Sets up all our graphics buffers. */
+	/** Called from resizescreen(). Sets up all our graphics buffers. */
 	private static function initgfx(width:Int, height:Int, scale:Int):Void {
 		//We initialise a few things
 		screenwidth = width; screenheight = height;

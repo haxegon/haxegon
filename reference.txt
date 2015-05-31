@@ -38,7 +38,7 @@ Graphics:
 -------------------------
 
 //Setup
-Gfx.createscreen(width, height, scale);
+Gfx.resizescreen(width, height, scale);
  
   - By default, TerryLib has a 768x480 screen with 1:1 scaling. If you want something different,
     call this function in Main.new(). E.g:
