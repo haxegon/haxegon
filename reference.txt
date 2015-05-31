@@ -150,31 +150,58 @@ Gfx.createimage("imagename", width, height);
 Gfx.createtiles("imagename", width, height, amount); 
   // Creates a blank tileset, with the tileset name "imagename", with each tile a given 
      width and height, containing "amount" tiles.
+t = Gfx.numberoftiles();              // Returns the total number of tiles in a tileset.
 
 Gfx.drawtoscreen();                   // Tell future draw commands to draw to the actual screen.
 Gfx.drawtoimage("imagename");         // Tell future draw commands to draw to the given image.
 Gfx.drawtotile(tilenumber);           // Tell future draw commands to draw to the given tile 
                                       // in the current tileset.
+                                      
+Gfx.copytile(tilenumber in current tileset, "tileset to copy from", tilenumber in other tileset);
+  // Copys a tile from one tileset to another. Tilesets must be have the same image dimensions!
+  
+Gfx.grabtilefromscreen(tilenumber, x position in screen, y position in screen);
+  // Copys a rectangle from x, y on the screen into the current tileset.
+
+Gfx.grabtilefromimage(tilenumber, "imagename", x position in image, y position in image);
+  // Copys a rectangle from x, y in the given image into the current tileset.
+
+Gfx.grabimagefromscreen("imagename", x position in screen, y position in screen);
+  // "imagename" will already have a width and a height from when it was created/loaded.
+  // This function grabs a copy of the screen from position x,y, and places it in the image.
+  
+Gfx.grabimagefromimage("imagename", "imagetocopyfrom", x position in image, y position in image);
+  // "imagename" will already have a width and a height from when it was created/loaded.
+  // This function grabs a copy of image "imagetocopyfrom" from position x,y, and places 
+  // it in the other image.
+  
 
 Animation:
 -------------------------
 
 You can do simple animations with tilesets! 
 
-t = Gfx.numberoftiles();              // Returns the total number of tiles in a tileset.
-t = Gfx.currentframe();               // Returns the current frame of the animation.
-
-Gfx.startframe(framenumber);          // Sets the start frame of the animation. Default 0.
-Gfx.endframe(framenumber);            // Sets the start frame of the animation. 
-                                      // Defaults to last frame in tileset.
-                                      
-Gfx.stopanimation()                   // Resets the animation on this tileset.
-
-Gfx.drawanimation(x, y, delay per frame, optional parameters);
-  // Draws an animated tile at (x, y), using the same optional parameters as drawtile.
-  // "Delay per frame" is the number of ticks to wait before moving to the next frame. e.g:
-  // Gfx.drawanimation(0, 0, 1);   // Moves to the next frame every tick.
-  // Gfx.drawanimation(0, 0, 60);  // Waits 60 ticks (i.e. 1 second) before moving to the next frame.
+Gfx.defineanimation("animationname", "tileset", start frame, end frame, delay per frame);
+  // Animations in TerryLib work by drawing frames from a subset of a tileset, with a delay
+  // between each one. First, you need to define some animations and give them a name, like this
+  // for example:
+  //
+  // Say we have a tileset called "playertiles" with lots of frames of the player walking.
+  // Say the first five are walking left, and the next five are walking right.
+  // We could define two animations like this:
+  //
+  // Gfx.defineanimation("anim_walkleft", "playertiles", 0, 4, 4);
+  // Gfx.defineanimation("anim_walkright", "playertiles", 5, 9, 1);
+  //
+  // In the first case, we define "anim_walkleft" as an animation from tiles 0, 1, 2, 3, and 4 of
+  // tileset "playertiles", with a delay of 4 ticks between each frame. In the second case, we
+  // define "anim_walkright" as an animation from tiles 5, 6, 7, 8, 9 with a delay of just 1 tick
+  // between each frame.
+  
+Gfx.drawanimation(x, y, "animation name", optional parameters);
+  // Draws the given animation at (x, y), using the same optional parameters as drawtile.
+  
+Gfx.stopanimation("animation name");   // Resets this animation to the first frame.
 
 Text:
 -------------------------
@@ -186,7 +213,7 @@ Text.addfont("fontname", defaultsize);
   
   Text.addfont("arial", 16);
   
-  Default font is Rosario, size 32.
+  TerryLib's default font is Google's "Open Sans" font, size 24.
   
 Text.changefont("fontname");
 Text.changesize(fontsize);

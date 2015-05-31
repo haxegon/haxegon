@@ -260,6 +260,50 @@ class Gfx {
 		drawto.draw(images[imagenum], shapematrix);
 	}
 	
+	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float):Void {
+		settrect(x, y, tilewidth(), tileheight());
+		tiles[currenttileset].tiles[tilenumber].copyPixels(backbuffer, trect, tl);
+	}
+	
+	public static function grabtilefromimage(tilenumber:Int, imagename:String, x:Float, y:Float):Void {
+		imagenum = imageindex.get(imagename);
+		
+		settrect(x, y, tilewidth(), tileheight());
+		tiles[currenttileset].tiles[tilenumber].copyPixels(images[imagenum], trect, tl);
+	}
+	
+	public static function grabimagefromscreen(imagename:String, x:Float, y:Float):Void {
+		imagenum = imageindex.get(imagename);
+		
+		settrect(x, y, images[imagenum].width, images[imagenum].height);
+		images[imagenum].copyPixels(backbuffer, trect, tl);
+	}
+	
+	public static function grabimagefromimage(imagename:String, imagetocopyfrom:String, x:Float, y:Float):Void {
+		imagenum = imageindex.get(imagename);
+		if (!imageindex.exists(imagetocopyfrom)) {
+			trace("ERROR: No image called \"" + imagetocopyfrom + "\" found.");
+		}
+		var imagenumfrom:Int = imageindex.get(imagetocopyfrom);
+		
+		settrect(x, y, images[imagenum].width, images[imagenum].height);
+		images[imagenum].copyPixels(images[imagenumfrom], trect, tl);
+	}
+	
+	public static function copytile(totilenumber:Int, fromtileset:String, fromtilenumber:Int):Void {
+		if (tilesetindex.exists(fromtileset)) {
+			if (tiles[currenttileset].width == tiles[tilesetindex.get(fromtileset)].width && tiles[currenttileset].height == tiles[tilesetindex.get(fromtileset)].height) {
+				tiles[currenttileset].tiles[totilenumber].copyPixels(tiles[tilesetindex.get(fromtileset)].tiles[fromtilenumber], tiles[tilesetindex.get(fromtileset)].tiles[fromtilenumber].rect, tl);		
+			}else {
+				trace("ERROR: Tilesets " + currenttilesetname + " (" + Std.string(tilewidth()) + "x" + Std.string(tileheight()) + ") and " + fromtileset + " (" + Std.string(tiles[tilesetindex.get(fromtileset)].width) + "x" + Std.string(tiles[tilesetindex.get(fromtileset)].height) + ") are different sizes. Maybe try just drawing to the tile you want instead with Gfx.drawtotile()?");
+				return;
+			}
+		}else {
+			trace("ERROR: Tileset " + fromtileset + " hasn't been loaded or created.");
+			return;
+		}
+	}
+	
 	/** Draws tile number t from current tileset.
 	 * Parameters can be: rotation, scale, xscale, yscale, xpivot, ypivoy, alpha
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
@@ -308,62 +352,36 @@ class Gfx {
 		return tiles[currenttileset].currentframe;
 	}
 	
-	/** Resets the animation on this tileset. */
-	public static function stopanimation():Void {
-		tiles[currenttileset].animationspeed = 1;
-		tiles[currenttileset].timethisframe = 0;
-		tiles[currenttileset].currentframe = tiles[currenttileset].startframe;
-		
-		if (tiles[currenttileset].endframe == -1) {
-			tiles[currenttileset].endframe = numberoftiles() - 1;
-		}
+	/** Resets the animation. */
+	public static function stopanimation(animationname:String):Void {
+		animationnum = animationindex.get(animationname);
+		animations[animationnum].reset();
 	}
 	
-	public static function startframe(framenumber:Int):Void {
-		if (framenumber < 0 || framenumber > numberoftiles() - 1) {
-			trace("ERROR: Framenumber " + Std.string(framenumber) + " is out of bounds [0-" + Std.string(numberoftiles() - 1) + "].");
-			return;
-		}
-		tiles[currenttileset].startframe = framenumber;
-		
-		if (tiles[currenttileset].currentframe < tiles[currenttileset].startframe) {
-			tiles[currenttileset].currentframe = tiles[currenttileset].startframe;
-		}
-	}
-	
-	public static function endframe(framenumber:Int):Void {
-		if (framenumber < 0 || framenumber > numberoftiles() - 1) {
-			trace("ERROR: Framenumber " + Std.string(framenumber) + " is out of bounds [0-" + Std.string(numberoftiles() - 1) + "].");
-			return;
-		}
-		tiles[currenttileset].endframe = framenumber;
-		
-		if (tiles[currenttileset].currentframe > tiles[currenttileset].endframe) {
-			tiles[currenttileset].currentframe = tiles[currenttileset].startframe;
-		}
-	}
-	
-	public static function drawanimation(x:Float, y:Float, delayperframe:Int, ?parameters:Drawparams):Void {
+	public static function defineanimation(animationname:String, tileset:String, startframe:Int, endframe:Int, delayperframe:Int):Void {
 		if (delayperframe < 1) {
 			trace("ERROR: Cannot have a delay per frame of less than 1.");
 			return;
 		}
-		tiles[currenttileset].animationspeed = delayperframe;
+		animationindex.set(animationname, animations.length);
+		animations.push(new AnimationContainer(animationname, tileset, startframe, endframe, delayperframe));
+	}
+	
+	public static function drawanimation(x:Float, y:Float, animationname:String, ?parameters:Drawparams):Void {
+		oldtileset = currenttilesetname;
+		animationnum = animationindex.get(animationname);
+		changetileset(animations[animationnum].tileset);
 		
-		tiles[currenttileset].timethisframe++;
-		if (tiles[currenttileset].timethisframe > tiles[currenttileset].animationspeed) {
-			tiles[currenttileset].timethisframe = 0;
-	  	tiles[currenttileset].currentframe++;
-			if (tiles[currenttileset].currentframe > tiles[currenttileset].endframe) {
-				tiles[currenttileset].currentframe = tiles[currenttileset].startframe;
-			}
-		}
+		animations[animationnum].update();
+		tempframe = animations[animationnum].currentframe;
 		
 		if (parameters != null) {
-		  drawtile(x, y, tiles[currenttileset].currentframe, parameters);
+		  drawtile(x, y, tempframe, parameters);
 		}else {
-			drawtile(x, y, tiles[currenttileset].currentframe);
+			drawtile(x, y, tempframe);
 		}
+		
+		changetileset(oldtileset);
 	}
 	
 	private static function tilealignx(x:Float):Float {
@@ -575,6 +593,10 @@ class Gfx {
 	
 	public static var drawto:BitmapData;
 	
+	private static var animations:Array<AnimationContainer> = new Array<AnimationContainer>();
+	private static var animationnum:Int;
+	private static var animationindex:Map<String, Int> = new Map<String, Int>();
+	
 	private static var images:Array<BitmapData> = new Array<BitmapData>();
 	private static var imagenum:Int;
 	private static var ct:ColorTransform;
@@ -591,6 +613,8 @@ class Gfx {
 	private static var tempxpivot:Float;
 	private static var tempypivot:Float;
 	private static var tempalpha:Float;
+	private static var tempframe:Int;
+	private static var oldtileset:String;
 	
 	private static var buffer:BitmapData;
 	

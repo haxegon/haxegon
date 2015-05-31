@@ -22,8 +22,8 @@ class Main {
 
 Here's a *complete* list of what you can do with TerryLib.
 
-**Graphics:**
-Load in images and draw them, draw simple shapes, and divide images into tilesets!
+**Graphics:** 
+Load in images and draw them, draw simple shapes, and divide images into tilesets! Do simple animations!
 
 **Fonts:**
 Load in different fonts at different sizes and display them! Take in simple string input!
@@ -51,8 +51,6 @@ http://www.openfl.org/documentation/getting-started/installing-openfl/
 ## Roadmap to 1.0
 
 To do: 
- - Add copy tile/ copy image in a sensible way
  - Make alpha blending actually work
  - Also do proper tinting
- - Animation?
  - Finish tutorial and make some examples!
