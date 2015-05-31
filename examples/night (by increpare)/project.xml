@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	<meta 
-    title="New Project" 
-    package="com.yournamehere.newproject" 
+    title="Night" 
+    package="com.increpare.night" 
     version="1.0.0" 
     company="Your name here" 
   />

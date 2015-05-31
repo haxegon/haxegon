@@ -287,6 +287,7 @@ class Gfx {
 		}else {
 			drawto.draw(images[imagenum], shapematrix);
 		}
+		shapematrix.identity();
 	}
 	
 	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float):Void {
@@ -400,6 +401,7 @@ class Gfx {
 		}else {
 		  drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
 		}
+		shapematrix.identity();
 	}
 	
 	/** Returns the current animation frame of the current tileset. */
