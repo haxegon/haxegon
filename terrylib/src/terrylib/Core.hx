@@ -24,7 +24,7 @@ class Core extends Sprite {
 		
 		//Default setup
 		Gfx.createscreen(768, 480);
-		Text.addfont("verdana", 24);
+		Text.addfont("rosario", 32);
 		
 		main = new Main();
 		

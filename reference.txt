@@ -166,7 +166,7 @@ Text.addfont("fontname", defaultsize);
   
   Text.addfont("arial", 16);
   
-  Default font is verdana, size 24.
+  Default font is Rosario, size 32.
   
 Text.changefont("fontname");
 Text.changesize(fontsize);

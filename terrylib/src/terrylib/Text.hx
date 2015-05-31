@@ -223,7 +223,7 @@ class Text {
 			fontmatrix.scale(tempxscale, tempyscale);
 			fontmatrix.rotate((temprotate * 3.1415) / 180);
 			fontmatrix.translate(x + tempxpivot, y + tempypivot);
-			drawto = Gfx.backbuffer;
+			drawto = Gfx.drawto;
 			drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);
 		}
 	}

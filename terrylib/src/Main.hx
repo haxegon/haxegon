@@ -6,6 +6,6 @@ class Main {
 	}
 	
 	function update() {
-		
+		Text.print(Text.CENTER, Text.CENTER, "Hello World");
 	}
 }
