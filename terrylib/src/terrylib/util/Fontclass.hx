@@ -15,7 +15,12 @@ class Fontclass {
 		tf.selectable = false;
 		tf.width = Gfx.screenwidth; 
 		tf.height = Gfx.screenheight;
-		tf.antiAliasType = AntiAliasType.NORMAL;
+		if (size <= 16) {
+			tf.antiAliasType = AntiAliasType.ADVANCED; //Small fonts need proper antialiasing
+		}else {
+		  tf.antiAliasType = AntiAliasType.NORMAL;	
+		}
+		
 		
 		tf.text = "???";
 		tfbitmap = new BitmapData(Gfx.screenwidth, Std.int(tf.textHeight)*2, true, 0);

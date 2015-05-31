@@ -16,7 +16,9 @@ typedef Drawparamstext = {
   @:optional var xpivot:Float;
   @:optional var ypivot:Float;
 	@:optional var alpha:Float;
-	@:optional var col:Int;
+	@:optional var red:Float;
+	@:optional var green:Float;
+	@:optional var blue:Float;
 	@:optional var rightalign:Bool;
 }
 
@@ -25,6 +27,7 @@ class Text {
 		drawto = Gfx.backbuffer;
 		gfxstage = stage;
 		enabletextfield();
+		alphact = new ColorTransform();
 	}
 	
 	//Text Input functions
@@ -196,6 +199,8 @@ class Text {
 			tempyscale = 1.0;
 			temprotate = 0;
 			tempalpha = 1.0;
+			tempred = 1.0; tempgreen = 1.0; tempblue = 1.0;
+			changecolours = false;
 			
 			print(0, 0, t, col);
 			
@@ -216,7 +221,26 @@ class Text {
 				if (parameters.yscale != null) tempyscale = parameters.yscale;
 			}
 			if (parameters.rotation != null) temprotate = parameters.rotation;
-			if (parameters.alpha != null) tempalpha = parameters.alpha;
+			if (parameters.alpha != null) {
+				tempalpha = parameters.alpha;
+				alphact.alphaMultiplier = tempalpha;
+				changecolours = true;
+			}
+			if (parameters.red != null) {
+				tempred = parameters.red;
+				alphact.redMultiplier = tempred;
+				changecolours = true;
+			}
+			if (parameters.green != null) {
+				tempgreen = parameters.green;
+				alphact.greenMultiplier = tempgreen;
+				changecolours = true;
+			}
+			if (parameters.blue != null) {
+				tempblue = parameters.blue;
+				alphact.blueMultiplier = tempblue;
+				changecolours = true;
+			}
 			
 			fontmatrix.identity();
 			fontmatrix.translate(-tempxpivot, -tempypivot);
@@ -224,7 +248,11 @@ class Text {
 			fontmatrix.rotate((temprotate * 3.1415) / 180);
 			fontmatrix.translate(x + tempxpivot, y + tempypivot);
 			drawto = Gfx.drawto;
-			drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);
+			if (changecolours) {
+				drawto.draw(typeface[currentindex].tfbitmap, fontmatrix, alphact);
+			}else {
+			  drawto.draw(typeface[currentindex].tfbitmap, fontmatrix);	
+			}
 		}
 	}
 	
@@ -300,6 +328,11 @@ class Text {
 	private static var tempxpivot:Float;
 	private static var tempypivot:Float;
 	private static var tempalpha:Float;
+	private static var tempred:Float;
+	private static var tempgreen:Float;
+	private static var tempblue:Float;
+	private static var changecolours:Bool;
+	private static var alphact:ColorTransform;
 	
 	//Text input variables
 	private static var inputField:TextField = new TextField();
