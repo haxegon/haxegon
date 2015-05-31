@@ -51,6 +51,7 @@ http://www.openfl.org/documentation/getting-started/installing-openfl/
 ## Roadmap to 1.0
 
 To do: 
+ - Add copy tile/ copy image in a sensible way
  - Make alpha blending actually work
  - Also do proper tinting
  - Animation?

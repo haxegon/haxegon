@@ -84,6 +84,10 @@ class Gfx {
 			currenttilesetname = tilesetname;
 		}
 	}
+	
+	public static function numberoftiles():Int {
+		return tiles[currenttileset].tiles.length;
+	}
 		
 	/** Makes a tile array from a given image. */
 	public static function loadtiles(imagename:String, width:Int, height:Int):Void {
@@ -261,6 +265,14 @@ class Gfx {
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
 	 * */
 	public static function drawtile(x:Float, y:Float, t:Int, ?parameters:Drawparams):Void {
+		if (t >= numberoftiles()) {
+			if (t == numberoftiles()) {
+			  trace("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles()) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
+			}else{
+				trace("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles()) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+			}
+		}
+		
 		tempxpivot = 0;
 		tempypivot = 0;
 		tempxscale = 1.0;
@@ -289,6 +301,69 @@ class Gfx {
 		if (tempxscale != 1.0 || tempyscale != 1.0) shapematrix.scale(tempxscale, tempyscale);
 		shapematrix.translate(x + tempxpivot, y + tempypivot);
 		drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
+	}
+	
+	/** Returns the current animation frame of the current tileset. */
+	public static function currentframe():Int {
+		return tiles[currenttileset].currentframe;
+	}
+	
+	/** Resets the animation on this tileset. */
+	public static function stopanimation():Void {
+		tiles[currenttileset].animationspeed = 1;
+		tiles[currenttileset].timethisframe = 0;
+		tiles[currenttileset].currentframe = tiles[currenttileset].startframe;
+		
+		if (tiles[currenttileset].endframe == -1) {
+			tiles[currenttileset].endframe = numberoftiles() - 1;
+		}
+	}
+	
+	public static function startframe(framenumber:Int):Void {
+		if (framenumber < 0 || framenumber > numberoftiles() - 1) {
+			trace("ERROR: Framenumber " + Std.string(framenumber) + " is out of bounds [0-" + Std.string(numberoftiles() - 1) + "].");
+			return;
+		}
+		tiles[currenttileset].startframe = framenumber;
+		
+		if (tiles[currenttileset].currentframe < tiles[currenttileset].startframe) {
+			tiles[currenttileset].currentframe = tiles[currenttileset].startframe;
+		}
+	}
+	
+	public static function endframe(framenumber:Int):Void {
+		if (framenumber < 0 || framenumber > numberoftiles() - 1) {
+			trace("ERROR: Framenumber " + Std.string(framenumber) + " is out of bounds [0-" + Std.string(numberoftiles() - 1) + "].");
+			return;
+		}
+		tiles[currenttileset].endframe = framenumber;
+		
+		if (tiles[currenttileset].currentframe > tiles[currenttileset].endframe) {
+			tiles[currenttileset].currentframe = tiles[currenttileset].startframe;
+		}
+	}
+	
+	public static function drawanimation(x:Float, y:Float, delayperframe:Int, ?parameters:Drawparams):Void {
+		if (delayperframe < 1) {
+			trace("ERROR: Cannot have a delay per frame of less than 1.");
+			return;
+		}
+		tiles[currenttileset].animationspeed = delayperframe;
+		
+		tiles[currenttileset].timethisframe++;
+		if (tiles[currenttileset].timethisframe > tiles[currenttileset].animationspeed) {
+			tiles[currenttileset].timethisframe = 0;
+	  	tiles[currenttileset].currentframe++;
+			if (tiles[currenttileset].currentframe > tiles[currenttileset].endframe) {
+				tiles[currenttileset].currentframe = tiles[currenttileset].startframe;
+			}
+		}
+		
+		if (parameters != null) {
+		  drawtile(x, y, tiles[currenttileset].currentframe, parameters);
+		}else {
+			drawtile(x, y, tiles[currenttileset].currentframe);
+		}
 	}
 	
 	private static function tilealignx(x:Float):Float {

@@ -8,7 +8,7 @@ Here's a complete list of what you can do with it!
 
 Graphics:
 ----------
-Load in images and draw them, draw simple shapes, and divide images into tilesets!
+Load in images and draw them, draw simple shapes, and divide images into tilesets! Do simple animations!
 
 Fonts:
 ----------
@@ -155,6 +155,26 @@ Gfx.drawtoscreen();                   // Tell future draw commands to draw to th
 Gfx.drawtoimage("imagename");         // Tell future draw commands to draw to the given image.
 Gfx.drawtotile(tilenumber);           // Tell future draw commands to draw to the given tile 
                                       // in the current tileset.
+
+Animation:
+-------------------------
+
+You can do simple animations with tilesets! 
+
+t = Gfx.numberoftiles();              // Returns the total number of tiles in a tileset.
+t = Gfx.currentframe();               // Returns the current frame of the animation.
+
+Gfx.startframe(framenumber);          // Sets the start frame of the animation. Default 0.
+Gfx.endframe(framenumber);            // Sets the start frame of the animation. 
+                                      // Defaults to last frame in tileset.
+                                      
+Gfx.stopanimation()                   // Resets the animation on this tileset.
+
+Gfx.drawanimation(x, y, delay per frame, optional parameters);
+  // Draws an animated tile at (x, y), using the same optional parameters as drawtile.
+  // "Delay per frame" is the number of ticks to wait before moving to the next frame. e.g:
+  // Gfx.drawanimation(0, 0, 1);   // Moves to the next frame every tick.
+  // Gfx.drawanimation(0, 0, 60);  // Waits 60 ticks (i.e. 1 second) before moving to the next frame.
 
 Text:
 -------------------------
