@@ -18,7 +18,9 @@ typedef Drawparams = {
   @:optional var xpivot:Float;
   @:optional var ypivot:Float;
 	@:optional var alpha:Float;
-	@:optional var col:Int;
+	@:optional var red:Float;
+	@:optional var green:Float;
+	@:optional var blue:Float;
 }
 
 class Gfx {
@@ -236,8 +238,10 @@ class Gfx {
 		tempxscale = 1.0;
 		tempyscale = 1.0;
 		temprotate = 0;
-		tempalpha = 1.0;
+		tempred = 1.0; tempgreen = 1.0;	tempblue = 1.0;	tempalpha = 1.0;
+		alphact.redMultiplier = 1.0; alphact.greenMultiplier = 1.0;	alphact.blueMultiplier = 1.0;
 		alphact.alphaMultiplier = tempalpha;
+		changecolours = false;
 		
 		x = imagealignx(x); y = imagealigny(y);
 		if(parameters != null){
@@ -254,6 +258,22 @@ class Gfx {
 			if (parameters.alpha != null) {
 				tempalpha = parameters.alpha;
 				alphact.alphaMultiplier = tempalpha;
+				changecolours = true;
+			}
+			if (parameters.red != null) {
+				tempred = parameters.red;
+				alphact.redMultiplier = tempred;
+				changecolours = true;
+			}
+			if (parameters.green != null) {
+				tempgreen = parameters.green;
+				alphact.greenMultiplier = tempgreen;
+				changecolours = true;
+			}
+			if (parameters.blue != null) {
+				tempblue = parameters.blue;
+				alphact.blueMultiplier = tempblue;
+				changecolours = true;
 			}
 		}
 			
@@ -262,7 +282,11 @@ class Gfx {
 		if (temprotate != 0) shapematrix.rotate((temprotate * 3.1415) / 180);
 		if (tempxscale != 1.0 || tempyscale != 1.0) shapematrix.scale(tempxscale, tempyscale);
 		shapematrix.translate(x + tempxpivot, y + tempypivot);
-		drawto.draw(images[imagenum], shapematrix, alphact);
+		if (changecolours) {
+		  drawto.draw(images[imagenum], shapematrix, alphact);	
+		}else {
+			drawto.draw(images[imagenum], shapematrix);
+		}
 	}
 	
 	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float):Void {
@@ -327,8 +351,10 @@ class Gfx {
 		tempxscale = 1.0;
 		tempyscale = 1.0;
 		temprotate = 0;
-		tempalpha = 1.0;
+		tempred = 1.0; tempgreen = 1.0;	tempblue = 1.0;	tempalpha = 1.0;
+		alphact.redMultiplier = 1.0; alphact.greenMultiplier = 1.0;	alphact.blueMultiplier = 1.0;
 		alphact.alphaMultiplier = tempalpha;
+		changecolours = false;
 		
 		x = tilealignx(x); y = tilealigny(y);
 		if (parameters != null) {
@@ -345,6 +371,22 @@ class Gfx {
 			if (parameters.alpha != null) {
 				tempalpha = parameters.alpha;
 				alphact.alphaMultiplier = tempalpha;
+				changecolours = true;
+			}
+			if (parameters.red != null) {
+				tempred = parameters.red;
+				alphact.redMultiplier = tempred;
+				changecolours = true;
+			}
+			if (parameters.green != null) {
+				tempgreen = parameters.green;
+				alphact.greenMultiplier = tempgreen;
+				changecolours = true;
+			}
+			if (parameters.blue != null) {
+				tempblue = parameters.blue;
+				alphact.blueMultiplier = tempblue;
+				changecolours = true;
 			}
 		}
 		
@@ -353,7 +395,11 @@ class Gfx {
 		if (temprotate != 0) shapematrix.rotate((temprotate * 3.1415) / 180);
 		if (tempxscale != 1.0 || tempyscale != 1.0) shapematrix.scale(tempxscale, tempyscale);
 		shapematrix.translate(x + tempxpivot, y + tempypivot);
-		drawto.draw(tiles[currenttileset].tiles[t], shapematrix, alphact);
+		if (changecolours) {
+		  drawto.draw(tiles[currenttileset].tiles[t], shapematrix, alphact);
+		}else {
+		  drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
+		}
 	}
 	
 	/** Returns the current animation frame of the current tileset. */
@@ -652,7 +698,11 @@ class Gfx {
 	private static var tempxpivot:Float;
 	private static var tempypivot:Float;
 	private static var tempalpha:Float;
+	private static var tempred:Float;
+	private static var tempgreen:Float;
+	private static var tempblue:Float;
 	private static var tempframe:Int;
+	private static var changecolours:Bool;
 	private static var oldtileset:String;
 	
 	private static var linethickness:Int;
