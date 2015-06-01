@@ -562,7 +562,7 @@ class Gfx {
 	}
 	
 	public static function getpixel(x:Float, y:Float):Int {
-		return drawto.getPixel32(x, y);
+		return drawto.getPixel32(Std.int(x), Std.int(y));
 	}
 
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0):Void {
