@@ -225,11 +225,11 @@ Text.addfont("fontname", defaultsize);
 Text.changefont("fontname");
 Text.changesize(fontsize);
 
-Text.print(x, y, "thing to print", col, optional parameters);
+Text.display(x, y, "thing to display", col, optional parameters);
 
-  - Text print functions take all the same arguments as Drawimage, and also the following:
+  - Text display functions take all the same arguments as Drawimage, and also the following:
     rightalign : Set to true if you want the text to align from the right of this point, eg
-    Text.print(700, 0, "top right corner", 0xFFFFFF, {rightalign: true});
+    Text.display(700, 0, "top right corner", 0xFFFFFF, {rightalign: true});
   
   - You can use the following constants for values of x, y, pivotx and pivoty:
     Text.TOP, Text.BOTTOM, Text.LEFT, Text.RIGHT, Text.CENTER

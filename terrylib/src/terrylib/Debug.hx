@@ -38,10 +38,10 @@ class Debug {
 			for (k in 0 ... debuglog.length) {
 				for (j in -1 ... 2) {
 					for (i in -1 ... 2) {
-						Text.print(2 + i, j + Std.int(2 + ((debuglog.length - 1 - k) * (Text.height() + 2))), debuglog[k], Gfx.RGB(0, 0, 0));
+						Text.display(2 + i, j + Std.int(2 + ((debuglog.length - 1 - k) * (Text.height() + 2))), debuglog[k], Gfx.RGB(0, 0, 0));
 					}
 				}
-				Text.print(2, Std.int(2 + ((debuglog.length-1-k) * (Text.height() + 2))), debuglog[k], Gfx.RGB(255, 255, 255));
+				Text.display(2, Std.int(2 + ((debuglog.length-1-k) * (Text.height() + 2))), debuglog[k], Gfx.RGB(255, 255, 255));
 			}
 		}
 	}

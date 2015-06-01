@@ -6,6 +6,6 @@ class Main {
 	}
 	
 	function update() {
-		Text.print(0, 0, "Hello World");
+		Text.display(0, 0, "Hello World");
 	}
 }

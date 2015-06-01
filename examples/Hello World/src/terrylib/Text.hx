@@ -125,11 +125,11 @@ class Text {
 			input_cursorglow++;
 			if (input_cursorglow >= 96) input_cursorglow = 0;
 			
-			print(input_textxp, input_textyp, input_text, input_textcol);
+			display(input_textxp, input_textyp, input_text, input_textcol);
 			if (input_cursorglow % 48 < 24) {
-				print(input_responsexp, input_responseyp, input_response, input_responsecol);
+				display(input_responsexp, input_responseyp, input_response, input_responsecol);
 			}else {
-				print(input_responsexp, input_responseyp, input_response + "_", input_responsecol);
+				display(input_responsexp, input_responseyp, input_response + "_", input_responsecol);
 			}
 		}
 		
@@ -137,7 +137,7 @@ class Text {
 		if (input_show < 0) input_show = 0;
 	}
 	
-	//Text Print functions
+	//Text display functions
 	public static function len(t:String):Float {
 		typeface[currentindex].tf.text = t;
 		return typeface[currentindex].tf.textWidth;
@@ -178,7 +178,8 @@ class Text {
 		return y;
 	}
 	
-	public static function print(x:Float, y:Float, t:String, col:Int = 0xFFFFFF, ?parameters:Drawparamstext):Void {
+	public static function display(x:Float, y:Float, t:String, col:Int = 0xFFFFFF, ?parameters:Drawparamstext):Void {
+		// This was called "print" once. Maybe it was better that way? eh, stuck with display now
 		if (parameters == null) {
 			typeface[currentindex].tf.textColor = col;
 			typeface[currentindex].tf.text = t;
@@ -202,7 +203,7 @@ class Text {
 			tempred = 1.0; tempgreen = 1.0; tempblue = 1.0;
 			changecolours = false;
 			
-			print(0, 0, t, col);
+			display(0, 0, t, col);
 			
 			x = alignx(x); y = aligny(y);
 			if (parameters.rightalign != null) {
