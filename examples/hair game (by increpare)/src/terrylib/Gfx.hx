@@ -560,6 +560,10 @@ class Gfx {
 	public static function cls():Void {
 		backbuffer.fillRect(backbuffer.rect, 0x00000000);
 	}
+	
+	public static function getpixel(x:Float, y:Float):Int {
+		return drawto.getPixel32(x, y);
+	}
 
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0):Void {
 		tempshape.graphics.clear();

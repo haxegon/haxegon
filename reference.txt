@@ -122,6 +122,8 @@ Gfx.setlinethickness(linethickness);       // Default value is 1 pixel.
   - "col" is a haxe HexCol, which is an int written like e.g this: 0xFFFFFF
     Or you could use the functions below:
 
+t = Gfx.getpixel(x, y);           // Returns the colour of the pixel at (x, y).
+
 //Colours
 t = Gfx.RGB(red, green, blue);                 //Red, Green and Blue are between 0-255.
 t = Gfx.HSL(hue, saturation, lightness);       //Hue is between 0-360. 
