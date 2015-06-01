@@ -23,7 +23,7 @@ class Core extends Sprite {
 		Music.init();
 		
 		//Default setup
-		Gfx.createscreen(768, 480);
+		Gfx.resizescreen(768, 480);
 		Text.addfont("opensans", 24);
 		
 		main = new Main();
