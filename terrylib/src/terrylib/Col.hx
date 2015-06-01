@@ -6,7 +6,11 @@ class Col {
 	public static var BLACK:Int = 0xFF000000;
 	public static var GREY:Int = 0xFF9D9D9D;
 	public static var GRAY:Int = 0xFF9D9D9D;
-	public static var WHITE:Int = 0xFFFFFFFF;
+	#if !flash
+	  public static var WHITE:Int = 0xFFFFFFFF;
+	#else
+	  public static var WHITE:Int = 0xFFFFFF;
+	#end
 	public static var RED:Int = 0xFFBE2633;
 	public static var PINK:Int = 0xFFE06F8B;
 	public static var DARKBROWN:Int = 0xFF493C2B;
