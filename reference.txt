@@ -12,7 +12,7 @@ Load in images and draw them, draw simple shapes, and divide images into tileset
 
 Fonts:
 ----------
-Load in different fonts at different sizes and display them! Take in simple string input!
+Load in different fonts at different sizes and display them! Take in simple string input! Mess with strings!
 
 Music:
 ----------
@@ -320,6 +320,51 @@ Mouse.rightreleased()    // True if you've just released right-click this frame
 
 Mouse.mousewheel             // An int between -3 and +3 for the scrollwheel value.
                              // For most mice it seems best to just check ==0, <0 and >0.
+
+String Manipulation:
+-------------------------
+
+String maniupulation probably isn't a thing you'll want to do very often or for most games, but it can be handy to have it for games that let people type things in! Here's a list of all the string manipulation functions in TerryLib:
+
+mystring = removefromstring(fullstring, substring);
+
+mybool = isinstring(stringtocheck, fullstring);
+
+myint = positioninstring(fullstring, substring);
+
+mystring = letterat(currentstring, position);
+
+mystring = mid(currentstring, start, length);
+
+mystring = left(currentstring, length);
+
+mystring = right(currentstring, length);
+
+mystring = reversetext(currentstring);
+
+mystring = replacechar(currentstring, char1, char2);
+
+mystring = getroot(currentstring, ch);
+
+mystring = getbranch(currentstring, ch);
+
+mystring = getlastbranch(currentstring, ch);
+
+mystring = getbetweenbrackets(currentstring);
+
+mystring = trimspaces(currentstring);
+  // Given a string currentstring, return a string without spaces around it.
+  // E.g. trimspace("    hello   ") returns "hello".
+  
+mybool = isnumber(currentstring);
+  // True if string currentstring is some kind of number; false if it's something else.
+  // E.g. isnumber("2135") returns true, isnumber("dog") returns false.
+
+myarray = split(currentstring, delimiter);
+
+myint = tocharcode(character);
+
+mystring = toascii(charcode);
 
 Other useful functions:
 -------------------------
