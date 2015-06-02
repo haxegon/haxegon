@@ -11,16 +11,6 @@ class Stringedit {
 		return currentstring.toLowerCase();
 	}
 	
-	/** Given a charcode, convert to ASCII character. */
-	public static function toascii(charcode:Int):String {
-		return String.fromCharCode(charcode);
-	}
-	
-	/** Given an ASCII character, convert to charcode. */
-	public static function tocharcode(character:String):Int {
-		return character.charCodeAt(0);
-	}
-	
 	/** Splits a string into an array, divided by a given delimiter character (e.g. ",")*/
 	public static function split(currentstring:String, delimiter:String):Array<String> {
 		return currentstring.split(delimiter);

@@ -413,18 +413,6 @@ myarray = Stringedit.split(currentstring, delimiter);
   // E.g. Stringedit.split("1,2,3,4,5", ",") returns an array of strings with five elements,
   //                                         which are [ "1", "2", "3", "4", "5" ].
                       
-myint = Stringedit.tocharcode(character);
-  // Given an ASCII character, convert to charcode.
-  // E.g. Stringedit.tocharcode("A") returns 65.
-  // Charcodes are integer representations of single letters. See a full list here:    
-  // http://www.asciitable.com/
-
-mystring = Stringedit.toascii(charcode);
-  // Given a charcode, convert to ASCII character. 
-  // E.g. Stringedit.toascii(65) returns "A".
-  // Charcodes are integer representations of single letters. See a full list here:    
-  // http://www.asciitable.com/
-
 Other useful functions:
 -------------------------
 Convert.tostring(1234);         // Returns a string, in this case: "1234"
