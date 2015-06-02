@@ -1,6 +1,16 @@
 package terrylib;
 
 class Stringedit {
+	/** Returns an uppercase version of the string. */
+	public static function uppercase(currentstring:String):String {
+		return currentstring.toUpperCase();
+	}
+	
+	/** Returns an lowercase version of the string. */
+	public static function lowercase(currentstring:String):String {
+		return currentstring.toLowerCase();
+	}
+	
 	/** Given a charcode, convert to ASCII character. */
 	public static function toascii(charcode:Int):String {
 		return String.fromCharCode(charcode);
@@ -26,8 +36,8 @@ class Stringedit {
 		}
 	}
 	
-	/** Returns true if any string in the list is in the given fullstring. */
-	public static function isinstring(stringtocheck:String, fullstring:String):Bool {
+	/** Returns true if the given stringtocheck is in the given fullstring. */
+	public static function isinstring(fullstring:String, stringtocheck:String,):Bool {
 		if (positioninstring(fullstring, stringtocheck) != -1) return true;
 		return false;
 	}
@@ -36,7 +46,6 @@ class Stringedit {
 	public static function positioninstring(fullstring:String, substring:String, start:Int = 0):Int {
 		return (fullstring.indexOf(substring, start));
 	}
-	
 	
 	/** Return character at given position */
 	public static function letterat(currentstring:String, position:Int = 0):String {
@@ -81,7 +90,7 @@ class Stringedit {
 		return fixedstring;
 	}
 	
-	/** Given a string n, return everything after the LAST occurance of the "ch" character */
+	/** Given a string currentstring, return everything after the LAST occurance of the "ch" character */
 	public static function getlastbranch(currentstring:String, ch:String):String {
 		var i:Int = currentstring.length - 1;
 		while (i >= 0) {
