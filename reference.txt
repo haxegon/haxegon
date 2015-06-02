@@ -1,6 +1,8 @@
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-TerryLib:                             v003
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+TerryLib:                     
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Work in progress! Nice looking HTML reference coming soon!
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 TerryLib is a tiny haxe programming library for beginners.
 
@@ -44,7 +46,7 @@ Gfx.resizescreen(width, height, scale);
     call this function in Main.new(). E.g:
     
     public function new() {
-      Gfx.createscreen(384, 240, 2); // Create a 384x240 screen at 2:1 scaling.
+      Gfx.resizescreen(384, 240, 2); // Create a 384x240 screen at 2:1 scaling.
     }
   
     You might also need to change the actual window size - this is in project.xml.
@@ -69,8 +71,10 @@ drawimage(x, y, "imagename", optional parameters);
       rotation       - rotation between 0-359
       xpivot, ypivot - position in image to rotate and scale from.
       alpha          - between 0.0 and 1.0, the transparancy of the image. 1.0 is solid.
+      red,green,blue - How much to multiply the red, green and blue values of the image by. 
+                       1.0 is normal.
     
-    These parameters should be grouped together and labeled like this:
+    These parameters should be grouped together and labeled between {} brackets like this:
       
     e.g. 
       Gfx.drawimage(50, 50, "monalisa", { scale: 2 });
@@ -338,7 +342,7 @@ All string manipulation functions are case sensitive!
 
 mystring = Stringedit.removefromstring(fullstring, substring);
   // Removes substring from the fullstring.
-  //  Stringedit.removefromstring("fraction", "action") returns "fr".
+  // E.g. Stringedit.removefromstring("fraction", "action") returns "fr".
   
 mybool = Stringedit.isinstring(fullstring, stringtocheck);
   // Returns true if the given stringtocheck is in the given fullstring.
@@ -348,7 +352,7 @@ mybool = Stringedit.isinstring(fullstring, stringtocheck);
 myint = Stringedit.positioninstring(fullstring, substring);
   // Return the position of a substring in a given string. -1 if not found.
   // e.g. Stringedit.positioninstring("phone number", "numb") returns 6.
-  //      Stringedit.positioninstring("phone number", "NUMB") returns -1.
+  //      Stringedit.positioninstring("phone number", "NUMB") returns -1. (it's case sensitive!)
   
 mystring = Stringedit.letterat(currentstring, position);
   // Return character at given position.
@@ -371,7 +375,7 @@ mystring = Stringedit.reversetext(currentstring);
   // e.g. Stringedit.reversetext("Stack cats.") returns ".stac kcatS"
 
 mystring = Stringedit.replacechar(currentstring, char1, char2);
-  // Given a string currentstring, replace all occurances of string ch with ch2. 
+  // Given a string currentstring, replace all occurances of string char1 with char2. 
   // Useful to remove characters.
   // e.g. Stringedit.replacechar("hello world", "o", "x") returns "hellx wxrld".
   // e.g. Stringedit.replacechar("hello world", "o", "") returns "hell wrld".
