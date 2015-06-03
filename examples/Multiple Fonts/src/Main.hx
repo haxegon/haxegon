@@ -1,6 +1,7 @@
 import terrylib.*;
 
 class Main {
+  // new() is a special function that is called on startup.
 	function new() {
 		// These fonts are located in the data/fonts/ directory.
 		

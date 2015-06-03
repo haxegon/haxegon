@@ -29,6 +29,7 @@ class Main {
 	var topbound:Int;
 	var bottombound:Int;
 
+  // new() is a special function that is called on startup.
 	function new() {
 		//Set some initial values for the game variables.
 		timer = 0;            // Counts the number of ticks since the last animation change.

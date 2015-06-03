@@ -39,7 +39,8 @@ class Main {
 	var radius:Float;          // How close to the mouse a hair has to be to be combed.
 	var fallchance:Float;      // Odds of a hair falling out when you comb over it.
 	var sensitivity:Float;     // How sensitive a hair is to changing angles.
-
+  
+  // new() is a special function that is called on startup.
 	function new() {
 		// Hair generation
 		hairlength = 70;                        // The length in pixels of a strand of hair.
