@@ -10,12 +10,8 @@ TerryLib is designed to give you a simple, beginner friendly, uncluttered starti
 import terrylib.*;
 
 class Main {
-	function new() {
-	
-	}
-	
 	function update() {
-	  Text.print(0, 0, "Hello World!");
+	  Text.display(0, 0, "Hello World!");
 	}
 }
 ``` 
@@ -33,6 +29,9 @@ Load in music and sound effects! Play them back!
 
 **Input:**
 Read in Keyboard and Mouse input!
+
+**Scene Control:**
+Easily change between different game scenes!
 
 See reference.txt for a full command list.
 
