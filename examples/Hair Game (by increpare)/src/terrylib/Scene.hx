@@ -4,7 +4,7 @@ package terrylib;
 import openfl.errors.ArgumentError;
 
 class Scene {
-	public static function init():Void {
+	private static function init():Void {
 		scenelist = new Array<Dynamic>();
 		//var mainFields:Array<String> = Type.getInstanceFields( Main );
 		
@@ -63,6 +63,6 @@ class Scene {
 		throw("ERROR: Scene has not been created yet!");
 	}
 	
-	public static var scenelist:Array<Dynamic>;
-	public static var currentscene:Int;
+	private static var scenelist:Array<Dynamic>;
+	private static var currentscene:Int;
 }

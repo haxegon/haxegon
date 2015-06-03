@@ -28,9 +28,13 @@ Basic structure:
 -------------------------
 TerryLib sets everything up in the background, and starts you with a single class, Main.hx.
 
-Main.hx contains two functions: new() and update().
+Main.hx contains one function, update(), and can optionally contain two more: new() and reset().
 
-new() is called once at the start of the program. update() is called 60 times a second. (You can change the framerate if you like in project.xml.)
+update() is called 60 times a second. (You can change the framerate if you like in project.xml.)
+
+new() is called when the program starts, if it exists.
+
+reset() is called when you change scene, if it exists!
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 FULL COMMAND LIST:
@@ -324,7 +328,47 @@ Mouse.rightreleased()    // True if you've just released right-click this frame
 
 Mouse.mousewheel             // An int between -3 and +3 for the scrollwheel value.
                              // For most mice it seems best to just check ==0, <0 and >0.
-                      
+
+Scene Control:
+-------------------------
+
+Scene.change(newscene)
+  // Changes the scene! New scenes need to contain an update function. Here's an example!
+  
+//in Main.hx
+import terrylib.*;
+
+class Main{
+  function update(){
+		if (Mouse.leftclick()) {
+			Scene.change(Titlescreen);
+		}
+		
+		Text.display(0, 0, "Main scene");
+  }
+}
+
+//in Titlescreen.hx
+import terrylib.*;
+
+class Titlescreen {
+  function update(){
+		if (Mouse.leftclick()) {
+			Scene.change(Main);
+		}
+		
+		Text.display(0, 0, "Titlescene");
+  }
+}
+
+// That's it!
+
+The only other scene function is "get", which is used to access public variables in other scenes. For example:
+
+t = Scene.get(Titlescreen).titlescreenvariable;
+
+(You can also do this with static variables, if you like. See the tutorial for more info about that)
+
 Other useful functions:
 -------------------------
 Convert.tostring(1234);         // Returns a string, in this case: "1234"

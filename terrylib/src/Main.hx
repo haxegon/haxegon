@@ -1,7 +1,7 @@
 import terrylib.*;
 
-class Main {
-	function update() {
+class Main{
+  function update() {
 		
-	}
+  }
 }
