@@ -7,6 +7,7 @@ import openfl.Lib;
 @:access(Main)
 @:access(terrylib.Mouse)
 @:access(terrylib.Input)
+@:access(terrylib.Scene)
 class Core extends Sprite {
 	public function new() {
 		super();
@@ -26,10 +27,12 @@ class Core extends Sprite {
 		Gfx.resizescreen(768, 480);
 		Text.addfont("opensans", 24);
 		
-		main = new Main();
+		Scene.init();
 		
 		addEventListener(Event.ENTER_FRAME, update);
 	}
+	
+	
 	
 	public function update(t:Event):Void {
 		Mouse.update(Std.int(Lib.current.mouseX / Gfx.screenscale), Std.int(Lib.current.mouseY / Gfx.screenscale));
@@ -37,12 +40,12 @@ class Core extends Sprite {
 		Gfx.backbuffer.lock();
 		
 		Gfx.cls();
-		main.update();
+		Scene.update();
 		Text.drawstringinput();
 		Debug.showlog();
 		
 		Gfx.backbuffer.unlock();
 	}
 	
-	public var main:Main;
+	
 }
