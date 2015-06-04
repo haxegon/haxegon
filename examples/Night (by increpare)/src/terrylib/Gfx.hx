@@ -479,6 +479,50 @@ class Gfx {
 		shapematrix.translate(-x1, -y1);
 	}
 	
+	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0):Void {
+		tempshape.graphics.clear();
+		tempshape.graphics.lineStyle(linethickness, col, alpha);
+		
+		temprotate = ((Math.PI * 2) / 6);
+		
+		tx = (Math.cos(angle) * radius);
+		ty = (Math.sin(angle) * radius);
+		
+		tempshape.graphics.moveTo(tx, ty);
+		for (i in 0 ... 7) {
+			tx = (Math.cos(angle + (temprotate * i)) * radius);
+		  ty = (Math.sin(angle + (temprotate * i)) * radius);
+			
+			tempshape.graphics.lineTo(tx, ty);
+		}
+		
+		shapematrix.translate(x, y);
+		drawto.draw(tempshape, shapematrix);
+		shapematrix.translate(-x, -y);
+	}
+	
+	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0):Void {
+		tempshape.graphics.clear();
+		temprotate = ((Math.PI * 2) / 6);
+		
+		tx = (Math.cos(angle) * radius);
+		ty = (Math.sin(angle) * radius);
+		
+		tempshape.graphics.moveTo(tx, ty);
+		tempshape.graphics.beginFill(col, alpha);
+		for (i in 0 ... 7) {
+			tx = (Math.cos(angle + (temprotate * i)) * radius);
+		  ty = (Math.sin(angle + (temprotate * i)) * radius);
+			
+			tempshape.graphics.lineTo(tx, ty);
+		}
+		tempshape.graphics.endFill();
+		
+		shapematrix.translate(x, y);
+		drawto.draw(tempshape, shapematrix);
+		shapematrix.translate(-x, -y);
+	}
+	
 	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0):Void {
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
@@ -710,6 +754,8 @@ class Gfx {
 	private static var tempframe:Int;
 	private static var changecolours:Bool;
 	private static var oldtileset:String;
+	private static var tx:Float;
+	private static var ty:Float;
 	
 	private static var linethickness:Int;
 	

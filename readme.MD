@@ -35,11 +35,7 @@ Easily change between different game scenes!
 
 See reference.txt for a full command list.
 
-There are no official examples available yet, but there should be some soon! Increpare has made some simple games with this which are open source, available here:
-
-http://www.increpare.com/2015/05/night/
-http://www.increpare.com/2015/05/body-paint/
-http://www.increpare.com/2015/05/hair-game/
+For examples, see the included examples folder! Examples are a work in progress - more are on the way!
 
 ## Using TerryLib
 

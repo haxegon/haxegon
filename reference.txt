@@ -120,6 +120,9 @@ Gfx.filltri(x1, y1, x2, y2, x3, y3, col);
 Gfx.drawcircle(x, y, radius, col);
 Gfx.fillcircle(x, y, radius, col);
 
+Gfx.drawhexagon(x, y, radius, angle, col);
+Gfx.fillhexagon(x, y, radius, angle, col);
+
 Gfx.drawline(x1, y1, x2, y2, col);
 
 Gfx.setlinethickness(linethickness);       // Default value is 1 pixel.
