@@ -49,7 +49,7 @@ Gfx.resizescreen(width, height, scale);
   - By default, TerryLib has a 768x480 screen with 1:1 scaling. If you want something different,
     call this function in Main.new(). E.g:
     
-    public function new() {
+    function new() {
       Gfx.resizescreen(384, 240, 2); // Create a 384x240 screen at 2:1 scaling.
     }
   
