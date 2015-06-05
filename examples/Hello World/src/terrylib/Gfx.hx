@@ -601,8 +601,8 @@ class Gfx {
 		if (linethickness > 255) linethickness = 255;
 	}
 	
-	public static function cls():Void {
-		backbuffer.fillRect(backbuffer.rect, 0x00000000);
+	public static function cls(col:Int = 0x00000000):Void {
+		backbuffer.fillRect(backbuffer.rect, col);
 	}
 	
 	public static function getpixel(x:Float, y:Float):Int {
