@@ -5,7 +5,7 @@ class Main {
 	function new() {
 		// These fonts are located in the data/fonts/ directory.
 		
-		// For most target platforms, you only need a TTF file, but HTML5, you need webfont
+		// For most target platforms, you only need a TTF file, but for HTML5, you need webfont
 		// formats like .eof and .woff. You can create these using a generator like this:
 		// http://www.fontsquirrel.com/tools/webfont-generator
 		

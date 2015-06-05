@@ -14,7 +14,7 @@ Load in images and draw them, draw simple shapes, and divide images into tileset
 
 Fonts:
 ----------
-Load in different fonts at different sizes and display them! Take in simple string input! Mess with strings!
+Load in different fonts at different sizes and display them! Take in simple string input!
 
 Music:
 ----------

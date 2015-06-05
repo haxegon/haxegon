@@ -4,6 +4,7 @@ class Main {
 	var animationlist:Array<String>;    // An array of strings, used to store animation names.
 	var currentanimation:Int;           // Current animation on screen.
 	
+  // new() is a special function that is called on startup.
 	function new() {
 		//Load in a tileset.
 		Gfx.loadtiles("jay", 64, 80);
