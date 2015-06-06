@@ -19,6 +19,7 @@ typedef Drawparamstext = {
 	@:optional var red:Float;
 	@:optional var green:Float;
 	@:optional var blue:Float;
+	@:optional var centeralign:Bool;
 	@:optional var rightalign:Bool;
 }
 
@@ -206,7 +207,12 @@ class Text {
 			display(0, 0, t, col);
 			
 			x = alignx(x); y = aligny(y);
-			if (parameters.rightalign != null) {
+			
+			if (parameters.centeralign != null) {
+				if (parameters.centeralign) {
+					x = x - (len(t) / 2);
+				}
+			}else if (parameters.rightalign != null) {
 				if (parameters.rightalign) {
 					x = Math.floor(x - len(t));
 				}

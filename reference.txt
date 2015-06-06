@@ -239,6 +239,10 @@ Text.changesize(fontsize);
 Text.display(x, y, "thing to display", col, optional parameters);
 
   - Text display functions take all the same arguments as Drawimage, and also the following:
+    
+    centeralign: Set to true if you want the text to align to the center of this point, eg:
+    Text.display(200, 0, "centered around (200, 0)", 0xFFFFFF, {centeralign: true});
+    
     rightalign : Set to true if you want the text to align from the right of this point, eg
     Text.display(700, 0, "top right corner", 0xFFFFFF, {rightalign: true});
   
