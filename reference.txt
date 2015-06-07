@@ -60,9 +60,10 @@ Gfx.cls();                     // Clears the screen to BLACK, can optionally tak
 //Images
 Gfx.loadimage("imagename");
   
-  - Place .PNG images in data/graphics/, and call this function to load them in. e.g:
+  - Place .PNG or .JPG images in data/graphics/, and call this function to load them in. e.g:
     
     Gfx.addimage("titlescreen");  // Loads in data/graphics/titlescreen.png
+    Gfx.addimage("background");   // Loads in data/graphics/background.jpg
 
 drawimage(x, y, "imagename", optional parameters);
 
