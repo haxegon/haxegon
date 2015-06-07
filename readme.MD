@@ -1,6 +1,6 @@
 #TerryLib
 
-Ssshh! TerryLib is a work in progress. Things might change between now and when it gets properly finished, but if you're feeling adventureous, feel free to try it out!
+Ssshh! TerryLib is a work in progress. Things might change between now and when it gets properly finished, but if you're feeling adventurous, feel free to try it out!
 
 TerryLib is a tiny haxe programming library for beginners. It's made to accompany a beginners game programming tutorial that I'm currently writing.
 
@@ -42,6 +42,10 @@ For examples, see the included examples folder! Examples are a work in progress 
 TerryLib is a Haxe Library, and is built on top of OpenFL. Here is a good starting point for installing Haxe and OpenFL on your machine:
 
 http://www.openfl.org/documentation/getting-started/installing-openfl/
+
+On windows, FlashDevelop is the recommended IDE. 
+
+On Mac, I've made a special compiler tool that comes with the project, TerryCompile. Unzip the "terrycompile.zip" folder into the project you want to complile, then run it! For a code editor on Mac, I like Adobe Brackets.
 
 ## Roadmap to 1.0
 
