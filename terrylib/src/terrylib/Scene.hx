@@ -6,9 +6,15 @@ import openfl.errors.ArgumentError;
 class Scene {
 	private static function init():Void {
 		scenelist = new Array<Dynamic>();
-		//var mainFields:Array<String> = Type.getInstanceFields( Main );
-		
-		scenelist.push(Type.createInstance(Main, []));
+		#if neko
+		  try{
+		    scenelist.push(Type.createInstance(Main, []));
+			}catch (e:Dynamic) {
+				throw("ERROR: Neko builds require that Main.hx has a \"new()\" function.");
+			}
+		#else
+		  scenelist.push(Type.createInstance(Main, []));
+		#end
 		currentscene = 0;
 	}
 	
@@ -22,7 +28,7 @@ class Scene {
 			try {
 				Reflect.callMethod(scenelist[currentscene], instanceFunc, []);
 			} catch ( e:ArgumentError ) {
-				throw( "Error: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments");
+				throw( "ERROR: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
 			}
 			return;
 		}
@@ -33,7 +39,7 @@ class Scene {
 			try {
 				Reflect.callMethod(scenelist[currentscene], classFunc, []);
 			} catch ( e:ArgumentError ) {
-				throw( "Error: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments");
+				throw( "ERROR: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
 			}
 			return;
 		}
@@ -50,7 +56,15 @@ class Scene {
 			}
 		}
 		
-		scenelist.push(Type.createInstance(newscene, []));
+		#if neko
+		  try{
+		    scenelist.push(Type.createInstance(newscene, []));
+			}catch (e:Dynamic) {
+				throw("ERROR: Neko builds require all classes to have a \"new()\" function.");
+			}
+		#else
+		  scenelist.push(Type.createInstance(newscene, []));
+		#end
 	}
 	
 	public static function get<T>(newscene:Class<T>):T {
