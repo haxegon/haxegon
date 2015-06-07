@@ -259,7 +259,7 @@ if (Text.input(x, y, "Question: ", question_colour, answer_colour)) {
 Music:
 -------------------------
 
-Music.addsong("songname");
+Music.loadsong("songname");
 
   - Place .MP3 files in data/music/mp3/ (for flash), or place .OGG files data/music/ogg/ 
     (for non-flash), and call this function to load them in. e.g:
@@ -272,7 +272,7 @@ Music.addsong("songname");
   Music.addsong("shakeitoff", 0.5);
   
 
-Music.addsound("effectname");
+Music.loadsound("effectname");
  
   - Loads in a sound effect from the data/sounds/ folder. Same mp3 and ogg deal as with music.
     Also takes an optional volume option, which defaults to 1.0.

@@ -131,7 +131,7 @@ class Music {
 		if (currentefchan > 15) currentefchan -= 16;
 	}
 	
-	public static function addsound(t:String, vol:Float = 1.0):Void {
+	public static function loadsound(t:String, vol:Float = 1.0):Void {
 		effectindex.set(t, numeffects);
 		volumelevels.push(vol);
 		#if flash
@@ -142,7 +142,7 @@ class Music {
 		numeffects++;
 	}
 	
-	public static function addsong(t:String, vol:Float = 1.0):Void {	
+	public static function loadsong(t:String, vol:Float = 1.0):Void {	
 		songindex.set(t, numsongs);
 		songvolumelevels.push(vol);
 		#if flash
