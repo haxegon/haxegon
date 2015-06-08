@@ -93,11 +93,11 @@ class Main {
 		//Display some text showing the song that's playing, and the current sound effect.
 		Text.changesize(16);
 		if (songplaying) {
-		  Text.display(Gfx.screenwidth - 10, 5, "[NOW PLAYING] Don't Look Back: Ascent (Chiptune version)", 0xf19599, { rightalign: true } );	
-			Text.display(Gfx.screenwidth - 10, 25, "Press ENTER to stop.", 0xf19599, { rightalign: true } );
+		  Text.display(Gfx.screenwidth - 10, 5, "[NOW PLAYING] Don't Look Back: Ascent (Chiptune version)", 0xf19599, { align: Text.RIGHT } );	
+			Text.display(Gfx.screenwidth - 10, 25, "Press ENTER to stop.", 0xf19599, { align: Text.RIGHT } );
 		}else {
-			Text.display(Gfx.screenwidth - 10, 5, "[STOPPED] Don't Look Back: Ascent (Chiptune version)", 0xf19599, { rightalign: true } );	
-			Text.display(Gfx.screenwidth - 10, 25, "Press ENTER to restart.", 0xf19599, { rightalign: true } );
+			Text.display(Gfx.screenwidth - 10, 5, "[STOPPED] Don't Look Back: Ascent (Chiptune version)", 0xf19599, { align: Text.RIGHT } );	
+			Text.display(Gfx.screenwidth - 10, 25, "Press ENTER to restart.", 0xf19599, { align: Text.RIGHT } );
 		}
 		
 		Text.display(10, 5, (currentsoundeffect + 1) + ": \"" + soundlist[currentsoundeffect]+ "\"", 0xf19599);	
