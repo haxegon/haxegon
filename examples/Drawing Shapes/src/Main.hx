@@ -50,8 +50,8 @@ class Main {
 		
 		Text.changesize(16);
 		//Display the text twice, once black and slightly offset, once white to give a shadow effect under the string
-		Text.display(Gfx.screenwidth - 10 +2, Gfx.screenheight - Text.height() - 5 + 2, "LEFT CLICK MOUSE TO CYCLE EFFECTS", Col.BLACK, { rightalign: true } );
-		Text.display(Gfx.screenwidth - 10, Gfx.screenheight - Text.height() - 5, "LEFT CLICK MOUSE TO CYCLE EFFECTS", Col.WHITE, { rightalign: true } );
+		Text.display(Gfx.screenwidth - 10 +2, Gfx.screenheight - Text.height() - 5 + 2, "LEFT CLICK MOUSE TO CYCLE EFFECTS", Col.BLACK, { align: Text.RIGHT } );
+		Text.display(Gfx.screenwidth - 10, Gfx.screenheight - Text.height() - 5, "LEFT CLICK MOUSE TO CYCLE EFFECTS", Col.WHITE, { align: Text.RIGHT } );
 	}
 	
 	function drawtriangles(effectnum:Int) {
