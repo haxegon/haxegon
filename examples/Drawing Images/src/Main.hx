@@ -61,49 +61,49 @@ class Main {
 		Text.changesize(24);
 		//Draw the left dress
 		if (leftdresseffect == 1) {
-			Text.display(Gfx.screenwidthmid / 2, 40, "[SCALE x3]", 0xFFFFFF, { centeralign: true } );
+			Text.display(Gfx.screenwidthmid / 2, 40, "[SCALE x3]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			//Since the dress is drawn quite small, we scale it up x3 in each example.
 			//xpivot and ypivot tell the code to center the dress when scaling.
 			//If we left those values out, the dress would scale from the top left hand corner.
 			Gfx.drawimage(leftdressx, leftdressy, "leftdress", { scale: 3, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER });
 		}else if (leftdresseffect == 2) {
-		  Text.display(Gfx.screenwidthmid / 2, 40, "[SCALE x3, WITH ROTATION]", 0xFFFFFF, { centeralign: true } );
+		  Text.display(Gfx.screenwidthmid / 2, 40, "[SCALE x3, WITH ROTATION]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(leftdressx, leftdressy, "leftdress", { scale: 3, rotation: (pulse-10) * 4, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER } );
 		}else if (leftdresseffect == 3) {
-		  Text.display(Gfx.screenwidthmid / 2, 40, "[DIFFERENT X AND Y SCALES]", 0xFFFFFF, { centeralign: true } );
+		  Text.display(Gfx.screenwidthmid / 2, 40, "[DIFFERENT X AND Y SCALES]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(leftdressx, leftdressy, "leftdress", { xscale: 2 + (pulse/10), yscale: 4 - (pulse/10), xpivot: Gfx.CENTER, ypivot: Gfx.CENTER });
 		}else if (leftdresseffect == 4) {
-		  Text.display(Gfx.screenwidthmid / 2, 40, "[ALPHA TRANSPARANCY]", 0xFFFFFF, { centeralign: true } );
+		  Text.display(Gfx.screenwidthmid / 2, 40, "[ALPHA TRANSPARANCY]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(leftdressx, leftdressy, "leftdress", { scale: 3, alpha: 1.0 - (pulse / 20), xpivot: Gfx.CENTER, ypivot: Gfx.CENTER } );
 		}else if (leftdresseffect == 5) {
-		  Text.display(Gfx.screenwidthmid / 2, 40, "[CHANGING GREEN MULTIPLER]", 0xFFFFFF, { centeralign: true } );
+		  Text.display(Gfx.screenwidthmid / 2, 40, "[CHANGING GREEN MULTIPLER]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(leftdressx, leftdressy, "leftdress", { scale: 3, green: 1 + ((pulse - 10)/20), xpivot: Gfx.CENTER, ypivot: Gfx.CENTER});
 		}
 		
 		//Draw the right dress, same as above
 		if (rightdresseffect == 1) {
-			Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[SCALE x3]", 0xFFFFFF, { centeralign: true } );
+			Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[SCALE x3]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(rightdressx, rightdressy, "rightdress", { scale: 3, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER });
 		}else if (rightdresseffect == 2) {
-		  Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[SCALE x3, WITH ROTATION]", 0xFFFFFF, { centeralign: true } );
+		  Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[SCALE x3, WITH ROTATION]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(rightdressx, rightdressy, "rightdress", { scale: 3, rotation: (pulse-10) * 4, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER } );
 		}else if (rightdresseffect == 3) {
-		  Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[DIFFERENT X AND Y SCALES]", 0xFFFFFF, { centeralign: true } );
+		  Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[DIFFERENT X AND Y SCALES]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(rightdressx, rightdressy, "rightdress", { xscale: 2 + (pulse/10), yscale: 4 - (pulse/10), xpivot: Gfx.CENTER, ypivot: Gfx.CENTER });
 		}else if (rightdresseffect == 4) {
-		  Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[ALPHA TRANSPARANCY]", 0xFFFFFF, { centeralign: true } );
+		  Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[ALPHA TRANSPARANCY]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(rightdressx, rightdressy, "rightdress", { scale: 3, alpha: 1.0 - (pulse / 20), xpivot: Gfx.CENTER, ypivot: Gfx.CENTER } );
 		}else if (rightdresseffect == 5) {
-		  Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[CHANGING BLUE MULTIPLER]", 0xFFFFFF, { centeralign: true } );
+		  Text.display(Gfx.screenwidthmid + (Gfx.screenwidthmid / 2), 40, "[CHANGING BLUE MULTIPLER]", 0xFFFFFF, { align: Text.CENTER } );
 			
 			Gfx.drawimage(rightdressx, rightdressy, "rightdress", { scale: 3, blue: 1 + ((pulse - 10)/20), xpivot: Gfx.CENTER, ypivot: Gfx.CENTER});
 		}
