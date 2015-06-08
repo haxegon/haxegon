@@ -46,7 +46,7 @@ class Main {
 		Gfx.cls(Col.GRAY);
 		
 		//Draw the animation. animationlist[] contains a list of animation names to draw.
-		Gfx.drawanimation(Gfx.screenwidthmid - 32, Gfx.screenheightmid - 80, animationlist[currentanimation], { scale: 4, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER } );
+		Gfx.drawanimation(Gfx.screenwidthmid, Gfx.screenheightmid - 40, animationlist[currentanimation], { scale: 4, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER, xalign: Gfx.CENTER, yalign: Gfx.CENTER } );
 		
 		//Draw the footer, with information about the current animation.
 		Gfx.fillbox(0, Gfx.screenheight - 80, Gfx.screenwidth, 80, Gfx.RGB(96, 96, 96));
