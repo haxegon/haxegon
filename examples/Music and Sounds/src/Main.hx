@@ -44,13 +44,13 @@ class Main {
 		
 		//Load in all the sounds with the names we just added to the array.
 		for (i in 0 ... soundlist.length) {
-			Music.addsound(soundlist[i]);
+			Music.loadsound(soundlist[i]);
 		}
 		
 		currentsoundeffect = 0;
 		
 		//Load in a song.
-		Music.addsong("ascent_chiptune");
+		Music.loadsong("ascent_chiptune");
 		
 		//Play the song!
 		Music.play("ascent_chiptune");
