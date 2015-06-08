@@ -19,8 +19,7 @@ typedef Drawparamstext = {
 	@:optional var red:Float;
 	@:optional var green:Float;
 	@:optional var blue:Float;
-	@:optional var centeralign:Bool;
-	@:optional var rightalign:Bool;
+	@:optional var align:Int;
 }
 
 class Text {
@@ -59,16 +58,16 @@ class Text {
 	}
 	
 	/** Return characters from the middle of a string. */
-	public static function Mid(s:String, start:Int = 0, length:Int = 1):String {
+	private static function mid(s:String, start:Int = 0, length:Int = 1):String {
 		return s.substr(start,length);
 	}
 	
 	/** Reverse a string. */
-	public static function reversetext(t:String):String {
+	private static function reversetext(t:String):String {
 		var t2:String = "";
 		
 		for (i in 0...t.length) {
-			t2 += Mid(t, t.length-i-1, 1);
+			t2 += mid(t, t.length-i-1, 1);
 		}
 		return t2;
 	}
@@ -208,13 +207,11 @@ class Text {
 			
 			x = alignx(x); y = aligny(y);
 			
-			if (parameters.centeralign != null) {
-				if (parameters.centeralign) {
+			if (parameters.align != null) {
+				if (parameters.align == CENTER) {
 					x = x - (len(t) / 2);
-				}
-			}else if (parameters.rightalign != null) {
-				if (parameters.rightalign) {
-					x = Math.floor(x - len(t));
+				}else if (parameters.align == RIGHT || parameters.align == BOTTOM) {
+					x = x - len(t);
 				}
 			}
 			

@@ -78,6 +78,8 @@ drawimage(x, y, "imagename", optional parameters);
       alpha          - between 0.0 and 1.0, the transparancy of the image. 1.0 is solid.
       red,green,blue - How much to multiply the red, green and blue values of the image by. 
                        1.0 is normal.
+      xalign, yalign - Aligns the image to the given axis. Can be set to:
+                       Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT, Gfx.CENTER
     
     These parameters should be grouped together and labeled between {} brackets like this:
       
@@ -86,8 +88,8 @@ drawimage(x, y, "imagename", optional parameters);
       Gfx.drawimage(50, 50, "monabart", { xscale: 2.5, alpha:0.5 });
       Gfx.drawimage(0, 0, "monamaggie", { rotation: 45, xpivot: 250, ypivot: 100 });
    
-  - You can use the following constants for values of x, y, pivotx and pivoty:
-      Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT, Gfx.CENTER
+  - You can use the following constants for values of x, y, xpivot, ypivot, xalign and yalign:
+    Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT, Gfx.CENTER
      
     e.g
       Gfx.drawimage(Gfx.CENTER, Gfx.CENTER, "logo");
@@ -241,11 +243,11 @@ Text.display(x, y, "thing to display", col, optional parameters);
 
   - Text display functions take all the same arguments as Drawimage, and also the following:
     
-    centeralign: Set to true if you want the text to align to the center of this point, eg:
-    Text.display(200, 0, "centered around (200, 0)", 0xFFFFFF, {centeralign: true});
+    align: Set to Text.LEFT to align to the left, Text.CENTER to align to the center, and
+           Text.RIGHT align to the right. Eg:
     
-    rightalign : Set to true if you want the text to align from the right of this point, eg
-    Text.display(700, 0, "top right corner", 0xFFFFFF, {rightalign: true});
+    Text.display(200, 0, "centered around (200, 0)", 0xFFFFFF, {align: Text.CENTER});
+    Text.display(700, 0, "top right corner", 0xFFFFFF, {align: Text.RIGHT});
   
   - You can use the following constants for values of x, y, pivotx and pivoty:
     Text.TOP, Text.BOTTOM, Text.LEFT, Text.RIGHT, Text.CENTER
