@@ -280,9 +280,11 @@ Music.loadsound("effectname");
     Also takes an optional volume option, which defaults to 1.0.
     
 Music.play("songname");
-Music.playsound("effectname");
 Music.stop();
 Music.fadeout();
+
+Music.playsound("effectname");
+Music.stopsound();
   
 Input:
 -------------------------

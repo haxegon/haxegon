@@ -131,6 +131,14 @@ class Music {
 		if (currentefchan > 15) currentefchan -= 16;
 	}
 	
+	public static function stopsound():Void {
+		temptransform = new SoundTransform(0);
+		
+		for (i in 0 ... 16) {
+			if (efchannel[i] != null) efchannel[i].soundTransform = temptransform;
+		}
+	}
+	
 	public static function loadsound(t:String, vol:Float = 1.0):Void {
 		effectindex.set(t, numeffects);
 		volumelevels.push(vol);
