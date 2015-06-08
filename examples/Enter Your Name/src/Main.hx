@@ -25,7 +25,7 @@ class Main {
 			Text.display(5, 5, "NAME:", Col.YELLOW);
 			Text.display(60, 5, playername, Col.WHITE);
 			
-			Text.display(Gfx.screenwidth - 5, 5, "[press ENTER to change]", Col.GRAY, { rightalign:true } );
+			Text.display(Gfx.screenwidth - 5, 5, "[press ENTER to change]", Col.GRAY, { align: Text.RIGHT } );
 		}else {
 			//Display the ENTER YOUR NAME prompt in the middle of the screen.
 			Text.changesize(32);
