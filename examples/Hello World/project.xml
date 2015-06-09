@@ -40,6 +40,6 @@
 	<assets path="data/music/ogg" rename="data/music" unless="flash"/> 
 	<assets path="data/sounds/mp3" rename="data/sounds" if="flash"/> 
 	<assets path="data/sounds/ogg" rename="data/sounds" unless="flash"/> 
-	<icon path="data/icon/openfl.svg" />
+	<icon path="data/icon/play.svg" />
 	
 </project>

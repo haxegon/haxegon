@@ -1,7 +1,10 @@
 import terrylib.*;
 
 class Main {
-	function update() {
+	function new() {
 		
+	}
+	function update() {
+		Text.display(0, 0, "HELLO!");
   }
 }

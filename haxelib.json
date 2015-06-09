@@ -1,0 +1,10 @@
+{
+	"name": "terrylib",
+	"url": "https://github.com/TerryCavanagh/terrylib",
+	"license": "MIT",
+	"tags": ["beginner", "simple", "easy", "tutorial"],
+	"description": "A tiny Haxe programming library for beginners.",
+	"version": "0.1",
+	"releasenote": "Work in progress, 1.0 coming soon!",
+	"contributors": [ "TerryCavanagh" ]
+}

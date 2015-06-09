@@ -62,8 +62,8 @@ Gfx.loadimage("imagename");
   
   - Place .PNG or .JPG images in data/graphics/, and call this function to load them in. e.g:
     
-    Gfx.addimage("titlescreen");  // Loads in data/graphics/titlescreen.png
-    Gfx.addimage("background");   // Loads in data/graphics/background.jpg
+    Gfx.loadimage("titlescreen");  // Loads in data/graphics/titlescreen.png
+    Gfx.loadimage("background");   // Loads in data/graphics/background.jpg
 
 drawimage(x, y, "imagename", optional parameters);
 
@@ -266,12 +266,12 @@ Music.loadsong("songname");
   - Place .MP3 files in data/music/mp3/ (for flash), or place .OGG files data/music/ogg/ 
     (for non-flash), and call this function to load them in. e.g:
     
-  Music.addsong("uptownfunk"); //Loads in data/music/mp3/uptownfunk.mp3 in flash, or
+  Music.loadsong("uptownfunk"); //Loads in data/music/mp3/uptownfunk.mp3 in flash, or
                                //data/music/ogg/uptownfunk.ogg in anything else.
   
   Can take a volume level between 0.0 and 1.0 as a second option. e.g:
   
-  Music.addsong("shakeitoff", 0.5);
+  Music.loadsong("shakeitoff", 0.5);
   
 
 Music.loadsound("effectname");
