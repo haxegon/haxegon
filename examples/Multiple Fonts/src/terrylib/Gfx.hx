@@ -96,13 +96,7 @@ class Gfx {
 		
 	/** Makes a tile array from a given image. */
 	public static function loadtiles(imagename:String, width:Int, height:Int):Void {
-		if (Assets.exists("data/graphics/" + imagename + ".png")) {
-			buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
-		}else if (Assets.exists("data/graphics/" + imagename + ".jpg")) {
-			buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".jpg")).bitmapData;
-		}else {
-			throw("ERROR: In loadtiles, cannot find .png or .jpg for \"" + imagename + "\".");
-		}
+		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
 		var tiles_rect:Rectangle = new Rectangle(0, 0, width, height);
 		tiles.push(new Tileset(imagename, width, height));
 		tilesetindex.set(imagename, tiles.length - 1);
@@ -147,13 +141,7 @@ class Gfx {
 	
 	/** Loads an image into the game. */
 	public static function loadimage(imagename:String):Void {
-		if (Assets.exists("data/graphics/" + imagename + ".png")) {
-		  buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
-		}else if (Assets.exists("data/graphics/" + imagename + ".jpg")) {
-			buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".jpg")).bitmapData;
-		}else {
-			throw("ERROR: In loadimage, cannot find .png or .jpg for \"" + imagename + "\".");
-		}
+		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
 		
 		imageindex.set(imagename, images.length);
 		
