@@ -638,16 +638,23 @@ class Gfx {
 			y = y - height;
 		}
 		
-		tempshape.graphics.clear();
-		tempshape.graphics.lineStyle(linethickness, col, alpha);
-		tempshape.graphics.lineTo(width, 0);
-		tempshape.graphics.lineTo(width, height);
-		tempshape.graphics.lineTo(0, height);
-		tempshape.graphics.lineTo(0, 0);
-		
-		shapematrix.translate(x, y);
-		drawto.draw(tempshape, shapematrix);
-		shapematrix.translate( -x, -y);
+		if (linethickness < 2) {				
+			drawline(x, y, x + width, y, col, alpha);
+			drawline(x, y + height, x + width, y + height, col, alpha);
+			drawline(x, y + 1, x, y + height, col, alpha);
+			drawline(x + width - 1, y + 1, x + width - 1, y + height, col, alpha);
+		}else{
+			tempshape.graphics.clear();
+			tempshape.graphics.lineStyle(linethickness, col, alpha);
+			tempshape.graphics.lineTo(width, 0);
+			tempshape.graphics.lineTo(width, height);
+			tempshape.graphics.lineTo(0, height);
+			tempshape.graphics.lineTo(0, 0);
+			
+			shapematrix.translate(x, y);
+			drawto.draw(tempshape, shapematrix);
+			shapematrix.translate( -x, -y);
+		}
 	}
 
 	public static function setlinethickness(size:Float):Void {
