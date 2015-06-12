@@ -59,11 +59,13 @@ class Scene {
 		#if neko
 		  try{
 		    scenelist.push(Type.createInstance(newscene, []));
+				currentscene = scenelist.length - 1;
 			}catch (e:Dynamic) {
 				throw("ERROR: Neko builds require all classes to have a \"new()\" function.");
 			}
 		#else
 		  scenelist.push(Type.createInstance(newscene, []));
+			currentscene = scenelist.length - 1;
 		#end
 	}
 	
