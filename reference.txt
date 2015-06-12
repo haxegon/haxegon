@@ -279,7 +279,7 @@ Music.loadsound("effectname");
   - Loads in a sound effect from the data/sounds/ folder. Same mp3 and ogg deal as with music.
     Also takes an optional volume option, which defaults to 1.0.
     
-Music.play("songname");
+Music.play("songname"); //Optionally takes a second paramater, seconds into the song to start at.
 Music.stop();
 Music.fadeout();
 
@@ -293,22 +293,21 @@ Keyboard keys are identified like this: Key.ENTER, Key.SPACE, Key.W, etc. Here's
 of allowed keys:
 
 //Letters
-"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
 
 //Numbers
-"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"
+ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE
 
 //Function keys
-"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"
+F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12
 
 //Punctuation
-"MINUS", "PLUS", "DELETE", "BACKSPACE", "LBRACKET", "RBRACKET", "BACKSLASH"
-"CAPSLOCK", "SEMICOLON", "QUOTE", "COMMA", "PERIOD", "SLASH"
+MINUS, PLUS, DELETE, BACKSPACE, LBRACKET, RBRACKET, BACKSLASH
+CAPSLOCK, SEMICOLON, QUOTE, COMMA, PERIOD, SLASH
 
 //Control characters
-"ESCAPE", "ENTER", "SHIFT", "CONTROL", "ALT", "SPACE"
-"UP", "DOWN", "LEFT", "RIGHT"
+ESCAPE, ENTER, SHIFT, CONTROL, ALT, SPACE
+UP, DOWN, LEFT, RIGHT
 
 In flashdevelop and other editors with tab completion, you should see the full list 
 after you type "Key." in your editor.
