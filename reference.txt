@@ -267,7 +267,7 @@ Music.loadsong("songname");
     (for non-flash), and call this function to load them in. e.g:
     
   Music.loadsong("uptownfunk"); //Loads in data/music/mp3/uptownfunk.mp3 in flash, or
-                               //data/music/ogg/uptownfunk.ogg in anything else.
+                                //data/music/ogg/uptownfunk.ogg in anything else.
   
   Can take a volume level between 0.0 and 1.0 as a second option. e.g:
   
@@ -279,7 +279,7 @@ Music.loadsound("effectname");
   - Loads in a sound effect from the data/sounds/ folder. Same mp3 and ogg deal as with music.
     Also takes an optional volume option, which defaults to 1.0.
     
-Music.play("songname"); //Optionally takes a second paramater, seconds into the song to start at.
+Music.play("songname"); //Optionally takes a second parameter, seconds into the song to start at.
 Music.stop();
 Music.fadeout();
 

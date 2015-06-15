@@ -115,6 +115,8 @@ class Gfx {
 				tiles[currenttileset].tiles.push(t);
 			}
 		}
+		
+		changetileset(imagename);
 	}
 	
 	/** Creates a blank tileset, with the name "imagename", with each tile a given width and height, containing "amount" tiles. */
