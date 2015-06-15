@@ -32,7 +32,7 @@
    
 	<source path="src" />
 	
-	<set name="openfl-legacy" unless="flash"/>
+	<set name="openfl-legacy" if="windows"/>
 	<haxelib name="openfl" />
 	
 	<assets path="data" exclude="*.svg|*.mp3|*.ogg|*.wav" />
