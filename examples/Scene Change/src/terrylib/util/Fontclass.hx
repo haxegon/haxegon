@@ -15,11 +15,12 @@ class Fontclass {
 		tf.selectable = false;
 		tf.width = Gfx.screenwidth; 
 		tf.height = Gfx.screenheight;
-		if (size <= 16) {
-			tf.antiAliasType = AntiAliasType.ADVANCED; //Small fonts need proper antialiasing
-		}else {
-		  tf.antiAliasType = AntiAliasType.NORMAL;	
-		}
+		// Taking this out for consistancy: only works on flash
+		//if (size <= 16) {
+		//	tf.antiAliasType = AntiAliasType.ADVANCED; //Small fonts need proper antialiasing
+		//}else {
+		tf.antiAliasType = AntiAliasType.NORMAL;	
+		//}
 		
 		
 		tf.text = "???";
