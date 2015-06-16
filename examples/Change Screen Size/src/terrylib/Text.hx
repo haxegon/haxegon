@@ -28,6 +28,7 @@ class Text {
 		gfxstage = stage;
 		enabletextfield();
 		alphact = new ColorTransform();
+		input_cursorglow = 0;
 	}
 	
 	//Text Input functions

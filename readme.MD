@@ -45,7 +45,9 @@ http://www.openfl.org/documentation/getting-started/installing-openfl/
 
 On windows, FlashDevelop is the recommended IDE. 
 
-On Mac, I've made a special compiler tool that comes with the project, TerryCompile. Unzip the "terrycompile.zip" folder into the project you want to complile, then run it! For a code editor on Mac, I like Adobe Brackets.
+On Mac, I've made a special compiler tool that comes with the project, TerryCompile. Unzip the "terrycompile.zip" folder into the project you want to complile, then run it! For a code editor on Mac, I'm still figuring out exactly what to recommend. Sublime Text, maybe!
+
+TerryLib can target Flash, HTML5, Neko, and Desktop platforms. (iOS and Android are possible in future, but are not currently supported.)
 
 ## Roadmap to 1.0
 
