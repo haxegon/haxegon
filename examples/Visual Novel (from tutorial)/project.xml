@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta 
+    title="Visual Novel" 
+    package="com.terrylib.visualnovel" 
+    version="1.0.0" 
+    company="Your name here" 
+  />
+
+	<app 
+      main="terrylib.Load"
+      path="bin" 
+      file="visualnovel" 
+   />
+   
+	<window
+      width="768" height="480" unless="mobile" 
+   ></window>
+   
+	<window
+      fps="60"
+      background="0x000000"
+      orientation="landscape"
+      hardware="true"
+      vsync="true"
+   ></window>
+   
+	<window
+      antialiasing="0" 
+      if="cpp"
+   ></window>
+   
+	<source path="src" />
+	
+	<set name="openfl-legacy" if="windows"/>
+	<haxelib name="openfl" />
+	
+	<assets path="data" exclude="*.svg|*.mp3|*.ogg|*.wav" />
+	<assets path="data/music/mp3" rename="data/music" if="flash"/> 
+	<assets path="data/music/ogg" rename="data/music" unless="flash"/> 
+	<assets path="data/sounds/mp3" rename="data/sounds" if="flash"/> 
+	<assets path="data/sounds/ogg" rename="data/sounds" unless="flash"/> 
+	<icon path="data/icon/play.svg" />
+	
+</project>

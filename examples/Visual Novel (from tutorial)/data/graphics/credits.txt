@@ -1,0 +1,11 @@
+walkway.png is by Zylinder, from the Ren'Py Lemma Soft Forums. It's been resized and cropped from the original to match TerryLib's default 768x480 resolution.
+
+from this thread:
+http://lemmasoft.renai.us/forums/viewtopic.php?f=52&t=13158
+
+All of the sprite images in this folder are by Konett, from the Ren'Py Lemma Soft Forums. 
+
+from this thread:
+http://lemmasoft.renai.us/forums/viewtopic.php?f=52&t=24893
+
+Thanks!
