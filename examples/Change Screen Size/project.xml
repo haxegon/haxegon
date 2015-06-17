@@ -10,7 +10,7 @@
 	<app 
       main="terrylib.Load"
       path="bin" 
-      file="newproject" 
+      file="changescreensize" 
    />
    
 	<window
