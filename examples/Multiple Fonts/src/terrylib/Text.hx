@@ -22,6 +22,7 @@ typedef Drawparamstext = {
 	@:optional var align:Int;
 }
 
+@:access(terrylib.Gfx)
 class Text {
 	public static function init(stage:Stage):Void {
 		drawto = Gfx.backbuffer;
@@ -181,6 +182,7 @@ class Text {
 	
 	public static function display(x:Float, y:Float, t:String, col:Int = 0xFFFFFF, ?parameters:Drawparamstext):Void {
 		// This was called "print" once. Maybe it was better that way? eh, stuck with display now
+		if (Gfx.skiprender && Gfx.drawingtoscreen) return;
 		if (parameters == null) {
 			typeface[currentindex].tf.textColor = col;
 			typeface[currentindex].tf.text = t;

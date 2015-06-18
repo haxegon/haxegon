@@ -58,6 +58,7 @@ class Gfx {
 		
 		backbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
 		drawto = backbuffer;
+		drawingtoscreen = true;
 		
 		screen = new Bitmap(backbuffer);
 		screen.width = screenwidth * scale;
@@ -177,6 +178,7 @@ class Gfx {
 	
 	/** Tell draw commands to draw to the actual screen. */
 	public static function drawtoscreen():Void {
+		drawingtoscreen = true;
 		drawto.unlock();
 		drawto = backbuffer;
 		drawto.lock();
@@ -184,6 +186,7 @@ class Gfx {
 	
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoimage(imagename:String):Void {
+		drawingtoscreen = false;
 		imagenum = imageindex.get(imagename);
 		
 		drawto.unlock();
@@ -193,6 +196,7 @@ class Gfx {
 	
 	/** Tell draw commands to draw to the given tile in the current tileset. */
 	public static function drawtotile(tilenumber:Int):Void {
+		drawingtoscreen = false;
 		drawto.unlock();
 		drawto = tiles[currenttileset].tiles[tilenumber];
 		drawto.lock();
@@ -235,6 +239,7 @@ class Gfx {
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
 	 * */
 	public static function drawimage(x:Float, y:Float, imagename:String, ?parameters:Drawparams):Void {
+		if (skiprender && drawingtoscreen) return;
 		imagenum = imageindex.get(imagename);
 		
 		tempxpivot = 0;
@@ -368,6 +373,7 @@ class Gfx {
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
 	 * */
 	public static function drawtile(x:Float, y:Float, t:Int, ?parameters:Drawparams):Void {
+		if (skiprender && drawingtoscreen) return;
 		if (t >= numberoftiles()) {
 			if (t == numberoftiles()) {
 			  trace("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles()) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
@@ -482,6 +488,7 @@ class Gfx {
 	}
 	
 	public static function drawanimation(x:Float, y:Float, animationname:String, ?parameters:Drawparams):Void {
+		if (skiprender && drawingtoscreen) return;
 		oldtileset = currenttilesetname;
 		animationnum = animationindex.get(animationname);
 		changetileset(animations[animationnum].tileset);
@@ -527,6 +534,7 @@ class Gfx {
 	}
 	
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
 		tempshape.graphics.lineTo(x2 - x1, y2 - y1);
@@ -537,6 +545,7 @@ class Gfx {
 	}
 	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
 		
@@ -559,6 +568,7 @@ class Gfx {
 	}
 	
 	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		temprotate = ((Math.PI * 2) / 6);
 		
@@ -581,6 +591,7 @@ class Gfx {
 	}
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
 		tempshape.graphics.drawCircle(0, 0, radius);
@@ -591,6 +602,7 @@ class Gfx {
 	}
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.beginFill(col, alpha);
 		tempshape.graphics.drawCircle(0, 0, radius);
@@ -602,6 +614,7 @@ class Gfx {
 	}
 	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
 		tempshape.graphics.lineTo(0, 0);
@@ -616,6 +629,7 @@ class Gfx {
 	}
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.beginFill(col, alpha);
 		tempshape.graphics.lineTo(0, 0);
@@ -631,6 +645,7 @@ class Gfx {
 	}
 
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		if (width < 0) {
 			width = -width;
 			x = x - width;
@@ -666,6 +681,7 @@ class Gfx {
 	}
 	
 	public static function cls(col:Int = 0x00000000):Void {
+		if (skiprender && drawingtoscreen) return;
 		backbuffer.fillRect(backbuffer.rect, col);
 	}
 	
@@ -674,6 +690,7 @@ class Gfx {
 	}
 
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0):Void {
+		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.beginFill(col, alpha);
 		tempshape.graphics.lineTo(width, 0);
@@ -845,4 +862,7 @@ class Gfx {
 	public static var TOP:Int = -20002;
 	public static var BOTTOM:Int = -20003;
 	public static var CENTER:Int = -20004;
+	
+	private static var skiprender:Bool;
+	private static var drawingtoscreen:Bool;
 }
