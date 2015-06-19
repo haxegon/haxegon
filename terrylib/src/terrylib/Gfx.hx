@@ -85,9 +85,13 @@ class Gfx {
 	
 	/** Change the tileset that the draw functions use. */
 	public static function changetileset(tilesetname:String):Void {
-		if(currenttilesetname != tilesetname){
-			currenttileset = tilesetindex.get(tilesetname);
-			currenttilesetname = tilesetname;
+		if (currenttilesetname != tilesetname) {
+			if(tilesetindex.exists(tilesetname)){
+				currenttileset = tilesetindex.get(tilesetname);
+				currenttilesetname = tilesetname;
+			}else {
+				throw("ERROR: Cannot change to tileset \"" + tilesetname + "\", no tileset with that name found.");
+			}
 		}
 	}
 	
@@ -98,10 +102,14 @@ class Gfx {
 	/** Makes a tile array from a given image. */
 	public static function loadtiles(imagename:String, width:Int, height:Int):Void {
 		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
+		if (buffer == null) {
+			throw("ERROR: In loadtiles, cannot find data/graphics/" + imagename + ".png.");
+			return;
+		}
+		
 		var tiles_rect:Rectangle = new Rectangle(0, 0, width, height);
 		tiles.push(new Tileset(imagename, width, height));
 		tilesetindex.set(imagename, tiles.length - 1);
-		currenttileset = tiles.length - 1;
 		
 		var tilerows:Int;
 		var tilecolumns:Int;
@@ -124,12 +132,13 @@ class Gfx {
 	public static function createtiles(imagename:String, width:Float, height:Float, amount:Int):Void {
 		tiles.push(new Tileset(imagename, Std.int(width), Std.int(height)));
 		tilesetindex.set(imagename, tiles.length - 1);
-		currenttileset = tiles.length - 1;
 		
 		for (i in 0 ... amount) {
 			var t:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0x000000);
 			tiles[currenttileset].tiles.push(t);
 		}
+		
+		changetileset(imagename);
 	}
 	
 	/** Returns the width of a tile in the current tileset. */
@@ -145,6 +154,10 @@ class Gfx {
 	/** Loads an image into the game. */
 	public static function loadimage(imagename:String):Void {
 		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
+		if (buffer == null) {
+			throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png.");
+			return;
+		}
 		
 		imageindex.set(imagename, images.length);
 		
@@ -164,14 +177,24 @@ class Gfx {
 	
 	/** Returns the width of the image. */
 	public static function imagewidth(imagename:String):Int {
-		imagenum = imageindex.get(imagename);
+		if(imageindex.exists(imagename)){
+			imagenum = imageindex.get(imagename);
+		}else {
+			throw("ERROR: In imagewidth, cannot find image \"" + imagename + "\".");
+			return 0;
+		}
 		
 		return images[imagenum].width;
 	}
 	
 	/** Returns the height of the image. */
 	public static function imageheight(imagename:String):Int {
-		imagenum = imageindex.get(imagename);
+		if(imageindex.exists(imagename)){
+			imagenum = imageindex.get(imagename);
+		}else {
+			throw("ERROR: In imageheight, cannot find image \"" + imagename + "\".");
+			return 0;
+		}
 		
 		return images[imagenum].height;
 	}
@@ -240,6 +263,10 @@ class Gfx {
 	 * */
 	public static function drawimage(x:Float, y:Float, imagename:String, ?parameters:Drawparams):Void {
 		if (skiprender && drawingtoscreen) return;
+		if (!imageindex.exists(imagename)) {
+			throw("ERROR: In drawimage, cannot find image \"" + imagename + "\".");
+			return;
+		}
 		imagenum = imageindex.get(imagename);
 		
 		tempxpivot = 0;
@@ -325,11 +352,26 @@ class Gfx {
 	}
 	
 	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float):Void {
+		if (currenttileset == -1) {
+			throw("ERROR: In grabtilefromscreen, there is no tileset currently set. Use Gfx.changetileset(\"tileset name\") to set the current tileset.");
+			return;
+		}
+		
 		settrect(x, y, tilewidth(), tileheight());
 		tiles[currenttileset].tiles[tilenumber].copyPixels(backbuffer, trect, tl);
 	}
 	
 	public static function grabtilefromimage(tilenumber:Int, imagename:String, x:Float, y:Float):Void {
+		if (!imageindex.exists(imagename)) {
+			throw("ERROR: In grabtilefromimage, \"" + imagename + "\" does not exist.");
+			return;
+		}
+		
+		if (currenttileset == -1) {
+			throw("ERROR: In grabtilefromimage, there is no tileset currently set. Use Gfx.changetileset(\"tileset name\") to set the current tileset.");
+			return;
+		}
+		
 		imagenum = imageindex.get(imagename);
 		
 		settrect(x, y, tilewidth(), tileheight());
@@ -337,6 +379,10 @@ class Gfx {
 	}
 	
 	public static function grabimagefromscreen(imagename:String, x:Float, y:Float):Void {
+		if (!imageindex.exists(imagename)) {
+			throw("ERROR: In grabimagefromscreen, \"" + imagename + "\" does not exist. You need to create an image label first before using this function.");
+			return;
+		}
 		imagenum = imageindex.get(imagename);
 		
 		settrect(x, y, images[imagenum].width, images[imagenum].height);
@@ -344,6 +390,11 @@ class Gfx {
 	}
 	
 	public static function grabimagefromimage(imagename:String, imagetocopyfrom:String, x:Float, y:Float):Void {
+		if (!imageindex.exists(imagename)) {
+			throw("ERROR: In grabimagefromimage, \"" + imagename + "\" does not exist. You need to create an image label first before using this function.");
+			return;
+		}
+		
 		imagenum = imageindex.get(imagename);
 		if (!imageindex.exists(imagetocopyfrom)) {
 			trace("ERROR: No image called \"" + imagetocopyfrom + "\" found.");
@@ -374,11 +425,17 @@ class Gfx {
 	 * */
 	public static function drawtile(x:Float, y:Float, t:Int, ?parameters:Drawparams):Void {
 		if (skiprender && drawingtoscreen) return;
+		if (currenttileset == -1) {
+			throw("ERROR: No tileset currently set. Use Gfx.changetileset(\"tileset name\") to set the current tileset.");
+			return;
+		}
 		if (t >= numberoftiles()) {
 			if (t == numberoftiles()) {
-			  trace("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles()) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
+			  throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles()) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
+				return;
 			}else{
-				trace("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles()) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles()) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				return;
 			}
 		}
 		
@@ -480,7 +537,7 @@ class Gfx {
 	
 	public static function defineanimation(animationname:String, tileset:String, startframe:Int, endframe:Int, delayperframe:Int):Void {
 		if (delayperframe < 1) {
-			trace("ERROR: Cannot have a delay per frame of less than 1.");
+			throw("ERROR: Cannot have a delay per frame of less than 1.");
 			return;
 		}
 		animationindex.set(animationname, animations.length);
@@ -803,7 +860,7 @@ class Gfx {
 	
 	private static var tiles:Array<Tileset> = new Array<Tileset>();
 	private static var tilesetindex:Map<String, Int> = new Map<String, Int>();
-	private static var currenttileset:Int;
+	private static var currenttileset:Int = -1;
 	public static var currenttilesetname:String;
 	
 	public static var drawto:BitmapData;
