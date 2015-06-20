@@ -26,10 +26,25 @@ typedef Drawparams = {
 }
 
 class Gfx {
-	/** Just gives Gfx access to the stage. */
-	public static function init(stage:Stage):Void {
-		gfxstage = stage;
-	}
+	public static var LEFT:Int = -20000;
+	public static var RIGHT:Int = -20001;
+	public static var TOP:Int = -20002;
+	public static var BOTTOM:Int = -20003;
+	public static var CENTER:Int = -20004;
+	
+	public static var screenwidth:Int;
+	public static var screenheight:Int;
+	public static var screenwidthmid:Int;
+	public static var screenheightmid:Int;
+	
+	public static var screenscale:Int;
+	public static var devicexres:Int;
+	public static var deviceyres:Int;
+	public static var fullscreen:Bool;
+	
+	public static var currenttilesetname:String;
+	public static var backbuffer:BitmapData;
+	public static var drawto:BitmapData;
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
 	public static function resizescreen(width:Float, height:Float, scale:Int = 1):Void {
@@ -38,49 +53,6 @@ class Gfx {
 		gfxstage.addChild(screen);
 		
 		updategraphicsmode();
-	}
-	
-	/** Called from resizescreen(). Sets up all our graphics buffers. */
-	private static function initgfx(width:Int, height:Int, scale:Int):Void {
-		//We initialise a few things
-		screenwidth = width; screenheight = height;
-		screenwidthmid = Std.int(screenwidth / 2); screenheightmid = Std.int(screenheight / 2);
-		
-		devicexres = Std.int(flash.system.Capabilities.screenResolutionX);
-		deviceyres = Std.int(flash.system.Capabilities.screenResolutionY);
-		screenscale = scale;
-		
-		trect = new Rectangle(); tpoint = new Point();
-		tbuffer = new BitmapData(1, 1, true);
-		ct = new ColorTransform(0, 0, 0, 1, 255, 255, 255, 1); //Set to white
-		alphact = new ColorTransform();
-		hslval.push(0.0); hslval.push(0.0); hslval.push(0.0);
-		
-		backbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
-		drawto = backbuffer;
-		drawingtoscreen = true;
-		
-		screen = new Bitmap(backbuffer);
-		screen.width = screenwidth * scale;
-		screen.height = screenheight * scale;
-		
-		fullscreen = false;
-		
-		Debug.showtest = false;
-	}
-	
-	/** Sets the values for the temporary rect structure. Probably better than making a new one, idk */
-	private static function settrect(x:Float, y:Float, w:Float, h:Float):Void {
-		trect.x = x;
-		trect.y = y;
-		trect.width = w;
-		trect.height = h;
-	}
-	
-	/** Sets the values for the temporary point structure. Probably better than making a new one, idk */
-	private static function settpoint(x:Float, y:Float):Void {
-		tpoint.x = x;
-		tpoint.y = y;
 	}
 	
 	/** Change the tileset that the draw functions use. */
@@ -822,7 +794,7 @@ class Gfx {
 		screen.y = (screenheight - (screenheight * t)) / 2;
 	}
 	
-	public static function updategraphicsmode():Void {
+	private static function updategraphicsmode():Void {
 		if (fullscreen) {
 			Lib.current.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 			gfxstage.scaleMode = StageScaleMode.NO_SCALE;
@@ -853,22 +825,57 @@ class Gfx {
 		}
 	}
 	
-	public static var screenwidth:Int;
-	public static var screenheight:Int;
-	public static var screenwidthmid:Int;
-	public static var screenheightmid:Int;
+	/** Just gives Gfx access to the stage. */
+	private static function init(stage:Stage):Void {
+		gfxstage = stage;
+	}
 	
-	public static var screenscale:Int;
-	public static var devicexres:Int;
-	public static var deviceyres:Int;
-	public static var fullscreen:Bool;
+	/** Called from resizescreen(). Sets up all our graphics buffers. */
+	private static function initgfx(width:Int, height:Int, scale:Int):Void {
+		//We initialise a few things
+		screenwidth = width; screenheight = height;
+		screenwidthmid = Std.int(screenwidth / 2); screenheightmid = Std.int(screenheight / 2);
+		
+		devicexres = Std.int(flash.system.Capabilities.screenResolutionX);
+		deviceyres = Std.int(flash.system.Capabilities.screenResolutionY);
+		screenscale = scale;
+		
+		trect = new Rectangle(); tpoint = new Point();
+		tbuffer = new BitmapData(1, 1, true);
+		ct = new ColorTransform(0, 0, 0, 1, 255, 255, 255, 1); //Set to white
+		alphact = new ColorTransform();
+		hslval.push(0.0); hslval.push(0.0); hslval.push(0.0);
+		
+		backbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
+		drawto = backbuffer;
+		drawingtoscreen = true;
+		
+		screen = new Bitmap(backbuffer);
+		screen.width = screenwidth * scale;
+		screen.height = screenheight * scale;
+		
+		fullscreen = false;
+		
+		Debug.showtest = false;
+	}
+	
+	/** Sets the values for the temporary rect structure. Probably better than making a new one, idk */
+	private static function settrect(x:Float, y:Float, w:Float, h:Float):Void {
+		trect.x = x;
+		trect.y = y;
+		trect.width = w;
+		trect.height = h;
+	}
+	
+	/** Sets the values for the temporary point structure. Probably better than making a new one, idk */
+	private static function settpoint(x:Float, y:Float):Void {
+		tpoint.x = x;
+		tpoint.y = y;
+	}
 	
 	private static var tiles:Array<Tileset> = new Array<Tileset>();
 	private static var tilesetindex:Map<String, Int> = new Map<String, Int>();
 	private static var currenttileset:Int = -1;
-	public static var currenttilesetname:String;
-	
-	public static var drawto:BitmapData;
 	
 	private static var animations:Array<AnimationContainer> = new Array<AnimationContainer>();
 	private static var animationnum:Int;
@@ -908,7 +915,6 @@ class Gfx {
 	
 	private static var temptile:BitmapData;
 	//Actual backgrounds
-	public static var backbuffer:BitmapData;
 	private static var screen:Bitmap;
 	private static var tempshape:Shape = new Shape();
 	private static var shapematrix:Matrix = new Matrix();
@@ -918,12 +924,6 @@ class Gfx {
 	
 	//HSL conversion variables 
 	private static var hslval:Array<Float> = new Array<Float>();
-	
-	public static var LEFT:Int = -20000;
-	public static var RIGHT:Int = -20001;
-	public static var TOP:Int = -20002;
-	public static var BOTTOM:Int = -20003;
-	public static var CENTER:Int = -20004;
 	
 	private static var skiprender:Bool;
 	private static var drawingtoscreen:Bool;

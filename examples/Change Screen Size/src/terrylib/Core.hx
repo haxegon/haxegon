@@ -7,6 +7,7 @@ import openfl.Lib;
 
 @:access(Main)
 @:access(terrylib.Gfx)
+@:access(terrylib.Music)
 @:access(terrylib.Mouse)
 @:access(terrylib.Input)
 @:access(terrylib.Scene)

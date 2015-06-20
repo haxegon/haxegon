@@ -12,6 +12,44 @@ enum Keystate {
 }
 
 class Input {
+	public static function pressed(k:Key):Bool {
+		return keyheld[keymap.get(k)];
+	}
+	
+	public static function justpressed(k:Key):Bool { 
+		if (current[keymap.get(k)] == Keystate.justpressed) {
+			current[keymap.get(k)] = Keystate.pressed;
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public static function justreleased(k:Key):Bool { 
+		if (current[keymap.get(k)] == Keystate.justreleased) {
+			current[keymap.get(k)] = Keystate.notpressed;
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public static function delaypressed(k:Key, delay:Int):Bool {
+		keycode = keymap.get(k);
+		if (keyheld[keycode]) {
+			if (keydelay[keycode] <= 0) {
+				keydelay[keycode] = delay;
+				return true;
+			}else {
+		    keydelay[keycode]--;
+				return false;
+			}
+		}else {
+			keydelay[keycode] = 0;
+		}
+		return false;
+	}
+	
 	private static function init(stage:DisplayObject):Void{
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		stage.addEventListener(KeyboardEvent.KEY_UP, handlekeyup);
@@ -121,44 +159,6 @@ class Input {
 				last[i] = Keystate.notpressed;
 				keyheld[i] = false;
 			}
-		}
-	}
-	
-	public static function delaypressed(k:Key, delay:Int):Bool {
-		keycode = keymap.get(k);
-		if (keyheld[keycode]) {
-			if (keydelay[keycode] <= 0) {
-				keydelay[keycode] = delay;
-				return true;
-			}else {
-		    keydelay[keycode]--;
-				return false;
-			}
-		}else {
-			keydelay[keycode] = 0;
-		}
-		return false;
-	}
-	
-	public static function pressed(k:Key):Bool {
-		return keyheld[keymap.get(k)];
-	}
-	
-	public static function justpressed(k:Key):Bool { 
-		if (current[keymap.get(k)] == Keystate.justpressed) {
-			current[keymap.get(k)] = Keystate.pressed;
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	public static function justreleased(k:Key):Bool { 
-		if (current[keymap.get(k)] == Keystate.justreleased) {
-			current[keymap.get(k)] = Keystate.notpressed;
-			return true;
-		}else {
-			return false;
 		}
 	}
 	

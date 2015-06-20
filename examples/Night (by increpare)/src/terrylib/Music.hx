@@ -6,122 +6,6 @@ import openfl.events.*;
 import openfl.Assets;
 
 class Music {
-	public static function init():Void{
-		currentsong = "nothing"; musicfade = 0;//no music, no amb
-		currentefchan = 0;
-		usingtickertext = false;
-		
-		globalsound = 1; muted = false;
-		
-		numplays = 0;
-		numeffects = 0;
-		numsongs = 0;
-	}
-	
-	public static function play(t:String, time:Int = 0):Void {
-		if (currentsong !=t) {
-			if (currentsong != "nothing") {
-				//Stop the old song first
-				musicchannel.stop();
-				musicchannel.removeEventListener(Event.SOUND_COMPLETE, loopmusic);
-			}
-			if (t != "nothing") {
-				currentsong = t;
-				
-				musicchannel = musicchan[Std.int(songindex.get(t))].play((time * 1000) % musicchan[Std.int(songindex.get(t))].length);
-				musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(t))] * globalsound);
-				
-				musicchannel.addEventListener(Event.SOUND_COMPLETE, loopmusic);
-			}else {	
-				currentsong = "nothing";
-			}
-		}
-	}   
-	
-	private static function loopmusic(e:Event):Void { 
-		musicchannel.removeEventListener(Event.SOUND_COMPLETE, loopmusic);
-		if (currentsong != "nothing") {
-			musicchannel = musicchan[Std.int(songindex.get(currentsong))].play();
-			musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(currentsong))] * globalsound);
-				
-			musicchannel.addEventListener(Event.SOUND_COMPLETE, loopmusic);
-		}
-	}
-	
-	private static function stopmusic(e:Event):Void { 
-		musicchannel.removeEventListener(Event.SOUND_COMPLETE, stopmusic);
-		musicchannel.stop();
-		currentsong = "nothing";
-	}
-	
-	public static function stop():Void { 
-		musicchannel.removeEventListener(Event.SOUND_COMPLETE, stopmusic);
-		musicchannel.stop();
-		currentsong = "nothing";
-	}
-	
-	public static function fadeout():Void { 
-		if (musicfade == 0) {
-			musicfade = 31;
-		}
-	}
-	
-	public static function processmusicfade():Void {
-		musicfade--;
-		if (musicfade > 0) {
-			musicchannel.soundTransform = new SoundTransform((musicfade / 30) * globalsound);
-		}else {
-			musicchannel.stop();
-			currentsong = "nothing";
-		}
-	}
-	
-	public static function processmusicfadein():Void {
-		musicfadein--;
-		if (musicfadein > 0) {
-			musicchannel.soundTransform = new SoundTransform(((60-musicfadein) / 60 )*globalsound);
-		}else {
-			musicchannel.soundTransform = new SoundTransform(1.0 * globalsound);
-		}
-	}
-	
-	public static function processmusic():Void {
-		if (musicfade > 0) processmusicfade();
-		if (musicfadein > 0) processmusicfadein();
-	}
-	
-	public static function updateallvolumes():Void {
-		//Update the volume levels of all currently playing sounds.
-		//Music:
-		if(currentsong!="nothing"){
-			musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(currentsong))] * globalsound);
-		}
-		//Sound effects
-		//Figure this out someday I guess?
-	}
-	
-	public static function processmute():Void {
-		if (Text.input_show == 0) {
-			if (Input.justpressed(Key.M) && mutebutton <= 0) {
-				mutebutton = 2; if (muted) { muted = false; }else { muted = true;}
-			}
-			if (mutebutton > 0 && !Input.pressed(Key.M)) mutebutton--;
-		}
-		
-		if (muted) {
-			if (globalsound == 1) {
-			  globalsound = 0;
-				updateallvolumes();
-			}
-		}
-		
-		if (!muted && globalsound < 1) {
-			globalsound += 0.05; 
-			if (globalsound > 1.0) globalsound = 1.0;
-			updateallvolumes();
-		}
-	}
-	
 	//Play a sound effect! There are 16 channels, which iterate
 	public static function playsound(t:String, offset:Int = 0):Void {
 		temptransform = new SoundTransform(volumelevels[Std.int(effectindex.get(t))] * globalsound);
@@ -159,6 +43,122 @@ class Music {
 		musicchan.push(Assets.getMusic("data/music/" + t + ".ogg"));
 		#end
 		numsongs++;
+	}
+	
+	public static function play(t:String, time:Int = 0):Void {
+		if (currentsong !=t) {
+			if (currentsong != "nothing") {
+				//Stop the old song first
+				musicchannel.stop();
+				musicchannel.removeEventListener(Event.SOUND_COMPLETE, loopmusic);
+			}
+			if (t != "nothing") {
+				currentsong = t;
+				
+				musicchannel = musicchan[Std.int(songindex.get(t))].play((time * 1000) % musicchan[Std.int(songindex.get(t))].length);
+				musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(t))] * globalsound);
+				
+				musicchannel.addEventListener(Event.SOUND_COMPLETE, loopmusic);
+			}else {	
+				currentsong = "nothing";
+			}
+		}
+	}   
+	
+	public static function stop():Void { 
+		musicchannel.removeEventListener(Event.SOUND_COMPLETE, stopmusic);
+		musicchannel.stop();
+		currentsong = "nothing";
+	}
+	
+	public static function fadeout():Void { 
+		if (musicfade == 0) {
+			musicfade = 31;
+		}
+	}
+	
+	private static function init():Void{
+		currentsong = "nothing"; musicfade = 0;//no music, no amb
+		currentefchan = 0;
+		usingtickertext = false;
+		
+		globalsound = 1; muted = false;
+		
+		numplays = 0;
+		numeffects = 0;
+		numsongs = 0;
+	}
+	
+	private static function loopmusic(e:Event):Void { 
+		musicchannel.removeEventListener(Event.SOUND_COMPLETE, loopmusic);
+		if (currentsong != "nothing") {
+			musicchannel = musicchan[Std.int(songindex.get(currentsong))].play();
+			musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(currentsong))] * globalsound);
+				
+			musicchannel.addEventListener(Event.SOUND_COMPLETE, loopmusic);
+		}
+	}
+	
+	private static function stopmusic(e:Event):Void { 
+		musicchannel.removeEventListener(Event.SOUND_COMPLETE, stopmusic);
+		musicchannel.stop();
+		currentsong = "nothing";
+	}
+	
+	private static function processmusicfade():Void {
+		musicfade--;
+		if (musicfade > 0) {
+			musicchannel.soundTransform = new SoundTransform((musicfade / 30) * globalsound);
+		}else {
+			musicchannel.stop();
+			currentsong = "nothing";
+		}
+	}
+	
+	private static function processmusicfadein():Void {
+		musicfadein--;
+		if (musicfadein > 0) {
+			musicchannel.soundTransform = new SoundTransform(((60-musicfadein) / 60 )*globalsound);
+		}else {
+			musicchannel.soundTransform = new SoundTransform(1.0 * globalsound);
+		}
+	}
+	
+	private static function processmusic():Void {
+		if (musicfade > 0) processmusicfade();
+		if (musicfadein > 0) processmusicfadein();
+	}
+	
+	private static function updateallvolumes():Void {
+		//Update the volume levels of all currently playing sounds.
+		//Music:
+		if(currentsong!="nothing"){
+			musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(currentsong))] * globalsound);
+		}
+		//Sound effects
+		//Figure this out someday I guess?
+	}
+	
+	private static function processmute():Void {
+		if (Text.input_show == 0) {
+			if (Input.justpressed(Key.M) && mutebutton <= 0) {
+				mutebutton = 2; if (muted) { muted = false; }else { muted = true;}
+			}
+			if (mutebutton > 0 && !Input.pressed(Key.M)) mutebutton--;
+		}
+		
+		if (muted) {
+			if (globalsound == 1) {
+			  globalsound = 0;
+				updateallvolumes();
+			}
+		}
+		
+		if (!muted && globalsound < 1) {
+			globalsound += 0.05; 
+			if (globalsound > 1.0) globalsound = 1.0;
+			updateallvolumes();
+		}
 	}
 	
 	public static var musicchan:Array<Sound> = new Array<Sound>();	
