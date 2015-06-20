@@ -110,6 +110,7 @@ class Gfx {
 		var tiles_rect:Rectangle = new Rectangle(0, 0, width, height);
 		tiles.push(new Tileset(imagename, width, height));
 		tilesetindex.set(imagename, tiles.length - 1);
+		currenttileset = tiles.length - 1;
 		
 		var tilerows:Int;
 		var tilecolumns:Int;
@@ -547,6 +548,10 @@ class Gfx {
 	public static function drawanimation(x:Float, y:Float, animationname:String, ?parameters:Drawparams):Void {
 		if (skiprender && drawingtoscreen) return;
 		oldtileset = currenttilesetname;
+		if (!animationindex.exists(animationname)) {
+			throw("ERROR: No animated named \"" +animationname+"\" is defined. Define one first using Gfx.defineanimation!");
+			return;
+		}
 		animationnum = animationindex.get(animationname);
 		changetileset(animations[animationnum].tileset);
 		
