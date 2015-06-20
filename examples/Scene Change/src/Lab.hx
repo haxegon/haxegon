@@ -47,7 +47,7 @@ class Lab {
 		}
 		
 		//Clear the screen to a very dark red
-		Gfx.cls(Gfx.RGB(16, 0, 0));
+		Gfx.clearscreen(Gfx.RGB(16, 0, 0));
 		
 		Gfx.setlinethickness(2);
 		

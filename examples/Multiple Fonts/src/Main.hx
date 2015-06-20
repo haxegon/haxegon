@@ -17,7 +17,7 @@ class Main {
 	
 	function update() {
 		// Draw a white background
-		Gfx.fillbox(0, 0, Gfx.screenwidth, Gfx.screenheight, Col.WHITE);
+		Gfx.clearscreen(Col.WHITE);
 		
 		//When changing font, it's usually best to change both the fontface and the size!
 		Text.changefont("oswald");

@@ -24,7 +24,7 @@ class Space {
 		}
 		
 		//Starfield
-		Gfx.cls();
+		Gfx.clearscreen();
 		
 		for (i in 0 ... 50) {
 			//Draw slow stars darker than bright stars to give a parallex effect.

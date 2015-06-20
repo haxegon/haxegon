@@ -43,7 +43,7 @@ class Main {
 		}
 		
 		//Clears the screen.
-		Gfx.cls(Col.GRAY);
+		Gfx.clearscreen(Col.GRAY);
 		
 		//Draw the animation. animationlist[] contains a list of animation names to draw.
 		Gfx.drawanimation(Gfx.screenwidthmid, Gfx.screenheightmid - 40, animationlist[currentanimation], { scale: 4, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER, xalign: Gfx.CENTER, yalign: Gfx.CENTER } );

@@ -55,7 +55,7 @@ Gfx.resizescreen(width, height, scale);
   
     You might also need to change the actual window size - this is in project.xml.
 
-Gfx.cls();                     // Clears the screen to BLACK, can optionally take a colour variable.
+Gfx.clearscreen();        // Clears the screen to BLACK, can optionally take a colour variable.
 
 //Images
 Gfx.loadimage("imagename");

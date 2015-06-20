@@ -11,7 +11,7 @@ class Main {
 	}
 	
   function update() {
-		Gfx.cls(Col.NIGHTBLUE);
+		Gfx.clearscreen(Col.NIGHTBLUE);
 		
 		if (nameentered) {
 			//If the name has been entered, then check for Key.ENTER before asking again.

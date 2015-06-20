@@ -737,7 +737,7 @@ class Gfx {
 		if (linethickness > 255) linethickness = 255;
 	}
 	
-	public static function cls(col:Int = 0x00000000):Void {
+	public static function clearscreen(col:Int = 0x00000000):Void {
 		if (skiprender && drawingtoscreen) return;
 		backbuffer.fillRect(backbuffer.rect, col);
 	}
