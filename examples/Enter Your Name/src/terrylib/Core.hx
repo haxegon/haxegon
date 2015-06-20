@@ -66,7 +66,7 @@ class Core extends Sprite {
 		
 		if(!Gfx.skiprender) Gfx.backbuffer.lock();
 		
-		Gfx.cls();
+		Gfx.clearscreen();
 		Scene.update();
 		Text.drawstringinput();
 		Debug.showlog();
