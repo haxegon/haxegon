@@ -105,6 +105,7 @@ class Gfx {
 	public static function createtiles(imagename:String, width:Float, height:Float, amount:Int):Void {
 		tiles.push(new Tileset(imagename, Std.int(width), Std.int(height)));
 		tilesetindex.set(imagename, tiles.length - 1);
+		currenttileset = tiles.length - 1;
 		
 		for (i in 0 ... amount) {
 			var t:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0x000000);

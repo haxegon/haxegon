@@ -15,14 +15,14 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="C:\coding\haxe\Haxe\lib\openfl\3,0,6" />
-    <class path="C:\coding\haxe\Haxe\lib\lime\2,4,1" />
+    <class path="C:\coding\haxe\Haxe\lib\openfl\3,1,0" />
+    <class path="C:\coding\haxe\Haxe\lib\lime\2,4,4" />
     <class path="src" />
     <class path="bin\flash\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=3.0.6&#xA;lime=2.4.1&#xA;openfl-next&#xA;tools=2.4.1&#xA;no-compilation&#xA;openfl-flash&#xA;web" />
+    <option directives="openfl=3.1.0&#xA;lime=2.4.4&#xA;openfl-next&#xA;tools=2.4.4&#xA;no-compilation&#xA;openfl-flash&#xA;web" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
