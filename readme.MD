@@ -1,6 +1,6 @@
 #TerryLib
 
-Ssshh! TerryLib is a work in progress. Things might change between now and when it gets properly finished, but if you're feeling adventurous, feel free to try it out!
+TerryLib is a work in progress! At this point it's pretty stable and thing probably won't change much before it gets released, but it's still being worked on. Feel free to try it out now, though, and let me know what you think!
 
 TerryLib is a tiny haxe programming library for beginners. It's made to accompany a beginners game programming tutorial that I'm currently writing.
 
@@ -52,5 +52,7 @@ TerryLib can target Flash, HTML5, Neko, and Desktop platforms. (iOS and Android 
 ## Roadmap to 1.0
 
 To do:
+ - Add support for simple text file embedding.
+ - Add support for simple csv file embedding.
  - Make sure TerryLib gives good error messages in as many places as possible.
  - Finish tutorial and make some examples!
