@@ -1,6 +1,6 @@
 #TerryLib
 
-TerryLib is a work in progress! At this point it's pretty stable - things probably won't change much before it gets released. Feel free to try it out right now, though, and let me know what you think!
+TerryLib is a work in progress! At this point it's pretty stable - things probably won't change much before it gets released. If you try it out, let me know what you think! The tutorial is on it's way, and will have a public beta test soon.
 
 TerryLib is a tiny haxe programming library for beginners. It's made to accompany a beginners game programming tutorial that I'm currently writing.
 
