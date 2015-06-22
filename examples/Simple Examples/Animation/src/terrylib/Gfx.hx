@@ -569,16 +569,14 @@ class Gfx {
 	}
 	
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int, alpha:Float = 1.0):Void {
-		if (skiprender && drawingtoscreen) return;
-		tempshape.graphics.clear();
-		tempshape.graphics.lineStyle(linethickness, col, alpha);
-		tempshape.graphics.lineTo(x2 - x1, y2 - y1);
-		
-		shapematrix.translate(x1, y1);
-		drawto.draw(tempshape, shapematrix);
-		shapematrix.translate(-x1, -y1);
+    if (skiprender && drawingtoscreen) return;
+    tempshape.graphics.clear();
+    tempshape.graphics.lineStyle(linethickness, col, alpha);
+    tempshape.graphics.moveTo(x1,y1);
+    tempshape.graphics.lineTo(x2, y2);
+    drawto.draw(tempshape, shapematrix);
 	}
-	
+
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0):Void {
 		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
