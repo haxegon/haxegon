@@ -571,8 +571,8 @@ class Gfx {
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int, alpha:Float = 1.0):Void {
     if (skiprender && drawingtoscreen) return;
     tempshape.graphics.clear();
-    tempshape.graphics.lineStyle(linethickness, col, alpha);
-    tempshape.graphics.moveTo(x1,y1);
+		tempshape.graphics.lineStyle(linethickness, col, alpha);
+		tempshape.graphics.moveTo(x1,y1);
     tempshape.graphics.lineTo(x2, y2);
     drawto.draw(tempshape, shapematrix);
 	}
@@ -708,7 +708,7 @@ class Gfx {
 	}
 
 	public static function setlinethickness(size:Float):Void {
-		linethickness = Std.int(size);
+		linethickness = size;
 		if (linethickness < 1) linethickness = 1;
 		if (linethickness > 255) linethickness = 255;
 	}
@@ -827,6 +827,7 @@ class Gfx {
 	/** Just gives Gfx access to the stage. */
 	private static function init(stage:Stage):Void {
 		gfxstage = stage;
+		setlinethickness(1);
 	}
 	
 	/** Called from resizescreen(). Sets up all our graphics buffers. */
@@ -908,7 +909,7 @@ class Gfx {
 	private static var tx:Float;
 	private static var ty:Float;
 	
-	private static var linethickness:Int;
+	private static var linethickness:Float;
 	
 	private static var buffer:BitmapData;
 	
