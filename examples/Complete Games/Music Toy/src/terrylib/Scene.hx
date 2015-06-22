@@ -4,7 +4,7 @@ package terrylib;
 import openfl.errors.ArgumentError;
 
 class Scene {
-	private static function init():Void {
+	private static function init() {
 		scenelist = new Array<Dynamic>();
 		#if neko
 		  try{
@@ -18,11 +18,11 @@ class Scene {
 		currentscene = 0;
 	}
 	
-	private static function update():Void {
+	private static function update() {
 		callscenemethod(scenelist[currentscene], "update");
 	}
 	
-	private static function callscenemethod(scene:Dynamic, method:String):Void {
+	private static function callscenemethod(scene:Dynamic, method:String) {
 		var instanceFunc:Dynamic = Reflect.field(scenelist[currentscene], method);
 		if (instanceFunc != null && Reflect.isFunction(instanceFunc)) {
 			try {
@@ -47,7 +47,7 @@ class Scene {
 		// method didn't exist; complain if necessary
 	}
 	
-	public static function change(newscene:Class<Dynamic>):Void {
+	public static function change(newscene:Class<Dynamic>) {
 		for (i in 0 ... scenelist.length) {
 			if (newscene == Type.getClass(scenelist[i])) {
 				currentscene = i;

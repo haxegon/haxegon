@@ -145,7 +145,7 @@ class Random{
 		return Math.abs(seed/(233280));
 	}
 	
-	public static function setseed(s:Int):Void {
+	public static function setseed(s:Int) {
 		seed = Std.int(Math.abs(s % 233280));
 	}
 	

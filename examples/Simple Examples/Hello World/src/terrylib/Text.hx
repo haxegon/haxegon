@@ -24,7 +24,7 @@ typedef Drawparamstext = {
 
 @:access(terrylib.Gfx)
 class Text {
-	public static function init(stage:Stage):Void {
+	public static function init(stage:Stage) {
 		drawto = Gfx.backbuffer;
 		gfxstage = stage;
 		enabletextfield();
@@ -34,7 +34,7 @@ class Text {
 	
 	//Text Input functions
 	
-	private static function enabletextfield():Void {
+	private static function enabletextfield() {
 		gfxstage.addChild(inputField);
 		inputField.border = true;
 		inputField.width = Gfx.screenwidth;
@@ -49,7 +49,7 @@ class Text {
 		resetinput("");
 	}
 	
-	private static function input_checkfortext():Void {
+	private static function input_checkfortext() {
 		gfxstage.focus = inputField;
 		#if flash
 		inputField.setSelection(inputField.text.length, inputField.text.length);
@@ -74,7 +74,7 @@ class Text {
 		return t2;
 	}
 	
-	public static function resetinput(t:String):Void {
+	public static function resetinput(t:String) {
 		#if flash
 		inputField.text = t; inputtext = t;
 		#else
@@ -120,7 +120,7 @@ class Text {
 		return response;
 	}
 	
-	public static function drawstringinput():Void {
+	public static function drawstringinput() {
 		if (input_show > 0) {
 			Text.changefont(input_font);
 			Text.changesize(input_textsize);
@@ -180,7 +180,7 @@ class Text {
 		return y;
 	}
 	
-	public static function display(x:Float, y:Float, t:String, col:Int = 0xFFFFFF, ?parameters:Drawparamstext):Void {
+	public static function display(x:Float, y:Float, t:String, col:Int = 0xFFFFFF, ?parameters:Drawparamstext) {
 		// This was called "print" once. Maybe it was better that way? eh, stuck with display now
 		if (Gfx.skiprender && Gfx.drawingtoscreen) return;
 		if (parameters == null) {
@@ -263,7 +263,7 @@ class Text {
 		}
 	}
 	
-	public static function changefont(t:String):Void {
+	public static function changefont(t:String) {
 		if(t != currentfont){
 			currentfont = t;
 			if (currentsize != -1) {
@@ -277,7 +277,7 @@ class Text {
 		}
 	}
 	
-	public static function changesize(t:Int):Void {
+	public static function changesize(t:Int) {
 		if (t != currentsize){
 			currentsize = t;
 			if (currentfont != "null") {
@@ -291,7 +291,7 @@ class Text {
 		}
 	}
 	
-	public static function addfont(t:String, defaultsize:Int):Void {
+	public static function addfont(t:String, defaultsize:Int) {
 		fontfile.push(new Fontfile(t));
 		fontfileindex.set(t, fontfile.length - 1);
 		currentfont = t;
@@ -299,7 +299,7 @@ class Text {
 		changesize(defaultsize);
 	}
 	
-	private static function addtypeface(_name:String, _size:Int):Void {
+	private static function addtypeface(_name:String, _size:Int) {
 		typeface.push(new Fontclass(_name, _size));
 		typefaceindex.set(_name+"_" + Std.string(_size), typeface.length - 1);
 	}

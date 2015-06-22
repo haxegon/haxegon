@@ -47,7 +47,7 @@ class Gfx {
 	public static var drawto:BitmapData;
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
-	public static function resizescreen(width:Float, height:Float, scale:Int = 1):Void {
+	public static function resizescreen(width:Float, height:Float, scale:Int = 1) {
 		initgfx(Std.int(width), Std.int(height), scale);
 		Text.init(gfxstage);
 		gfxstage.addChild(screen);
@@ -56,7 +56,7 @@ class Gfx {
 	}
 	
 	/** Change the tileset that the draw functions use. */
-	public static function changetileset(tilesetname:String):Void {
+	public static function changetileset(tilesetname:String) {
 		if (currenttilesetname != tilesetname) {
 			if(tilesetindex.exists(tilesetname)){
 				currenttileset = tilesetindex.get(tilesetname);
@@ -72,7 +72,7 @@ class Gfx {
 	}
 		
 	/** Makes a tile array from a given image. */
-	public static function loadtiles(imagename:String, width:Int, height:Int):Void {
+	public static function loadtiles(imagename:String, width:Int, height:Int) {
 		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
 		if (buffer == null) {
 			throw("ERROR: In loadtiles, cannot find data/graphics/" + imagename + ".png.");
@@ -102,7 +102,7 @@ class Gfx {
 	}
 	
 	/** Creates a blank tileset, with the name "imagename", with each tile a given width and height, containing "amount" tiles. */
-	public static function createtiles(imagename:String, width:Float, height:Float, amount:Int):Void {
+	public static function createtiles(imagename:String, width:Float, height:Float, amount:Int) {
 		tiles.push(new Tileset(imagename, Std.int(width), Std.int(height)));
 		tilesetindex.set(imagename, tiles.length - 1);
 		currenttileset = tiles.length - 1;
@@ -126,7 +126,7 @@ class Gfx {
 	}
 	
 	/** Loads an image into the game. */
-	public static function loadimage(imagename:String):Void {
+	public static function loadimage(imagename:String) {
 		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
 		if (buffer == null) {
 			throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png.");
@@ -142,7 +142,7 @@ class Gfx {
 	}
 	
 	/** Creates a blank image, with the name "imagename", with given width and height. */
-	public static function createimage(imagename:String, width:Float, height:Float):Void {
+	public static function createimage(imagename:String, width:Float, height:Float) {
 		imageindex.set(imagename, images.length);
 		
 		var t:BitmapData = new BitmapData(Math.floor(width), Math.floor(height), true, 0x000000);
@@ -174,7 +174,7 @@ class Gfx {
 	}
 	
 	/** Tell draw commands to draw to the actual screen. */
-	public static function drawtoscreen():Void {
+	public static function drawtoscreen() {
 		drawingtoscreen = true;
 		drawto.unlock();
 		drawto = backbuffer;
@@ -182,7 +182,7 @@ class Gfx {
 	}
 	
 	/** Tell draw commands to draw to the given image. */
-	public static function drawtoimage(imagename:String):Void {
+	public static function drawtoimage(imagename:String) {
 		drawingtoscreen = false;
 		imagenum = imageindex.get(imagename);
 		
@@ -192,7 +192,7 @@ class Gfx {
 	}
 	
 	/** Tell draw commands to draw to the given tile in the current tileset. */
-	public static function drawtotile(tilenumber:Int):Void {
+	public static function drawtotile(tilenumber:Int) {
 		drawingtoscreen = false;
 		drawto.unlock();
 		drawto = tiles[currenttileset].tiles[tilenumber];
@@ -235,7 +235,7 @@ class Gfx {
 	 * Parameters can be: rotation, scale, xscale, yscale, xpivot, ypivoy, alpha
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
 	 * */
-	public static function drawimage(x:Float, y:Float, imagename:String, ?parameters:Drawparams):Void {
+	public static function drawimage(x:Float, y:Float, imagename:String, ?parameters:Drawparams) {
 		if (skiprender && drawingtoscreen) return;
 		if (!imageindex.exists(imagename)) {
 			throw("ERROR: In drawimage, cannot find image \"" + imagename + "\".");
@@ -325,7 +325,7 @@ class Gfx {
 		shapematrix.identity();
 	}
 	
-	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float):Void {
+	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float) {
 		if (currenttileset == -1) {
 			throw("ERROR: In grabtilefromscreen, there is no tileset currently set. Use Gfx.changetileset(\"tileset name\") to set the current tileset.");
 			return;
@@ -335,7 +335,7 @@ class Gfx {
 		tiles[currenttileset].tiles[tilenumber].copyPixels(backbuffer, trect, tl);
 	}
 	
-	public static function grabtilefromimage(tilenumber:Int, imagename:String, x:Float, y:Float):Void {
+	public static function grabtilefromimage(tilenumber:Int, imagename:String, x:Float, y:Float) {
 		if (!imageindex.exists(imagename)) {
 			throw("ERROR: In grabtilefromimage, \"" + imagename + "\" does not exist.");
 			return;
@@ -352,7 +352,7 @@ class Gfx {
 		tiles[currenttileset].tiles[tilenumber].copyPixels(images[imagenum], trect, tl);
 	}
 	
-	public static function grabimagefromscreen(imagename:String, x:Float, y:Float):Void {
+	public static function grabimagefromscreen(imagename:String, x:Float, y:Float) {
 		if (!imageindex.exists(imagename)) {
 			throw("ERROR: In grabimagefromscreen, \"" + imagename + "\" does not exist. You need to create an image label first before using this function.");
 			return;
@@ -363,7 +363,7 @@ class Gfx {
 		images[imagenum].copyPixels(backbuffer, trect, tl);
 	}
 	
-	public static function grabimagefromimage(imagename:String, imagetocopyfrom:String, x:Float, y:Float):Void {
+	public static function grabimagefromimage(imagename:String, imagetocopyfrom:String, x:Float, y:Float) {
 		if (!imageindex.exists(imagename)) {
 			throw("ERROR: In grabimagefromimage, \"" + imagename + "\" does not exist. You need to create an image label first before using this function.");
 			return;
@@ -379,7 +379,7 @@ class Gfx {
 		images[imagenum].copyPixels(images[imagenumfrom], trect, tl);
 	}
 	
-	public static function copytile(totilenumber:Int, fromtileset:String, fromtilenumber:Int):Void {
+	public static function copytile(totilenumber:Int, fromtileset:String, fromtilenumber:Int) {
 		if (tilesetindex.exists(fromtileset)) {
 			if (tiles[currenttileset].width == tiles[tilesetindex.get(fromtileset)].width && tiles[currenttileset].height == tiles[tilesetindex.get(fromtileset)].height) {
 				tiles[currenttileset].tiles[totilenumber].copyPixels(tiles[tilesetindex.get(fromtileset)].tiles[fromtilenumber], tiles[tilesetindex.get(fromtileset)].tiles[fromtilenumber].rect, tl);		
@@ -397,7 +397,7 @@ class Gfx {
 	 * Parameters can be: rotation, scale, xscale, yscale, xpivot, ypivoy, alpha
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
 	 * */
-	public static function drawtile(x:Float, y:Float, t:Int, ?parameters:Drawparams):Void {
+	public static function drawtile(x:Float, y:Float, t:Int, ?parameters:Drawparams) {
 		if (skiprender && drawingtoscreen) return;
 		if (currenttileset == -1) {
 			throw("ERROR: No tileset currently set. Use Gfx.changetileset(\"tileset name\") to set the current tileset.");
@@ -504,12 +504,12 @@ class Gfx {
 	}
 	
 	/** Resets the animation. */
-	public static function stopanimation(animationname:String):Void {
+	public static function stopanimation(animationname:String) {
 		animationnum = animationindex.get(animationname);
 		animations[animationnum].reset();
 	}
 	
-	public static function defineanimation(animationname:String, tileset:String, startframe:Int, endframe:Int, delayperframe:Int):Void {
+	public static function defineanimation(animationname:String, tileset:String, startframe:Int, endframe:Int, delayperframe:Int) {
 		if (delayperframe < 1) {
 			throw("ERROR: Cannot have a delay per frame of less than 1.");
 			return;
@@ -518,7 +518,7 @@ class Gfx {
 		animations.push(new AnimationContainer(animationname, tileset, startframe, endframe, delayperframe));
 	}
 	
-	public static function drawanimation(x:Float, y:Float, animationname:String, ?parameters:Drawparams):Void {
+	public static function drawanimation(x:Float, y:Float, animationname:String, ?parameters:Drawparams) {
 		if (skiprender && drawingtoscreen) return;
 		oldtileset = currenttilesetname;
 		if (!animationindex.exists(animationname)) {
@@ -568,7 +568,7 @@ class Gfx {
 		return y;
 	}
 	
-	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, col:Int, alpha:Float = 1.0) {
     if (skiprender && drawingtoscreen) return;
     tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
@@ -577,7 +577,7 @@ class Gfx {
     drawto.draw(tempshape, shapematrix);
 	}
 
-	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0) {
 		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
@@ -600,7 +600,7 @@ class Gfx {
 		shapematrix.translate(-x, -y);
 	}
 	
-	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0) {
 		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		temprotate = ((Math.PI * 2) / 6);
@@ -623,7 +623,7 @@ class Gfx {
 		shapematrix.translate(-x, -y);
 	}
 	
-	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
 		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
@@ -634,7 +634,7 @@ class Gfx {
 		shapematrix.translate(-x, -y);
 	}
 	
-	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
 		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.beginFill(col, alpha);
@@ -646,7 +646,7 @@ class Gfx {
 		shapematrix.translate(-x, -y);
 	}
 	
-	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0) {
 		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.lineStyle(linethickness, col, alpha);
@@ -661,7 +661,7 @@ class Gfx {
 		shapematrix.translate(-x1, -y1);
 	}
 	
-	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0) {
 		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.beginFill(col, alpha);
@@ -677,7 +677,7 @@ class Gfx {
 		shapematrix.translate(-x1, -y1);
 	}
 
-	public static function drawbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function drawbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
 		if (skiprender && drawingtoscreen) return;
 		if (width < 0) {
 			width = -width;
@@ -707,13 +707,13 @@ class Gfx {
 		}
 	}
 
-	public static function setlinethickness(size:Float):Void {
+	public static function setlinethickness(size:Float) {
 		linethickness = size;
 		if (linethickness < 1) linethickness = 1;
 		if (linethickness > 255) linethickness = 255;
 	}
 	
-	public static function clearscreen(col:Int = 0x000000):Void {
+	public static function clearscreen(col:Int = 0x000000) {
 		if (skiprender && drawingtoscreen) return;
 		backbuffer.fillRect(backbuffer.rect, col);
 	}
@@ -722,7 +722,7 @@ class Gfx {
 		return drawto.getPixel32(Std.int(x), Std.int(y));
 	}
 
-	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0):Void {
+	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
 		if (skiprender && drawingtoscreen) return;
 		tempshape.graphics.clear();
 		tempshape.graphics.beginFill(col, alpha);
@@ -786,14 +786,14 @@ class Gfx {
 		return RGB(Std.int(hslval[0] * 255), Std.int(hslval[1] * 255), Std.int(hslval[2] * 255));
 	}
 	
-	private static function setzoom(t:Int):Void {
+	private static function setzoom(t:Int) {
 		screen.width = screenwidth * t;
 		screen.height = screenheight * t;
 		screen.x = (screenwidth - (screenwidth * t)) / 2;
 		screen.y = (screenheight - (screenheight * t)) / 2;
 	}
 	
-	private static function updategraphicsmode():Void {
+	private static function updategraphicsmode() {
 		if (fullscreen) {
 			Lib.current.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 			gfxstage.scaleMode = StageScaleMode.NO_SCALE;
@@ -825,13 +825,13 @@ class Gfx {
 	}
 	
 	/** Just gives Gfx access to the stage. */
-	private static function init(stage:Stage):Void {
+	private static function init(stage:Stage) {
 		gfxstage = stage;
 		setlinethickness(1);
 	}
 	
 	/** Called from resizescreen(). Sets up all our graphics buffers. */
-	private static function initgfx(width:Int, height:Int, scale:Int):Void {
+	private static function initgfx(width:Int, height:Int, scale:Int) {
 		//We initialise a few things
 		screenwidth = width; screenheight = height;
 		screenwidthmid = Std.int(screenwidth / 2); screenheightmid = Std.int(screenheight / 2);
@@ -860,7 +860,7 @@ class Gfx {
 	}
 	
 	/** Sets the values for the temporary rect structure. Probably better than making a new one, idk */
-	private static function settrect(x:Float, y:Float, w:Float, h:Float):Void {
+	private static function settrect(x:Float, y:Float, w:Float, h:Float) {
 		trect.x = x;
 		trect.y = y;
 		trect.width = w;
@@ -868,7 +868,7 @@ class Gfx {
 	}
 	
 	/** Sets the values for the temporary point structure. Probably better than making a new one, idk */
-	private static function settpoint(x:Float, y:Float):Void {
+	private static function settpoint(x:Float, y:Float) {
 		tpoint.x = x;
 		tpoint.y = y;
 	}

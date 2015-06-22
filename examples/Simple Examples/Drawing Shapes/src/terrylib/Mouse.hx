@@ -28,7 +28,7 @@ class Mouse{
 	public static function middleclick():Bool { return _middlecurrent == 2; }	
 	public static function middlereleased():Bool { return _middlecurrent == -1; }
 	
-	private static function init(stage:DisplayObject):Void {
+	private static function init(stage:DisplayObject) {
 		//Right mouse stuff
 		#if !flash
 		stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
@@ -52,7 +52,7 @@ class Mouse{
 		_last = 0;
 	}		
 	
-	private static function mouseLeave(e:Event) :Void {
+	private static function mouseLeave(e:Event) {
 		mouseoffstage = true;
 		_current = 0;
 		_last = 0;
@@ -63,19 +63,19 @@ class Mouse{
 		_middlelast = 0;
 	}
 	
-	private static function mouseOver(e:MouseEvent) :Void {
+	private static function mouseOver(e:MouseEvent) {
 		mouseoffstage = false;
 	}
 	
-	private static function mousewheelHandler( e:MouseEvent ):Void {
+	private static function mousewheelHandler( e:MouseEvent ) {
 		mousewheel = e.delta;
 	}
 	
-	public static function visitsite(t:String):Void {
+	public static function visitsite(t:String) {
 		gotosite = t;
 	}
 	
-	public static function update(X:Int,Y:Int):Void{
+	public static function update(X:Int,Y:Int){
 		x = X;
 		y = Y;
 		
@@ -98,7 +98,7 @@ class Mouse{
 		_middlelast = _middlecurrent;
 	}
 	
-	private static function reset():Void{
+	private static function reset(){
 		_current = 0;
 		_last = 0;
 		_rightcurrent = 0;
@@ -109,14 +109,14 @@ class Mouse{
 	
 		
 	#if !flash
-		private static function handleRightMouseDown(event:MouseEvent):Void {	if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
-		private static function handleRightMouseUp(event:MouseEvent):Void {	if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
+		private static function handleRightMouseDown(event:MouseEvent) {	if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
+		private static function handleRightMouseUp(event:MouseEvent) {	if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
   #end
 	
-	private static function handleMiddleMouseDown(event:MouseEvent):Void {	if (_middlecurrent > 0) { _middlecurrent = 1; } else { _middlecurrent = 2; } }
-	private static function handleMiddleMouseUp(event:MouseEvent):Void {	if (_middlecurrent > 0) { _middlecurrent = -1; } else { _middlecurrent = 0; }	}
+	private static function handleMiddleMouseDown(event:MouseEvent) {	if (_middlecurrent > 0) { _middlecurrent = 1; } else { _middlecurrent = 2; } }
+	private static function handleMiddleMouseUp(event:MouseEvent) {	if (_middlecurrent > 0) { _middlecurrent = -1; } else { _middlecurrent = 0; }	}
 	
-	private static function handleMouseDown(event:MouseEvent):Void {
+	private static function handleMouseDown(event:MouseEvent) {
 		if (Input.pressed(Key.CONTROL)) {
 			if(_rightcurrent > 0) _rightcurrent = 1;
 			else _rightcurrent = 2;
@@ -134,7 +134,7 @@ class Mouse{
 		}
 	}
 	
-	private static function handleMouseUp(event:MouseEvent):Void {		
+	private static function handleMouseUp(event:MouseEvent) {		
 		if(_rightcurrent > 0) _rightcurrent = -1;
 		else _rightcurrent = 0;
 		

@@ -28,7 +28,7 @@ class Fontclass {
 		tf.height = tf.textHeight * 2;
 	}
 	
-	public function clearbitmap():Void {
+	public function clearbitmap() {
 		tfbitmap.fillRect(tfbitmap.rect, 0);
 	}
 	

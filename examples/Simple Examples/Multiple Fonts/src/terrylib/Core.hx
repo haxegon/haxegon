@@ -18,7 +18,7 @@ class Core extends Sprite {
 		init();
 	}
 	
-	public function init():Void {
+	public function init() {
 		//Init library classes
 		Random.setseed(Std.int(Math.random() * 233280));
 		Input.init(this.stage);
@@ -40,7 +40,7 @@ class Core extends Sprite {
 	
 	
 	
-	public function update(e:TimerEvent):Void {
+	public function update(e:TimerEvent) {
 		Gfx.skiprender = false;
 		_current = Lib.getTimer();
 		if (_last < 0) _last = _current;

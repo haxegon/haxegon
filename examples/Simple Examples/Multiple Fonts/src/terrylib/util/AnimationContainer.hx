@@ -13,7 +13,7 @@ class AnimationContainer {
 		reset();
 	}
 	
-	public function update():Void {
+	public function update() {
 		timethisframe++;
 		if (timethisframe > delayperframe) {
 			timethisframe = 0;
@@ -24,7 +24,7 @@ class AnimationContainer {
 		}
 	}
 	
-	public function reset():Void {
+	public function reset() {
 		timethisframe = 0;
 		currentframe = startframe;
 	}

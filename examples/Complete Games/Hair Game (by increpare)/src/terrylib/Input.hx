@@ -50,7 +50,7 @@ class Input {
 		return false;
 	}
 	
-	private static function init(stage:DisplayObject):Void{
+	private static function init(stage:DisplayObject){
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		stage.addEventListener(KeyboardEvent.KEY_UP, handlekeyup);
 		
@@ -142,7 +142,7 @@ class Input {
 		addkey(Key.RIGHT, Keyboard.RIGHT);
 	}
 	
-	private static function update():Void{
+	private static function update(){
 		for (i in 0 ... numletters) {
 			if (lookup.exists(i)) {
 				if ((last[i] == Keystate.justreleased) && (current[i] == Keystate.justreleased)) current[i] = Keystate.notpressed;
@@ -152,7 +152,7 @@ class Input {
 		}
 	}
 	
-	private static function reset():Void{
+	private static function reset(){
 		for (i in 0...numletters) {
 			if (lookup.exists(i)) {
 				current[i] = Keystate.notpressed;
@@ -169,7 +169,7 @@ class Input {
 		return false;
 	}
 	
-	private static function handlekeydown(event:KeyboardEvent):Void {
+	private static function handlekeydown(event:KeyboardEvent) {
 		keycode = event.keyCode;
 		
 		if (lookup.exists(keycode)) {
@@ -183,7 +183,7 @@ class Input {
 		}
 	}
 	
-	private static function handlekeyup(event:KeyboardEvent):Void {
+	private static function handlekeyup(event:KeyboardEvent) {
 		keycode = event.keyCode;
 		if (lookup.exists(keycode)) {
 			if (iskeycodeheld(current[keycode])) {
@@ -195,7 +195,7 @@ class Input {
 		}
 	}
 	
-	private static function addkey(KeyName:Key, KeyCode:Int):Void {
+	private static function addkey(KeyName:Key, KeyCode:Int) {
 		keymap.set(KeyName, KeyCode);
 		lookup.set(KeyCode, KeyName);
 		current[KeyCode] = Keystate.notpressed;
