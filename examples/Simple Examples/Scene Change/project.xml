@@ -35,11 +35,13 @@
 	<set name="openfl-legacy" if="windows"/>
 	<haxelib name="openfl" />
 	
-	<assets path="data" exclude="*.svg|*.mp3|*.ogg|*.wav" />
-	<assets path="data/music/mp3" rename="data/music" if="flash"/> 
-	<assets path="data/music/ogg" rename="data/music" unless="flash"/> 
-	<assets path="data/sounds/mp3" rename="data/sounds" if="flash"/> 
-	<assets path="data/sounds/ogg" rename="data/sounds" unless="flash"/> 
+	<assets path="data/music/mp3" rename="data/music" exclude="*.txt" if="flash"/> 
+	<assets path="data/music/ogg" rename="data/music" exclude="*.txt" unless="flash"/> 
+	<assets path="data/sounds/mp3" rename="data/sounds" exclude="*.txt" if="flash"/> 
+	<assets path="data/sounds/ogg" rename="data/sounds" exclude="*.txt" unless="flash"/> 
+	
+	<assets path="data" exclude="*.svg|*.mp3|*.ogg|*.wav|*.txt" />
+	
 	<icon path="data/icon/play.svg" />
 	
 </project>
