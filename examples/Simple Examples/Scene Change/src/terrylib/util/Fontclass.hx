@@ -24,8 +24,8 @@ class Fontclass {
 		
 		
 		tf.text = "???";
-		tfbitmap = new BitmapData(Gfx.screenwidth, Std.int(tf.textHeight)*2, true, 0);
-		tf.height = tf.textHeight * 2;
+		tfbitmap = new BitmapData(Gfx.screenwidth, Gfx.screenheight, true, 0);
+		tf.height = Gfx.screenheight;
 	}
 	
 	public function clearbitmap() {

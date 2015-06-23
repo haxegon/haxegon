@@ -180,12 +180,12 @@ class Text {
 		return y;
 	}
 	
-	public static function display(x:Float, y:Float, t:String, col:Int = 0xFFFFFF, ?parameters:Drawparamstext) {
+	public static function display(x:Float, y:Float, text:String, col:Int = 0xFFFFFF, ?parameters:Drawparamstext) {
 		// This was called "print" once. Maybe it was better that way? eh, stuck with display now
 		if (Gfx.skiprender && Gfx.drawingtoscreen) return;
 		if (parameters == null) {
 			typeface[currentindex].tf.textColor = col;
-			typeface[currentindex].tf.text = t;
+			typeface[currentindex].tf.text = text;
 			
 			x = alignx(x); y = aligny(y);
 			
@@ -206,19 +206,19 @@ class Text {
 			tempred = 1.0; tempgreen = 1.0; tempblue = 1.0;
 			changecolours = false;
 			
-			display(0, 0, t, col);
+			display(0, 0, text, col);
 			
 			x = alignx(x); y = aligny(y);
 			
 			if (parameters.align != null) {
 				if (parameters.align == CENTER) {
-					x = x - (len(t) / 2);
+					x = x - (len(text) / 2);
 				}else if (parameters.align == RIGHT || parameters.align == BOTTOM) {
-					x = x - len(t);
+					x = x - len(text);
 				}
 			}
 			
-			if (parameters.xpivot != null) tempxpivot = aligntextx(t, parameters.xpivot);
+			if (parameters.xpivot != null) tempxpivot = aligntextx(text, parameters.xpivot);
 		  if (parameters.ypivot != null) tempypivot = aligntexty(parameters.ypivot);		
 			if (parameters.scale != null) {
 				tempxscale = parameters.scale;
