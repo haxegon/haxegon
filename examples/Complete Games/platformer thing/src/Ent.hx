@@ -63,23 +63,26 @@ class Ent {
 	public static function physics(t:Int) {
 		//Physics
 		if (entities[t].jumpstate > 0) {
-			if (entities[t].ay < 0) entities[t].ay += 0.5;
-			if (entities[t].ay > -0.5) entities[t].ay = 0;
+			if (entities[t].vy < 0) entities[t].vy = entities[t].vy + 0.1;
+			if (entities[t].vy >= 0) entities[t].vy = 0;
+			//if (entities[t].vy > -0.5) entities[t].vy = 0;
 			entities[t].jumpstate--;
 		}else {
-			if (entities[t].gravity) entities[t].ay = 1.5;
+			if (entities[t].gravity) {
+				entities[t].vy = entities[t].vy + 0.5;
+				if (entities[t].vy >= 2 ) entities[t].vy = 2;
+			}
 		}
 		
-		if (entities[t].gravity) applyfriction(t, 0, 0.5);
-		
-		entities[t].vx = entities[t].vx + entities[t].ax;
-		entities[t].vy = entities[t].vy + entities[t].ay;
-		entities[t].ax = 0;
+		//if (entities[t].gravity) applyfriction(t, 0, 0.5);
 	}
 	
 	public static function mapcollision(t:Int) {
-		entities[t].newx = entities[t].x + entities[t].vx;
+		entities[t].xhitwall = false;
+		entities[t].yhitwall = false;
+		
 		while (!xcollision(t) && entities[t].vx != 0) {
+			entities[t].xhitwall = true;
 			if (entities[t].vx > 0) {
 				entities[t].vx--;
 				if (entities[t].vx < 0) entities[t].vx = 0;
@@ -88,11 +91,12 @@ class Ent {
 				entities[t].vx++;
 				if (entities[t].vx > 0) entities[t].vx = 0;
 			}
-			entities[t].newx = entities[t].x + entities[t].vx;
 		}
 		
-		entities[t].newy = entities[t].y + entities[t].vy;
+		entities[t].x = entities[t].x + entities[t].vx;
+		
 		while (!ycollision(t) && entities[t].vy != 0) {
+			entities[t].yhitwall = true;
 			if (entities[t].vy > 0) {
 				entities[t].vy--;
 				if (entities[t].vy < 0) entities[t].vy = 0;
@@ -101,8 +105,9 @@ class Ent {
 				entities[t].vy++;
 				if (entities[t].vy > 0) entities[t].vy = 0;
 			}
-			entities[t].newy = entities[t].y + entities[t].vy;
 		}
+		
+		entities[t].y = entities[t].y + entities[t].vy;
 		
 		if (collidefloor(t)) {
 			entities[t].isonground = 2;
@@ -116,7 +121,7 @@ class Ent {
 		if (entities[t].vx < 0) entities[t].vx += xrate;
 		if (entities[t].vy > 0) entities[t].vy -= yrate;
 		if (entities[t].vy < 0) entities[t].vy += yrate;
-		if (entities[t].vy > 4) entities[t].vy = 4;
+		if (entities[t].vy > 2) entities[t].vy = 2;
 		if (entities[t].vy < -4) entities[t].vy = -4;
 		if (entities[t].vx > 4) entities[t].vx = 4;
 		if (entities[t].vx < -4) entities[t].vx = -4;
@@ -127,13 +132,12 @@ class Ent {
 	
 	public static function xcollision(t:Int):Bool {
 		//Deal with horizontal map collisions.
-		if (Game.checkwall(entities[t].newx + entities[t].collisionx, 
+		if (Game.checkwall(entities[t].x + entities[t].vx + entities[t].collisionx, 
 										 	 entities[t].y + entities[t].collisiony,
 											 entities[t].collisionw,
 											 entities[t].collisionh)) {		
-			return false;
+		  return false;
 		}else {
-			entities[t].x = entities[t].newx;
 			return true;
 		}
 	}
@@ -141,12 +145,11 @@ class Ent {
 	public static function ycollision(t:Int):Bool {
 		//Deal with vertical map collisions.
 		if (Game.checkwall(entities[t].x + entities[t].collisionx, 
-										 	 entities[t].newy + entities[t].collisiony,
+										 	 entities[t].y + entities[t].vy + entities[t].collisiony,
 											 entities[t].collisionw,
 											 entities[t].collisionh)) {		
-			return false;
+		  return false;
 		}else {
-			entities[t].y = entities[t].newy;
 			return true;
 		}
 	}

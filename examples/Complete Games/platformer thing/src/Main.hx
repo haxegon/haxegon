@@ -63,8 +63,7 @@ class Main {
 			if (Game.jumppressed > 0) {
 				Game.jumppressed--;
 				if (Ent.entities[player].isonground > 0 && Ent.entities[player].jumpstate == 0) {
-					Ent.entities[player].ay = -3;
-					Ent.entities[player].vy = 0;
+					Ent.entities[player].vy = -3;
 					Ent.entities[player].jumpstate = 25;
 				}
 			}
@@ -74,9 +73,9 @@ class Main {
 	function logic() {
 		//Update the game
 		for (i in 0 ... Ent.numentities) {
-			Ent.entities[i].update();
 			Ent.physics(i);
 			Ent.mapcollision(i);
+			Ent.entities[i].update();
 		}
 	}
 	
