@@ -18,16 +18,16 @@
     <class path="C:\coding\haxe\Haxe\lib\openfl\3,1,0" />
     <class path="C:\coding\haxe\Haxe\lib\lime\2,4,4" />
     <class path="src" />
-    <class path="bin\flash\haxe" />
+    <class path="bin\windows\cpp\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=3.1.0&#xA;lime=2.4.4&#xA;openfl-next&#xA;tools=2.4.4&#xA;no-compilation&#xA;openfl-flash&#xA;web" />
+    <option directives="openfl=3.1.0&#xA;lime=2.4.4&#xA;openfl-next&#xA;tools=2.4.4&#xA;no-compilation&#xA;native&#xA;lime-native&#xA;openfl-native&#xA;windows&#xA;desktop" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
-    <option additional="-swf-version 11.2&#xA;-debug " />
+    <option additional="--remap flash:openfl&#xA;#--macro keep(&quot;terrylib.Load&quot;)&#xA;-debug " />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

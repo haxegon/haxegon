@@ -33,6 +33,9 @@ Read in Keyboard and Mouse input!
 **Scene Control:**
 Easily change between different game scenes!
 
+**Loading Text:**
+Easily load in text files!
+
 See reference.txt for a full command list.
 
 For examples, see the included examples folder! Examples are a work in progress - more are on the way!
@@ -52,7 +55,5 @@ TerryLib can target Flash, HTML5, Neko, and Desktop platforms. (iOS and Android 
 ## Roadmap to 1.0
 
 To do:
- - Add support for simple text file embedding.
- - Add support for simple csv file embedding.
  - Make sure TerryLib gives good error messages in as many places as possible.
  - Finish tutorial and make some examples!

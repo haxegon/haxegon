@@ -24,6 +24,10 @@ Input:
 ----------
 Read in Keyboard and Mouse input!
 
+Text:
+----------
+Easily load in text files!
+
 Basic structure:
 -------------------------
 TerryLib sets everything up in the background, and starts you with a single class, Main.hx.
@@ -379,6 +383,15 @@ The only other scene function is "get", which is used to access public variables
 t = Scene.get(Titlescreen).titlescreenvariable;
 
 (You can also do this with static variables, if you like. See the tutorial for more info about that)
+
+Loading Text:
+-------------------------
+
+var leveldata:Array<Int>;
+leveldata = Data.loadcsv("stage1");  //Loads a CSV spreadsheet as an array of Ints.
+
+var script:Array<String>;
+script = Data.loadtext("cutscene1"); //Loads a TXT file as an array of Strings.
 
 Other useful functions:
 -------------------------

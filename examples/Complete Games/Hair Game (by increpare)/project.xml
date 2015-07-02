@@ -38,7 +38,8 @@
 	<assets path="data/music/mp3" rename="data/music" exclude="*.txt" if="flash"/> 
 	<assets path="data/music/ogg" rename="data/music" exclude="*.txt" unless="flash"/> 
 	<assets path="data/sounds/mp3" rename="data/sounds" exclude="*.txt" if="flash"/> 
-	<assets path="data/sounds/ogg" rename="data/sounds" exclude="*.txt" unless="flash"/> 
+	<assets path="data/sounds/ogg" rename="data/sounds" exclude="*.txt" unless="flash"/>
+	<assets path="data/text" exclude="place txt and csv files here.txt"/> 
 	
 	<assets path="data" exclude="*.svg|*.mp3|*.ogg|*.wav|*.txt" />
 	
