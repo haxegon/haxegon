@@ -109,6 +109,10 @@ class Ent {
 		
 		entities[t].y = entities[t].y + entities[t].vy;
 		
+		//Check for step off left/right
+		stepoffleft(t);
+		stepoffright(t);
+		
 		if (collidefloor(t)) {
 			entities[t].isonground = 2;
 		}else {
@@ -161,5 +165,19 @@ class Ent {
 											 entities[t].collisionw,
 											 entities[t].collisionh)) return true;
 		return false;
+	}
+	
+	// Check if entity t's bottom left corner is off the ledge
+	public static function stepoffleft(t:Int) {
+		entities[t].stepoffleft = !Game.pointcollide(
+				entities[t].x + entities[t].collisionx, 
+				entities[t].y + entities[t].collisiony + entities[t].collisionh + 1);
+	}
+	
+	// Check if entity t's bottom right corner is off the ledge
+	public static function stepoffright(t:Int) {
+		entities[t].stepoffright = !Game.pointcollide(
+				entities[t].x + entities[t].collisionx + entities[t].collisionw, 
+				entities[t].y + entities[t].collisiony + entities[t].collisionh + 1);
 	}
 }

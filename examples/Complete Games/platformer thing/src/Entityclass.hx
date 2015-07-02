@@ -21,6 +21,8 @@ class Entityclass {
 	
 	public var xhitwall:Bool;
 	public var yhitwall:Bool;
+	public var stepoffleft:Bool;
+	public var stepoffright:Bool;
 	
 	public var collisionx:Float;
 	public var collisiony:Float;
@@ -40,8 +42,11 @@ class Entityclass {
 		gravity = false;
 		vx = 0; vy = 0;
 		animation = "none";
+		
 		xhitwall = false;
 		yhitwall = false;
+		stepoffleft = false;
+		stepoffright = false;
 		
 		rule = "none";
 		type = "none";
@@ -90,14 +95,14 @@ class Entityclass {
 				case "guard":
 					if (state == "walk_left") {
 						vx = -1;
-						if (xhitwall) {
+						if (xhitwall || stepoffleft) {
 							statedelay = 8;
 							vx = 0;
 							state = "walk_right";
 						}
 					}else if (state == "walk_right") {
 						vx = 1;
-						if (xhitwall) {
+						if (xhitwall || stepoffright) {
 							statedelay = 8;
 							vx = 0;
 							state = "walk_left";
