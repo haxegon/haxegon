@@ -9,32 +9,13 @@ class Main {
 		Game.init();
 		Ent.init();
 		
-	  Gfx.loadtiles("tiles", Game.tilewidth, Game.tileheight);	
+	  Gfx.loadtiles("tiles", World.tilewidth, World.tileheight);	
 		
 		Gfx.defineanimation("player", "tiles", 20, 20, 1);
 		Gfx.defineanimation("guard", "tiles", 21, 21, 1);
+		Gfx.defineanimation("coin", "tiles", 22, 22, 1);
 		
-		Game.currentlevel = [
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-		];
-		
-		
-		Ent.createentity(4, 4, "player");
-		Ent.createentity(16, 4, "guard");
+		Game.restart();
 	}
 	
 	function update() {
@@ -76,7 +57,10 @@ class Main {
 			Ent.physics(i);
 			Ent.mapcollision(i);
 			Ent.entities[i].update();
+			Ent.entitycollision(i);
 		}
+		
+		Ent.cleanup();
 	}
 	
 	function render() {
@@ -100,9 +84,9 @@ class Main {
 	}
 	
 	function drawbackground() {
-		for (j in 0 ... Game.mapheight) {
-			for (i in 0 ... Game.mapwidth) {
-				Gfx.drawtile(i * Game.tilewidth, j * Game.tileheight, Game.currentlevel[i + (j * Game.mapwidth)]);
+		for (j in 0 ... World.mapheight) {
+			for (i in 0 ... World.mapwidth) {
+				Gfx.drawtile(i * World.tilewidth, j * World.tileheight, World.currentlevel[i + (j * World.mapwidth)]);
 			}
 		}
 	}

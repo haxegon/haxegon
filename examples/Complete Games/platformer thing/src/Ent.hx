@@ -2,10 +2,13 @@ class Ent {
 	//Static entity control class
 	public static var entities:Array<Entityclass>;
 	public static var numentities:Int;
+	public static var maxentities:Int;
 	
 	public static function init() {
+		maxentities = 100;
+		
 		entities = [];
-		for (i in 0 ... Game.maxentities) {
+		for (i in 0 ... maxentities) {
 			entities.push(new Entityclass());
 		}
 		numentities = 0;
@@ -25,8 +28,8 @@ class Ent {
 	
 	public static function createentity(_x:Float, _y:Float, _type:String) {
 		//Create the entity at a tile position:
-		_x = _x * Game.tilewidth;
-		_y = _y * Game.tileheight;
+		_x = _x * World.tilewidth;
+		_y = _y * World.tileheight;
 		//Find the first non-active entity
 		var ent:Int = -1;
 		
@@ -53,7 +56,7 @@ class Ent {
 			}
 		}
 		
-		if (ent >= Game.maxentities) {
+		if (ent >= maxentities) {
 			throw("ERROR: Too many entities created.");
 		}else{
 			entities[ent].create(_x, _y, _type);
@@ -65,7 +68,6 @@ class Ent {
 		if (entities[t].jumpstate > 0) {
 			if (entities[t].vy < 0) entities[t].vy = entities[t].vy + 0.1;
 			if (entities[t].vy >= 0) entities[t].vy = 0;
-			//if (entities[t].vy > -0.5) entities[t].vy = 0;
 			entities[t].jumpstate--;
 		}else {
 			if (entities[t].gravity) {
@@ -73,111 +75,43 @@ class Ent {
 				if (entities[t].vy >= 2 ) entities[t].vy = 2;
 			}
 		}
-		
-		//if (entities[t].gravity) applyfriction(t, 0, 0.5);
 	}
 	
 	public static function mapcollision(t:Int) {
-		entities[t].xhitwall = false;
-		entities[t].yhitwall = false;
+		Collision.check_xcollision(t);
+		Collision.check_ycollision(t);
 		
-		while (!xcollision(t) && entities[t].vx != 0) {
-			entities[t].xhitwall = true;
-			if (entities[t].vx > 0) {
-				entities[t].vx--;
-				if (entities[t].vx < 0) entities[t].vx = 0;
-			}
-			if (entities[t].vx < 0) {
-				entities[t].vx++;
-				if (entities[t].vx > 0) entities[t].vx = 0;
-			}
-		}
+		Collision.check_stepoffleft(t);
+		Collision.check_stepoffright(t);
 		
-		entities[t].x = entities[t].x + entities[t].vx;
-		
-		while (!ycollision(t) && entities[t].vy != 0) {
-			entities[t].yhitwall = true;
-			if (entities[t].vy > 0) {
-				entities[t].vy--;
-				if (entities[t].vy < 0) entities[t].vy = 0;
-			}
-			if (entities[t].vy < 0) {
-				entities[t].vy++;
-				if (entities[t].vy > 0) entities[t].vy = 0;
+		Collision.check_onfloor(t);
+	}
+	
+	public static function cleanup() {
+		if (numentities > 0) {
+			if (!entities[numentities - 1].active) {
+				numentities--;
+				cleanup();
 			}
 		}
-		
-		entities[t].y = entities[t].y + entities[t].vy;
-		
-		//Check for step off left/right
-		stepoffleft(t);
-		stepoffright(t);
-		
-		if (collidefloor(t)) {
-			entities[t].isonground = 2;
-		}else {
-			if (entities[t].isonground > 0) entities[t].isonground--;
+	}
+	
+	public static function entitycollision(a:Int) {
+		//check for entity v entity collisions
+		if (entities[a].checkentitycollision) {
+			for (b in 0 ... numentities) {
+				if (a != b) {
+					if (Collision.collideentity(a, b)) {
+						if (entities[a].rule == "player") {
+							if (entities[b].rule == "enemy") {
+								Game.restart();
+							}else if (entities[b].rule == "item") {
+								entities[b].active = false;
+							}
+						}
+					}
+				}
+			}
 		}
-	}
-	
-	public static function applyfriction(t:Int, xrate:Float, yrate:Float):Void{
-		if (entities[t].vx > 0) entities[t].vx -= xrate;
-		if (entities[t].vx < 0) entities[t].vx += xrate;
-		if (entities[t].vy > 0) entities[t].vy -= yrate;
-		if (entities[t].vy < 0) entities[t].vy += yrate;
-		if (entities[t].vy > 2) entities[t].vy = 2;
-		if (entities[t].vy < -4) entities[t].vy = -4;
-		if (entities[t].vx > 4) entities[t].vx = 4;
-		if (entities[t].vx < -4) entities[t].vx = -4;
-		
-		if (Math.abs(entities[t].vx) <= xrate) entities[t].vx = 0;
-		if (Math.abs(entities[t].vy) <= yrate) entities[t].vy = 0;
-	}
-	
-	public static function xcollision(t:Int):Bool {
-		//Deal with horizontal map collisions.
-		if (Game.checkwall(entities[t].x + entities[t].vx + entities[t].collisionx, 
-										 	 entities[t].y + entities[t].collisiony,
-											 entities[t].collisionw,
-											 entities[t].collisionh)) {		
-		  return false;
-		}else {
-			return true;
-		}
-	}
-	
-	public static function ycollision(t:Int):Bool {
-		//Deal with vertical map collisions.
-		if (Game.checkwall(entities[t].x + entities[t].collisionx, 
-										 	 entities[t].y + entities[t].vy + entities[t].collisiony,
-											 entities[t].collisionw,
-											 entities[t].collisionh)) {		
-		  return false;
-		}else {
-			return true;
-		}
-	}
-	
-	// True if entity t collides with the floor
-	public static function collidefloor(t:Int):Bool {
-		if (Game.checkwall(entities[t].x + entities[t].collisionx, 
-										 	 entities[t].y + entities[t].collisiony + 1,
-											 entities[t].collisionw,
-											 entities[t].collisionh)) return true;
-		return false;
-	}
-	
-	// Check if entity t's bottom left corner is off the ledge
-	public static function stepoffleft(t:Int) {
-		entities[t].stepoffleft = !Game.pointcollide(
-				entities[t].x + entities[t].collisionx, 
-				entities[t].y + entities[t].collisiony + entities[t].collisionh + 1);
-	}
-	
-	// Check if entity t's bottom right corner is off the ledge
-	public static function stepoffright(t:Int) {
-		entities[t].stepoffright = !Game.pointcollide(
-				entities[t].x + entities[t].collisionx + entities[t].collisionw, 
-				entities[t].y + entities[t].collisiony + entities[t].collisionh + 1);
 	}
 }

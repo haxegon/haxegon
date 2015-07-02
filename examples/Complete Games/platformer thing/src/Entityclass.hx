@@ -19,6 +19,8 @@ class Entityclass {
 	public var state:String;
 	public var statedelay:Int;
 	
+	public var checkentitycollision:Bool;
+	
 	public var xhitwall:Bool;
 	public var yhitwall:Bool;
 	public var stepoffleft:Bool;
@@ -48,6 +50,8 @@ class Entityclass {
 		stepoffleft = false;
 		stepoffright = false;
 		
+		checkentitycollision = false;
+		
 		rule = "none";
 		type = "none";
 		state = "normal";
@@ -75,6 +79,8 @@ class Entityclass {
 			animation = "player";
 			setcollision(0, 0, 16, 16);
 			gravity = true;
+			
+			checkentitycollision = true;
 		}else if (_type == "guard") {
 			rule = "enemy";
 			type = "guard";
@@ -84,6 +90,12 @@ class Entityclass {
 			animation = "guard";
 			setcollision(0, 0, 16, 16);
 			gravity = true;
+		}else if (_type == "coin") {
+			rule = "item";
+			type = "coin";
+			
+			animation = "coin";
+			setcollision(0, 0, 16, 16);
 		}
 	}
 	
@@ -96,14 +108,14 @@ class Entityclass {
 					if (state == "walk_left") {
 						vx = -1;
 						if (xhitwall || stepoffleft) {
-							statedelay = 8;
+							statedelay = 30;
 							vx = 0;
 							state = "walk_right";
 						}
 					}else if (state == "walk_right") {
 						vx = 1;
 						if (xhitwall || stepoffright) {
-							statedelay = 8;
+							statedelay = 30;
 							vx = 0;
 							state = "walk_left";
 						}
