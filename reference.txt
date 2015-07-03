@@ -387,11 +387,13 @@ t = Scene.get(Titlescreen).titlescreenvariable;
 Loading Text:
 -------------------------
 
-var leveldata:Array<Int>;
-leveldata = Data.loadcsv("stage1");  //Loads a CSV spreadsheet as an array of Ints.
-
 var script:Array<String>;
 script = Data.loadtext("cutscene1"); //Loads a TXT file as an array of Strings.
+
+var leveldata:Array<Int>;
+leveldata = Data.loadcsv("stage1");  //Loads a CSV spreadsheet as an array of Ints.
+Data.width    //Int containing the width of the last loaded csv file.
+Data.height   //Int containing the height of the last loaded csv file.
 
 Other useful functions:
 -------------------------

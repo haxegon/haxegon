@@ -3,6 +3,9 @@ package terrylib;
 import openfl.Assets;
 
 class Data {
+	public static var width:Int = 0;
+	public static var height:Int = 0;
+	
 	public static function loadtext(textfile:String):Array<String> {
 		tempstring = Assets.getText("data/text/" + textfile + ".txt");
 		tempstring = replacechar(tempstring, "\r", "");
@@ -10,8 +13,20 @@ class Data {
 		return tempstring.split("\n");
 	}
 	
-	public static function loadcsv(textfile:String):Array<Int> {
-		tempstring = Assets.getText("data/text/" + textfile + ".csv");
+	public static function loadcsv(csvfile:String):Array<Int> {
+		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+		
+		//figure out width
+		width = 1;
+		var i:Int = 0;
+		while (i < tempstring.length) {
+			if (mid(tempstring, i) == ",") width++;
+			if (mid(tempstring, i) == "\n") {
+				break;
+			}
+			i++;
+		}
+		
 		
 		tempstring = replacechar(tempstring, "\r", "");
 		tempstring = replacechar(tempstring, "\n", ",");
@@ -22,6 +37,8 @@ class Data {
 		for (i in 0 ... stringarray.length) {
 			intarray.push(Std.parseInt(stringarray[i]));
 		}
+		
+		height = Std.int(intarray.length / width);
 		
 		return intarray;
 	}
