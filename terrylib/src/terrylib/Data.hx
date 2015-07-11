@@ -13,7 +13,7 @@ class Data {
 		return tempstring.split("\n");
 	}
 	
-	public static function loadcsv(csvfile:String):Array<Int> {
+	public static function loadcsv(csvfile:String):Dynamic {
 		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
 		
 		//figure out width
