@@ -13,34 +13,82 @@ class Data {
 		return tempstring.split("\n");
 	}
 	
-	public static function loadcsv(csvfile:String):Dynamic {
+	public static function loadcsv_int(csvfile:String, delimiter:String = ","):Array<Int> {
 		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
 		
 		//figure out width
 		width = 1;
 		var i:Int = 0;
 		while (i < tempstring.length) {
-			if (mid(tempstring, i) == ",") width++;
+			if (mid(tempstring, i) == delimiter) width++;
 			if (mid(tempstring, i) == "\n") {
 				break;
 			}
 			i++;
 		}
 		
-		
 		tempstring = replacechar(tempstring, "\r", "");
-		tempstring = replacechar(tempstring, "\n", ",");
+		tempstring = replacechar(tempstring, "\n", delimiter);
 		
 		var intarray:Array<Int> = [];
-		var stringarray:Array<String> = tempstring.split(",");
+		var stringarray:Array<String> = tempstring.split(delimiter);
 		
 		for (i in 0 ... stringarray.length) {
 			intarray.push(Std.parseInt(stringarray[i]));
 		}
 		
 		height = Std.int(intarray.length / width);
-		
 		return intarray;
+	}
+	
+	public static function loadcsv_float(csvfile:String, delimiter:String = ","):Array<Float> {
+		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+		
+		//figure out width
+		width = 1;
+		var i:Int = 0;
+		while (i < tempstring.length) {
+			if (mid(tempstring, i) == delimiter) width++;
+			if (mid(tempstring, i) == "\n") {
+				break;
+			}
+			i++;
+		}
+		
+		tempstring = replacechar(tempstring, "\r", "");
+		tempstring = replacechar(tempstring, "\n", delimiter);
+		
+		var floatarray:Array<Float> = [];
+		var stringarray:Array<String> = tempstring.split(delimiter);
+		
+		for (i in 0 ... stringarray.length) {
+			floatarray.push(Std.parseFloat(stringarray[i]));
+		}
+		
+		height = Std.int(floatarray.length / width);
+		return floatarray;
+	}
+	
+	public static function loadcsv_string(csvfile:String, delimiter:String = ","):Array<String> {
+		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+		
+		//figure out width
+		width = 1;
+		var i:Int = 0;
+		while (i < tempstring.length) {
+			if (mid(tempstring, i) == delimiter) width++;
+			if (mid(tempstring, i) == "\n") {
+				break;
+			}
+			i++;
+		}
+		
+		tempstring = replacechar(tempstring, "\r", "");
+		tempstring = replacechar(tempstring, "\n", delimiter);
+		
+		var stringarray:Array<String> = tempstring.split(delimiter);
+		height = Std.int(stringarray.length / width);
+		return stringarray;
 	}
 	
 	/** Return characters from the middle of a string. */
