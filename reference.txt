@@ -387,13 +387,31 @@ t = Scene.get(Titlescreen).titlescreenvariable;
 Loading Text:
 -------------------------
 
+You can load a simple text file into a string array like this:
+
 var script:Array<String>;
 script = Data.loadtext("cutscene1"); //Loads a TXT file as an array of Strings.
 
+You can also load CSV spreadsheets into Arrays! For those, you need to specify the type of variable in the CSV file.
+
 var leveldata:Array<Int>;
-leveldata = Data.loadcsv("stage1");  //Loads a CSV spreadsheet as an array of Ints.
+leveldata = Data.loadcsv_int("stage1");  //Loads a CSV spreadsheet as an array of Ints.
+
 Data.width    //Int containing the width of the last loaded csv file.
 Data.height   //Int containing the height of the last loaded csv file.
+
+You can also floats and strings like this:
+Data.loadcsv_int("csvfile")
+Data.loadcsv_float("csvfile")
+Data.loadcsv_string("csvfile")
+
+You can also load CSVs into two dimensional arrays with these functions:
+var leveldata2d:Array<Array<Int>>;
+leveldata = Data.loadcsv_2dint("stage1");  //Loads a CSV spreadsheet as a 2D array of Ints.
+
+Data.loadcsv_2dint("csvfile")
+Data.loadcsv_2dfloat("csvfile")
+Data.loadcsv_2dstring("csvfile")
 
 Other useful functions:
 -------------------------
