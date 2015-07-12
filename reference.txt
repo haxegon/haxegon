@@ -392,8 +392,7 @@ You can load a simple text file into a string array like this:
 var script:Array<String>;
 script = Data.loadtext("cutscene1"); //Loads a TXT file as an array of Strings.
 
-You can also load CSV spreadsheets into Arrays! 
-For those, you need to specify the type of variable in the CSV file.
+You can also load CSV spreadsheets into Arrays!
 
 var leveldata:Array<Int>;   //Could also be Float or Strings
 leveldata = Data.loadcsv("stage1");  //Loads a CSV spreadsheet as an array of Ints.
