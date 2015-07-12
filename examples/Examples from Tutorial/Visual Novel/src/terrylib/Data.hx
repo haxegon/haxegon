@@ -13,34 +13,64 @@ class Data {
 		return tempstring.split("\n");
 	}
 	
-	public static function loadcsv(csvfile:String):Array<Int> {
+	@:generic
+	public static function loadcsv<T>(csvfile:String, delimiter:String = ","):Array<T> {
 		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
 		
 		//figure out width
 		width = 1;
 		var i:Int = 0;
 		while (i < tempstring.length) {
-			if (mid(tempstring, i) == ",") width++;
+			if (mid(tempstring, i) == delimiter) width++;
 			if (mid(tempstring, i) == "\n") {
 				break;
 			}
 			i++;
 		}
 		
-		
 		tempstring = replacechar(tempstring, "\r", "");
-		tempstring = replacechar(tempstring, "\n", ",");
+		tempstring = replacechar(tempstring, "\n", delimiter);
 		
-		var intarray:Array<Int> = [];
-		var stringarray:Array<String> = tempstring.split(",");
+		var returnedarray:Array<T> = new Array<T>();
+		var stringarray:Array<String> = tempstring.split(delimiter);
 		
 		for (i in 0 ... stringarray.length) {
-			intarray.push(Std.parseInt(stringarray[i]));
+			returnedarray.push(cast stringarray[i]);
 		}
 		
-		height = Std.int(intarray.length / width);
+		height = Std.int(returnedarray.length / width);
+		return returnedarray;
+	}
+	
+	@:generic
+	public static function loadcsv_2d<T>(csvfile:String, delimiter:String = ","):Array<Array<T>> {
+		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
 		
-		return intarray;
+		//figure out width
+		width = 1;
+		var i:Int = 0;
+		while (i < tempstring.length) {
+			if (mid(tempstring, i) == delimiter) width++;
+			if (mid(tempstring, i) == "\n") {
+				break;
+			}
+			i++;
+		}
+		
+		tempstring = replacechar(tempstring, "\r", "");
+		tempstring = replacechar(tempstring, "\n", delimiter);
+		
+		var returnedarray:Array<T> = new Array<T>();
+		var stringarray:Array<String> = tempstring.split(delimiter);
+		
+		for (i in 0 ... stringarray.length) {
+			returnedarray.push(cast stringarray[i]);
+		}
+		
+		height = Std.int(returnedarray.length / width);
+		
+		var returnedarray2d:Array<Array<T>> = [for (x in 0 ... width) [for (y in 0 ... height) returnedarray[x + (y * width)]]];
+		return returnedarray2d;
 	}
 	
 	/** Return characters from the middle of a string. */
