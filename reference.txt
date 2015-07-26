@@ -110,14 +110,18 @@ Gfx.loadtiles("imagename", tilewidth, tileheight);
 Gfx.changetileset("newtileset");
  
   - Changes the tileset that all subsequent Gfx.drawtile() commands refer to. e.g.
-    Gfx.changetileset("forest"); drawtile(0, 0, 4); // Draws tile 4 from the "forest" tileset at 0,0
-    Gfx.changetileset("city"); drawtile(10, 20, 7); // Draws tile 7 from the "city" tileset at 10,20
+    
+    Gfx.changetileset("forest"); Gfx.drawtile(0, 0, 4); 
+    // Draws tile 4 from the "forest" tileset at 0, 0
+    
+    Gfx.changetileset("city"); Gfx.drawtile(10, 20, 7); 
+    // Draws tile 7 from the "city" tileset at 10, 20
   
 drawtile(x, y, tilenumber, optional parameters);
 
   - Drawtiles functions take all the same arguments as drawimage functions. 
   
-//Primatives
+//Primitives
 Gfx.drawbox(x, y, width, height, col);
 Gfx.fillbox(x, y, width, height, col);
 
@@ -403,6 +407,13 @@ Data.height   //Int containing the height of the last loaded csv file.
 You can also load CSVs into two dimensional arrays with this function:
 var leveldata2d:Array<Array<Int>>;  //Could also be Float or Strings
 leveldata = Data.loadcsv_2d("stage1");  //Loads a CSV spreadsheet as a 2D array of Ints.
+
+Data.blank2darray(width, height); //Creates a blank 2D array
+
+e.g:
+var myarray:Array<Array<Int>>;
+myarray = Data.blank2darray(25, 25);
+myarray[10][20] = 100;
 
 Other useful functions:
 -------------------------

@@ -230,7 +230,7 @@ class Gfx {
 		if (y == RIGHT || y == BOTTOM) return images[imagenum].height;
 		return y;
 	}
-		
+	
 	/** Draws image by name. 
 	 * Parameters can be: rotation, scale, xscale, yscale, xpivot, ypivoy, alpha
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
