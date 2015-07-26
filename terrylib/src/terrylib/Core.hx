@@ -64,6 +64,7 @@ class Core extends Sprite {
 	
 	public function doupdate() {
 		Mouse.update(Std.int(Lib.current.mouseX / Gfx.screenscale), Std.int(Lib.current.mouseY / Gfx.screenscale));
+		Input.update();
 		
 		if(!Gfx.skiprender) Gfx.backbuffer.lock();
 		

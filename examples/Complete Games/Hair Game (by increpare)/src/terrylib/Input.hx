@@ -18,7 +18,7 @@ class Input {
 	
 	public static function justpressed(k:Key):Bool { 
 		if (current[keymap.get(k)] == Keystate.justpressed) {
-			current[keymap.get(k)] = Keystate.pressed;
+			//current[keymap.get(k)] = Keystate.pressed;
 			return true;
 		}else {
 			return false;
