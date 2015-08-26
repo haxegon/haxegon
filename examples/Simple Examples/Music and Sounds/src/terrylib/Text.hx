@@ -155,7 +155,7 @@ class Text {
 		if (x == LEFT || x == TOP) return 0;
 		if (x == RIGHT || x == BOTTOM) return Math.floor(Gfx.screenwidth - (typeface[currentindex].tf.textWidth));
 		
-		return x;
+		return Math.floor(x);
 	}
 	
 	private static function aligny(y:Float):Float {
@@ -163,7 +163,7 @@ class Text {
 		if (y == LEFT || y == TOP) return 0;
 		if (y == RIGHT || y == BOTTOM) return Math.floor(Gfx.screenheight - (typeface[currentindex].tf.textHeight));
 		
-		return y;
+		return Math.floor(y);
 	}
 	
 	private static function aligntextx(t:String, x:Float):Float {
@@ -212,9 +212,9 @@ class Text {
 			
 			if (parameters.align != null) {
 				if (parameters.align == CENTER) {
-					x = x - (len(text) / 2);
+					x = Math.floor(x - (len(text) / 2));
 				}else if (parameters.align == RIGHT || parameters.align == BOTTOM) {
-					x = x - len(text);
+					x = Math.floor(x - len(text));
 				}
 			}
 			
