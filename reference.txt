@@ -69,7 +69,7 @@ Gfx.loadimage("imagename");
     Gfx.loadimage("titlescreen");  // Loads in data/graphics/titlescreen.png
     Gfx.loadimage("background");   // Loads in data/graphics/background.jpg
 
-drawimage(x, y, "imagename", optional parameters);
+Gfx.drawimage(x, y, "imagename", optional parameters);
 
   - e.g. 
       Gfx.drawimage(0, 0, "monalisa");
@@ -117,7 +117,7 @@ Gfx.changetileset("newtileset");
     Gfx.changetileset("city"); Gfx.drawtile(10, 20, 7); 
     // Draws tile 7 from the "city" tileset at 10, 20
   
-drawtile(x, y, tilenumber, optional parameters);
+Gfx.drawtile(x, y, tilenumber, optional parameters);
 
   - Drawtiles functions take all the same arguments as drawimage functions. 
   
@@ -144,15 +144,15 @@ Gfx.setlinethickness(linethickness);       // Default value is 1 pixel.
   - "col" is a haxe HexCol, which is an int written like e.g this: 0xFFFFFF
     Or you could use the functions below:
 
-t = Gfx.getpixel(x, y);           // Returns the colour of the pixel at (x, y).
+var p:Int = Gfx.getpixel(x, y);           // Returns the colour of the pixel at (x, y).
 
 //Colours
-t = Gfx.RGB(red, green, blue);                 //Red, Green and Blue are between 0-255.
-t = Gfx.HSL(hue, saturation, lightness);       //Hue is between 0-360. 
+var col:Int = Gfx.RGB(red, green, blue);                 //Red, Green and Blue are between 0-255.
+var col:Int = Gfx.HSL(hue, saturation, lightness);       //Hue is between 0-360. 
                                                //Saturation and lightness are between 0.0 and 1.0.
-redvalue = Gfx.getred(col);
-greenvalue = Gfx.getgreen(col);
-bluevalue = Gfx.getblue(col);
+var redvalue:Int = Gfx.getred(col);
+var greenvalue:Int = Gfx.getgreen(col);
+var bluevalue:Int = Gfx.getblue(col);
 
 There are 16 preset colours (based on Arne's famous 16 colour palette) that you can use with the following constants:
 
