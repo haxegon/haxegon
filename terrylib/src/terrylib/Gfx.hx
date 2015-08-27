@@ -46,13 +46,24 @@ class Gfx {
 	public static var backbuffer:BitmapData;
 	public static var drawto:BitmapData;
 	
+	private static var fpsobj:FPS;
+	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
 	public static function resizescreen(width:Float, height:Float, scale:Int = 1) {
 		initgfx(Std.int(width), Std.int(height), scale);
 		Text.init(gfxstage);
+		fps();
 		gfxstage.addChild(screen);
 		
 		updategraphicsmode();
+	}
+	
+	public static function fps():Int {
+		if (fpsobj == null) {
+			fpsobj = new FPS(0, 0, 0xffffff);	
+		  gfxstage.addChild(fpsobj);
+		}
+		return fpsobj.currentFPS;
 	}
 	
 	/** Change the tileset that the draw functions use. */
@@ -732,6 +743,12 @@ class Gfx {
 	
 	public static function getpixel(x:Float, y:Float):Int {
 		return drawto.getPixel32(Std.int(x), Std.int(y));
+	}
+	
+	public static function setpixel(x:Float, y:Float, col:Int, alpha:Float = 1.0) {
+		if (skiprender && drawingtoscreen) return;
+		
+		drawto.setPixel32(Std.int(x), Std.int(y), (Std.int(alpha * 256) << 24) + col);
 	}
 
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
