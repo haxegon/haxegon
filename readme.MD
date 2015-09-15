@@ -1,13 +1,13 @@
-#TerryLib
+#Haxegon
 
-TerryLib is a work in progress! At this point it's pretty stable - things probably won't change much before it gets released. If you try it out, let me know what you think! The tutorial is on it's way, and will have a public beta test soon.
+Haxegon is a work in progress! At this point it's pretty stable - things probably won't change much before it gets released. If you try it out, let me know what you think! The tutorial is on it's way, and will have a public beta test soon.
 
-TerryLib is a tiny haxe programming library for beginners. It's made to accompany a beginners game programming tutorial that I'm currently writing.
+Haxegon is a tiny haxe programming library for beginners. It's made to accompany a beginners game programming tutorial that I'm currently writing.
 
-TerryLib is designed to give you a simple, beginner friendly, uncluttered starting point to game programming. Hello World in TerryLib looks like this:
+Haxegon is designed to give you a simple, beginner friendly, uncluttered starting point to game programming. Hello World in Haxegon looks like this:
 
 ```haxe
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	function update() {
@@ -16,7 +16,7 @@ class Main {
 }
 ``` 
 
-Here's a *complete* list of what you can do with TerryLib.
+Here's a *complete* list of what you can do with Haxegon.
 
 **Graphics:** 
 Load in images and draw them, draw simple shapes, and divide images into tilesets! Do simple animations!
@@ -40,9 +40,9 @@ See reference.txt for a full command list.
 
 For examples, see the included examples folder! Examples are a work in progress - more are on the way!
 
-## Using TerryLib
+## Using Haxegon
 
-TerryLib is a Haxe Library, and is built on top of OpenFL. Here is a good starting point for installing Haxe and OpenFL on your machine:
+Haxegon is a Haxe Library, and is built on top of OpenFL. Here is a good starting point for installing Haxe and OpenFL on your machine:
 
 http://www.openfl.org/documentation/getting-started/installing-openfl/
 
@@ -50,11 +50,11 @@ On windows, FlashDevelop is the recommended IDE.
 
 On Mac, I've made a special compiler tool that comes with the project, TerryCompile. Unzip the "terrycompile.zip" folder into the project you want to complile, then run it! For a code editor on Mac, I'm still figuring out exactly what to recommend. Sublime Text, maybe!
 
-TerryLib can target Flash and Desktop platforms. A HTML5 target is working, but currently has a lot of bugs. iOS and Android targets are possible in future, but are not currently supported.
+Haxegon can target Flash and Desktop platforms. A HTML5 target is working, but currently has a lot of bugs. iOS and Android targets are possible in future, but are not currently supported.
 
 ## Roadmap to 1.0
 
 To do:
  - Work to make HTML5 target stable.
- - Make sure TerryLib gives good error messages in as many places as possible.
+ - Make sure Haxegon gives good error messages in as many places as possible.
  - Finish tutorial and make some examples!
