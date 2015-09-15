@@ -1,6 +1,6 @@
 <p align="center"><img src="haxegon.png"/></p>
 
-Haxegon is a work in progress! At this point it's pretty stable - things probably won't change much before it gets released. If you try it out, let me know what you think! The tutorial is on it's way, and will have a public beta test soon.
+** Haxegon is a work in progress! ** Right now, Haxegon doesn't work correctly, and it's currently being modified pretty heavily as part of it's sister project, <a href="https://github.com/increpare/zeedonk">Zeedonk</a>. More info soon!
 
 Haxegon is a tiny haxe programming library for beginners. It's made to accompany a beginners game programming tutorial that I'm currently writing.
 
