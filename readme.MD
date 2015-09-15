@@ -1,4 +1,4 @@
-#Haxegon
+<p align="center"><img src="haxegon.png"/></p>
 
 Haxegon is a work in progress! At this point it's pretty stable - things probably won't change much before it gets released. If you try it out, let me know what you think! The tutorial is on it's way, and will have a public beta test soon.
 
