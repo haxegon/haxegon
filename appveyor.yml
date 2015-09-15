@@ -1,6 +1,3 @@
-# version format
-version: 1.0.{build}
-
 # example appveyor.yml haxe configuration
 
 environment:
@@ -40,14 +37,3 @@ script:
   - C:\haxegon\AppVeyor.exe test %FILENAME% # this will set the $FILENAME defined on the environment variable to run the tests
 
 
-
-
-notifications:
-
-# Email
-#- provider: Email
-#  to:
-#    - terry@maths.tcd.ie
-#  subject: 'Build {{status}}'                  # optional
-#  message: "{{message}}, {{commitId}}, ..."    # optional
-#  on_build_status_changed: true
