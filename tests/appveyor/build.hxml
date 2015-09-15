@@ -1,0 +1,5 @@
+-main AppVeyor
+-cpp cpp
+-lib format
+-lib hxcpp
+-debug
