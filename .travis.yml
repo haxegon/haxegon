@@ -1,0 +1,24 @@
+language: c++
+
+before_install:
+  - sudo add-apt-repository ppa:eyecreate/haxe -y
+  - sudo apt-get update
+  - sudo apt-get install haxe -y --force-yes
+  - sudo apt-get install g++-multilib gcc-multilib
+  - mkdir ~/haxelib
+  - haxelib setup ~/haxelib
+  #- haxelib install openfl > /dev/null
+  - git clone --recursive https://github.com/openfl/openfl ~/openfl --depth 1
+  - haxelib dev openfl ~/openfl
+  - haxelib install lime > /dev/null
+  - haxelib install hxcpp > /dev/null
+  - haxelib install actuate > /dev/null
+  - haxelib install box2d > /dev/null
+  - haxelib install swf > /dev/null
+  - haxelib install layout > /dev/null
+  - haxelib install format > /dev/null
+  - git clone --recursive https://github.com/terrycavanagh/haxegon ~/haxegon --depth 1
+
+script:
+  - haxelib run openfl build $(pwd)/terrylib flash
+  - haxelib run openfl build $(pwd)/terrylib neko
