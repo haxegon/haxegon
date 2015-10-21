@@ -21,4 +21,3 @@ before_install:
 
 script:
   - haxelib run openfl build $(pwd)/haxegon flash
-  - haxelib run openfl build $(pwd)/haxegon neko
