@@ -1,4 +1,4 @@
-package terrylib.util;
+package haxegon.util;
 
 import openfl.display.*;
 

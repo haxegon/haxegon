@@ -1,5 +1,5 @@
-#if !terrylibweb
-package terrylib;
+#if !haxegonweb
+package haxegon;
 
 import openfl.display.*;          
 import openfl.media.*; 

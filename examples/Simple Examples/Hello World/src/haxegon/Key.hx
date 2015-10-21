@@ -1,4 +1,4 @@
-package terrylib;
+package haxegon;
 
 enum Key {
 	A;

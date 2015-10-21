@@ -1,4 +1,4 @@
-package terrylib;
+package haxegon;
 
 import openfl.display.DisplayObject;
 import openfl.events.MouseEvent;
@@ -50,7 +50,23 @@ class Mouse{
 		_middlelast = 0;
 		_current = 0;
 		_last = 0;
-	}		
+	}
+	
+	private static function unload(stage:DisplayObject) {
+		//Right mouse stuff
+		#if !flash
+		stage.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
+		stage.removeEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
+		#end
+		
+		stage.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+		stage.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+		stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
+		stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
+		stage.removeEventListener(MouseEvent.MOUSE_WHEEL, mousewheelHandler);
+		stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
+		stage.removeEventListener(Event.MOUSE_LEAVE, mouseLeave);
+	}	
 	
 	private static function mouseLeave(e:Event) {
 		mouseoffstage = true;

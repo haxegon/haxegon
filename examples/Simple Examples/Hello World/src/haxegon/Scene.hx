@@ -1,6 +1,6 @@
 // Huge huge thanks to Ruari O'Sullivan (@randomnine) for figuring this stuff out for me!
-#if !terrylibweb
-package terrylib;
+#if !haxegonweb
+package haxegon;
 
 import openfl.errors.ArgumentError;
 
