@@ -1,4 +1,5 @@
 <p align="center"><img src="haxegon.png"/></p>
+<p align="center"><img src="supportedplatforms.png"/></p>
 
 [![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
 
