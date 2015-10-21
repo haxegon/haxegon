@@ -1,4 +1,4 @@
-package terrylib.bitmapFont;
+package haxegon.bitmapFont;
 
 /**
  * Possible BitmapTextField align modes.

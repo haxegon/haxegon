@@ -1,6 +1,6 @@
-package terrylib.util;
+package haxegon.util;
 
-@:access(terrylib.Gfx)
+@:access(haxegon.Gfx)
 class AnimationContainer {
 	public function new(_animationname:String, _tileset:String, _startframe:Int, _endframe:Int, _delayperframe:Int) {
 		name = _animationname;

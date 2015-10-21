@@ -1,5 +1,5 @@
-#if terrylibweb
-package terrylib;
+#if haxegonweb
+package haxegon;
 
 import openfl.Assets;
 
@@ -11,7 +11,7 @@ class Data {
 	}
 }
 #else
-package terrylib;
+package haxegon;
 
 import openfl.Assets;
 

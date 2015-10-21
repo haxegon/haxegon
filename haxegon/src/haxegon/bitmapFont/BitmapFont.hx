@@ -1,4 +1,4 @@
-package terrylib.bitmapFont;
+package haxegon.bitmapFont;
 
 import haxe.Utf8;
 import haxe.xml.Fast;
@@ -10,9 +10,9 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
-#if RENDER_TILE
+/*#if RENDER_TILE
 import openfl.display.Tilesheet;
-#end
+#end*/
 
 /**
  * Holds information and bitmap glyphs for a bitmap font.
@@ -171,9 +171,9 @@ class BitmapFont
 	
 	public var glyphs:Map<Int, BitmapGlyphFrame>;
 	
-	#if RENDER_TILE
+	/*#if RENDER_TILE
 	public var tilesheet:Tilesheet;
-	#end
+	#end*/
 	
 	/**
 	 * Creates and stores new bitmap font using specified source image.
@@ -182,9 +182,9 @@ class BitmapFont
 	{
 		this.bitmap = bitmap;
 		this.fontName = name;
-		#if RENDER_TILE
+		/*#if RENDER_TILE
 		tilesheet = new Tilesheet(bitmap);
-		#end
+		#end*/
 		glyphs = new Map<Int, BitmapGlyphFrame>();
 		BitmapFont.store(name, this);
 	}
@@ -201,9 +201,9 @@ class BitmapFont
 		}
 		
 		bitmap = null;
-		#if RENDER_TILE
+		/*#if RENDER_TILE
 		tilesheet = null;
-		#end
+		#end*/
 		glyphs = null;
 		fontName = null;
 	}
@@ -535,14 +535,14 @@ class BitmapFont
 		glyphFrame.xadvance = xAdvance;
 		glyphFrame.rect = frame;
 		
-		#if RENDER_TILE
+		/*#if RENDER_TILE
 		glyphFrame.tileID = tilesheet.addTileRect(frame, new Point(0, 0));
-		#end
+		#end*/
 		
 		glyphs.set(charCode, glyphFrame);
 	}
 	
-	#if RENDER_BLIT
+	//#if RENDER_BLIT
 	/**
 	 * Generates special collection of BitmapGlyph objects, which are used in RENDER_BLIT mode.
 	 * These BitmapGlyph objects contain prepared (scales and color transformed) glyph images, which saves some CPU cycles for you.
@@ -556,7 +556,7 @@ class BitmapFont
 	{
 		return new BitmapGlyphCollection(this, scale, color, useColor, smoothing);
 	}
-	#end
+	//#end
 }
 
 /**

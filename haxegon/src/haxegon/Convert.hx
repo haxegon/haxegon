@@ -1,4 +1,4 @@
-package terrylib;
+package haxegon;
 
 class Convert {
 	public static function tostring(?value:Dynamic):String {
@@ -6,7 +6,7 @@ class Convert {
 	}
 	
 	public static function toint(?value:Dynamic):Int {
-		return Std.parseInt(value);
+		return Std.parseInt(Std.string(value));
 	}
 	
 	public static function tofloat(?value:Dynamic):Float {

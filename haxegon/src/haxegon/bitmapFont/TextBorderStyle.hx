@@ -1,4 +1,4 @@
-package terrylib.bitmapFont;
+package haxegon.bitmapFont;
 
 /**
  * Possible border styles for BitmapTextField. Default is NONE, which means no borders.

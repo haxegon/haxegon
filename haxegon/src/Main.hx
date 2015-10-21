@@ -1,7 +1,6 @@
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	function update() {
-		
   }
 }

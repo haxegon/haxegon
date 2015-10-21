@@ -8,7 +8,7 @@
   />
 
 	<app 
-      main="terrylib.Load"
+      main="haxegon.Load"
       path="bin" 
       file="newproject" 
    />
@@ -44,5 +44,4 @@
 	<assets path="data" exclude="*.svg|*.mp3|*.ogg|*.wav|*.txt"/>
 	
 	<icon path="data/icon/play.svg"/>
-	
 </project>
