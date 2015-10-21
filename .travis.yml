@@ -21,3 +21,4 @@ before_install:
 
 script:
   - haxelib run openfl build $(pwd)/haxegon flash
+  - haxelib run openfl build "$(pwd)/examples/Simple Examples/Hello World" flash
