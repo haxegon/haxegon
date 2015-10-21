@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	var currentscene:Int;

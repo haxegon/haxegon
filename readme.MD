@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
 
-**Haxegon is a work in progress!** Right now, Haxegon doesn't work correctly, and it's currently being modified pretty heavily as part of it's sister project, <a href="https://github.com/increpare/zeedonk">Zeedonk</a>. More info soon!
+**Haxegon is a work in progress!** Feel free to give it a whirl, but be warned that some things might change between now and launch...
 
 Haxegon is a tiny haxe programming library for beginners. It's made to accompany a beginners game programming tutorial that I'm currently writing.
 

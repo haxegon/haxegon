@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	var playername:String;         // String containing the playername typed in.
@@ -25,7 +25,9 @@ class Main {
 			Text.display(5, 5, "NAME:", Col.YELLOW);
 			Text.display(60, 5, playername, Col.WHITE);
 			
-			Text.display(Gfx.screenwidth - 5, 5, "[press ENTER to change]", Col.GRAY, { align: Text.RIGHT } );
+			Text.align(Text.RIGHT);
+			Text.display(Gfx.screenwidth - 5, 5, "[press ENTER to change]", Col.GRAY);
+			Text.align(Text.LEFT);
 		}else {
 			//Display the ENTER YOUR NAME prompt in the middle of the screen.
 			Text.changesize(32);

@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	function update() {
@@ -9,6 +9,7 @@ class Main {
 		
 		//Show the title screen text.
 		Text.changesize(32);
+		Text.align(Text.LEFT);
 		Text.display(Text.CENTER, Gfx.screenheightmid - 30, "SCENE CHANGE EXAMPLE", Col.WHITE);
 		Text.changesize(16);
 		Text.display(Text.CENTER, Gfx.screenheightmid + 10, "LEFT CLICK TO CHANGE", Col.WHITE);

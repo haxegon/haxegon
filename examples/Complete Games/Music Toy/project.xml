@@ -8,7 +8,7 @@
   />
 
 	<app 
-      main="terrylib.Load"
+      main="haxegon.Load"
       path="bin" 
       file="musictoy"
    />

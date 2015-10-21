@@ -2,13 +2,13 @@
 <project>
 	<meta 
     title="Tilesets" 
-    package="com.terrylib.tilesets" 
+    package="com.haxegon.tilesets" 
     version="1.0.0" 
     company="Your name here" 
   />
 
 	<app 
-      main="terrylib.Load"
+      main="haxegon.Load"
       path="bin" 
       file="tilesets" 
    />

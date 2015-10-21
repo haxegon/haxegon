@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Game {
 	public static var jumppressed:Int;

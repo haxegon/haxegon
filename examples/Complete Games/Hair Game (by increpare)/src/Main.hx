@@ -9,7 +9,7 @@
  * http://www.increpare.com/2015/05/hair-game/
  * 
  * */
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	// Position values defining the layout of the head of hair.

@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Entityclass {
 	public var active:Bool;

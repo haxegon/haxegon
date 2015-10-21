@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Space {
 	//Create some arrays for the starfield.
@@ -46,7 +46,9 @@ class Space {
 		}
 		
 		Text.changesize(16);
+		Text.align(Text.LEFT);
 		Text.display(6, Gfx.screenheight - 25, "LEFT CLICK TO CHANGE", Col.GRAY);
-		Text.display(Gfx.screenwidth - 6, Gfx.screenheight - 25, "[now running from \"Space.hx\"]", Col.WHITE, { align: Text.RIGHT } );
+		Text.align(Text.RIGHT);
+		Text.display(Gfx.screenwidth - 6, Gfx.screenheight - 25, "[now running from \"Space.hx\"]", Col.WHITE);
   }
 }

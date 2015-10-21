@@ -2,7 +2,7 @@
 <project>
 	<meta 
     title="Hello World" 
-    package="com.terrylib.helloworld" 
+    package="com.haxegon.helloworld" 
     version="1.0.0" 
     company="Your name here" 
   />

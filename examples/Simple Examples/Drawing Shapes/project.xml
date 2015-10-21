@@ -2,13 +2,13 @@
 <project>
 	<meta 
     title="Drawing Shapes" 
-    package="com.terrylib.drawingshapes" 
+    package="com.haxegon.drawingshapes" 
     version="1.0.0" 
     company="Your name here" 
   />
 
 	<app 
-      main="terrylib.Load"
+      main="haxegon.Load"
       path="bin" 
       file="drawingshapes" 
    />

@@ -2,13 +2,13 @@
 <project>
 	<meta 
     title="Scene Change" 
-    package="com.terrylib.scenechange" 
+    package="com.haxegon.scenechange" 
     version="1.0.0" 
     company="Your name here" 
   />
 
 	<app 
-      main="terrylib.Load"
+      main="haxegon.Load"
       path="bin" 
       file="scenechange" 
    />

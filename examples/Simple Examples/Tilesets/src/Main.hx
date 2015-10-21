@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	var level:Array<Int>;          //An array to hold the level data in.

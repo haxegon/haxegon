@@ -1240,9 +1240,11 @@ class Gfx {
 			tempshape.graphics.lineTo(0, height);
 			tempshape.graphics.lineTo(0, 0);
 			
+			shapematrix.identity();
 			shapematrix.translate(x, y);
 			drawto.draw(tempshape, shapematrix);
 			shapematrix.translate( -x, -y);
+			shapematrix.identity();
 		}
 		#end
 	}

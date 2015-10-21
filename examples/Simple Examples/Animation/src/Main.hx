@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	var animationlist:Array<String>;    // An array of strings, used to store animation names.
@@ -46,10 +46,11 @@ class Main {
 		Gfx.clearscreen(Col.GRAY);
 		
 		//Draw the animation. animationlist[] contains a list of animation names to draw.
-		Gfx.drawanimation(Gfx.screenwidthmid, Gfx.screenheightmid - 40, animationlist[currentanimation], { scale: 4, xpivot: Gfx.CENTER, ypivot: Gfx.CENTER, xalign: Gfx.CENTER, yalign: Gfx.CENTER } );
+		Gfx.scale(4, 4);
+		Gfx.drawanimation(Gfx.screenwidthmid, Gfx.screenheightmid - 40, animationlist[currentanimation]);
 		
 		//Draw the footer, with information about the current animation.
-		Gfx.fillbox(0, Gfx.screenheight - 80, Gfx.screenwidth, 80, Gfx.RGB(96, 96, 96));
+		Gfx.fillbox(0, Gfx.screenheight - 80, Gfx.screenwidth, 80, Gfx.rgb(96, 96, 96));
 		Text.changesize(32); Text.display(Text.CENTER, Gfx.screenheight - 80, (currentanimation + 1) + ": \"" + animationlist[currentanimation] + "\"", Col.WHITE);
 		Text.changesize(16); Text.display(Text.CENTER, Gfx.screenheight - 30, "press left and right to change", Col.LIGHTBLUE);
   }

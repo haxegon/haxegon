@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Lab {
 	//Create some arrays for the box effect in the background.
@@ -47,13 +47,13 @@ class Lab {
 		}
 		
 		//Clear the screen to a very dark red
-		Gfx.clearscreen(Gfx.RGB(16, 0, 0));
+		Gfx.clearscreen(Gfx.rgb(16, 0, 0));
 		
-		Gfx.setlinethickness(2);
+		Gfx.linethickness = 2;
 		
 		for (i in 0 ... 18) {
 			//Draw the box with the given x, y, width, height and brightness values.
-			Gfx.drawbox(box_x[i], box_y[i], box_width[i], box_height[i], Gfx.RGB(brightness[i], 16, 16));
+			Gfx.drawbox(box_x[i], box_y[i], box_width[i], box_height[i], Gfx.rgb(brightness[i], 16, 16));
 			
 			//Move the box based on it's speed.
 			box_x[i] += box_vx[i];
@@ -82,7 +82,9 @@ class Lab {
 		}
 		
 		Text.changesize(16);
+		Text.align(Text.LEFT);
 		Text.display(6, Gfx.screenheight - 25, "LEFT CLICK TO CHANGE", Col.GRAY);
-		Text.display(Gfx.screenwidth - 6, Gfx.screenheight - 25, "[now running from \"Lab.hx\"]", Col.WHITE, { align: Text.RIGHT } );
+		Text.align(Text.RIGHT);
+		Text.display(Gfx.screenwidth - 6, Gfx.screenheight - 25, "[now running from \"Lab.hx\"]", Col.WHITE);
   }
 }

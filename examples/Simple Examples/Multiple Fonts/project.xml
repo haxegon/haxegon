@@ -2,13 +2,13 @@
 <project>
 	<meta 
     title="Multiple Fonts" 
-    package="com.terrylib.mutliplefonts" 
+    package="com.haxegon.mutliplefonts" 
     version="1.0.0" 
     company="Your name here" 
   />
 
 	<app 
-      main="terrylib.Load"
+      main="haxegon.Load"
       path="bin" 
       file="mutliplefonts" 
    />

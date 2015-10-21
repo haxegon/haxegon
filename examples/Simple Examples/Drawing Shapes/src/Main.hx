@@ -1,4 +1,4 @@
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	var currenteffect:Int;    // Current effect we're drawing on the screen
@@ -50,8 +50,10 @@ class Main {
 		
 		Text.changesize(16);
 		//Display the text twice, once black and slightly offset, once white to give a shadow effect under the string
-		Text.display(Gfx.screenwidth - 10 +2, Gfx.screenheight - Text.height() - 5 + 2, "LEFT CLICK MOUSE TO CYCLE EFFECTS", Col.BLACK, { align: Text.RIGHT } );
-		Text.display(Gfx.screenwidth - 10, Gfx.screenheight - Text.height() - 5, "LEFT CLICK MOUSE TO CYCLE EFFECTS", Col.WHITE, { align: Text.RIGHT } );
+		Text.align(Text.RIGHT);
+		Text.display(Gfx.screenwidth - 10 +2, Gfx.screenheight - Text.height() - 5 + 2, "LEFT CLICK MOUSE TO CYCLE EFFECTS", Col.BLACK);
+		Text.display(Gfx.screenwidth - 10, Gfx.screenheight - Text.height() - 5, "LEFT CLICK MOUSE TO CYCLE EFFECTS", Col.WHITE);
+		Text.align(Text.LEFT);
 	}
 	
 	function drawtriangles(effectnum:Int) {
@@ -64,7 +66,7 @@ class Main {
 		}
 		
 		//Draw a triangle with random vertices, random colour and alpha of 0.6.
-		Gfx.filltri(Random.int(0, Gfx.screenwidth), Random.int(0, Gfx.screenheight), Random.int(0, Gfx.screenwidth), Random.int(0, Gfx.screenheight), Random.int(0, Gfx.screenwidth), Random.int(0, Gfx.screenheight), Gfx.HSL(Random.int(0, 360), 0.5, 0.5), 0.6);
+		Gfx.filltri(Random.int(0, Gfx.screenwidth), Random.int(0, Gfx.screenheight), Random.int(0, Gfx.screenwidth), Random.int(0, Gfx.screenheight), Random.int(0, Gfx.screenwidth), Random.int(0, Gfx.screenheight), Gfx.hsl(Random.int(0, 360), 0.5, 0.5), 0.6);
 		
 		//Draw that buffer to the screen
 		Gfx.drawtoscreen();
@@ -77,7 +79,7 @@ class Main {
 	}
 	
 	function drawcircles(effectnum:Int) {
-		Gfx.setlinethickness(3);
+		Gfx.linethickness = 3;
 		var radius:Int = 0;
 		
 		radius = (counter % 120) * 4;
@@ -100,10 +102,10 @@ class Main {
 	}
 	
 	function drawhexagon(effectnum:Int) {
-		Gfx.setlinethickness(2);
+		Gfx.linethickness = 2;
 			
 		for (i in 0 ... 30) {
-			Gfx.drawhexagon(Gfx.screenwidthmid, Gfx.screenheightmid, 10 + (i*20) + (pulse / 2), counter / 50, Gfx.RGB(255-(8*i), 255-(8*i), 255-(8*i)));
+			Gfx.drawhexagon(Gfx.screenwidthmid, Gfx.screenheightmid, 10 + (i*20) + (pulse / 2), counter / 50, Gfx.rgb(255-(8*i), 255-(8*i), 255-(8*i)));
 		}
 		
 		Text.changesize(16);

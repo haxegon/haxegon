@@ -9,7 +9,7 @@
  * http://www.increpare.com/2015/05/night/
  * 
  * */
-import terrylib.*;
+import haxegon.*;
 
 class Main {
 	//Position variables
