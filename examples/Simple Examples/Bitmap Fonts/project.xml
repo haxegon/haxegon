@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta 
+    title="Bitmap Fonts" 
+    package="com.haxegon.bitmapfonts" 
+    version="1.0.0" 
+    company="Your name here" 
+  />
+
+	<app 
+      main="haxegon.Load"
+      path="bin" 
+      file="newproject" 
+   />
+   
+	<window
+      width="768" height="480" unless="mobile" 
+   ></window>
+   
+	<window
+      fps="60"
+      background="0x000000"
+      orientation="landscape"
+      hardware="true"
+      vsync="true"
+   ></window>
+   
+	<window
+      antialiasing="0" 
+      if="cpp"
+   ></window>
+   
+	<source path="src" />
+	
+	<set name="openfl-legacy" if="windows"/>
+	<haxelib name="openfl" />
+	
+	<assets path="data/music/mp3" rename="data/music" exclude="*.txt" if="flash"/> 
+	<assets path="data/music/ogg" rename="data/music" exclude="*.txt" unless="flash"/> 
+	<assets path="data/sounds/mp3" rename="data/sounds" exclude="*.txt" if="flash"/> 
+	<assets path="data/sounds/ogg" rename="data/sounds" exclude="*.txt" unless="flash"/> 
+	<assets path="data/text" exclude="place txt and csv files here.txt"/>
+	
+	<assets path="data" exclude="*.svg|*.mp3|*.ogg|*.wav|*.txt"/>
+	
+	<icon path="data/icon/play.svg"/>
+</project>
