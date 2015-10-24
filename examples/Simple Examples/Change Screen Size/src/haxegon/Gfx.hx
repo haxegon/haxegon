@@ -918,6 +918,7 @@ class Gfx {
 		tempshape.graphics.lineStyle(_linethickness, col, alpha);
 		tempshape.graphics.moveTo(_x1, _y1);
     tempshape.graphics.lineTo(_x2, _y2);
+		shapematrix.identity();
     drawto.draw(tempshape, shapematrix);
 		#end
 	}
@@ -1035,6 +1036,7 @@ class Gfx {
 		shapematrix.identity();
 		shapematrix.translate(x, y);
 		drawto.draw(tempshape, shapematrix);
+		shapematrix.identity();
 		#end
 	}
 	
@@ -1089,7 +1091,7 @@ class Gfx {
 		
 		shapematrix.translate(x, y);
 		drawto.draw(tempshape, shapematrix);
-		shapematrix.translate( -x, -y);
+		shapematrix.identity();
 		#end
 	}
 	
@@ -1111,7 +1113,7 @@ class Gfx {
 		
 		shapematrix.translate(x1, y1);
 		drawto.draw(tempshape, shapematrix);
-		shapematrix.translate( -x1, -y1);
+		shapematrix.identity();
 		#end
 	}
 	
@@ -1228,10 +1230,10 @@ class Gfx {
 			fillbox(x + width - 1, y + 1, 1, height, col, alpha);
 		#else
 		if (_linethickness < 2) {				
-			drawline(x, y, x + width, y, col, alpha);
-			drawline(x, y + height, x + width, y + height, col, alpha);
-			drawline(x, y + 1, x, y + height, col, alpha);
-			drawline(x + width - 1, y + 1, x + width - 1, y + height, col, alpha);
+			fillbox(x, y, width, 1, col, alpha);
+			fillbox(x, y + height, width - 1, 1, col, alpha);
+			fillbox(x, y + 1, 1, height, col, alpha);
+			fillbox(x + width - 1, y + 1, 1, height, col, alpha);
 		}else{
 			tempshape.graphics.clear();
 			tempshape.graphics.lineStyle(_linethickness, col, alpha);
@@ -1243,7 +1245,6 @@ class Gfx {
 			shapematrix.identity();
 			shapematrix.translate(x, y);
 			drawto.draw(tempshape, shapematrix);
-			shapematrix.translate( -x, -y);
 			shapematrix.identity();
 		}
 		#end
@@ -1349,6 +1350,7 @@ class Gfx {
 		shapematrix.identity();
 		shapematrix.translate(x, y);
 		drawto.draw(tempshape, shapematrix);
+		shapematrix.identity();
 		#end
 	}
 	
