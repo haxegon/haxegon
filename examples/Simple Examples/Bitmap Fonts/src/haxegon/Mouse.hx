@@ -91,6 +91,14 @@ class Mouse{
 		gotosite = t;
 	}
 	
+	public static function show() {
+	  openfl.ui.Mouse.show();	
+	}
+	
+	public static function hide() {
+	  openfl.ui.Mouse.hide();	
+	}
+	
 	public static function update(X:Int,Y:Int){
 		x = X;
 		y = Y;

@@ -344,6 +344,10 @@ Mouse.rightclick()       // True if you've just clicked right this frame
 Mouse.rightheld()        // True if you're holding down right click.
 Mouse.rightreleased()    // True if you've just released right-click this frame
                          // *** Right mouse checks don't work in flash!
+                         
+Mouse.hide()             // Hide the mouse cursor
+Mouse.show()             // Show the mouse cursor
+
 
 Mouse.mousewheel             // An int between -3 and +3 for the scrollwheel value.
                              // For most mice it seems best to just check ==0, <0 and >0.
