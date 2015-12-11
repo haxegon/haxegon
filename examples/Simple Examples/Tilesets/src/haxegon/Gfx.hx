@@ -1,5 +1,9 @@
 package haxegon;
-	
+
+#if !haxegon3d
+import haxegon3D.*;
+#end
+
 import haxegon.util.*;
 import openfl.display.*;
 import openfl.geom.*;
@@ -212,7 +216,7 @@ class Gfx {
 	
 	/** Loads an image into the game. */
 	#if haxegonweb
-	private static var BASE64:String = "abcdefghijklmnopqrstuvwxyz0123456789$=ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static var BASE64:String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàáâäæãåøèéöü";
 	public static var KEEPCOL:Int = -1;
 	
 	private static function convertobinary(t:Int, len:Int):String {
@@ -278,6 +282,35 @@ class Gfx {
 		images = [];
 	}
 	
+	private static function unmakerle(s:String):String {
+		var result:String = "";
+		var lastInt:Int = 0;
+		var i:Int = 0;
+		
+		while (i < s.length) {
+			var c:String = s.substr(i, 1);
+			while (c == "0" || c == "1" || c == "2" || c == "3" || c == "4" ||
+			       c == "5" || c == "6" || c == "7" || c == "8" || c == "9") {
+				lastInt = lastInt * 10 + Convert.toint(c);
+				i++;
+				c = s.substr(i, 1);
+			}
+			
+			if (lastInt == 0) {
+				lastInt = 1;
+			}
+			
+			for (i in 0 ... lastInt) {
+				result = result + c;
+			}
+			i++;
+			c = s.substr(i, 1);
+			lastInt = 0;
+		}
+		
+		return result;
+	}
+	
 	public static function loadimagestring(imagename:String, inputstring:String, col1:Int = -1, col2:Int = -1, col3:Int = -1, col4:Int = -1) {
 		inputstring = replacechar(inputstring, " ", "");
 		inputstring = replacechar(inputstring, "\n", "");
@@ -288,6 +321,7 @@ class Gfx {
 			inputstring = inputstring.substr(size);
 		}
 		
+		inputstring = unmakerle(inputstring);
 		inputstring = convertbase64tobinary(inputstring);
 		
 		//Get image width:
@@ -1225,15 +1259,15 @@ class Gfx {
 		}
 		#if haxegonweb
 			fillbox(x, y, width, 1, col, alpha);
-			fillbox(x, y + height, width - 1, 1, col, alpha);
-			fillbox(x, y + 1, 1, height, col, alpha);
-			fillbox(x + width - 1, y + 1, 1, height, col, alpha);
+			fillbox(x, y + height - 1, width - 1, 1, col, alpha);
+			fillbox(x, y + 1, 1, height - 1, col, alpha);
+			fillbox(x + width - 1, y + 1, 1, height - 1, col, alpha);
 		#else
 		if (_linethickness < 2) {				
 			fillbox(x, y, width, 1, col, alpha);
-			fillbox(x, y + height, width - 1, 1, col, alpha);
-			fillbox(x, y + 1, 1, height, col, alpha);
-			fillbox(x + width - 1, y + 1, 1, height, col, alpha);
+			fillbox(x, y + height - 1, width - 1, 1, col, alpha);
+			fillbox(x, y + 1, 1, height - 1, col, alpha);
+			fillbox(x + width - 1, y + 1, 1, height - 1, col, alpha);
 		}else{
 			tempshape.graphics.clear();
 			tempshape.graphics.lineStyle(_linethickness, col, alpha);
@@ -1517,6 +1551,10 @@ class Gfx {
 		reset();
 		linethickness = 1;
 		transparentpixel = new BitmapData(1, 1, true, 0);
+		
+		#if !haxegon3d
+		Gfx3D.init3d();
+		#end
 	}	
 	
 	#if html5
@@ -1579,7 +1617,11 @@ class Gfx {
 		hslval.push(0.0); hslval.push(0.0); hslval.push(0.0);
 		
 		if (backbuffer != null) backbuffer.dispose();
+		#if !haxegon3d
+		backbuffer = new BitmapData(screenwidth, screenheight, true, 0);
+		#else
 		backbuffer = new BitmapData(screenwidth, screenheight, false, 0x000000);
+		#end
 		drawto = backbuffer;
 		drawingtoscreen = true;
 		
@@ -1589,8 +1631,7 @@ class Gfx {
 		screen.height = screenheight * scale;
 		
 		fullscreen = false;
-		
-		Debug.showtest = false;
+		haxegon.Debug.showtest = false;
 	}
 	
 	/** Sets the values for the temporary rect structure. Probably better than making a new one, idk */
