@@ -5,8 +5,15 @@ import openfl.display.*;
 import openfl.events.*;
 import openfl.Lib;
 
+#if haxegon3D
+import haxegon3D.*;
+#end
+
 @:access(Main)
 @:access(haxegon.Gfx)
+#if haxegon3D
+@:access(haxegon3D.Gfx3D)
+#end
 @:access(haxegon.Music)
 @:access(haxegon.Mouse)
 @:access(haxegon.Input)
@@ -179,6 +186,10 @@ class Core extends Sprite {
 			Debug.showlog();
 			
 			Gfx.drawto.unlock();
+			
+			#if haxegon3D
+			Gfx3D.view.render();
+			#end
 		}
 		
 		Mouse.mousewheel = 0;

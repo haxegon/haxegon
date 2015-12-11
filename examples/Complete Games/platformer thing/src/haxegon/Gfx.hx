@@ -14,6 +14,9 @@ import openfl.Assets;
 import openfl.Lib;
 import openfl.system.Capabilities;
 
+#if haxegon3D
+@:access(haxegon3D.Gfx3D)
+#end
 class Gfx {
 	public static var LEFT:Int = -10000;
 	public static var RIGHT:Int = -20000;
