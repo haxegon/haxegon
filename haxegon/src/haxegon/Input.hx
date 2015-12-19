@@ -294,6 +294,8 @@ class Input {
 		addkey(Key.LEFT,Keyboard.LEFT);
 		addkey(Key.RIGHT, Keyboard.RIGHT);
 		addkey(Key.TAB, Keyboard.TAB);
+		addkey(Key.HOME, Keyboard.HOME);
+		addkey(Key.END, Keyboard.END);
 	}
 	
 	private static var keymap:Map<Key, Int> = new Map<Key, Int>();

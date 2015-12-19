@@ -73,4 +73,6 @@ enum Key {
 	LEFT;
 	RIGHT;
 	TAB;
+	HOME;
+	END;
 }
