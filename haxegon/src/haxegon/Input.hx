@@ -293,6 +293,7 @@ class Input {
 		addkey(Key.DOWN,Keyboard.DOWN);
 		addkey(Key.LEFT,Keyboard.LEFT);
 		addkey(Key.RIGHT, Keyboard.RIGHT);
+		addkey(Key.TAB, Keyboard.TAB);
 	}
 	
 	private static var keymap:Map<Key, Int> = new Map<Key, Int>();

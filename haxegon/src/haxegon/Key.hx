@@ -72,4 +72,5 @@ enum Key {
 	DOWN;
 	LEFT;
 	RIGHT;
+	TAB;
 }
