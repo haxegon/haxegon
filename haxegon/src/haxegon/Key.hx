@@ -75,4 +75,6 @@ enum Key {
 	TAB;
 	HOME;
 	END;
+	PAGEUP;
+	PAGEDOWN;
 }
