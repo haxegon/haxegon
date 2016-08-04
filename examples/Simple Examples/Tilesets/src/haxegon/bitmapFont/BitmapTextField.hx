@@ -10,7 +10,6 @@ import flash.geom.Point;
 import haxegon.bitmapFont.BitmapFont;
 import haxe.Utf8;
 import openfl.display.PixelSnapping;
-import openfl.display.Tilesheet;
 
 /**
  * Class for rendering text with provided bitmap font and some additional options.

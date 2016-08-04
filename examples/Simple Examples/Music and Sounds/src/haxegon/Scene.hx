@@ -7,6 +7,7 @@ import openfl.errors.ArgumentError;
 class Scene {
 	private static function init() {
 		scenelist = new Array<Dynamic>();
+		currentscene = 0;
 		#if neko
 		  try{
 		    scenelist.push(Type.createInstance(Main, []));
@@ -16,7 +17,6 @@ class Scene {
 		#else
 		  scenelist.push(Type.createInstance(Main, []));
 		#end
-		currentscene = 0;
 	}
 	
 	private static function update() {

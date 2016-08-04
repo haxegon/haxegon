@@ -293,6 +293,11 @@ class Input {
 		addkey(Key.DOWN,Keyboard.DOWN);
 		addkey(Key.LEFT,Keyboard.LEFT);
 		addkey(Key.RIGHT, Keyboard.RIGHT);
+		addkey(Key.TAB, Keyboard.TAB);
+		addkey(Key.HOME, Keyboard.HOME);
+		addkey(Key.END, Keyboard.END);
+		addkey(Key.PAGEUP, Keyboard.PAGE_UP);
+		addkey(Key.PAGEDOWN, Keyboard.PAGE_DOWN);
 	}
 	
 	private static var keymap:Map<Key, Int> = new Map<Key, Int>();

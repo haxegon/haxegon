@@ -173,13 +173,14 @@ class Random{
 		return arr[int(0, arr.length - 1)];
 	}
 	
-	public static function random():Float {
-		seed = (seed * 9301 + 49297) % 233280; 
-		return Math.abs(seed/(233280));
+  public static function random():Float {
+		seed = (seed * 16807) % 2147483647; 
+		return Math.abs(seed/2147483647);
 	}
 	
 	public static function setseed(s:Int) {
-		seed = Std.int(Math.abs(s % 233280));
+		seed = Std.int(Math.abs(s % 2147483647));
+		Math.random();
 	}
 	
 	private static var temp:Int;

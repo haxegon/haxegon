@@ -155,6 +155,40 @@ class Text {
 	}
 	
 	//Text display functions
+	
+	/* Given a width in pixels and a long string, return an array on strings
+	 * that wraps to the given width with the current font. */
+	public static function wordwrap(textwidth:Int, txt:String):Array<String> {
+		var returnval:Array<String> = [];
+		var i:Int = 0;
+		var currentchunk:String = "";
+		
+		while (i < txt.length) {
+			currentchunk += txt.substr(i, 1);
+			if (width(currentchunk) >= textwidth) {
+				if (S.isinstring(currentchunk, " ")) {
+					while (currentchunk.substr(currentchunk.length - 1, 1) != " ") {
+						currentchunk = currentchunk.substr(0, currentchunk.length - 1);
+						i--;
+					}
+				}else {
+					currentchunk = currentchunk.substr(0, currentchunk.length - 1);
+					i--;
+				}
+				returnval.push(currentchunk);
+				currentchunk = "";
+			}
+			i++;
+		}
+		
+		//Anything leftover?
+		if (width(currentchunk) > 0) {
+			returnval.push(currentchunk);
+		}
+		
+		return returnval;
+	}
+	
 	private static function currentlen():Float {
 		if (typeface[currentindex].type == "ttf") {
 			return typeface[currentindex].tf_ttf.textWidth;
@@ -194,7 +228,7 @@ class Text {
 		return 0;
 	}
 	
-	public static function len(t:String):Float {
+	public static function width(t:String):Float {
 		if (typeface[currentindex].type == "ttf") {
 			typeface[currentindex].tf_ttf.text = t;
 			return typeface[currentindex].tf_ttf.textWidth;
@@ -351,11 +385,11 @@ class Text {
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Math.floor(len(t) / 2);
+				return t1 + Math.floor(width(t) / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + len(t);
+				return t3 + width(t);
 			}
 		}
 		

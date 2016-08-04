@@ -2,7 +2,6 @@ package haxegon.bitmapFont;
 
 import haxe.Utf8;
 import haxe.xml.Fast;
-import openfl.display.Tilesheet;
 import openfl.display.BitmapData;
 import openfl.display.Graphics;
 import openfl.geom.ColorTransform;

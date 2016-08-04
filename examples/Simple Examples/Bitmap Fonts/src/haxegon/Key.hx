@@ -72,4 +72,9 @@ enum Key {
 	DOWN;
 	LEFT;
 	RIGHT;
+	TAB;
+	HOME;
+	END;
+	PAGEUP;
+	PAGEDOWN;
 }
