@@ -4,7 +4,7 @@ TerryLib:
 Work in progress! Nice looking HTML reference coming soon!
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-TerryLib is a tiny haxe programming library for beginners.
+TerryLib is a tiny haxe programming library for beginners. Oh my god this is so out out date I'm still calling it TerryLib. Added a github issue to do proper documentation.
 
 Here's a complete list of what you can do with it!
 
