@@ -156,10 +156,19 @@ class Text {
 	
 	//Text display functions
 	
+	public static function wordwrap(?textwidth:Int) {
+	  if (textwidth == null) {
+		  wordwrap_width = 0;
+		}else {
+		  wordwrap_width = textwidth;
+		}
+		if (wordwrap_width < 10) wordwrap_width = 0;
+	}
+	
 	/* Given a width in pixels and a long string, return an array on strings
 	 * that wraps to the given width with the current font. */
-	public static function wordwrap(textwidth:Int, txt:String):Array<String> {
-		var returnval:Array<String> = [];
+	public static function dowordwrap(textwidth:Int, txt:String) {
+		wordwrap_text = "";
 		var i:Int = 0;
 		var currentchunk:String = "";
 		
@@ -175,7 +184,7 @@ class Text {
 					currentchunk = currentchunk.substr(0, currentchunk.length - 1);
 					i--;
 				}
-				returnval.push(currentchunk);
+				wordwrap_text += currentchunk + "\n";
 				currentchunk = "";
 			}
 			i++;
@@ -183,10 +192,8 @@ class Text {
 		
 		//Anything leftover?
 		if (width(currentchunk) > 0) {
-			returnval.push(currentchunk);
+			wordwrap_text += currentchunk;
 		}
-		
-		return returnval;
 	}
 	
 	private static function currentlen():Float {
@@ -259,16 +266,28 @@ class Text {
 		return 0;
 	}
 	
-	public static function height():Float {
+	public static function height(text:String):Float {
+		var linecount:Int = 1;
+		if (wordwrap_width > 0) {
+			if (width(text) >= wordwrap_width) {
+				dowordwrap(wordwrap_width, text);
+				for (i in 0 ... wordwrap_text.length) if (wordwrap_text.substr(i, 1) == "\n") linecount++;
+			}else {
+				for (i in 0 ... text.length) if (text.substr(i, 1) == "\n") linecount++;	
+			}
+		}else {
+			for (i in 0 ... text.length) if (text.substr(i, 1) == "\n") linecount++;	
+		}
+		
 		if (typeface[currentindex].type == "ttf") {
 			var oldtext:String = typeface[currentindex].tf_ttf.text;
 			typeface[currentindex].tf_ttf.text = "???";
 			var h:Float = typeface[currentindex].tf_ttf.textHeight;
 			typeface[currentindex].tf_ttf.text = oldtext;
-			return h;
+			return h * linecount;
 		}else if (typeface[currentindex].type == "bitmap") {
 			typeface[currentindex].tf_bitmap.text = "???";
-			return typeface[currentindex].height * currentsize;
+			return typeface[currentindex].height * currentsize * linecount;
 		}
 		return 0;
 	}
@@ -396,17 +415,17 @@ class Text {
 		return x;
 	}
 	
-	private static function aligntexty(y:Float):Float {
+	private static function aligntexty(t:String, y:Float):Float {
 		if (y <= -5000) {
 			t1 = y - CENTER;
 			t2 = y - TOP;
 			t3 = y - BOTTOM;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Math.floor(height() / 2);
+				return t1 + Math.floor(height(t) / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + height();
+				return t3 + height(t);
 			}
 		}
 		return y;
@@ -436,6 +455,18 @@ class Text {
 	#end
 		if (!Gfx.clearscreeneachframe) if (Gfx.skiprender && Gfx.drawingtoscreen) return;
 		if (text == "") return;
+		
+		if (wordwrap_width > 0) {
+		  if (width(text) >= wordwrap_width) {
+				dowordwrap(wordwrap_width, text);
+				var originalwordwrap_width:Int = wordwrap_width;
+				wordwrap_width = 0;
+				display(x, y, wordwrap_text, col);
+				wordwrap_width = originalwordwrap_width;
+				return;
+			}
+		}
+		
 		if (typeface[currentindex].type == "bitmap") {
 			cachelabel = text + "_" + currentfont + Convert.tostring(col);
 			if (!cachedtextindex.exists(cachelabel)) {
@@ -592,7 +623,7 @@ class Text {
 		
 		if (textrotate != 0) {
 			if (textrotatexpivot != 0.0) tempxpivot = aligntextx(text, textrotatexpivot);
-			if (textrotateypivot != 0.0) tempypivot = aligntexty(textrotatexpivot);
+			if (textrotateypivot != 0.0) tempypivot = aligntexty(text, textrotateypivot);
 			fontmatrix.translate( -tempxpivot, -tempypivot);
 			fontmatrix.rotate((textrotate * 3.1415) / 180);
 			fontmatrix.translate( tempxpivot, tempypivot);
@@ -800,6 +831,9 @@ class Text {
 	private static var tempblue:Float = 1;
 	private static var changecolours:Bool = false;
 	private static var alphact:ColorTransform;
+	
+	private static var wordwrap_width:Int = 0;
+	private static var wordwrap_text:String;
 	
 	//Text input variables
 	#if flash
