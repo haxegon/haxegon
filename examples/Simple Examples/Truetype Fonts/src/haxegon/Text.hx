@@ -411,6 +411,7 @@ class Text {
 	public static function display(x:Float, y:Float, text:String, col:Int = 0xFFFFFF) {
 	#end
 		if (!Gfx.clearscreeneachframe) if (Gfx.skiprender && Gfx.drawingtoscreen) return;
+		if (text == null) return;
 		if (text == "") return;
 		
 		if (wordwrap_width > 0) {
@@ -569,6 +570,7 @@ class Text {
 	
 	private static function display_ttf(x:Float, y:Float, text:String, col:Int = 0xFFFFFF) {
 		if (!Gfx.clearscreeneachframe) if (Gfx.skiprender && Gfx.drawingtoscreen) return;
+		if (text == null) text = "";
 		
 		typeface[currentindex].tf_ttf.textColor = col;
 		typeface[currentindex].tf_ttf.text = text;
