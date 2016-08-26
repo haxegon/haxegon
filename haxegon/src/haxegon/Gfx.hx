@@ -88,7 +88,8 @@ class Gfx {
 		imagescalexpivot = 0; imagescaleypivot = 0;
 		
 		coltransform = false;
-		imagealphamult = 1.0;	imageredmult = 1.0;	imagegreenmult = 1.0;	imagebluemult = 1.0;	
+		imagealphamult = 1.0;	imageredmult = 1.0;	imagegreenmult = 1.0;	imagebluemult = 1.0;
+		imageredadd = 0.0; imagegreenadd = 0.0; imageblueadd = 0.0;
 	}
 	
 	/** Called when a transform takes place to check if any transforms are active */
@@ -102,7 +103,7 @@ class Gfx {
 		}
 		
 		if (imagealphamult == 1.0) {
-		  if (imageredmult == 1.0 && imagegreenmult == 1.0 && imagebluemult == 1.0) {
+		  if (imageredmult == 1.0 && imagegreenmult == 1.0 && imagebluemult == 1.0 && imageredadd == 0.0 && imagegreenadd == 0.0 && imageblueadd == 0.0) {
 			  coltransform = false;	
 			}
 		}
@@ -119,7 +120,7 @@ class Gfx {
 	
 	/** Scales image drawing functions. Optionally takes a second argument 
 	 * to scale X and Y seperately. */
-	public static function scale(xscale:Float, yscale:Float, xpivot:Float = -15000, ypivot:Float = -15000) {
+	public static function scale(xscale:Float, yscale:Float, xpivot:Float = -10000, ypivot:Float = -10000) {
 		imagexscale = xscale;
 		imageyscale = yscale;
 		imagescalexpivot = xpivot;
@@ -136,11 +137,38 @@ class Gfx {
 		reset_ifclear();
 	}
 	
-	/** Set a colour multipler for image drawing functions. */
-	public static function imagecolor(c:Int = 0xFFFFFF) {
-	  imageredmult = getred(c) / 255;
+	/** Set a colour multipler and offset for image drawing functions. */
+	public static function imagecolor(c:Int = 0xFFFFFF, add:Int = 0x000000) {
+		#if flash
+		if (getred(c) > 0) {
+			imageredmult = getred(c) / 254.94;
+			imageredadd = getred(add) + 1;
+		} else {
+			imageredmult = 0;
+			imageredadd = getred(add);
+		}
+		if (getgreen(c) > 0) {
+			imagegreenmult = getgreen(c) / 254.94;
+			imagegreenadd = getgreen(add) + 1;
+		} else {
+			imagegreenmult = 0;
+			imagegreenadd = getgreen(add);
+		}
+		if (getblue(c) > 0) {
+			imagebluemult = getblue(c) / 254.94;
+			imageblueadd = getblue(add) + 1;
+		} else {
+			imagebluemult = 0;
+			imageblueadd = getblue(add);
+		}
+		#else
+		imageredmult = getred(c) / 255;
 		imagegreenmult = getgreen(c) / 255;
 		imagebluemult = getblue(c) / 255;
+		imageredadd = getred(add);
+		imagegreenadd = getgreen(add);
+		imageblueadd = getblue(add);
+		#end
 		coltransform = true;
 		reset_ifclear();
 	}
@@ -171,16 +199,17 @@ class Gfx {
 		
 	/** Makes a tile array from a given image. */
 	#if haxegonweb
-	public static function loadtiles(imagename:String, width:Int, height:Int) {
+	public static function loadtiles(imagename:String, width:Int, height:Int, altlabel:String = "") {
 		Webdebug.log("Error: \"loadtiles\" function not available in webscript version.");
 	}
 	#else
-	public static function loadtiles(imagename:String, width:Int, height:Int) {
+	public static function loadtiles(imagename:String, width:Int, height:Int, altlabel:String = "") {
 		buffer = new Bitmap(Assets.getBitmapData("data/graphics/" + imagename + ".png")).bitmapData;
 		if (buffer == null) {
 			throw("ERROR: In loadtiles, cannot find data/graphics/" + imagename + ".png.");
 			return;
 		}
+		if (altlabel != "") imagename = altlabel;
 		
 		var tiles_rect:Rectangle = new Rectangle(0, 0, width, height);
 		tiles.push(new haxegon.util.Tileset(imagename, width, height));
@@ -203,21 +232,45 @@ class Gfx {
 		
 		changetileset(imagename);
 	}
+	
+	/* Add some blank tiles to the end of a tileset*/ 
+	public static function addblanktiles(imagename:String, num:Int) {
+		var w:Int = tiles[tilesetindex.get(imagename)].tiles[0].width;
+		var h:Int = tiles[tilesetindex.get(imagename)].tiles[0].height;
+		for(i in 0 ... num){
+			tiles[tilesetindex.get(imagename)].tiles.push(new BitmapData(w, h, true, 0x000000));
+		}
+	}
 	#end
 	
 	#if !haxegonweb
 	/** Creates a blank tileset, with the name "imagename", with each tile a given width and height, containing "amount" tiles. */
 	public static function createtiles(imagename:String, width:Float, height:Float, amount:Int) {
-		tiles.push(new haxegon.util.Tileset(imagename, Std.int(width), Std.int(height)));
-		tilesetindex.set(imagename, tiles.length - 1);
-		currenttileset = tiles.length - 1;
-		
-		for (i in 0 ... amount) {
-			var t:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0x000000);
-			tiles[currenttileset].tiles.push(t);
+		var exindex:Null<Int> = tilesetindex.get(imagename);
+		if (exindex == null) {
+			tiles.push(new haxegon.util.Tileset(imagename, Std.int(width), Std.int(height)));
+			tilesetindex.set(imagename, tiles.length - 1);
+			currenttileset = tiles.length - 1;
+			
+			for (i in 0 ... amount) {
+				var t:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0x000000);
+				tiles[currenttileset].tiles.push(t);
+			}
+			
+			changetileset(imagename);
+		}else {
+			changetileset(imagename);
+			for (i in 0 ... amount) {
+			  tiles[currenttileset].tiles[i].dispose();
+			}
+			
+			tiles[currenttileset] = new haxegon.util.Tileset(imagename, Std.int(width), Std.int(height));
+			
+			for (i in 0 ... amount) {
+				var t:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0x000000);
+				tiles[currenttileset].tiles.push(t);
+			}
 		}
-		
-		changetileset(imagename);
 	}
 	
 	/** Returns the width of a tile in the current tileset. */
@@ -413,10 +466,16 @@ class Gfx {
 	
 	/** Creates a blank image, with the name "imagename", with given width and height. */
 	public static function createimage(imagename:String, width:Float, height:Float) {
-		imageindex.set(imagename, images.length);
-		
 		var t:BitmapData = new BitmapData(Math.floor(width), Math.floor(height), true, 0);
-		images.push(t);
+		
+		var exindex:Null<Int> = imageindex.get(imagename);
+		if (exindex == null) {
+			imageindex.set(imagename, images.length);
+			images.push(t);
+		} else {
+			images[exindex].dispose();
+			images[exindex] = t;
+		}
 	}
 	
 	/** Resizes an image to a new size and stores it with the same label. */
@@ -593,7 +652,7 @@ class Gfx {
 		
 		if (!transform && !coltransform) {
 			settpoint(Std.int(x), Std.int(y));
-			drawto.copyPixels(images[imagenum], images[imagenum].rect, tpoint);
+			drawto.copyPixels(images[imagenum], images[imagenum].rect, tpoint, null, null, true);
 		}else {		
 			tempxalign = 0;	tempyalign = 0;
 			
@@ -621,6 +680,9 @@ class Gfx {
 				alphact.redMultiplier = imageredmult;
 				alphact.greenMultiplier = imagegreenmult;
 				alphact.blueMultiplier = imagebluemult;
+				alphact.redOffset = imageredadd;
+				alphact.greenOffset = imagegreenadd;
+				alphact.blueOffset = imageblueadd;
 				drawto.draw(images[imagenum], shapematrix, alphact);	
 			}else {
 				drawto.draw(images[imagenum], shapematrix);
@@ -710,7 +772,10 @@ class Gfx {
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
 	 * */
 	#if !haxegonweb
-	public static function drawtile(x:Float, y:Float, t:Int) {
+	public static function drawtile(x:Float, y:Float, tilesetname:String, t:Int) {
+		if (currenttilesetname != tilesetname) {
+		  changetileset(tilesetname);	
+		}
 		if (!clearscreeneachframe) if (skiprender && drawingtoscreen) return;
 		if (currenttileset == -1) {
 			throw("ERROR: No tileset currently set. Use Gfx.changetileset(\"tileset name\") to set the current tileset.");
@@ -730,7 +795,7 @@ class Gfx {
 		
 		if (!transform && !coltransform) {
 			settpoint(Std.int(x), Std.int(y));
-			drawto.copyPixels(tiles[currenttileset].tiles[t], tiles[currenttileset].tiles[t].rect, tpoint);
+			drawto.copyPixels(tiles[currenttileset].tiles[t], tiles[currenttileset].tiles[t].rect, tpoint, null, null, true);
 		}else {		
 			tempxalign = 0;	tempyalign = 0;
 			
@@ -758,6 +823,9 @@ class Gfx {
 				alphact.redMultiplier = imageredmult;
 				alphact.greenMultiplier = imagegreenmult;
 				alphact.blueMultiplier = imagebluemult;
+				alphact.redOffset = imageredadd;
+				alphact.greenOffset = imagegreenadd;
+				alphact.blueOffset = imageblueadd;
 				drawto.draw(tiles[currenttileset].tiles[t], shapematrix, alphact);	
 			}else {
 				drawto.draw(tiles[currenttileset].tiles[t], shapematrix);
@@ -1055,9 +1123,9 @@ class Gfx {
 		if (!clearscreeneachframe) if (skiprender && drawingtoscreen) return;
 		#if haxegonweb alpha = 1.0; #end
 		#if haxegonweb
-		x = fastFloor(x);
-		y = fastFloor(y);
-		radius = fastFloor(radius);
+		x = Std.int(x);
+		y = Std.int(y);
+		radius = Std.int(radius);
 		tx = radius;
     ty = 0;
     var decisionOver2:Float = 1 - tx;   // Decision criterion divided by 2 evaluated at x=r, y=0
@@ -1140,6 +1208,7 @@ class Gfx {
 		tempshape.graphics.drawCircle(0, 0, radius);
 		tempshape.graphics.endFill();
 		
+		shapematrix.identity();
 		shapematrix.translate(x, y);
 		drawto.draw(tempshape, shapematrix);
 		shapematrix.identity();
@@ -1334,7 +1403,7 @@ class Gfx {
 		if (col == Col.TRANSPARENT) {
 			if (_linethickness == 1) {
 				settpoint(fastFloor(x), fastFloor(y));
-				drawto.copyPixels(transparentpixel, transparentpixel.rect, tpoint);
+				drawto.copyPixels(transparentpixel, transparentpixel.rect, tpoint, null, null, true);
 			}else {
 				fillbox(x - _linethickness + 1, y - _linethickness + 1, _linethickness + _linethickness - 2, _linethickness + _linethickness - 2, col);
 			}
@@ -1358,7 +1427,7 @@ class Gfx {
 			}
 		}
 		#else
-		drawto.setPixel32(Std.int(x), Std.int(y), (Std.int(alpha * 256) << 24) + col);
+		drawto.setPixel32(Std.int(x), Std.int(y), (Std.int(alpha * 255) << 24) + col);
 		#end
 	}
 
@@ -1369,24 +1438,24 @@ class Gfx {
 		if (col == Col.TRANSPARENT) {
 			for (j in Std.int(y) ... Std.int(y + height)) {
 				for (i in Std.int(x) ... Std.int(x + width)) {
-					settpoint(fastFloor(i), fastFloor(j));
-					drawto.copyPixels(transparentpixel, transparentpixel.rect, tpoint);
+					settpoint(Std.int(i), Std.int(j));
+					drawto.copyPixels(transparentpixel, transparentpixel.rect, tpoint, null, null, true);
 				}
 			}
 		}else	if (alpha == 1.0) {
-			settrect(fastFloor(x), fastFloor(y), fastFloor(width), fastFloor(height));
+			settrect(Std.int(x), Std.int(y), Std.int(width), Std.int(height));
 			drawto.fillRect(trect, (0xFF << 24) + col);
 		}else {
 			tempshape.graphics.clear();
 			tempshape.graphics.beginFill(col, alpha);
-			tempshape.graphics.lineTo(fastFloor(width), 0);
-			tempshape.graphics.lineTo(fastFloor(width), fastFloor(height));
-			tempshape.graphics.lineTo(0, fastFloor(height));
+			tempshape.graphics.lineTo(Std.int(width), 0);
+			tempshape.graphics.lineTo(Std.int(width), Std.int(height));
+			tempshape.graphics.lineTo(0, Std.int(height));
 			tempshape.graphics.lineTo(0, 0);
 			tempshape.graphics.endFill();
 			
 			shapematrix.identity();
-			shapematrix.translate(fastFloor(x), fastFloor(y));
+			shapematrix.translate(Std.int(x), Std.int(y));
 			drawto.draw(tempshape, shapematrix);
 		}
 		#else
@@ -1405,16 +1474,16 @@ class Gfx {
 		#end
 	}
 	
-	public static function getred(c:Int):Int {
-		return (( c >> 16 ) & 0xFF);
+	public static inline function getred(c:Int):Int {
+		return ((c >> 16) & 0xFF);
 	}
 	
-	public static function getgreen(c:Int):Int {
-		return ( (c >> 8) & 0xFF );
+	public static inline function getgreen(c:Int):Int {
+		return ((c >> 8) & 0xFF);
 	}
 	
-	public static function getblue(c:Int):Int {
-		return ( c & 0xFF );
+	public static inline function getblue(c:Int):Int {
+		return (c & 0xFF);
 	}
 	
 	/** Get the Hue value (0-360) of a hex code colour. **/
@@ -1523,18 +1592,17 @@ class Gfx {
 			Lib.current.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 			gfxstage.scaleMode = StageScaleMode.NO_SCALE;
 			
-			var xScaleFresh:Float = cast(devicexres, Float) / cast(screenwidth, Float);
-			var yScaleFresh:Float = cast(deviceyres, Float) / cast(screenheight, Float);
-			if (xScaleFresh < yScaleFresh){
-				screen.width = screenwidth * xScaleFresh;
-				screen.height = screenheight * xScaleFresh;
-			}else if (yScaleFresh < xScaleFresh){
-				screen.width = screenwidth * yScaleFresh;
-				screen.height = screenheight * yScaleFresh;
+			var xScaleFresh:Float = Math.floor(cast(devicexres, Float) / cast(screenwidth, Float));
+			var yScaleFresh:Float = Math.floor(cast(deviceyres, Float) / cast(screenheight, Float));
+			var fullscreenscale:Int = 1;
+			if (xScaleFresh < yScaleFresh) {
+				fullscreenscale = Std.int(xScaleFresh);
 			} else {
-				screen.width = screenwidth * xScaleFresh;
-				screen.height = screenheight * yScaleFresh;
+				fullscreenscale = Std.int(yScaleFresh);
 			}
+			screen.width = screenwidth * fullscreenscale;
+			screen.height = screenheight * fullscreenscale;
+			
 			screen.x = (cast(devicexres, Float) / 2.0) - (screen.width / 2.0);
 			screen.y = (cast(deviceyres, Float) / 2.0) - (screen.height / 2.0);
 			//Mouse.hide();
@@ -1697,6 +1765,9 @@ class Gfx {
 	private static var imageredmult:Float;
 	private static var imagegreenmult:Float;
 	private static var imagebluemult:Float;
+	private static var imageredadd:Float;
+	private static var imagegreenadd:Float;
+	private static var imageblueadd:Float;
 	private static var tempframe:Int;
 	private static var tempxalign:Float;
 	private static var tempyalign:Float;

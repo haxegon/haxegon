@@ -1,10 +1,10 @@
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-TerryLib:                     
+Haxegon:                     
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 Work in progress! Nice looking HTML reference coming soon!
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-TerryLib is a tiny haxe programming library for beginners. Oh my god this is so out out date I'm still calling it TerryLib. Added a github issue to do proper documentation.
+Haxegon is a tiny haxe programming library for beginners.
 
 Here's a complete list of what you can do with it!
 
@@ -120,7 +120,11 @@ Gfx.changetileset("newtileset");
 Gfx.drawtile(x, y, tilenumber, optional parameters);
 
   - Drawtiles functions take all the same arguments as drawimage functions. 
+
+Gfx.addblanktiles("tilesetname", number of tiles);
   
+  - Adds some blank tiles to the end of a tileset.
+
 //Primitives
 Gfx.drawbox(x, y, width, height, col);
 Gfx.fillbox(x, y, width, height, col);
