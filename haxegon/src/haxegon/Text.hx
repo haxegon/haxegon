@@ -14,9 +14,6 @@ class Text {
 	public static function init(stage:Stage) {
 		drawto = Gfx.backbuffer;
 		gfxstage = stage;
-		#if flash
-			enabletextfield();
-		#end
 		alphact = new ColorTransform();
 		input_cursorglow = 0;
 		inputmaxlength = 40;
@@ -35,36 +32,9 @@ class Text {
 		textrotateypivot = ypivot;
 	}
 	
-	//Text Input functions
-	#if flash
-	private static function enabletextfield() {
-		gfxstage.addChild(inputfield);
-		inputfield.border = true;
-		inputfield.width = Gfx.screenwidth;
-		inputfield.height = 20;
-		inputfield.x = 0;
-		inputfield.y = Gfx.screenheight + 10;
-		inputfield.type = TextFieldType.INPUT;
-		inputfield.visible = false;
-		
-		inputfield.maxChars = inputmaxlength;
-		
-		resetinput("");
-	}
-	
-	private static function input_checkfortext() {
-		gfxstage.focus = inputfield;
-		inputfield.setSelection(inputfield.text.length, inputfield.text.length);
-		//inputfield.setSelection(inputfield.text.length, inputfield.text.length); //C++ maybe
-		inputtext = inputfield.text;
-	}
-	#end
-	
-	#if (js || html5)
-	private static function input_checkfortext() {
+	public static function input_checkfortext() {
 		inputtext = Input.keybuffer;
 	}
-	#end
 	
 	/** Reverse a string. */
 	private static function reverse(t:String):String {
@@ -73,14 +43,6 @@ class Text {
 		for (i in 0...t.length) t2 += t.substr(t.length - i - 1, 1);
 		return t2;
 	}
-	
-	#if flash
-	public static function resetinput(t:String) {
-		inputfield.text = t; inputtext = t;
-		//inputfield.text = reversetext(t); inputtext = reversetext(t); //Seems to work for native
-		input_show = 0;
-	}
-	#end
 	
 	public static function input(x:Float, y:Float, text:String, col:Int = 0xFFFFFF, responsecol:Int = 0xCCCCCC):Bool {
 		input_show = 2;
@@ -122,11 +84,7 @@ class Text {
 		var response:String = inputtext;
 		lastentry = inputtext;
 		inputtext = "";
-		#if flash
-		inputfield.text = "";
-		#else
 		Input.keybuffer = "";
-		#end
 		input_show = 0;
 		
 		return response;
@@ -155,7 +113,6 @@ class Text {
 	}
 	
 	//Text display functions
-	
 	public static function wordwrap(?textwidth:Int) {
 	  if (textwidth == null) {
 		  wordwrap_width = 0;
@@ -174,7 +131,7 @@ class Text {
 		
 		while (i < txt.length) {
 			currentchunk += txt.substr(i, 1);
-			if (width(currentchunk) >= textwidth) {
+			if (len(currentchunk) >= textwidth) {
 				if (S.isinstring(currentchunk, " ")) {
 					while (currentchunk.substr(currentchunk.length - 1, 1) != " ") {
 						currentchunk = currentchunk.substr(0, currentchunk.length - 1);
@@ -191,7 +148,7 @@ class Text {
 		}
 		
 		//Anything leftover?
-		if (width(currentchunk) > 0) {
+		if (len(currentchunk) > 0) {
 			wordwrap_text += currentchunk;
 		}
 	}
@@ -210,16 +167,16 @@ class Text {
 				while (i < text.length) {
 					if (text.substr(i, 1) == "\n") {
 						numlines++;
-						thislength = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
+						thislength = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
 						if (thislength > longestline) longestline = thislength;
 						currentline = "";
 					}else	currentline += text.substr(i, 1);
 					i++;
 				}
-				thislength = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
+				thislength = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
 				if (thislength > longestline) longestline = thislength;
 			}else {
-				longestline = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(text, false));
+				longestline = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(text, false));
 			}
 			return longestline;
 		}
@@ -235,7 +192,7 @@ class Text {
 		return 0;
 	}
 	
-	public static function width(t:String):Float {
+	public static function len(t:String):Float {
 		if (typeface[currentindex].type == "ttf") {
 			typeface[currentindex].tf_ttf.text = t;
 			return typeface[currentindex].tf_ttf.textWidth;
@@ -250,16 +207,16 @@ class Text {
 				while (i < text.length) {
 					if (text.substr(i, 1) == "\n") {
 						numlines++;
-						thislength = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
+						thislength = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
 						if (thislength > longestline) longestline = thislength;
 						currentline = "";
 					}else	currentline += text.substr(i, 1);
 					i++;
 				}
-				thislength = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
+				thislength = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
 				if (thislength > longestline) longestline = thislength;
 			}else {
-				longestline = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(text, false));
+				longestline = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(text, false));
 			}
 			return longestline;
 		}
@@ -269,7 +226,7 @@ class Text {
 	public static function height(text:String):Float {
 		var linecount:Int = 1;
 		if (wordwrap_width > 0) {
-			if (width(text) >= wordwrap_width) {
+			if (len(text) >= wordwrap_width) {
 				dowordwrap(wordwrap_width, text);
 				for (i in 0 ... wordwrap_text.length) if (wordwrap_text.substr(i, 1) == "\n") linecount++;
 			}else {
@@ -404,11 +361,11 @@ class Text {
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Math.floor(width(t) / 2);
+				return t1 + Math.floor(len(t) / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + width(t);
+				return t3 + len(t);
 			}
 		}
 		
@@ -457,7 +414,7 @@ class Text {
 		if (text == "") return;
 		
 		if (wordwrap_width > 0) {
-		  if (width(text) >= wordwrap_width) {
+		  if (len(text) >= wordwrap_width) {
 				dowordwrap(wordwrap_width, text);
 				var originalwordwrap_width:Int = wordwrap_width;
 				wordwrap_width = 0;
@@ -480,21 +437,21 @@ class Text {
 					while (i < text.length) {
 						if (text.substr(i, 1) == "\n") {
 							numlines++;
-							thislength = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
+							thislength = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
 							if (thislength > longestline) longestline = thislength;
 							currentline = "";
 						}else	currentline += text.substr(i, 1);
 						i++;
 					}
-					thislength = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
+					thislength = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(currentline, false));
 					if (thislength > longestline) longestline = thislength;
 				}else {
-					longestline = Convert.toint(typeface[currentindex].tf_bitmap.getStringWidth(text, false));
+					longestline = Math.round(typeface[currentindex].tf_bitmap.getStringWidth(text, false));
 				}
 				
 				cacheindex = cachedtext.length;
 				cachedtextindex.set(cachelabel, cacheindex);
-				cachedtext.push(new BitmapData(longestline, Convert.toint(typeface[currentindex].height) * numlines, true, 0));
+				cachedtext.push(new BitmapData(longestline, Math.round(typeface[currentindex].height) * numlines, true, 0));
 			  
 				drawto = cachedtext[cacheindex];
 				//cachedtext[cacheindex].fillRect(cachedtext[cacheindex].rect, (0xFF << 24) + Col.RED);
@@ -780,7 +737,6 @@ class Text {
 	private static function addfont(t:String, defaultsize:Float = 1) {
 		fontfile.push(new Fontfile(t));
 		fontfileindex.set(t, fontfile.length - 1);
-		currentfont = t;
 		
 		changesize(defaultsize);
 	}
@@ -836,10 +792,7 @@ class Text {
 	private static var wordwrap_text:String;
 	
 	//Text input variables
-	#if flash
-	private static var inputfield:TextField = new TextField();
-	#end
-	private static var inputtext:String;
+	public static var inputtext:String;
 	private static var lastentry:String;
 	#if haxegonweb
 	public static var inputsound:Int;
