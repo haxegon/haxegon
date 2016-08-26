@@ -34,8 +34,8 @@ class Main {
 			//Text.input is true when the player presses Key.ENTER.
 			if (Text.input(Gfx.CENTER, Gfx.CENTER, "ENTER YOUR NAME: ", Col.YELLOW, Col.WHITE)) {
 				//Text.getinput() is a function that contains the text from Text.input().
-				playername = Text.getinput();
-				nameentered = true;
+				//playername = Text.getinput();
+				//nameentered = true;
 			}
 		}
   }

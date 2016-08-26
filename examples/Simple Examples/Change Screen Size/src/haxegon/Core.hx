@@ -98,16 +98,21 @@ class Core extends Sprite {
 		// start game loop
 		_rate = 1000 / TARGETFRAMERATE;
     // fixed framerate
-    _skip = _rate * (maxframeskip + 1);
+    _skip = _rate * (maxframeskip + 0.98);
     _last = _prev = Lib.getTimer();
 		if(_timer != null) _timer.stop();
     _timer = new Timer(tickrate);
-    _timer.run = ontimer;
+    //_timer.run = ontimer;
+		stage.addEventListener(Event.ENTER_FRAME, onenterframe);
 		Gfx.update_fps = 0;
 		Gfx.render_fps = 0;
 		_framesthissecond_counter = -1;
 		
 		Gfx.initrun = false;
+	}
+	
+	private function onenterframe(FlashEvent:Event){
+		ontimer();
 	}
 	
 	private function ontimer(){
@@ -125,6 +130,12 @@ class Core extends Sprite {
 		
 		// quit if a frame hasn't passed
 		if (_delta < _rate) return;
+		
+		// Slide the frame window back ever so slightly to avoid causing hiccups when the call
+		// interval to ontimer() approaches the length of a frame
+		if (_delta > 1.5 * _rate) {
+			_delta -= 0.01;
+		}
 		
 		// update timer
 		_gametime = Std.int(_time);
@@ -169,6 +180,7 @@ class Core extends Sprite {
 	
 	public function doupdate() {
 		Gfx.update_fps++;
+		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY));
 		Mouse.update(Std.int(Lib.current.mouseX / Gfx.screenscale), Std.int(Lib.current.mouseY / Gfx.screenscale));
 		Input.update();
 		

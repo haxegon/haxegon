@@ -21,6 +21,7 @@ class Data {
 	
 	public static function loadtext(textfile:String):Array<String> {
 		tempstring = Assets.getText("data/text/" + textfile + ".txt");
+		if(tempstring == null) tempstring = "file not found";
 		tempstring = replacechar(tempstring, "\r", "");
 		
 		return tempstring.split("\n");

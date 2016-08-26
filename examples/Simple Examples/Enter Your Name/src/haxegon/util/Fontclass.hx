@@ -36,7 +36,7 @@ class Fontclass {
 		
 		tf_ttf = new TextField();
 		tf_ttf.embedFonts = true;
-		tf_ttf.defaultTextFormat = new TextFormat(Text.getfonttypename(_name), Convert.toint(size), 0, false);
+		tf_ttf.defaultTextFormat = new TextFormat(Text.getfonttypename(_name), Math.round(size), 0, false);
 		tf_ttf.selectable = false;
 		tf_ttf.width = Gfx.screenwidth; 
 		tf_ttf.height = Gfx.screenheight;

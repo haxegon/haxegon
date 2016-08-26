@@ -48,36 +48,42 @@ class Scene {
 		// method didn't exist; complain if necessary
 	}
 	
-	public static function change(newscene:Class<Dynamic>) {
+	public static function findscene<T>(findscene:Class<T>):Int {
 		for (i in 0 ... scenelist.length) {
-			if (newscene == Type.getClass(scenelist[i])) {
-				currentscene = i;
-				callscenemethod(scenelist[currentscene], "reset");
-				return;
+			if (findscene == Type.getClass(scenelist[i])) {
+				return i;
 			}
 		}
 		
 		#if neko
-		  try{
-		    scenelist.push(Type.createInstance(newscene, []));
-				currentscene = scenelist.length - 1;
+			try{
+				scenelist.push(Type.createInstance(findscene, []));
 			}catch (e:Dynamic) {
 				throw("ERROR: Neko builds require all classes to have a \"new()\" function.");
 			}
 		#else
-		  scenelist.push(Type.createInstance(newscene, []));
-			currentscene = scenelist.length - 1;
+			scenelist.push(Type.createInstance(findscene, []));
 		#end
+		
+		return scenelist.length - 1;
+	}
+	
+	public static function change<T>(newscene:Class<T>):T {
+		currentscene = findscene(newscene);
+		callscenemethod(scenelist[currentscene], "reset");
+		return cast scenelist[currentscene];
 	}
 	
 	public static function get<T>(newscene:Class<T>):T {
-	  for (i in 0 ... scenelist.length) {
-			if (newscene == Type.getClass(scenelist[i])) {
-				return scenelist[i];
-			}
-		}
-		
-		throw("ERROR: Scene has not been created yet!");
+		return cast scenelist[findscene(newscene)];
+	}
+	
+	public static function getcurrentscene():String {
+		return Type.getClassName(Type.getClass(scenelist[currentscene]));
+	}
+	
+	public static function getcurrentsceneclass():Dynamic {
+		return cast scenelist[currentscene];
 	}
 	
 	private static var scenelist:Array<Dynamic>;

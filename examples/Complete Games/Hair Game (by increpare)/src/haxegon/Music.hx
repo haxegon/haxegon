@@ -46,20 +46,31 @@ class Music {
 		numsongs++;
 	}
 	
-	public static function play(t:String, time:Int = 0) {
+	public static function play(t:String, ?time:Int = 0, ?loop:Bool = true) {
 		if (currentsong !=t) {
 			if (currentsong != "nothing") {
 				//Stop the old song first
 				musicchannel.stop();
 				musicchannel.removeEventListener(Event.SOUND_COMPLETE, loopmusic);
 			}
+			
+			musicfade = 0;
+			musicfadein = 0;
+			
 			if (t != "nothing") {
 				currentsong = t;
 				
-				musicchannel = musicchan[Std.int(songindex.get(t))].play((time * 1000) % musicchan[Std.int(songindex.get(t))].length);
+				if (loop) {
+					if (time == 0) {
+						musicchannel = musicchan[Std.int(songindex.get(t))].play(0, 999999);
+					} else {
+						musicchannel = musicchan[Std.int(songindex.get(t))].play((time * 1000) % musicchan[Std.int(songindex.get(t))].length);
+						musicchannel.addEventListener(Event.SOUND_COMPLETE, loopmusic);
+					}
+				} else {
+					musicchannel = musicchan[Std.int(songindex.get(t))].play((time * 1000) % musicchan[Std.int(songindex.get(t))].length);
+				}
 				musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(t))] * globalsound);
-				
-				musicchannel.addEventListener(Event.SOUND_COMPLETE, loopmusic);
 			}else {	
 				currentsong = "nothing";
 			}
@@ -93,10 +104,8 @@ class Music {
 	private static function loopmusic(e:Event) { 
 		musicchannel.removeEventListener(Event.SOUND_COMPLETE, loopmusic);
 		if (currentsong != "nothing") {
-			musicchannel = musicchan[Std.int(songindex.get(currentsong))].play();
+			musicchannel = musicchan[Std.int(songindex.get(currentsong))].play(0, 999999);
 			musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(currentsong))] * globalsound);
-				
-			musicchannel.addEventListener(Event.SOUND_COMPLETE, loopmusic);
 		}
 	}
 	
@@ -108,24 +117,28 @@ class Music {
 	
 	private static function processmusicfade() {
 		musicfade--;
-		if (musicfade > 0) {
-			musicchannel.soundTransform = new SoundTransform((musicfade / 30) * globalsound);
-		}else {
-			musicchannel.stop();
-			currentsong = "nothing";
+		if (musicchannel != null) {
+			if (musicfade > 0) {
+				musicchannel.soundTransform = new SoundTransform((musicfade / 30) * globalsound);
+			}else {
+				musicchannel.stop();
+				currentsong = "nothing";
+			}
 		}
 	}
 	
 	private static function processmusicfadein() {
 		musicfadein--;
-		if (musicfadein > 0) {
-			musicchannel.soundTransform = new SoundTransform(((60-musicfadein) / 60 )*globalsound);
-		}else {
-			musicchannel.soundTransform = new SoundTransform(1.0 * globalsound);
+		if (musicchannel != null) {
+			if (musicfadein > 0) {
+				musicchannel.soundTransform = new SoundTransform(((60-musicfadein) / 60 )*globalsound);
+			}else {
+				musicchannel.soundTransform = new SoundTransform(1.0 * globalsound);
+			}
 		}
 	}
 	
-	private static function processmusic() {
+	public static function processmusic() {
 		if (musicfade > 0) processmusicfade();
 		if (musicfadein > 0) processmusicfadein();
 	}

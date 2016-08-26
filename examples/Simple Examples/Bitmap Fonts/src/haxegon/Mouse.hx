@@ -10,8 +10,11 @@ import openfl.Lib;
 class Mouse{		
 	public static var x:Int;
 	public static var y:Int;
+	public static var oldx:Int;
+	public static var oldy:Int;
 	
 	public static var mousewheel:Int = 0;
+	public static var cursormoved:Bool;
 	
 	public static var mouseoffstage:Bool;
 	public static var isdragging:Bool;
@@ -42,8 +45,12 @@ class Mouse{
 		stage.addEventListener(MouseEvent.MOUSE_WHEEL, mousewheelHandler);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
 		stage.addEventListener(Event.MOUSE_LEAVE, mouseLeave);
+		stage.addEventListener(Event.DEACTIVATE, handleDeactivate);
 		x = 0;
 		y = 0;
+		oldx = 0;
+		oldy = 0;
+		cursormoved = false;
 		_rightcurrent = 0;
 		_rightlast = 0;
 		_middlecurrent = 0;
@@ -66,6 +73,7 @@ class Mouse{
 		stage.removeEventListener(MouseEvent.MOUSE_WHEEL, mousewheelHandler);
 		stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
 		stage.removeEventListener(Event.MOUSE_LEAVE, mouseLeave);
+		stage.removeEventListener(Event.DEACTIVATE, handleDeactivate);
 	}	
 	
 	private static function mouseLeave(e:Event) {
@@ -102,6 +110,13 @@ class Mouse{
 	public static function update(X:Int,Y:Int){
 		x = X;
 		y = Y;
+		
+		if (x == oldx && y == oldy) {
+		  cursormoved = false;	
+		}else {
+		  oldx = x; oldy = y;
+			cursormoved = true;
+		}
 		
 		if((_last == -1) && (_current == -1))
 			_current = 0;
@@ -164,6 +179,12 @@ class Mouse{
 		
 		if(_current > 0) _current = -1;
 		else _current = 0;
+	}
+	
+	private static function handleDeactivate(e:Event) {
+		_current = 0;
+		_rightcurrent = 0;
+		_middlecurrent = 0;
 	}
 	
 	private static var _current:Int;
