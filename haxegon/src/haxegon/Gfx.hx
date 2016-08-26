@@ -53,6 +53,20 @@ class Gfx {
 		
 		updategraphicsmode();
 	}
+	
+	public static function setfullscreen(fs:Bool) {
+		fullscreen = fs;
+		updategraphicsmode();
+	}
+	
+	public static function getscreenx(_x:Float) : Int {
+		return Math.floor((_x - screen.x) * screenwidth / screen.width);
+	}
+
+	public static function getscreeny(_y:Float) : Int {
+		return Math.floor((_y - screen.y) * screenheight / screen.height);
+	}
+	
 	public static var showfps:Bool;
 	private static var render_fps:Int;
 	private static var render_fps_max:Int = -1;
