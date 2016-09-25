@@ -1,3 +1,15 @@
+So! **What is going on with Haxegon**?
+
+I've been using some version of Haxegon for my own projects since I first started using Haxe, back in 2014. Everytime I work on something, Haxegon gets a little better.
+
+However, recently I've been very focused on a much bigger project - so Haxegon hasn't been propely updated in a while. It does work if you wanna mess with it, but still pretty far from being at a point where anyone can just pick it up and have a smooth experience with it. 
+
+My current project is leading me in a direction that will require some really fundamental changes to how this framework works, so future updates might make it a little unstable - but it should come out the other side of that faster, more powerful and more portable than it currently is.
+
+- Terry, 25th September 2016
+
+=-=-=-=-=-
+
 <p align="center"><img src="haxegon.png"/></p>
 <p align="center"><img src="supportedplatforms.png"/></p>
 
