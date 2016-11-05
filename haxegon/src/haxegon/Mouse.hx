@@ -1,9 +1,9 @@
 package haxegon;
 
-import openfl.display.DisplayObject;
+import starling.display.*;
+import starling.events.*;
 import openfl.events.MouseEvent;
 import openfl.ui.Mouse;
-import openfl.events.Event;
 import openfl.net.*;
 import openfl.Lib;
 	
@@ -12,40 +12,45 @@ class Mouse{
 	public static var y:Int;
 	public static var oldx:Int;
 	public static var oldy:Int;
+	private static var starstage:starling.display.Stage;
+	private static var flashstage:openfl.display.Stage;
+	
+	private static var _current:Int;
+	private static var _held:Int;
+	private static var _last:Int;
+	private static var _middlecurrent:Int;
+	private static var _middlelast:Int;
+	private static var _rightcurrent:Int;
+	private static var _rightlast:Int;
+	private static var gotosite:String = "";
 	
 	public static var mousewheel:Int = 0;
-	public static var cursormoved:Bool;
 	
 	public static var mouseoffstage:Bool;
 	public static var isdragging:Bool;
+	public static var cursormoved:Bool;
 	
 	public static function leftheld():Bool { return _current > 0; }
 	public static function leftclick():Bool { return _current == 2; }
 	public static function leftreleased():Bool { return _current == -1; }
+	public static function leftforcerelease():Void { _current = -1; }
 	
 	public static function rightheld():Bool { return _rightcurrent > 0; }
 	public static function rightclick():Bool { return _rightcurrent == 2; }	
 	public static function rightreleased():Bool { return _rightcurrent == -1; }
+	public static function rightforcerelease():Void { _rightcurrent = -1; }
 	
 	public static function middleheld():Bool { return _middlecurrent > 0; }
 	public static function middleclick():Bool { return _middlecurrent == 2; }	
 	public static function middlereleased():Bool { return _middlecurrent == -1; }
+	public static function middleforcerelease():Void { _middlecurrent = -1; }
 	
-	private static function init(stage:DisplayObject) {
-		//Right mouse stuff
-		#if !flash
-		stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
-		stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
-		#end
-		
-		stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-		stage.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
-		stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
-		stage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
-		stage.addEventListener(MouseEvent.MOUSE_WHEEL, mousewheelHandler);
-		stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
-		stage.addEventListener(Event.MOUSE_LEAVE, mouseLeave);
-		stage.addEventListener(Event.DEACTIVATE, handleDeactivate);
+	// based on Input.delaypressed(); catch repeats after an initial delay
+	public static function leftdelaypressed(repeatframes:Int, ?instantreps:Int=-1):Bool {
+		return true;// Input.procdelaypressed(_held, repeatframes, instantreps);
+	}
+	
+	private static function init(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
 		x = 0;
 		y = 0;
 		oldx = 0;
@@ -56,44 +61,37 @@ class Mouse{
 		_middlecurrent = 0;
 		_middlelast = 0;
 		_current = 0;
+		_held = 0;
 		_last = 0;
-	}
-	
-	private static function unload(stage:DisplayObject) {
-		//Right mouse stuff
-		#if !flash
-		stage.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
-		stage.removeEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
-		#end
 		
-		stage.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-		stage.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
-		stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
-		stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
-		stage.removeEventListener(MouseEvent.MOUSE_WHEEL, mousewheelHandler);
-		stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
-		stage.removeEventListener(Event.MOUSE_LEAVE, mouseLeave);
-		stage.removeEventListener(Event.DEACTIVATE, handleDeactivate);
+		starstage = _starlingstage;
+		flashstage = _flashstage;
+		
+    starstage.addEventListener(TouchEvent.TOUCH, ontouch);
+    
+    #if !flash
+    flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
+    flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
+    #end
+    flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
+    flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
+    
+    flashstage.addEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
+	}
+	
+	private static function unload(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
+		_starlingstage.removeEventListener(TouchEvent.TOUCH, ontouch);
+			
+    //Right mouse stuff
+    #if !flash
+    _flashstage.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
+    _flashstage.removeEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
+    #end
+    _flashstage.removeEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
+    _flashstage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
+    
+    _flashstage.removeEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
 	}	
-	
-	private static function mouseLeave(e:Event) {
-		mouseoffstage = true;
-		_current = 0;
-		_last = 0;
-		isdragging = false;
-		_rightcurrent = 0;
-		_rightlast = 0;
-		_middlecurrent = 0;
-		_middlelast = 0;
-	}
-	
-	private static function mouseOver(e:MouseEvent) {
-		mouseoffstage = false;
-	}
-	
-	private static function mousewheelHandler( e:MouseEvent ) {
-		mousewheel = e.delta;
-	}
 	
 	public static function visitsite(t:String) {
 		gotosite = t;
@@ -107,7 +105,56 @@ class Mouse{
 	  openfl.ui.Mouse.hide();	
 	}
 	
-	public static function update(X:Int,Y:Int){
+	private static function ontouch(e:TouchEvent) {
+		var touch:Touch = e.getTouch(starstage);
+		if (touch != null) {
+			if(touch.phase == TouchPhase.BEGAN){
+				//There was a touch (same as mouse down event)
+				if (Input.pressed(Key.CONTROL)) {
+					if(_rightcurrent > 0) _rightcurrent = 1;
+					else _rightcurrent = 2;
+				}else{
+					if(_current > 0) _current = 1;
+					else _current = 2;
+					
+					if (_current == 2) {
+						if (gotosite != "") {
+							var link:URLRequest = new URLRequest(gotosite);
+							Lib.getURL(link);
+							gotosite = "";
+						}
+					}
+					
+					_held = 0;
+				}
+			}else if(touch.phase == TouchPhase.ENDED){
+				//The Touch ended (same as mouse up event)
+				if(_rightcurrent > 0) _rightcurrent = -1;
+				else _rightcurrent = 0;
+				
+				if(_current > 0) _current = -1;
+				else _current = 0;
+				
+				_held = 0;
+			}else if(touch.phase == TouchPhase.MOVED){
+				//touch dragging
+			}
+		}
+	}
+	
+	#if !flash
+		private static function handleRightMouseDown(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
+		private static function handleRightMouseUp(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
+	#end
+	
+	private static function handleMiddleMouseDown(event:MouseEvent) { if (_middlecurrent > 0) { _middlecurrent = 1; } else { _middlecurrent = 2; } }
+	private static function handleMiddleMouseUp(event:MouseEvent) { if (_middlecurrent > 0) { _middlecurrent = -1; } else { _middlecurrent = 0; }	}
+
+	private static function handleMouseWheel(event:MouseEvent) {
+		mousewheel = (event.delta > 0) ? 2 : -2;
+	}
+	
+	public static function update(X:Int, Y:Int, firstframe:Bool) {
 		x = X;
 		y = Y;
 		
@@ -124,6 +171,10 @@ class Mouse{
 			_current = 1;
 		_last = _current;
 		
+		if (_current > 0) {
+			++_held;
+    }
+
 		if((_rightlast == -1) && (_rightcurrent == -1))
 			_rightcurrent = 0;
 		else if((_rightlast == 2) && (_rightcurrent == 2))
@@ -135,64 +186,25 @@ class Mouse{
 		else if((_middlelast == 2) && (_middlecurrent == 2))
 			_middlecurrent = 1;
 		_middlelast = _middlecurrent;
+		
+		if (firstframe) {
+			if (mousewheel == -2) {
+				mousewheel = -1;
+			} else if (mousewheel == 2) {
+				mousewheel = 1;
+			} else {
+				mousewheel = 0;
+			}
+		}
 	}
 	
 	private static function reset(){
 		_current = 0;
 		_last = 0;
+		_held = 0;
 		_rightcurrent = 0;
 		_rightlast = 0;
 		_middlecurrent = 0;
 		_middlelast = 0;
 	}
-	
-		
-	#if !flash
-		private static function handleRightMouseDown(event:MouseEvent) {	if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
-		private static function handleRightMouseUp(event:MouseEvent) {	if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
-  #end
-	
-	private static function handleMiddleMouseDown(event:MouseEvent) {	if (_middlecurrent > 0) { _middlecurrent = 1; } else { _middlecurrent = 2; } }
-	private static function handleMiddleMouseUp(event:MouseEvent) {	if (_middlecurrent > 0) { _middlecurrent = -1; } else { _middlecurrent = 0; }	}
-	
-	private static function handleMouseDown(event:MouseEvent) {
-		if (Input.pressed(Key.CONTROL)) {
-			if(_rightcurrent > 0) _rightcurrent = 1;
-			else _rightcurrent = 2;
-		}else{
-			if(_current > 0) _current = 1;
-			else _current = 2;
-			
-			if (_current == 2) {
-				if (gotosite != "") {
-					var link:URLRequest = new URLRequest(gotosite);
-					Lib.getURL(link);
-					gotosite = "";
-				}
-			}
-		}
-	}
-	
-	private static function handleMouseUp(event:MouseEvent) {		
-		if(_rightcurrent > 0) _rightcurrent = -1;
-		else _rightcurrent = 0;
-		
-		if(_current > 0) _current = -1;
-		else _current = 0;
-	}
-	
-	private static function handleDeactivate(e:Event) {
-		_current = 0;
-		_rightcurrent = 0;
-		_middlecurrent = 0;
-	}
-	
-	private static var _current:Int;
-	private static var _last:Int;
-	
-	private static var _middlecurrent:Int;
-	private static var _middlelast:Int;
-	private static var _rightcurrent:Int;
-	private static var _rightlast:Int;
-	private static var gotosite:String = "";
 }

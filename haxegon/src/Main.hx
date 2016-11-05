@@ -1,28 +1,31 @@
 import haxegon.*;
 
 class Main {
-	function new() {
+	function update() {
 	}
 	
-	var textwidth:Int = 400;
-	
-	function update(){
-		Text.changesize(16);
-		Text.display(0, 0, "Word wrap example!");
+	function render() {
+		var t = (flash.Lib.getTimer()) / 1800 + 10;
+		var big_r=40;
 		
-		Text.changesize(12);
-		Text.wordwrap(textwidth);
-		
-		var bigtext:String = "What is Lorem Ipsum? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
-		Gfx.fillbox(18, 38, textwidth + 4, 4 + Text.height(bigtext), Col.DARKBLUE);
-		Text.display(20, 40, bigtext);
-		
-		if (Input.pressed(Key.LEFT)) {
-		  textwidth -= 5;	
-		}else if (Input.pressed(Key.RIGHT)) {
-		  textwidth += 5;	
-		}
-		
-		Text.wordwrap();
+		var x = Gfx.screenwidthmid;
+		var y = Gfx.screenheightmid;
+
+		for (i in 0 ... 6) {	
+			var r = 10 + (Math.sin(flash.Lib.getTimer() / 600 + i) + 1) * 5;
+			var a1 = 2 * Math.PI * (i + 0.5) / 6 - t;
+			var a2 = 2 * Math.PI * (i + 1 + 0.5) / 6 - t;
+			var a3 = 2 * Math.PI * (i + 2 + 0.5) / 6 - t;
+			var m1 = 3 * (Math.cos(t) + 1);
+			var m2 = 3 * (Math.sin(t * 1.1 + 1) + 1);
+			var m3 = 3 * (Math.sin(t * 1.2 + 2) + 1);
+			var x1 = Gfx.screenwidthmid + big_r * Math.sin(a1) * m1;
+			var y1 = Gfx.screenheightmid + big_r * Math.cos(a1) * m1;
+			var x2 = Gfx.screenwidthmid + big_r * Math.sin(a2) * m2;
+			var y2 = Gfx.screenheightmid + big_r * Math.cos(a2) * m2;
+			var x3 = Gfx.screenwidthmid + big_r * Math.sin(a3) * m3;
+			var y3 = Gfx.screenheightmid + big_r * Math.cos(a3) * m3;
+			Gfx.filltri(x1, y1, x2, y2, x3, y3, Gfx.hsl((t + i + 130) * 100, 1, .5));
+		}	
 	}
 }

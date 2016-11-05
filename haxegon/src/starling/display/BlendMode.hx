@@ -1,0 +1,119 @@
+// =================================================================================================
+//
+//	Starling Framework
+//	Copyright Gamua GmbH. All Rights Reserved.
+//
+//	This program is free software. You can redistribute and/or modify it
+//	in accordance with the terms of the accompanying license agreement.
+//
+// =================================================================================================
+
+package starling.display;
+
+import flash.display3D.Context3DBlendFactor;
+import flash.errors.ArgumentError;
+
+/** A class that provides constant values for visual blend mode effects. 
+ *   
+ *  <p>A blend mode is always defined by two 'Context3DBlendFactor' values. A blend factor 
+ *  represents a particular four-value vector that is multiplied with the source or destination
+ *  color in the blending formula. The blending formula is:</p>
+ * 
+ *  <pre>result = source Å~ sourceFactor + destination Å~ destinationFactor</pre>
+ * 
+ *  <p>In the formula, the source color is the output color of the pixel shader program. The 
+ *  destination color is the color that currently exists in the color buffer, as set by 
+ *  previous clear and draw operations.</p>
+ *  
+ *  <p>Beware that blending factors produce different output depending on the texture type.
+ *  Textures may contain 'premultiplied alpha' (pma), which means that their RGB values were 
+ *  multiplied with their alpha value (to save processing time). Textures based on 'BitmapData'
+ *  objects have premultiplied alpha values, while ATF textures haven't. For this reason, 
+ *  a blending mode may have different factors depending on the pma value.</p>
+ *  
+ *  @see flash.display3D.Context3DBlendFactor
+ */
+class BlendMode
+{
+    private static var sBlendFactors:Array<Map<String, Array<Context3DBlendFactor>>> = [
+        // no premultiplied alpha
+        [
+            "none"     => [ Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO ],
+            "normal"   => [ Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA ],
+            "add"      => [ Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA ],
+            "multiply" => [ Context3DBlendFactor.DESTINATION_COLOR, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA ],
+            "screen"   => [ Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE ],
+            "erase"    => [ Context3DBlendFactor.ZERO, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA ],
+            "mask"     => [ Context3DBlendFactor.ZERO, Context3DBlendFactor.SOURCE_ALPHA ],
+            "below"    => [ Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA ]
+        ],
+        // premultiplied alpha
+        [
+            "none"     => [ Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO ],
+            "normal"   => [ Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA ],
+            "add"      => [ Context3DBlendFactor.ONE, Context3DBlendFactor.ONE ],
+            "multiply" => [ Context3DBlendFactor.DESTINATION_COLOR, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA ],
+            "screen"   => [ Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR ],
+            "erase"    => [ Context3DBlendFactor.ZERO, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA ],
+            "mask"     => [ Context3DBlendFactor.ZERO, Context3DBlendFactor.SOURCE_ALPHA ],
+            "below"    => [ Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA ]
+        ]
+    ];
+    
+    // predifined modes
+    
+    /** Inherits the blend mode from this display object's parent. */
+    public static inline var AUTO:String = "auto";
+
+    /** Deactivates blending, i.e. disabling any transparency. */
+    public static inline var NONE:String = "none";
+    
+    /** The display object appears in front of the background. */
+    public static inline var NORMAL:String = "normal";
+    
+    /** Adds the values of the colors of the display object to the colors of its background. */
+    public static inline var ADD:String = "add";
+    
+    /** Multiplies the values of the display object colors with the the background color. */
+    public static inline var MULTIPLY:String = "multiply";
+    
+    /** Multiplies the complement (inverse) of the display object color with the complement of 
+      * the background color, resulting in a bleaching effect. */
+    public static inline var SCREEN:String = "screen";
+    
+    /** Erases the background when drawn on a RenderTexture. */
+    public static inline var ERASE:String = "erase";
+
+    /** When used on a RenderTexture, the drawn object will act as a mask for the current
+     * content, i.e. the source alpha overwrites the destination alpha. */
+    public static inline var MASK:String = "mask";
+
+    /** Draws under/below existing objects; useful especially on RenderTextures. */
+    public static inline var BELOW:String = "below";
+
+    // accessing modes
+    
+    /** Returns the blend factors that correspond with a certain mode and premultiplied alpha
+     * value. Throws an ArgumentError if the mode does not exist. */
+    public static function getBlendFactors(mode:String, premultipliedAlpha:Bool=true):Array<Context3DBlendFactor>
+    {
+        var modes:Map<String, Array<Context3DBlendFactor>> = sBlendFactors[premultipliedAlpha ? 1 : 0];
+        var ret = modes[mode];
+        if (ret != null)
+            return ret;
+        else throw new ArgumentError("Invalid blend mode");
+    }
+    
+    /** Registeres a blending mode under a certain name and for a certain premultiplied alpha
+     * (pma) value. If the mode for the other pma value was not yet registered, the factors are
+     * used for both pma settings. */
+    public static function register(name:String, sourceFactor:Context3DBlendFactor, destFactor:Context3DBlendFactor,
+                                    premultipliedAlpha:Bool=true):Void
+    {
+        var modes:Map<String, Array<Context3DBlendFactor>> = sBlendFactors[premultipliedAlpha ? 1 : 0];
+        modes[name] = [sourceFactor, destFactor];
+        
+        var otherModes:Map<String, Array<Context3DBlendFactor>> = sBlendFactors[!premultipliedAlpha ? 1 : 0];
+        if (!(otherModes.exists(name))) otherModes[name] = [sourceFactor, destFactor];
+    }
+}

@@ -1,6 +1,6 @@
 package haxegon.util;
 
-import openfl.display.*;
+import starling.display.*;
 
 class Tileset {
 	public function new(n:String, w:Int, h:Int) {
@@ -8,23 +8,11 @@ class Tileset {
 		width = w;
 		height = h;
 		
-		animationspeed = 0;
-		timethisframe = 0;
-		currentframe = 0;
-		
-		startframe = 0;
-		endframe = -1;
+		tiles = [];
 	}
 	
-	public var tiles:Array<BitmapData> = new Array<BitmapData>();
+	public var tiles:Array<Image>;
 	public var name:String;
 	public var width:Int;
 	public var height:Int;
-	
-	public var animationspeed:Int;
-	public var timethisframe:Int;
-	public var currentframe:Int;
-	
-	public var startframe:Int;
-	public var endframe:Int;
 }

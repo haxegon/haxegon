@@ -22,6 +22,7 @@ class Data {
 	public static function loadtext(textfile:String):Array<String> {
 		tempstring = Assets.getText("data/text/" + textfile + ".txt");
 		if(tempstring == null) tempstring = "file not found";
+		
 		tempstring = replacechar(tempstring, "\r", "");
 		
 		return tempstring.split("\n");
@@ -56,9 +57,8 @@ class Data {
 		return returnedarray;
 	}
 	
-	@:generic
-	public static function blank2darray<T>(width:Int, height:Int):Array<Array<T>> {
-		var returnedarray2d:Array<Array<T>> = [for (x in 0 ... width) [for (y in 0 ... height) cast ""]];
+	public static function blank2darray(width:Int, height:Int):Array<Array<Int>> {
+		var returnedarray2d:Array<Array<Int>> = [for (x in 0 ... width) [for (y in 0 ... height) 0]];
 		return returnedarray2d;
 	}
 	

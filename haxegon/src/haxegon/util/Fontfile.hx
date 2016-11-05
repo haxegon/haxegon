@@ -1,30 +1,40 @@
 package haxegon.util;
 
-import haxegon.bitmapFont.*;
 import openfl.Assets;
-import openfl.text.*;
-import openfl.display.*;
+import openfl.text.Font;
+import starling.text.*;
+import starling.display.*;
+import starling.textures.*;
 
 class Fontfile {
-	public function new(_file:String) {
-		if (Assets.exists("data/fonts/" + _file + "/" + _file + ".fnt")) {
-			type = "bitmap";
-			fontxml = Xml.parse(Assets.getText("data/fonts/" + _file + "/" + _file + ".fnt"));
-			var tempfontimage:BitmapData = Assets.getBitmapData("data/fonts/" + _file + "/" + _file + "_0.png");
-			fontimage = new BitmapData(tempfontimage.width, tempfontimage.height, true, 0);
-			for (j in 0 ... tempfontimage.height) {
-				for (i in 0 ... tempfontimage.width) {
-					var cpixel:Int = tempfontimage.getPixel(i, j);
-					if (cpixel != 0x00000000 && cpixel != 0x000000) {
-						fontimage.setPixel32(i, j, 0xFFFFFFFF);
-					}
-				}
-			}
+	public function new(?_file:String) {
+		if (_file == null) {
+			type = "ttf";
 			
-			bitmapfont = BitmapFont.fromAngelCode(fontimage, fontxml);
-			typename = _file;
-		}else {//if(Assets.exists("data/fonts/" + _file + "/" + _file + ".ttf")){	
+			filename = "";
+			typename = "Verdana";
+			sizescale = 1;
+		}else	if (Assets.exists("data/fonts/" + _file + "/" + _file + ".fnt")) {
+			type = "bitmap";
+			
+			fontxml = Xml.parse(Assets.getText("data/fonts/" + _file + "/" + _file + ".fnt")).firstElement();
+			typename = fontxml.elementsNamed("info").next().get("face");
+			pngname = Xml.parse(Assets.getText("data/fonts/" + _file + "/" + _file + ".fnt")).firstElement()
+			               .elementsNamed("pages").next().elementsNamed("page").next().get("file");
+			if (pngname == null) {
+				throw("ERROR: Bitmap font XML file \"" + _file + ".fnt\" does not reference a .png file.");
+			}
+			if (S.right(pngname, 4) == ".png") {
+				pngname = S.left(pngname, pngname.length - 4);
+			}
+			sizescale = Std.parseInt(fontxml.elementsNamed("info").next().get("size"));
+			
+			fonttex = Texture.fromBitmapData(Assets.getBitmapData("data/fonts/" + _file + "/" + pngname + ".png"), false);
+			bitmapfont = new BitmapFont(fonttex, fontxml);
+			TextField.registerBitmapFont(bitmapfont);
+		}else {
 		  type = "ttf";
+			
 			filename = "data/fonts/" + _file + "/" + _file + ".ttf";
 			try {
 				font = Assets.getFont(filename);
@@ -32,6 +42,7 @@ class Fontfile {
 			}catch (e:Dynamic) {
 				throw("ERROR: Cannot set font to \"" + _file + "\", no TTF or Bitmap Font found.");
 			}
+			sizescale = 1;
 		}
 	}
 	
@@ -39,7 +50,10 @@ class Fontfile {
 	
 	public var bitmapfont:BitmapFont;
 	public var fontxml:Xml;
-	public var fontimage:BitmapData;
+	public var fonttex:Texture;
+	private var pngname:String;
+	public var sizescale:Int;
+	//public var fontimage:BitmapData;
 	
 	public var font:Font;
 	public var filename:String;

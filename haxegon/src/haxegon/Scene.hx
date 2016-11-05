@@ -17,10 +17,22 @@ class Scene {
 		#else
 		  scenelist.push(Type.createInstance(Main, []));
 		#end
+		
+		checkforrenderfunction();
+	}
+	
+	private static function checkforrenderfunction() {
+		//When we change to a scene, check if this class contains a "render" method.
+		//If so, allow seperation of update and render
+		singleupdatefunction = (Reflect.field(scenelist[currentscene], "render") == null);
 	}
 	
 	private static function update() {
 		callscenemethod(scenelist[currentscene], "update");
+	}
+	
+	private static function render() {
+		callscenemethod(scenelist[currentscene], "render");
 	}
 	
 	private static function callscenemethod(scene:Dynamic, method:String) {
@@ -71,6 +83,9 @@ class Scene {
 	public static function change<T>(newscene:Class<T>):T {
 		currentscene = findscene(newscene);
 		callscenemethod(scenelist[currentscene], "reset");
+		
+		checkforrenderfunction();
+		
 		return cast scenelist[currentscene];
 	}
 	
@@ -88,6 +103,7 @@ class Scene {
 	
 	private static var scenelist:Array<Dynamic>;
 	private static var currentscene:Int;
+	private static var singleupdatefunction:Bool;
 }
 
 #end

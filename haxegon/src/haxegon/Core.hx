@@ -1,47 +1,23 @@
 package haxegon;
 
-import haxe.Timer;
-import openfl.display.*;
-import openfl.events.*;
 import openfl.Lib;
-
-#if haxegon3D
-import haxegon3D.*;
-#end
+import openfl.geom.Matrix;
+import starling.events.*;
+import starling.display.*;
+import starling.core.Starling;
+import starling.core.StatsDisplay;
 
 @:access(Main)
 @:access(haxegon.Gfx)
-#if haxegon3D
-@:access(haxegon3D.Gfx3D)
-#end
 @:access(haxegon.Music)
 @:access(haxegon.Mouse)
 @:access(haxegon.Input)
 @:access(haxegon.Scene)
 class Core extends Sprite {
 	public function new() {
-		super();
+		super();	
 		
-		Gfx.initrun = true;
-		#if haxegonweb
-		Webscript.corecontrol = this;
-		#end
-		init();
-	}
-	
-	public function init() {
-		maxelapsed = 0.0333;
-		maxframeskip = 5;
-		tickrate = 20;
-		_delta = 0;
-		
-		// on-stage event listener
-		if (Gfx.initrun) {
-			addEventListener(Event.ADDED_TO_STAGE, addedtostage);
-			Lib.current.addChild(this);
-		}else {
-			loaded();
-		}
+		addEventListener(Event.ADDED_TO_STAGE, addedtostage);
 	}
 	
 	private function addedtostage(e:Event = null) {
@@ -49,187 +25,117 @@ class Core extends Sprite {
 		loaded();
 	}
 	
-	#if haxegonweb
-	public function reset() {
-	  Random.setseed(Std.int(Math.random() * 233280));
-		Gfx.init(this.stage);
-		Gfx.resizescreen(240, 150, 1);
-		Text.setfont(Webfont.DEFAULT, 1);
-		Text.cleartextcache();
-		Input.keybuffer = "";
-	}
-	#end
-	
 	private function loaded() {
 		//Init library classes
 		Random.setseed(Std.int(Math.random() * 233280));
 		
-		if (Gfx.initrun) {
-			Input.init(this.stage);
-			Mouse.init(this.stage);
-		}
+		Input.init(this.stage, Starling.current.nativeStage);
+		Mouse.init(this.stage, Starling.current.nativeStage);
 		
 		Gfx.init(this.stage);
 		
-		#if haxegonweb
-		#else
-		Music.init();
-		#end
-		
 		//Default setup
-		#if haxegonweb
-			Gfx.resizescreen(240, 150, 1);
-			Text.setfont("default", 1);
-			Text.cleartextcache();
-			Input.keybuffer = "";
-		#else
-			Gfx.resizescreen(768, 480);
-			Text.setfont("opensans", 24);
-		#end
+		Gfx.resizescreen(768, 480);
 		
-		#if haxegonweb
-		if (Gfx.initrun) {
-			if (haxegonmain == null) haxegonmain = new Main();
-		}
-		#else
+		Music.init();
+		
 		Scene.init();
-		#end
 		
 		// start game loop
-		_rate = 1000 / TARGETFRAMERATE;
-    // fixed framerate
-    _skip = _rate * (maxframeskip + 0.98);
-    _last = _prev = Lib.getTimer();
-		if(_timer != null) _timer.stop();
-    _timer = new Timer(tickrate);
-    //_timer.run = ontimer;
-		stage.addEventListener(Event.ENTER_FRAME, onenterframe);
-		Gfx.update_fps = 0;
-		Gfx.render_fps = 0;
-		_framesthissecond_counter = -1;
+		_rate3 = Math.round(3000 / TARGETFRAMERATE);
+		_target3 = 3 * Lib.getTimer() + _rate3;
 		
-		Gfx.initrun = false;
+    stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	}
 	
-	private function onenterframe(FlashEvent:Event){
-		ontimer();
-	}
-	
-	private function ontimer(){
-		Gfx.skiprender = false;
-		_skipedupdate = 0;
+	private function onEnterFrame(e:Event) {
+		var updatecount:Int = 0;
 		
-		// update timer
-		_time = Lib.getTimer();
-		_delta += (_time - _last);
-		_last = _time;
+		// Ready the time!
+		// "_time3", "_target3" and "_rate3" all work in thirds of a millisecond. This is because
+		// frame times use even thirds (30fps = 33 1/3 ms, 60fps = 16 2/3ms) and we want to track
+		// them accurately, so we can't use floating point (which would start to lose precision 
+		// after an hour or so).
+		//
+		// Keep this in mind when working with these values. Divide them by 3 to get milliseconds.
+		var _time3:Int = 3*Lib.getTimer();
 		
-		if (_framesthissecond_counter == -1) {
-			_framesthissecond_counter = _time;
+		// Frames too fast? If we got here too soon, quit now and come back next time.
+		// This uses a 0.5 frame offset because we want the hard boundaries that decide frameskip/
+		// delay to be as far as possible from our regular frame timings. This way, our game needs
+		// to move an entire half a frame off course in either direction before it stutters.
+		if (_time3 < _target3 - 0.5*_rate3) {
+			return;
+		}
+
+		// How many updates do we want?
+		// Again, this uses a 0.5 frame offset before triggering frameskip.
+		var frameupdates:Int = Math.ceil(Math.max(1.0, (_time3 - _target3 + 0.5 * _rate3) / _rate3));
+		if (frameupdates > MAXFRAMESKIP) {
+			_target3 += _rate3 * (frameupdates - MAXFRAMESKIP);
+			frameupdates = MAXFRAMESKIP;
 		}
 		
-		// quit if a frame hasn't passed
-		if (_delta < _rate) return;
-		
-		// Slide the frame window back ever so slightly to avoid causing hiccups when the call
-		// interval to ontimer() approaches the length of a frame
-		if (_delta > 1.5 * _rate) {
-			_delta -= 0.01;
+		if (frameupdates == 1) {
+			// TIME TWEAK: That 0.5 frame offset only helps smoothness if we can line up _target
+			// with our regular frame times from OpenFL. This does that, by sliding _target backwards
+			// and forwards as necessary.
+			// Sliding by 1/3 ms per frame amounts to a 1% timeslip; 30fps becomes 29.7 - 30.3fps.
+			// Barely noticeable, and OpenFL will be feeding us a solid 30 most of the time anyway.
+			if (_target3 - _time3 > 0.1*_rate3) {
+				_target3 -= 1;
+			} else if (_target3 - _time3 < -0.1*_rate3) {
+				_target3 += 1;
+			}
 		}
-		
-		// update timer
-		_gametime = Std.int(_time);
-		
-		// update loop
-		if (_delta > _skip) _delta = _skip;
-		while (_delta >= _rate) {
-			//HXP.elapsed = _rate * HXP.rate * 0.001;
-			// update timer
-			_updatetime = _time;
-			_delta -= _rate;
-			_prev = _time;
+
+		// Run our frames!
+		for (upd in 0 ... frameupdates) {
+			_target3 += _rate3;
 			
 			// update loop
-			if (Gfx.clearscreeneachframe) Gfx.skiprender = true;
-			_skipedupdate++; //Skip one update now; we catch it later at render
-			if (_skipedupdate > 1) doupdate();
-			
-			// update timer
-			_time = Lib.getTimer();
+			doupdate(upd == 0);
 		}
-		
-		// update timer
-		_rendertime = _time;
 		
 		// render loop
-		Gfx.skiprender = false;	doupdate();
-		Gfx.render_fps++;
-		
-		if (_rendertime-_framesthissecond_counter > 1000) {
-			//trace("Update calls: " + Gfx.update_fps +", Render calls: " + Gfx.render_fps);
-			_framesthissecond_counter = Lib.getTimer();
-			Gfx.update_fps_max = Gfx.update_fps;
-			Gfx.render_fps_max = Gfx.render_fps;
-			Gfx.render_fps = 0;
-			Gfx.update_fps = 0;
+		if (!Scene.singleupdatefunction) {
+			dorender();
 		}
-		
-		// update timer
-		_time = Lib.getTimer();
 	}
-	
-	public function doupdate() {
-		Gfx.update_fps++;
-		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY));
-		Mouse.update(Std.int(Lib.current.mouseX / Gfx.screenscale), Std.int(Lib.current.mouseY / Gfx.screenscale));
+
+	public function doupdate(firstupdate:Bool) {
+		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY), firstupdate);
 		Input.update();
 		
-		if (!Gfx.skiprender) {
-			Gfx.drawto.lock();			
-			if (Gfx.clearscreeneachframe) Gfx.clearscreen();
-		}
-		#if haxegonweb
-		haxegonmain.update();
-		#else
-		Scene.update();
-		#end
-		if(!Gfx.skiprender) {
-			Text.drawstringinput();
-			Debug.showlog();
-			
-			Gfx.drawto.unlock();
-			
-			#if haxegon3D
-			Gfx3D.view.render();
-			#end
+		if (Scene.singleupdatefunction) {
+			Gfx.backbuffer.drawBundled(
+				function(unused0:DisplayObject, unused1:Matrix, unused2:Float) {
+					Scene.update();	
+					Text.drawstringinput();
+					Debug.showlog();
+				}
+			);
+		}else {
+		  Scene.update();	
 		}
 		
-		Mouse.mousewheel = 0;
+		Music.processmusic();
 	}
 	
-	#if haxegonweb
-	public var haxegonmain:Main; //No scene control in online version
-	#end
-	
-	//NEW FRAMERATE CODE - From HaxePunk fixed FPS implementation
-	private var maxelapsed:Float;
-	private var maxframeskip:Int;
-	private var tickrate:Int;
+	public function dorender() {
+		Gfx.backbuffer.drawBundled(
+		  function(unused0:DisplayObject, unused1:Matrix, unused2:Float) {
+				Scene.render();
+				Text.drawstringinput();
+				Debug.showlog();
+      }
+		);
+	}
 	
 	// Timing information.
-	private var TARGETFRAMERATE:Int = 30;
-	private var _delta:Float;
-	private var _time:Float;
-	private var _last:Float;
-	private var _timer:Timer;
-	private var	_rate:Float;
-	private var	_skip:Float;
-	private var _prev:Float;
-	private var _skipedupdate:Int;
-
-	// Debug timing information.
-	private var _updatetime:Float;
-	private var _rendertime:Float;
-	private var _gametime:Float;
-	private var _framesthissecond_counter:Float;
+	private static inline var TARGETFRAMERATE:Int = 30;
+	private static inline var MAXFRAMESKIP:Int = 4;
+	
+	private var	_rate3:Int; // The time between frames, in thirds of a millisecond.
+	private var _target3:Int; // The ideal time to start the next frame, in thirds of a millisecond.
 }

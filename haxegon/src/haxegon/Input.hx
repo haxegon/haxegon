@@ -1,12 +1,11 @@
 package haxegon;
 
-import openfl.display.Stage;
-import openfl.display.DisplayObject;
-import openfl.events.Event;
-import openfl.events.KeyboardEvent;
+import starling.display.*;
+import starling.events.*;
 import openfl.events.TextEvent;
 import openfl.ui.Keyboard;
 import openfl.external.ExternalInterface;
+import starling.core.Starling;
 
 #if flash
 	import flash.desktop.Clipboard;
@@ -81,12 +80,14 @@ class Input {
 		return false;
 	}
 	
-	private static function init(stage:Stage) {
-		gamestage = stage;	
-		stage.addEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
-		stage.addEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		stage.addEventListener(TextEvent.TEXT_INPUT, handletextinput);
-		stage.addEventListener(Event.DEACTIVATE, handledeactivate);
+	private static function init(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
+		starstage = _starlingstage;
+		flashstage = _flashstage;
+		
+		starstage.addEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
+		starstage.addEventListener(KeyboardEvent.KEY_UP, handlekeyup);
+		flashstage.addEventListener(TextEvent.TEXT_INPUT, handletextinput);
+		//stage.addEventListener(Event.DEACTIVATE, handledeactivate);
 		
 		clipboardbuffer = [""];
 		cut = false;
@@ -96,10 +97,10 @@ class Input {
 		redo = false;
 
 		#if flash
-			stage.addEventListener(Event.CUT, handlecut);
-			stage.addEventListener(Event.COPY, handlecopy);
-			stage.addEventListener(Event.PASTE, handlepaste);
-			stage.addEventListener(Event.SELECT_ALL, handleselectall);
+			flashstage.addEventListener(openfl.events.Event.CUT, handlecut);
+			flashstage.addEventListener(openfl.events.Event.COPY, handlecopy);
+			flashstage.addEventListener(openfl.events.Event.PASTE, handlepaste);
+			flashstage.addEventListener(openfl.events.Event.SELECT_ALL, handleselectall);
 		#end
 		
 		resetKeys();
@@ -159,17 +160,17 @@ class Input {
 		#end		
 	}
 	
-	private static function unload(stage:DisplayObject){
-		stage.removeEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
-		stage.removeEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		stage.removeEventListener(TextEvent.TEXT_INPUT, handletextinput);
-		stage.removeEventListener(Event.DEACTIVATE, handledeactivate);
+	private static function unload(){
+		starstage.removeEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
+		starstage.removeEventListener(KeyboardEvent.KEY_UP, handlekeyup);
+		starstage.removeEventListener(TextEvent.TEXT_INPUT, handletextinput);
+		flashstage.removeEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
 
 		#if flash
-			stage.removeEventListener(Event.CUT, handlecut);
-			stage.removeEventListener(Event.COPY, handlecopy);
-			stage.removeEventListener(Event.PASTE, handlepaste);
-			stage.removeEventListener(Event.SELECT_ALL, handleselectall);
+			flashstage.removeEventListener(openfl.events.Event.CUT, handlecut);
+			flashstage.removeEventListener(openfl.events.Event.COPY, handlecopy);
+			flashstage.removeEventListener(openfl.events.Event.PASTE, handlepaste);
+			flashstage.removeEventListener(openfl.events.Event.SELECT_ALL, handleselectall);
 		#end
 	}
 	
@@ -283,13 +284,15 @@ class Input {
 				keyheld[keycode] = -1;
 			}
 		}else {
+			#if (!html5)
 			if (event.controlKey){
 				return;
 			}
+			#end
 		}
 		#end
 		
-		gamestage.focus = gamestage;
+		//Starling.current.nativeStage.focus = flashstage;
 		charcode = event.charCode;
 		keycode = event.keyCode;
 		
@@ -333,6 +336,7 @@ class Input {
 	}
 
 	private static function handletextinput(event:TextEvent) {
+		trace("this is called sometimes!");
 		// Ignore all text input that's not valid ANSI text
 		if (event.text.length == 1 && event.text.charCodeAt(0) >= 32 && event.text.charCodeAt(0) <= 126) {
 			if (keybuffer.length < Text.inputmaxlength) {
@@ -590,5 +594,6 @@ class Input {
 	private static var lastcharcode:Int;
 	
 	private static var keybuffer:String = "";
-	private static var gamestage:Stage;
+	private static var starstage:starling.display.Stage;
+	private static var flashstage:openfl.display.Stage;
 }

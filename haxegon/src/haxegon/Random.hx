@@ -111,20 +111,20 @@ class Random{
 	}
 	
 	/** Return a random Int from a list of up to 12 Ints. */
-	public static function pickint(s1:Int, s2:Int, ?s3:Int, ?s4:Int,
-																					 ?s5:Int, ?s6:Int, ?s7:Int, ?s8:Int,
-																					 ?s9:Int, ?s10:Int, ?s11:Int, ?s12:Int):Int{
+	public static function pickint(s1:Int, s2:Int, s3:Int = -10000, s4:Int = -10000,
+																					 s5:Int = -10000, s6:Int = -10000, s7:Int = -10000, s8:Int = -10000,
+																					 s9:Int = -10000, s10:Int = -10000, s11:Int = -10000,s12:Int = -10000):Int{
 	  temp = 2;
-    if (s3 != null) temp = 3;
-	  if (s4 != null) temp = 4;
-	  if (s5 != null) temp = 5;
-	  if (s6 != null) temp = 6;
-	  if (s7 != null) temp = 7;
-	  if (s8 != null) temp = 8;
-	  if (s9 != null) temp = 9;
-	  if (s10 != null) temp = 10;
-	  if (s11 != null) temp = 11;
-	  if (s12 != null) temp = 12;
+    if (s3 != -10000) temp = 3;
+	  if (s4 != -10000) temp = 4;
+	  if (s5 != -10000) temp = 5;
+	  if (s6 != -10000) temp = 6;
+	  if (s7 != -10000) temp = 7;
+	  if (s8 != -10000) temp = 8;
+	  if (s9 != -10000) temp = 9;
+	  if (s10 != -10000) temp = 10;
+	  if (s11 != -10000) temp = 11;
+	  if (s12 != -10000) temp = 12;
 		
 		switch(int(1, temp)) {
 			case 1: return s1;
@@ -145,20 +145,20 @@ class Random{
 	}
 	
 	/** Return a random Float from a list of up to 12 Floats. */
-	public static function pickfloat(s1:Float,  s2:Float, ?s3:Float, ?s4:Float,
-																					 ?s5:Float, ?s6:Float, ?s7:Float, ?s8:Float,
-																					 ?s9:Float, ?s10:Float, ?s11:Float, ?s12:Float):Float{
+	public static function pickfloat(s1:Float, s2:Float, s3:Float = -10000, s4:Float = -10000,
+																					 s5:Float = -10000, s6:Float = -10000, s7:Float = -10000, s8:Float = -10000,
+																					 s9:Float = -10000, s10:Float = -10000, s11:Float = -10000,s12:Float = -10000):Float{
 	  temp = 2;
-    if (s3 != null) temp = 3;
-	  if (s4 != null) temp = 4;
-	  if (s5 != null) temp = 5;
-	  if (s6 != null) temp = 6;
-	  if (s7 != null) temp = 7;
-	  if (s8 != null) temp = 8;
-	  if (s9 != null) temp = 9;
-	  if (s10 != null) temp = 10;
-	  if (s11 != null) temp = 11;
-	  if (s12 != null) temp = 12;
+    if (s3 != -10000) temp = 3;
+	  if (s4 != -10000) temp = 4;
+	  if (s5 != -10000) temp = 5;
+	  if (s6 != -10000) temp = 6;
+	  if (s7 != -10000) temp = 7;
+	  if (s8 != -10000) temp = 8;
+	  if (s9 != -10000) temp = 9;
+	  if (s10 != -10000) temp = 10;
+	  if (s11 != -10000) temp = 11;
+	  if (s12 != -10000) temp = 12;
 		
 		switch(int(1, temp)) {
 			case 1: return s1;
@@ -182,7 +182,7 @@ class Random{
 		return arr[int(0, arr.length - 1)];
 	}
 	
-  public static function random():Float {
+	public static function random():Float {
 		seed = (seed * 16807) % 2147483647; 
 		return Math.abs(seed/2147483647);
 	}

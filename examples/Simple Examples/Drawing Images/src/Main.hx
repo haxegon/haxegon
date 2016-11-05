@@ -149,6 +149,6 @@ class Main {
 		Gfx.fillbox(0, Gfx.screenheight - 30, Gfx.screenwidth, 30, Gfx.rgb(64, 64, 64));
 		
 		Text.changesize(16);
-		Text.display(Gfx.CENTER, Gfx.screenheight - Text.height() - 5, "CLICK ON A DRESS TO CHANGE EFFECTS", Col.WHITE);
+		Text.display(Gfx.CENTER, Gfx.screenheight - Text.height("") - 5, "CLICK ON A DRESS TO CHANGE EFFECTS", Col.WHITE);
   }
 }

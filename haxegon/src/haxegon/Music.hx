@@ -46,7 +46,7 @@ class Music {
 		numsongs++;
 	}
 	
-	public static function play(t:String, ?time:Int = 0, ?loop:Bool = true) {
+	public static function play(t:String, ?time:Float = 0, ?loop:Bool = true) {
 		if (currentsong !=t) {
 			if (currentsong != "nothing") {
 				//Stop the old song first
@@ -78,8 +78,10 @@ class Music {
 	}   
 	
 	public static function stop() { 
-		musicchannel.removeEventListener(Event.SOUND_COMPLETE, stopmusic);
-		musicchannel.stop();
+		if (musicchannel != null) {
+			musicchannel.removeEventListener(Event.SOUND_COMPLETE, stopmusic);
+			musicchannel.stop();
+		}
 		currentsong = "nothing";
 	}
 	

@@ -6,7 +6,8 @@
     version="1.0.0" 
     company="Your name here" 
   />
-
+  
+  <app swf-version="17" if="flash"/>
 	<app 
       main="haxegon.Load"
       path="bin" 
