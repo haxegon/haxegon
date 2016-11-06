@@ -7,5 +7,5 @@
 	"version": "0.0.1-alpha",
 	"releasenote": "Work in progress, currently a bit unstable, but usable! If you're interested in learning more/trying it out, contact me at @terrycavanagh on twitter!",
 	"contributors": [ "TerryCavanagh" ],
-	"dependencies": { "lime": "3.4.1", "openfl": "4.4.1" }
+	"dependencies": { "openfl" }
 }
