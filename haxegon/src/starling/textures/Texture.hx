@@ -288,10 +288,12 @@ class Texture
     public static function fromAtfData(data:ByteArray, scale:Float=1, useMipMaps:Bool=true,
                                        async:Void->Void=null, repeat:Bool=false):Texture
     {
+        if (data == null) return null;
         var context:Context3D = Starling.current.context;
         if (context == null) throw new MissingContextError();
 
         var atfData:AtfData = new AtfData(data);
+
         var nativeTexture:flash.display3D.textures.Texture = context.createTexture(
             atfData.width, atfData.height, atfData.format, false);
         var concreteTexture:ConcreteTexture = new ConcreteTexture(nativeTexture, atfData.format,

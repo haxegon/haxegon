@@ -12,6 +12,7 @@ package starling.core;
 
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.display.Stage in FlashStage;
 import flash.display.Stage3D;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
@@ -322,8 +323,8 @@ class Starling extends EventDispatcher
                 mProfile = cast(profile, Context3DProfile);
             
             mShareContext = true;
-            Timer.delay(initialize, 1); // we don't call it right away, because Starling should
-                                       // behave the same way with or without a shared context
+            if (stage3D.context3D != null) Timer.delay(initialize, 1);
+			else stage3D.addEventListener(Event.CONTEXT3D_CREATE, onCreatedInitialize, false, 100);
         }
         else
         {
@@ -336,6 +337,11 @@ class Starling extends EventDispatcher
         }
     }
     
+	private function onCreatedInitialize(e:Event):Void 
+	{
+		initialize();
+	}
+	
     /** Disposes all children of the stage and the render context; removes all registered
      * event listeners. */
     public function dispose():Void
@@ -617,7 +623,7 @@ class Starling extends EventDispatcher
         background.graphics.endFill();
 
         var textField:TextField = new TextField();
-        var textFormat:TextFormat = new TextFormat("Verdana", 14, 0xFFFFFF);
+        var textFormat:TextFormat = new TextFormat("_sans", 14, 0xFFFFFF);
         textFormat.align = TextFormatAlign.CENTER;
         textField.defaultTextFormat = textFormat;
         textField.wordWrap = true;
@@ -730,8 +736,8 @@ class Starling extends EventDispatcher
     
     private function onResize(event:Event):Void
     {
-        var stageWidth:Int  = event.target.stageWidth;
-        var stageHeight:Int = event.target.stageHeight;
+        var stageWidth:Int  = cast (event.target, FlashStage).stageWidth;
+        var stageHeight:Int = cast (event.target, FlashStage).stageHeight;
 
         function dispatchResizeEvent():Void
         {
