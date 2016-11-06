@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["beginner", "simple", "easy", "tutorial"],
 	"description": "A tiny Haxe programming library for beginners.",
-	"version": "0.9",
+	"version": "0.01",
 	"releasenote": "Work in progress, currently a bit unstable, but usable!",
 	"contributors": [ "TerryCavanagh" ]
 }

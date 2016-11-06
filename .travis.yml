@@ -20,6 +20,6 @@ before_install:
   - git clone --recursive https://github.com/terrycavanagh/haxegon ~/haxegon --depth 1
 
 script:
-  - haxelib run openfl build $(pwd)/haxegon flash
-  - haxelib run openfl build $(pwd)/haxegon html5
-  - haxelib run openfl build $(pwd)/haxegon neko
+  - haxelib run openfl build $(pwd) flash
+  - haxelib run openfl build $(pwd) html5
+  - haxelib run openfl build $(pwd) neko
