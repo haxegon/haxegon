@@ -4,7 +4,8 @@
 	"license": "MIT",
 	"tags": ["beginner", "simple", "easy", "tutorial"],
 	"description": "A tiny Haxe programming library for beginners.",
-	"version": "0.01",
-	"releasenote": "Work in progress, currently a bit unstable, but usable!",
-	"contributors": [ "TerryCavanagh" ]
+	"version": "0.0.1-alpha",
+	"releasenote": "Work in progress, currently a bit unstable, but usable! If you're interested in learning more/trying it out, contact me at @terrycavanagh on twitter!",
+	"contributors": [ "TerryCavanagh" ],
+	"dependencies": { "lime": "3.4.1", "openfl": "4.4.1" }
 }
