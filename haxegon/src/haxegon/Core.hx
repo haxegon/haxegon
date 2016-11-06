@@ -49,6 +49,12 @@ class Core extends Sprite {
 	}
 	
 	private function onEnterFrame(e:Event) {
+		if (!Scene.hasseperaterenderfunction) {
+			//If we don't have a seperate render function, just fall back to onEnterFrame for now
+			doupdate(true);
+		  return;	
+		}
+		
 		var updatecount:Int = 0;
 		
 		// Ready the time!
@@ -98,7 +104,7 @@ class Core extends Sprite {
 		}
 		
 		// render loop
-		if (!Scene.singleupdatefunction) {
+		if (Scene.hasseperaterenderfunction) {
 			dorender();
 		}
 	}
@@ -107,7 +113,7 @@ class Core extends Sprite {
 		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY), firstupdate);
 		Input.update();
 		
-		if (Scene.singleupdatefunction) {
+		if (!Scene.hasseperaterenderfunction) {
 			Gfx.backbuffer.drawBundled(
 				function(unused0:DisplayObject, unused1:Matrix, unused2:Float) {
 					Scene.update();	

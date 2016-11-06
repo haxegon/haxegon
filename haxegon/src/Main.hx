@@ -2,9 +2,6 @@ import haxegon.*;
 
 class Main {
 	function update() {
-	}
-	
-	function render() {
 		var t = (flash.Lib.getTimer()) / 1800 + 10;
 		var big_r=40;
 		

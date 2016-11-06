@@ -24,7 +24,7 @@ class Scene {
 	private static function checkforrenderfunction() {
 		//When we change to a scene, check if this class contains a "render" method.
 		//If so, allow seperation of update and render
-		singleupdatefunction = (Reflect.field(scenelist[currentscene], "render") == null);
+		hasseperaterenderfunction = (Reflect.field(scenelist[currentscene], "render") != null);
 	}
 	
 	private static function update() {
@@ -103,7 +103,7 @@ class Scene {
 	
 	private static var scenelist:Array<Dynamic>;
 	private static var currentscene:Int;
-	private static var singleupdatefunction:Bool;
+	private static var hasseperaterenderfunction:Bool;
 }
 
 #end
