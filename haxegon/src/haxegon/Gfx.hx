@@ -21,7 +21,6 @@ class Gfx {
 	public static var screenheight:Int;
 	public static var screenwidthmid:Int;
 	public static var screenheightmid:Int;
-	public static var clearscreeneachframe:Bool;
 	
 	public static var screenscale:Int;
 	public static var devicexres:Int;
@@ -35,7 +34,6 @@ class Gfx {
 		initgfx(Std.int(width), Std.int(height), scale);
 		Text.init(gfxstage);
 		//showfps = false;
-		gfxstage.addChild(screen);
 		
 		updategraphicsmode();
 	}
@@ -128,7 +126,17 @@ class Gfx {
 	}
 		
 	/** Makes a tile array from a given image. */
-	public static function loadtiles(imagename:String, width:Int, height:Int, altlabel:String = "") {		
+	public static function loadtiles(imagename:String, width:Int, height:Int) {	
+		/*
+		var tex:Texture;
+		
+		try {
+		  tex = getassetpackedtexture(imagename);
+		}catch (e:Dynamic) {
+			throw("ERROR: In loadtiles, cannot find data/graphics/" + imagename + ".png.");
+			return;
+		}
+		*/
 		var tex:Texture;
 		
 		try {
@@ -137,9 +145,10 @@ class Gfx {
 			throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png.");
 			return;
 		}
-		if (altlabel != "") imagename = altlabel;
 		
 		starlingassets.addTexture(imagename, tex);
+		
+		//
 		var spritesheet:Texture = starlingassets.getTexture(imagename);
 		
 		var tiles_rect:Rectangle = new Rectangle(0, 0, width, height);
@@ -171,25 +180,104 @@ class Gfx {
 	
 	/* Add some blank tiles to the end of a tileset*/ 
 	public static function addblanktiles(tilesetname:String, num:Int) {
-		trace("warning: Gfx.addblanktiles is not implemented");
+		var tileset:Int = 0;
+		if(tilesetindex.exists(tilesetname)){
+			tileset = tilesetindex.get(tilesetname);
+		}else {
+			throw("ERROR: Cannot add blank tiles to tileset \"" + tilesetname + "\", no tileset with that name found.");
+		}
+		
+		var w:Int = Std.int(tiles[tileset].tiles[0].width);
+		var h:Int = Std.int(tiles[tileset].tiles[0].height);
+		for (i in 0 ... num) {
+			var tex:Texture = Texture.fromBitmapData(new BitmapData(w, h, true, 0), false);
+			var img:Image = new Image(tex);
+			img.touchable = false;
+			tiles[tileset].tiles.push(img);
+		}
 	}
 	
-	/** Creates a blank tileset, with the name "imagename", with each tile a given width and height, containing "amount" tiles. */
+	/** Creates a blank tileset, with the name "tilesetname", with each tile a given width and height, containing "amount" tiles. */
 	public static function createtiles(tilesetname:String, width:Float, height:Float, amount:Int) {
-		trace("warning: Gfx.createtiles is not implemented");
+		var exindex:Null<Int> = tilesetindex.get(tilesetname);
+		if (exindex == null) {
+			tiles.push(new haxegon.util.Tileset(tilesetname, Std.int(width), Std.int(height)));
+			tilesetindex.set(tilesetname, tiles.length - 1);
+			currenttileset = tiles.length - 1;
+			
+			for (i in 0 ... amount) {
+				var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
+				var img:Image = new Image(tex);
+				img.touchable = false;
+				tiles[currenttileset].tiles.push(img);
+			}
+			
+			changetileset(tilesetname);
+		}else {
+			changetileset(tilesetname);
+			
+			var purge:Bool = (tiles[currenttileset].width != Math.floor(width) || tiles[currenttileset].height != Math.floor(height));
+			tiles[currenttileset].width = Math.floor(width);
+			tiles[currenttileset].height = Math.floor(height);
+			
+			// Delete all excess or wrongly-sized tiles
+			while (tiles[currenttileset].tiles.length > (purge ? 0 : amount)) {
+				var extile:Image = tiles[currenttileset].tiles.pop();
+				extile.touchable = false;
+				extile.texture.dispose();
+				extile.dispose();
+			}
+			
+			// Create tiles, repurposing RenderTexture tiles when available
+			for (i in 0 ... amount) {
+				if (i < tiles[currenttileset].tiles.length && !purge && Std.is(tiles[currenttileset].tiles[i].texture, RenderTexture)) {
+					cast(tiles[currenttileset].tiles[i].texture, RenderTexture).clear();
+				} else {
+					var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
+					var img:Image = new Image(tex);
+					img.touchable = false;
+					
+					if (i < tiles[currenttileset].tiles.length) {
+						tiles[currenttileset].tiles[i].texture.dispose();
+						tiles[currenttileset].tiles[i].dispose();
+						tiles[currenttileset].tiles[i] = img;
+					} else {
+						tiles[currenttileset].tiles.push(img);
+					}
+				}
+			}
+		}
 	}
 	
 	/** Returns the width of a tile in the current tileset. */
 	public static function tilewidth(tilesetname:String):Int {
-		trace("warning: Gfx.tilewidth is not implemented");
-		return 0;
+		changetileset(tilesetname);
+		return tiles[currenttileset].width;
 	}
 	
 	/** Returns the height of a tile in the current tileset. */
 	public static function tileheight(tilesetname:String):Int {
-		trace("warning: Gfx.tileheight is not implemented");
-		return 0;
+		changetileset(tilesetname);
+		return tiles[currenttileset].height;
 	}
+
+	/** Loads a texture from Starling. */
+	private static function getassetpackedtexture(imagename:String):Texture {
+		var bd:Texture = null;
+		try {
+			bd = starlingassets.getTexture(imagename);
+		}catch (e:Dynamic) {
+			throw("ERROR: In getrawbitmapdata, cannot find data/graphics/" + imagename + ".png.");
+		}
+		return bd;
+	}
+	
+	/** Loads a packed texture into Gfx. */
+	private static function loadimagefrompackedtexture(imagename:String, tex:Texture) {
+		imageindex.set(imagename, images.length);
+		images.push(new Image(tex));
+		images[images.length - 1].smoothing = "none";
+	}		
 	
 	/** Loads an image into the game. */
 	public static function loadimage(imagename:String) {
@@ -205,18 +293,21 @@ class Gfx {
 		imageindex.set(imagename, images.length);
 		images.push(new Image(starlingassets.getTexture(imagename)));
 		images[images.length - 1].smoothing = "none";
+		//loadimagefrompackedtexture(imagename, getassetpackedtexture(imagename));
 	}
 	
 	/** Creates a blank image, with the name "imagename", with given width and height. */
 	public static function createimage(imagename:String, width:Float, height:Float) {
-		var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0));
+		var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
 		var img:Image = new Image(tex);
+		img.touchable = false;
 
 		var exindex:Null<Int> = imageindex.get(imagename);
 		if (exindex == null) {
 			imageindex.set(imagename, images.length);
 			images.push(img);
 		}else {
+			images[exindex].texture.dispose();
 			images[exindex].dispose();
 			images[exindex] = img;
 		}
@@ -230,57 +321,92 @@ class Gfx {
 	/** Returns the width of the image. */
 	public static function imagewidth(imagename:String):Int {
 		if(imageindex.exists(imagename)){
-			imagenum = imageindex.get(imagename);
+			var imagenum:Int = imageindex.get(imagename);
+			return Std.int(images[imagenum].width);
 		}else {
 			throw("ERROR: In imagewidth, cannot find image \"" + imagename + "\".");
 			return 0;
 		}
-		
-		return Std.int(images[imagenum].width);
 	}
 	
 	/** Returns the height of the image. */
 	public static function imageheight(imagename:String):Int {
 		if(imageindex.exists(imagename)){
-			imagenum = imageindex.get(imagename);
+			var imagenum:Int = imageindex.get(imagename);
+			return Std.int(images[imagenum].height);
 		}else {
 			throw("ERROR: In imageheight, cannot find image \"" + imagename + "\".");
 			return 0;
 		}
-		
-		return Std.int(images[imagenum].height);
 	}
 	
-	/** Tell draw commands to draw to the actual screen. */
+	private static function promotetorendertarget(image:Image) {
+		if (!Std.is(image.texture, RenderTexture)) {
+			var newtexture:RenderTexture = new RenderTexture(Std.int(image.texture.width), Std.int(image.texture.height));
+			
+			// Copy the old texture to the new RenderTexture
+			shapematrix.identity();
+			newtexture.draw(image, shapematrix);
+			
+			// Clean up the old texture and swap
+			image.texture.dispose();
+			image.texture = newtexture;
+		}
+	}
+
+	/** Tell draw commands to draw to the given image. */
 	public static function drawtoscreen() {
-		trace("warning: Gfx.drawtoscreen is not implemented");
+		drawto = backbuffer;
 	}
 	
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoimage(imagename:String) {
-		trace("warning: Gfx.drawtoimage is not implemented");
+		if (!imageindex.exists(imagename)) {
+			throw("ERROR: In drawtoimage, cannot find image \"" + imagename + "\".");
+			return;
+		}
+		
+		var imagenum:Int = imageindex.get(imagename);
+		promotetorendertarget(images[imagenum]);
+		drawto = cast(images[imagenum].texture, RenderTexture);
 	}
 	
 	/** Tell draw commands to draw to the given tile in the current tileset. */
-	public static function drawtotile(tilenumber:Int) {
-		trace("warning: Gfx.drawtotile is not implemented");
+	public static function drawtotile(tilesetname:String, t:Int) {
+		var tileset:Int = 0;
+		if(tilesetindex.exists(tilesetname)){
+			tileset = tilesetindex.get(tilesetname);
+		}else {
+			throw("ERROR: Cannot change to tileset \"" + tilesetname + "\", no tileset with that name found.");
+		}
+		
+		if (t >= numberoftiles(tilesetname)) {
+			if (t == numberoftiles(tilesetname)) {
+				throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
+			}else{
+				throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+			}
+		}
+
+		promotetorendertarget(tiles[tileset].tiles[t]);
+		drawto = cast(tiles[tileset].tiles[t].texture, RenderTexture);
 	}
 	
 	/** Helper function for image drawing functions. */
 	private static var t1:Float;
 	private static var t2:Float;
 	private static var t3:Float;
-	private static function imagealignx(x:Float):Float {
+	private static function imagealignx(image:Image, x:Float):Float {
 		if (x <= -5000) {
 			t1 = x - CENTER;
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Gfx.screenwidthmid - Std.int(images[imagenum].width / 2);
+				return t1 + Gfx.screenwidthmid - Std.int(image.width / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + images[imagenum].width;
+				return t3 + image.width;
 			}
 		}
 		
@@ -288,17 +414,17 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealigny(y:Float):Float {
+	private static function imagealigny(image:Image, y:Float):Float {
 		if (y <= -5000) {
 			t1 = y - CENTER;
 			t2 = y - TOP;
 			t3 = y - BOTTOM;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Gfx.screenheightmid - Std.int(images[imagenum].height / 2);
+				return t1 + Gfx.screenheightmid - Std.int(image.height / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + images[imagenum].height;
+				return t3 + image.height;
 			}
 		}
 		
@@ -306,17 +432,17 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealignonimagex(x:Float):Float {
+	private static function imagealignonimagex(image:Image, x:Float):Float {
 		if (x <= -5000) {
 			t1 = x - CENTER;
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Std.int(images[imagenum].width / 2);
+				return t1 + Std.int(image.width / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + images[imagenum].width;
+				return t3 + image.width;
 			}
 		}
 		
@@ -324,21 +450,58 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealignonimagey(y:Float):Float {
+	private static function imagealignonimagey(image:Image, y:Float):Float {
 		if (y <= -5000) {
 			t1 = y - CENTER;
 			t2 = y - TOP;
 			t3 = y - BOTTOM;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Std.int(images[imagenum].height / 2);
+				return t1 + Std.int(image.height / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + images[imagenum].height;
+				return t3 + image.height;
 			}
 		}
 		
 		return y;
+	}
+	
+	private static function internaldrawimage(x:Float, y:Float, image:Image) {
+		if (!transform && !coltransform) {
+			shapematrix.identity();
+			shapematrix.translate(Std.int(x), Std.int(y));
+			drawto.draw(image, shapematrix);
+		}else {
+			tempxalign = 0;	tempyalign = 0;
+			
+			shapematrix.identity();
+			
+			if (imagexscale != 1.0 || imageyscale != 1.0) {
+				if (imagescalexpivot != 0.0) tempxalign = imagealignonimagex(image, imagescalexpivot);
+				if (imagescaleypivot != 0.0) tempyalign = imagealignonimagey(image, imagescaleypivot);
+				shapematrix.translate( -tempxalign, -tempyalign);
+				shapematrix.scale(imagexscale, imageyscale);
+				shapematrix.translate( tempxalign, tempyalign);
+			}
+			
+			if (imagerotate != 0) {
+				if (imagerotatexpivot != 0.0) tempxalign = imagealignonimagex(image, imagerotatexpivot);
+				if (imagerotateypivot != 0.0) tempyalign = imagealignonimagey(image, imagerotateypivot);
+				shapematrix.translate( -tempxalign, -tempyalign);
+				shapematrix.rotate((imagerotate * 3.1415) / 180);
+				shapematrix.translate( tempxalign, tempyalign);
+			}
+			
+			shapematrix.translate(x, y);
+			if (coltransform) {
+				image.color = imagecolormult;
+				drawto.draw(image, shapematrix, imagealphamult);
+				image.color = Col.WHITE;
+			}else {
+				drawto.draw(image, shapematrix);
+			}
+		}		
 	}
 	
 	/** Draws image by name. 
@@ -349,48 +512,42 @@ class Gfx {
 			throw("ERROR: In drawimage, cannot find image \"" + imagename + "\".");
 			return;
 		}
-		
-		imagenum = imageindex.get(imagename);
-		x = imagealignx(x); y = imagealigny(y);
-		
-		if (!transform && !coltransform) {
-			shapematrix.identity();
-			shapematrix.translate(Std.int(x), Std.int(y));
-			backbuffer.draw(images[imagenum], shapematrix);
-		}else {
-			tempxalign = 0;	tempyalign = 0;
-			
-			shapematrix.identity();
-			
-			if (imagexscale != 1.0 || imageyscale != 1.0) {
-				if (imagescalexpivot != 0.0) tempxalign = imagealignonimagex(imagescalexpivot);
-				if (imagescaleypivot != 0.0) tempyalign = imagealignonimagey(imagescaleypivot);
-				shapematrix.translate( -tempxalign, -tempyalign);
-				shapematrix.scale(imagexscale, imageyscale);
-				shapematrix.translate( tempxalign, tempyalign);
-			}
-			
-			if (imagerotate != 0) {
-				if (imagerotatexpivot != 0.0) tempxalign = imagealignonimagex(imagerotatexpivot);
-				if (imagerotateypivot != 0.0) tempyalign = imagealignonimagey(imagerotateypivot);
-				shapematrix.translate( -tempxalign, -tempyalign);
-				shapematrix.rotate((imagerotate * 3.1415) / 180);
-				shapematrix.translate( tempxalign, tempyalign);
-			}
-			
-			shapematrix.translate(x, y);
-			if (coltransform) {
-				images[imagenum].color = imagecolormult;
-				backbuffer.draw(images[imagenum], shapematrix, imagealphamult);
-				images[imagenum].color = Col.WHITE;
-			}else {
-				backbuffer.draw(images[imagenum], shapematrix);
-			}
-		}
+
+		var image:Image = images[imageindex.get(imagename)];
+		x = imagealignx(image, x); y = imagealigny(image, y);
+		internaldrawimage(x, y, image);
 	}
 	
+	/** Draws image by name. 
+	 * x and y are the point at which to render.
+	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
+	 * x1, y1, w1, h1 describe the rectangle of the image to use.
+	 * */
 	public static function drawsubimage(x:Float, y:Float, x1:Float, y1:Float, w1:Float, h1:Float, imagename:String) {
-		trace("warning: Gfx.drawsubimage is not implemented");
+		if (!imageindex.exists(imagename)) {
+			throw("ERROR: In drawsubimage, cannot find image \"" + imagename + "\".");
+			return;
+		}
+		
+		var image:Image = images[imageindex.get(imagename)];
+		x = imagealignx(image, x); y = imagealigny(image, y);
+		
+		// Acquire SubTexture and build an Image from it.
+		trect.x = x1;
+		trect.y = y1;
+		trect.width = w1;
+		trect.height = h1;
+
+		// 2 allocs. avoidable with pooling?
+		var subtex:Texture = Texture.fromTexture(image.texture, trect);
+		var subimage:Image = new Image(subtex); // alloc. avoidable with pooling?
+		subimage.touchable = false;
+		
+		internaldrawimage(x, y, subimage);
+
+		// all done! clean up
+		subtex.dispose();
+		subimage.dispose();
 	}
 	
 	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float) {
@@ -415,10 +572,39 @@ class Gfx {
 	
 	/** Draws tile number t from current tileset.
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
+	 * x1, y1, w1, h1 describe the rectangle of the tile to use.
 	 * */
-	/*Draw a partial tile in the rectangle x1,y1-w,h*/
 	public static function drawsubtile(x:Float, y:Float, x1:Float, y1:Float, w:Float, h:Float, tilesetname:String, t:Int) {
-		trace("warning: Gfx.drawsubtile is not implemented");
+		changetileset(tilesetname);
+		
+		if (t >= numberoftiles(tilesetname)) {
+			if (t == numberoftiles(tilesetname)) {
+ 			  throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
+				return;
+			}else{
+				throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				return;
+			}
+		}
+		
+		x = tilealignx(x); y = tilealigny(y);
+		
+		// Acquire SubTexture and build an Image from it.
+		trect.x = x1;
+		trect.y = y1;
+		trect.width = w;
+		trect.height = h;
+
+		// 2 allocs. avoidable with pooling?
+		var subtex:Texture = Texture.fromTexture(tiles[currenttileset].tiles[t].texture, trect);
+		var subimage:Image = new Image(subtex);
+		subimage.touchable = false;
+		
+		internaldrawimage(x, y, subimage);
+
+		// all done! clean up
+		subtex.dispose();
+		subimage.dispose();		
 	}
 	
 	public static function drawtile(x:Float, y:Float, tilesetname:String, t:Int) {
@@ -436,40 +622,7 @@ class Gfx {
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
-		if (!transform && !coltransform) {
-			shapematrix.identity();
-			shapematrix.translate(Std.int(x), Std.int(y));
-			backbuffer.draw(tiles[currenttileset].tiles[t], shapematrix);
-		}else {
-			tempxalign = 0;	tempyalign = 0;
-			
-			shapematrix.identity();
-			
-			if (imagexscale != 1.0 || imageyscale != 1.0) {
-				if (imagescalexpivot != 0.0) tempxalign = tilealignontilex(imagescalexpivot);
-				if (imagescaleypivot != 0.0) tempyalign = tilealignontiley(imagescaleypivot);
-				shapematrix.translate( -tempxalign, -tempyalign);
-				shapematrix.scale(imagexscale, imageyscale);
-				shapematrix.translate( tempxalign, tempyalign);
-			}
-			
-			if (imagerotate != 0) {
-				if (imagerotatexpivot != 0.0) tempxalign = tilealignontilex(imagerotatexpivot);
-				if (imagerotateypivot != 0.0) tempyalign = tilealignontiley(imagerotateypivot);
-				shapematrix.translate( -tempxalign, -tempyalign);
-				shapematrix.rotate((imagerotate * 3.1415) / 180);
-				shapematrix.translate( tempxalign, tempyalign);
-			}
-			
-			shapematrix.translate(x, y);
-			if (coltransform) {
-				tiles[currenttileset].tiles[t].color = imagecolormult;
-				backbuffer.draw(tiles[currenttileset].tiles[t], shapematrix, imagealphamult);
-				tiles[currenttileset].tiles[t].color = Col.WHITE;
-			}else {
-				backbuffer.draw(tiles[currenttileset].tiles[t], shapematrix);
-			}
-		}
+		internaldrawimage(x, y, tiles[currenttileset].tiles[t]);
 	}
 	
 	private static function tilealignx(x:Float):Float {
@@ -501,248 +654,74 @@ class Gfx {
 	}
 	
 	public static function drawline(_x1:Float, _y1:Float, _x2:Float, _y2:Float, col:Int, alpha:Float = 1.0) {
-		//drawbresenhamline(Std.int(_x1), Std.int(_y1), Std.int(_x2), Std.int(_y2), col, alpha);
+		if (col == Col.TRANSPARENT) return;
 		templine = new Line(_x1, _y1, _x2, _y2, linethickness, col);
 		templine.alpha = alpha;
 		
-		backbuffer.draw(templine);
+		drawto.draw(templine);
 	}
 
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
 		var tempring:Ring = new Ring(radius - linethickness, radius, col, true, 6, angle);
 		tempring.alpha = alpha;
 		
 		shapematrix.identity();
 		shapematrix.translate(x - radius, y - radius);
 		
-		backbuffer.draw(tempring, shapematrix);
+		drawto.draw(tempring, shapematrix);
 	}
 	
 	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
 		var tempring:Disk = new Disk(radius, col, true, 6, angle);
 		tempring.alpha = alpha;
 		
 		shapematrix.identity();
 		shapematrix.translate(x - radius, y - radius);
 		
-		backbuffer.draw(tempring, shapematrix);
+		drawto.draw(tempring, shapematrix);
 	}
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
 		var tempring:Ring = new Ring(radius - linethickness, radius, col);
 		tempring.alpha = alpha;
 		
 		shapematrix.identity();
 		shapematrix.translate(x - radius, y - radius);
 		
-		backbuffer.draw(tempring, shapematrix);
+		drawto.draw(tempring, shapematrix);
 	}
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
 		var tempring:Disk = new Disk(radius, col);
 		tempring.alpha = alpha;
 		
 		shapematrix.identity();
 		shapematrix.translate(x - radius, y - radius);
 		
-		backbuffer.draw(tempring, shapematrix);
+		drawto.draw(tempring, shapematrix);
 	}
 	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0) {
-		drawbresenhamline(Std.int(x1), Std.int(y1), Std.int(x2), Std.int(y2), col, alpha);
-		drawbresenhamline(Std.int(x2), Std.int(y2), Std.int(x3), Std.int(y3), col, alpha);
-		drawbresenhamline(Std.int(x1), Std.int(y1), Std.int(x3), Std.int(y3), col, alpha);
+		if (col == Col.TRANSPARENT) return;
+		drawline(x1, y1, x2, y2, col, alpha);
+		drawline(x1, y1, x3, y3, col, alpha);
+		drawline(x2, y2, x3, y3, col, alpha);
 	}
 	
-	public static var bresx1:Array<Int> = new Array<Int>();
-	public static var bresy1:Array<Int> = new Array<Int>();
-	//public static var bresswap1:Array<Int> = new Array<Int>();
-	public static var bresx2:Array<Int> = new Array<Int>();
-	public static var bresy2:Array<Int> = new Array<Int>();
-	//public static var bresswap2:Array<Int> = new Array<Int>();
-	//public static var bressize:Int;
-	public static inline function fastAbs(v:Int) : Int {
-		return (v ^ (v >> 31)) - (v >> 31);
-	}
-	 
-	public static inline function fastFloor(v:Float) : Int {
-		return Std.int(v); // actually it's more "truncate" than "round to 0"
-	}
-	
-	public static function bresenhamline(x0:Int, y0:Int, x1:Int, y1:Int, linenum:Int):Void {
-		var startx1:Int = x1;
-		var starty1:Int = y1;
-		var swapXY = Math.abs(y1 - y0) > Math.abs(x1 - x0);
-		var tmp:Int;
-		
-		if (linenum == 0) {
-			bresx1 = []; bresy1 = [];
-		}else {
-			bresx2 = []; bresy2 = [];
-		}
-		if (swapXY) {
-			// swap x and y
-			tmp = x0; x0 = y0; y0 = tmp; // swap x0 and y0
-			tmp = x1; x1 = y1; y1 = tmp; // swap x1 and y1
-		}
-		
-		if(x0 > x1) {
-			// make sure x0 < x1
-			tmp = x0; x0 = x1; x1 = tmp; // swap x0 and x1
-			tmp = y0; y0 = y1; y1 = tmp; // swap y0 and y1
-		}
-		
-		var deltax = x1 - x0;
-		var deltay = Std.int( Math.abs(y1 - y0));
-		var error = Std.int( deltax / 2 );
-		var y = y0;
-		var ystep = if ( y0 < y1 ) 1 else -1;
-		
-			// Y / X
-		for (x in x0 ... x1 + 1 ) {	
-			if(linenum==0){
-				if (swapXY) {
-					bresx1.push(y); bresy1.push(x);
-				}else {
-					bresx1.push(x); bresy1.push(y);
-				}
-			}else {
-				if (swapXY) {
-					bresx2.push(y); bresy2.push(x);
-				}else {
-					bresx2.push(x); bresy2.push(y);
-				}
-			}
-			error -= deltay;
-			if ( error < 0 ) {
-				y = y + ystep;
-				error = error + deltax;
-			}
-		}
-	}
-	
-	public static function drawbresenhamline(x0:Int, y0:Int, x1:Int, y1:Int, col:Int, alpha:Float):Void {
-		var startx1:Int = x1;
-		var starty1:Int = y1;
-		var swapXY = Math.abs(y1 - y0) > Math.abs(x1 - x0);
-		var tmp:Int;
-		
-		if (swapXY) {
-			// swap x and y
-			tmp = x0; x0 = y0; y0 = tmp; // swap x0 and y0
-			tmp = x1; x1 = y1; y1 = tmp; // swap x1 and y1
-		}
-		
-		if(x0 > x1) {
-			// make sure x0 < x1
-			tmp = x0; x0 = x1; x1 = tmp; // swap x0 and x1
-			tmp = y0; y0 = y1; y1 = tmp; // swap y0 and y1
-		}
-		
-		var deltax = x1 - x0;
-		var deltay = Std.int( Math.abs(y1 - y0));
-		var error = Std.int( deltax / 2 );
-		var y = y0;
-		var ystep = if ( y0 < y1 ) 1 else -1;
-		
-			// Y / X
-		for (x in x0 ... x1 + 1 ) {	
-			if (swapXY) {
-				setpixel(y, x, col, alpha);
-			}else {
-				setpixel(x, y, col, alpha);
-			}
-			error -= deltay;
-			if ( error < 0 ) {
-				y = y + ystep;
-				error = error + deltax;
-			}
-		}
-	}
-	
-	private static var tri_x1:Int;
-	private static var tri_y1:Int;
-	private static var tri_x2:Int;
-	private static var tri_y2:Int;
-	private static var tri_x3:Int;
-	private static var tri_y3:Int;
-	
-	private static function getfilltrimatchpoint(t:Int):Int {
-		//Return the INDEX of bresenham line two where the y value matches t.
-		for (i in 0 ... bresy2.length) {
-			if (bresy2[i] == t) {
-				return i;
-			}
-		}
-		return -1;
-	}
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
 		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, col);
 		temppoly4.alpha = alpha;
-		backbuffer.draw(temppoly4);
-		/*
-		//Sort the points from y value highest to lowest
-		if (y1 < y2 && y1 < y3) {
-			tri_x1 = Std.int(x1); tri_y1 = Std.int(y1);
-			if (y2 < y3) { tri_x2 = Std.int(x2); tri_y2 = Std.int(y2);	tri_x3 = Std.int(x3); tri_y3 = Std.int(y3);
-			}else {	tri_x2 = Std.int(x3); tri_y2 = Std.int(y3);	tri_x3 = Std.int(x2); tri_y3 = Std.int(y2);}
-		}else if (y2 < y3 && y2 < y1) {
-			tri_x1 = Std.int(x2); tri_y1 = Std.int(y2);
-			if (y1 < y3) { tri_x2 = Std.int(x1); tri_y2 = Std.int(y1);	tri_x3 = Std.int(x3); tri_y3 = Std.int(y3);
-			}else {tri_x2 = Std.int(x3); tri_y2 = Std.int(y3);	tri_x3 = Std.int(x1); tri_y3 = Std.int(y1);	}
-		}else {
-			tri_x1 = Std.int(x3); tri_y1 = Std.int(y3);
-			if (y2 < y1) {tri_x2 = Std.int(x2); tri_y2 = Std.int(y2);	tri_x3 = Std.int(x1); tri_y3 = Std.int(y1);
-			}else {	tri_x2 = Std.int(x1); tri_y2 = Std.int(y1);	tri_x3 = Std.int(x2); tri_y3 = Std.int(y2);	}
-		}
-		
-		//Bresenham from 1 to 2 and 1 to 3
-		bresenhamline(tri_x1, tri_y1, tri_x2, tri_y2, 0);
-		bresenhamline(tri_x1, tri_y1, tri_x3, tri_y3, 1);
-		var matchingpoint:Int = 0;
-		var lastypos:Int = -1;
-		var firstypos:Int = bresy1[0];
-		
-		//1-2 is the shorter line, so run down it and fill that segment up
-		for (i in 0 ... bresx1.length) {
-			if (bresy1[i] != lastypos) {
-				lastypos = bresy1[i];
-				matchingpoint = getfilltrimatchpoint(bresy1[i]);
-				if (matchingpoint > -1) {	
-					if (bresx1[i] > bresx2[matchingpoint]) {
-						settrect(bresx2[matchingpoint], bresy1[i], bresx1[i]-bresx2[matchingpoint], 1);
-					}else {
-						settrect(bresx1[i], bresy1[i], bresx2[matchingpoint]-bresx1[i], 1);
-					}
-					
-					fillbox(trect.x, trect.y, trect.width, 1, col, alpha);
-				}
-			}
-		}
-		
-		//Now get 2 to 3
-		var secondlastypos:Int = -1;
-		bresenhamline(tri_x2, tri_y2, tri_x3, tri_y3, 0);
-		for (i in 0 ... bresx1.length) {
-			if (bresy1[i] != lastypos && bresy1[i] != secondlastypos && bresy1[i] != firstypos) {
-				secondlastypos = bresy1[i];
-				matchingpoint = getfilltrimatchpoint(bresy1[i]);
-				if (matchingpoint > -1) {	
-					if (bresx1[i] > bresx2[matchingpoint]) {
-						settrect(bresx2[matchingpoint], bresy1[i], bresx1[i]-bresx2[matchingpoint], 1);
-					}else {
-						settrect(bresx1[i], bresy1[i], bresx2[matchingpoint]-bresx1[i], 1);
-					}
-					
-					fillbox(trect.x, trect.y, trect.width, 1, col, alpha);
-				}
-			}
-		}
-		*/
+		drawto.draw(temppoly4);
 	}
 
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
 		if (width < 0) {
 			width = -width;
 			x = x - width;
@@ -773,21 +752,16 @@ class Gfx {
 	}
 	
 	public static function clearscreen(col:Int = 0x000000) {
-		backbuffer.clear(col, 1.0);
-	}
-	
-	public static function getpixel(x:Float, y:Float):Int {
-		//This one seems tough :/ 
-		//http://stackoverflow.com/questions/14078071/how-can-i-get-pixel-values-of-a-texture-in-starling
-		trace("warning: Gfx.getpixel is not implemented");
-		return 0;
+		drawto.clear(col, 1.0);
 	}
 	
 	public static function setpixel(x:Float, y:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
 		fillbox(x, y, 1, 1, col, alpha);
 	}
 
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
 		tempquad.x = x;
 		tempquad.y = y;
 		tempquad.width = width;
@@ -795,7 +769,7 @@ class Gfx {
 		tempquad.color = col;
 		tempquad.alpha = alpha;
 		
-		backbuffer.draw(tempquad);
+		drawto.draw(tempquad);
 	}
 	
 	public static inline function getred(c:Int):Int {
@@ -917,7 +891,6 @@ class Gfx {
 	/** Just gives Gfx access to the stage. */
 	private static function init(stage:Stage) {
 		gfxstage = stage;
-		clearscreeneachframe = true;
 		linethickness = 1;
 		
 		reset();
@@ -946,13 +919,20 @@ class Gfx {
 		tempquad = new Quad(1, 1);
 		//temppoly4 = new Poly4();
 		
-		starlingassets = new AssetManager();
+		if(!gfxinit){
+			starlingassets = new AssetManager();
+			starlingassets.verbose = false;
+			
+			backbuffer = new RenderTexture(width, height, false);
+			drawto = backbuffer;
+			screen = new Image(backbuffer);
+			screen.touchable = false;
+			screen.scale = scale;
+			screen.smoothing = "none";
+			gfxstage.addChild(screen);
+		}
 		
-		backbuffer = new RenderTexture(width, height, false);
-		screen = new Image(backbuffer);
-		screen.scale = scale;
-		screen.smoothing = "none";
-		gfxstage.addChild(screen);
+		gfxinit = true;
 	}
 	
 	/** Sets the values for the temporary rect structure. Probably better than making a new one, idk */
@@ -963,12 +943,8 @@ class Gfx {
 		trect.height = h;
 	}
 	
-	/** Sets the values for the temporary point structure. Probably better than making a new one, idk */
-	private inline static function settpoint(x:Float, y:Float) {
-		trace("warning: Gfx.settpoint is not implemented");
-	}
-	
 	private static var backbuffer:RenderTexture;
+	private static var drawto:RenderTexture;
 	private static var screen:Image;
 	private static var tempquad:Quad;
 	private static var temppoly4:Poly4;
@@ -1001,9 +977,10 @@ class Gfx {
 	
 	private static var imageindex:Map<String, Int> = new Map<String, Int>();
 	private static var images:Array<Image> = new Array<Image>();
-	private static var imagenum:Int;
 	
 	private static var tiles:Array<haxegon.util.Tileset> = new Array<haxegon.util.Tileset>();
 	private static var tilesetindex:Map<String, Int> = new Map<String, Int>();
 	private static var currenttileset:Int = -1;
+	
+	private static var gfxinit:Bool = false;
 }
