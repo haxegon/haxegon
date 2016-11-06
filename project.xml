@@ -32,8 +32,6 @@
    ></window>
    
 	<source path="src" />
-	
-	<set name="openfl-legacy" if="windows"/>
 	<haxelib name="openfl" />
 	
 	<assets path="data/music/mp3" rename="data/music" exclude="*.txt" if="flash"/> 
