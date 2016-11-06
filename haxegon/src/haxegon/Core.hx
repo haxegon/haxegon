@@ -104,9 +104,7 @@ class Core extends Sprite {
 		}
 		
 		// render loop
-		if (Scene.hasseperaterenderfunction) {
-			dorender();
-		}
+		dorender();
 	}
 
 	public function doupdate(firstupdate:Bool) {

@@ -25,6 +25,10 @@ class Scene {
 		//When we change to a scene, check if this class contains a "render" method.
 		//If so, allow seperation of update and render
 		hasseperaterenderfunction = (Reflect.field(scenelist[currentscene], "render") != null);
+		if (!hasseperaterenderfunction) {
+		  //Also check for the static function
+		  hasseperaterenderfunction = (Reflect.field(Type.getClass(scenelist[currentscene]), "render") != null);
+		}
 	}
 	
 	private static function update() {
