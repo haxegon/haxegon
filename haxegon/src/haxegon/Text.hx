@@ -208,7 +208,7 @@ class Text {
 		}
 		
 		fontmatrix.translate(x, y);
-		Gfx.backbuffer.draw(typeface[currentindex].tf, fontmatrix);
+		Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix);
 		// Clumsy work around that isn't relavent for anything other than haxegon itself!
 		if (typeface[currentindex].type == "ttf") {
 		  Gfx.fillbox(-1, -1, 1, 1, Col.RED);	
