@@ -1,11 +1,15 @@
 package haxegon;
 
+import haxe.Constraints.Function;
+import haxe.Timer;
 import openfl.Lib;
 import openfl.geom.Matrix;
 import starling.events.*;
 import starling.display.*;
 import starling.core.Starling;
 import starling.core.StatsDisplay;
+import audio.internal.AudioCore;
+import states.Analyticsstate;
 
 @:access(Main)
 @:access(haxegon.Gfx)
@@ -25,6 +29,26 @@ class Core extends Sprite {
 		loaded();
 	}
 	
+	public static function callfunctionafterupdate(?f:Function) {
+		if (f == null) {
+		  updateextended = false;	
+			extendedupdatefunction = null;
+		}else {
+			updateextended = true;
+			extendedupdatefunction = f;
+		}
+	}
+	
+	public static function callfunctionafterrender(?f:Function) {
+		if (f == null) {
+		  renderextended = false;	
+			extendedrenderfunction = null;
+		}else {
+			renderextended = true;
+			extendedrenderfunction = f;
+		}
+	}
+	
 	private function loaded() {
 		//Init library classes
 		Random.setseed(Std.int(Math.random() * 233280));
@@ -35,7 +59,7 @@ class Core extends Sprite {
 		Gfx.init(this.stage);
 		
 		//Default setup
-		Gfx.resizescreen(768, 480);
+		Gfx.resizescreen(384, 240, 3);
 		
 		Music.init();
 		
@@ -73,7 +97,7 @@ class Core extends Sprite {
 		if (_time3 < _target3 - 0.5*_rate3) {
 			return;
 		}
-
+		
 		// How many updates do we want?
 		// Again, this uses a 0.5 frame offset before triggering frameskip.
 		var frameupdates:Int = Math.ceil(Math.max(1.0, (_time3 - _target3 + 0.5 * _rate3) / _rate3));
@@ -105,6 +129,8 @@ class Core extends Sprite {
 		
 		// render loop
 		dorender();
+		
+		if (updateextended) extendedupdatefunction();
 	}
 
 	public function doupdate(firstupdate:Bool) {
@@ -117,10 +143,13 @@ class Core extends Sprite {
 					Scene.update();	
 					Text.drawstringinput();
 					Debug.showlog();
+					
+					if (updateextended) extendedupdatefunction();
 				}
 			);
 		}else {
 		  Scene.update();	
+			if (updateextended) extendedupdatefunction();
 		}
 		
 		Music.processmusic();
@@ -134,12 +163,19 @@ class Core extends Sprite {
 				Debug.showlog();
       }
 		);
+		
+		if (renderextended) extendedrenderfunction();
 	}
 	
 	// Timing information.
 	private static inline var TARGETFRAMERATE:Int = 30;
 	private static inline var MAXFRAMESKIP:Int = 4;
 	
-	private var	_rate3:Int; // The time between frames, in thirds of a millisecond.
-	private var _target3:Int; // The ideal time to start the next frame, in thirds of a millisecond.
+	private static var extendedupdatefunction:Dynamic = null;
+	private static var extendedrenderfunction:Dynamic = null;
+	private static var updateextended:Bool = false;
+	private static var renderextended:Bool = false;
+	
+	private static var	_rate3:Int; // The time between frames, in thirds of a millisecond.
+	private static var _target3:Int; // The ideal time to start the next frame, in thirds of a millisecond.
 }
