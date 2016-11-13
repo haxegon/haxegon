@@ -7,7 +7,7 @@ class Main {
 		
 		var x = Gfx.screenwidthmid;
 		var y = Gfx.screenheightmid;
-
+		
 		for (i in 0 ... 6) {	
 			var r = 10 + (Math.sin(flash.Lib.getTimer() / 600 + i) + 1) * 5;
 			var a1 = 2 * Math.PI * (i + 0.5) / 6 - t;

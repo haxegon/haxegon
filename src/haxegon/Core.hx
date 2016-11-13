@@ -56,12 +56,14 @@ class Core extends Sprite {
 		
 		Gfx.init(this.stage);
 		
-		//Default setup
-		Gfx.resizescreen(384, 240, 3);
-		
 		Music.init();
 		
 		Scene.init();
+		
+		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
+		if(!Gfx.gfxinit){
+			Gfx.resizescreen(stage.stageWidth, stage.stageHeight, 1);
+		}
 		
 		// start game loop
 		_rate3 = Math.round(3000 / TARGETFRAMERATE);
