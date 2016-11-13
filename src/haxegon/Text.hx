@@ -106,20 +106,24 @@ class Text {
 	}
 	
 	private static function currentlen():Float {
+		if (typeface.length == 0) defaultfont();
 		return typeface[currentindex].width;
 	}
 	
 	private static function currentheight():Float {
+		if (typeface.length == 0) defaultfont();
 		return typeface[currentindex].height;
 	}
 	
 	public static function len(text:String):Float {
+		if (typeface.length == 0) defaultfont();
 		typeface[currentindex].tf.text = text;
 		return typeface[currentindex].width;
 	}
 	
 	public static function height(?text:String):Float {
-		if (text == null) text = "?";
+		if (text == null || text == "") text = "?";
+		if (typeface.length == 0) defaultfont();
 		typeface[currentindex].tf.text = text;
 		return typeface[currentindex].height;
 	}
@@ -187,9 +191,7 @@ class Text {
 	public static function display(x:Float, y:Float, text:String, col:Int = 0xFFFFFF) {
 		if (text == "") return;
 		
-		if (typeface.length == 0) {
-		  defaultfont();	
-		}
+		if (typeface.length == 0) defaultfont();
 		
 		typeface[currentindex].tf.color = col;
 		typeface[currentindex].tf.text = text;
