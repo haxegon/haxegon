@@ -8,8 +8,6 @@ import starling.events.*;
 import starling.display.*;
 import starling.core.Starling;
 import starling.core.StatsDisplay;
-import audio.internal.AudioCore;
-import states.Analyticsstate;
 
 @:access(Main)
 @:access(haxegon.Gfx)
