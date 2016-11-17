@@ -108,7 +108,7 @@ class Text {
 		}
 	}
 	
-	private static function currentlen():Float {
+	private static function currentwidth():Float {
 		return typeface[currentindex].width;
 	}
 	
@@ -116,7 +116,7 @@ class Text {
 		return typeface[currentindex].height;
 	}
 	
-	public static function len(text:String):Float {
+	public static function width(text:String):Float {
 		if (wordwrapwidth > 0) {
 			typeface[currentindex].updatewidth(false);
 		}else {
@@ -149,11 +149,11 @@ class Text {
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Math.floor(Gfx.screenwidthmid - (currentlen() / 2));
+				return t1 + Math.floor(Gfx.screenwidthmid - (currentwidth() / 2));
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + Math.floor(Gfx.screenwidth - currentlen());
+				return t3 + Math.floor(Gfx.screenwidth - currentwidth());
 			}
 		}
 		
@@ -183,11 +183,11 @@ class Text {
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Math.floor(len(t) / 2);
+				return t1 + Math.floor(width(t) / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + len(t);
+				return t3 + width(t);
 			}
 		}
 		
