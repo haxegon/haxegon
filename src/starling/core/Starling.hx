@@ -736,8 +736,8 @@ class Starling extends EventDispatcher
     
     private function onResize(event:Event):Void
     {
-        var stageWidth:Int  = cast (event.target, FlashStage).stageWidth;
-        var stageHeight:Int = cast (event.target, FlashStage).stageHeight;
+        var stageWidth:Int  = mStage.stageWidth;
+        var stageHeight:Int = mStage.stageHeight;
 
         function dispatchResizeEvent():Void
         {

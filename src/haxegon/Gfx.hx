@@ -768,7 +768,7 @@ class Gfx {
 		tempquad.height = height;
 		tempquad.color = col;
 		tempquad.alpha = alpha;
-		
+		drawto.
 		drawto.draw(tempquad);
 	}
 	

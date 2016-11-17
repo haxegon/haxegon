@@ -27,6 +27,16 @@ class Core extends Sprite {
 		loaded();
 	}
 	
+	private static function callfunctionstartframe(?f:Function) {
+		if (f == null) {
+			startframeextended = false;
+			extendedstartframefunction = null;
+		}else {
+			startframeextended = true;
+			extendedstartframefunction = f;
+		}
+	}
+	
 	public static function callfunctionafterupdate(?f:Function) {
 		if (f == null) {
 		  updateextended = false;	
@@ -50,14 +60,10 @@ class Core extends Sprite {
 	private function loaded() {
 		//Init library classes
 		Random.setseed(Std.int(Math.random() * 233280));
-		
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
-		
 		Gfx.init(this.stage);
-		
 		Music.init();
-		
 		Scene.init();
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
@@ -75,7 +81,7 @@ class Core extends Sprite {
 	private function onEnterFrame(e:Event) {
 		if (!Scene.hasseperaterenderfunction) {
 			//If we don't have a seperate render function, just fall back to onEnterFrame for now
-			doupdate(true);
+			doupdate(0, 1);
 		  return;	
 		}
 		
@@ -97,6 +103,8 @@ class Core extends Sprite {
 		if (_time3 < _target3 - 0.5*_rate3) {
 			return;
 		}
+		
+		if (startframeextended) extendedstartframefunction();
 		
 		// How many updates do we want?
 		// Again, this uses a 0.5 frame offset before triggering frameskip.
@@ -124,17 +132,15 @@ class Core extends Sprite {
 			_target3 += _rate3;
 			
 			// update loop
-			doupdate(upd == 0);
+			doupdate(upd, frameupdates);
 		}
 		
 		// render loop
 		dorender();
-		
-		if (updateextended) extendedupdatefunction();
 	}
 
-	public function doupdate(firstupdate:Bool) {
-		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY), firstupdate);
+	public function doupdate(updateindex:Int, updatecount:Int) {
+		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY), updateindex == 0);
 		Input.update();
 		
 		if (!Scene.hasseperaterenderfunction) {
@@ -144,12 +150,12 @@ class Core extends Sprite {
 					Text.drawstringinput();
 					Debug.showlog();
 					
-					if (updateextended) extendedupdatefunction();
+					if (updateextended) extendedupdatefunction(updateindex, updatecount);
 				}
 			);
 		}else {
 		  Scene.update();	
-			if (updateextended) extendedupdatefunction();
+			if (updateextended) extendedupdatefunction(updateindex, updatecount);
 		}
 		
 		Music.processmusic();
@@ -170,9 +176,11 @@ class Core extends Sprite {
 	// Timing information.
 	private static inline var TARGETFRAMERATE:Int = 30;
 	private static inline var MAXFRAMESKIP:Int = 4;
-	
+
+	private static var extendedstartframefunction:Dynamic = null;
 	private static var extendedupdatefunction:Dynamic = null;
 	private static var extendedrenderfunction:Dynamic = null;
+	private static var startframeextended:Bool = false;
 	private static var updateextended:Bool = false;
 	private static var renderextended:Bool = false;
 	
