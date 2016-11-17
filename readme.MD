@@ -16,7 +16,10 @@ Once the library is installed, use this blank project file to get started:
 
 There's no documentation right now, sorry. Coming soon!
 
-## Changelog
+## Last Update
 
- 0.0.1-alpha
-   * Initial haxelib release!
+0.0.1-alpha (2016-11-06)
+------------------
+* Initial haxelib release!
+
+*(For a full update history, see <a href="https://github.com/TerryCavanagh/haxegon/blob/master/changelog.md">the changelog</a>.)*
