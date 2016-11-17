@@ -1,5 +1,3 @@
-// Huge huge thanks to Ruari O'Sullivan (@randomnine) for figuring this stuff out for me!
-#if !haxegonweb
 package haxegon;
 
 import openfl.errors.ArgumentError;
@@ -109,5 +107,3 @@ class Scene {
 	private static var currentscene:Int;
 	private static var hasseperaterenderfunction:Bool;
 }
-
-#end
