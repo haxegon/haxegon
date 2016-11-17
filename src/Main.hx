@@ -5,15 +5,10 @@ class Main {
 	var page:String = "unpacked";
 	
 	function new() {
-		Core.showstats = true;
-	  Gfx.resizescreen(384, 240, 2);
+		Gfx.resizescreen(384, 240, 2);
 		
-		Gfx.loadimage("leftdress");
-		Gfx.loadimage("rightdress");
 		Gfx.loadtiles("herotiles", 64, 64);
-		
-		//Gfx.loadimage("leftdress2");
-		//Gfx.loadimage("rightdress2");
+		Gfx.loadtiles("herotiles2", 64, 64);
 	}
 	
 	function update() {
@@ -41,6 +36,12 @@ class Main {
 		}else {
 		  Gfx.drawimage(10, 50, "leftdress2");
 			Gfx.drawimage(Gfx.screenwidth - 10 - Gfx.imagewidth("rightdress2"), 50, "rightdress2");
+			
+			for (j in 0 ... 3) {
+				for (i in 0 ... 3) {
+					Gfx.drawtile(100 - 4 + i * 68, 25 - 4 + j * 68, "herotiles2", Std.int(i + (j * 3) + (gametime / 20)) % Gfx.numberoftiles("herotiles"));
+				}
+			}
 		}
 		
 		Text.setfont("default", 1);

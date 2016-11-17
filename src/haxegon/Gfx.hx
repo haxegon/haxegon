@@ -94,15 +94,17 @@ class Gfx {
 	}
 	
 	/** Set an alpha multipler for image drawing functions. */
-	public static function imagealpha(a:Float) {
-		imagealphamult = a;
+	public static function imagealpha(?alpha:Float) {
+		if (alpha == null) alpha = 1.0;
+		imagealphamult = alpha;
 		coltransform = true;
 		reset_ifclear();
 	}
 	
 	/** Set a colour multipler and offset for image drawing functions. */
-	public static function imagecolor(c:Int = 0xFFFFFF) {
-		imagecolormult = c;
+		public static function imagecolor(?color:Int) {
+		if (color == null) color = 0xFFFFFF;
+		imagecolormult = color;
 		
 		coltransform = true;
 		reset_ifclear();
@@ -127,26 +129,21 @@ class Gfx {
 		
 	/** Makes a tile array from a given image. */
 	public static function loadtiles(imagename:String, width:Int, height:Int) {	
-		/*
-		var tex:Texture;
-		
-		try {
-		  tex = getassetpackedtexture(imagename);
-		}catch (e:Dynamic) {
-			throw("ERROR: In loadtiles, cannot find data/graphics/" + imagename + ".png.");
-			return;
+	  var tex:starling.textures.Texture;
+		if (imageindex.exists(imagename)) {
+		  //We've already loaded the image for this somewhere, probably from a packed texture
+			//In any case, we use that texture as the source for these tiles
+			tex = getassetpackedtexture(imagename);
+		}else{
+			try {
+				tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);	
+			}catch (e:Dynamic) {
+				throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png.");
+				return;
+			}
+			
+			starlingassets.addTexture(imagename, tex);
 		}
-		*/
-		var tex:Texture;
-		
-		try {
-		  tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);	
-		}catch (e:Dynamic) {
-			throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png.");
-			return;
-		}
-		
-		starlingassets.addTexture(imagename, tex);
 		
 		//
 		var spritesheet:Texture = starlingassets.getTexture(imagename);
@@ -267,10 +264,11 @@ class Gfx {
 		try {
 			bd = starlingassets.getTexture(imagename);
 		}catch (e:Dynamic) {
-			throw("ERROR: In getrawbitmapdata, cannot find data/graphics/" + imagename + ".png.");
+			throw("ERROR: Cannot find " + imagename + ".png in packed textures.");
 		}
 		return bd;
 	}
+	
 	
 	/** Loads a packed texture into Gfx. */
 	private static function loadimagefrompackedtexture(imagename:String, tex:Texture) {
@@ -281,6 +279,8 @@ class Gfx {
 	
 	/** Loads an image into the game. */
 	public static function loadimage(imagename:String) {
+		if (imageindex.exists(imagename)) return; //This is already loaded, so we're done!
+		
 		var tex:Texture;
 		try {
 		  tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);	
@@ -320,24 +320,22 @@ class Gfx {
 	
 	/** Returns the width of the image. */
 	public static function imagewidth(imagename:String):Int {
-		if(imageindex.exists(imagename)){
-			var imagenum:Int = imageindex.get(imagename);
-			return Std.int(images[imagenum].width);
-		}else {
-			throw("ERROR: In imagewidth, cannot find image \"" + imagename + "\".");
-			return 0;
-		}
+		if (!imageindex.exists(imagename)) {
+			loadimage(imagename);
+		}	
+		
+		var imagenum:Int = imageindex.get(imagename);
+		return Std.int(images[imagenum].width);
 	}
 	
 	/** Returns the height of the image. */
 	public static function imageheight(imagename:String):Int {
-		if(imageindex.exists(imagename)){
-			var imagenum:Int = imageindex.get(imagename);
-			return Std.int(images[imagenum].height);
-		}else {
-			throw("ERROR: In imageheight, cannot find image \"" + imagename + "\".");
-			return 0;
-		}
+		if (!imageindex.exists(imagename)) {
+			loadimage(imagename);
+		}	
+		
+		var imagenum:Int = imageindex.get(imagename);
+		return Std.int(images[imagenum].height);
 	}
 	
 	private static function promotetorendertarget(image:Image) {
@@ -509,8 +507,7 @@ class Gfx {
 	 * */
 	public static function drawimage(x:Float, y:Float, imagename:String) {
 		if (!imageindex.exists(imagename)) {
-			throw("ERROR: In drawimage, cannot find image \"" + imagename + "\".");
-			return;
+			loadimage(imagename);
 		}
 
 		var image:Image = images[imageindex.get(imagename)];
@@ -895,13 +892,45 @@ class Gfx {
 		return Math.floor((_y - screen.y) * screenheight / screen.height);
 	}
 	
-	/** Just gives Gfx access to the stage. */
+	/** Gives Gfx access to the stage, and preloads packed textures. */
 	private static function init(stage:Stage) {
 		gfxstage = stage;
 		linethickness = 1;
 		
+		loadpackedtextures();
+		
 		reset();
 	}	
+	
+	private static function loadpackedtextures() {
+		if(!gfxinit){
+			starlingassets = new AssetManager();
+			starlingassets.verbose = false;
+			
+			//Scan for packed textures
+			var atlasnum:Int = 0;
+			for (t in Assets.list(AssetType.TEXT)) {
+				var extension:String = S.getlastbranch(t, ".");
+				if (extension == "xml") {
+					//A packed texture is an XML file containing "TextureAtlas" as the first element
+					var xml:Xml = Xml.parse(Assets.getText(t)).firstElement();
+					if (xml.nodeName == "TextureAtlas") {
+						//Cool, it's a packed texture! Let's load it in!
+						var texturepackedimage:Texture = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + xml.get("imagePath")), false);
+						starlingassets.addTexture("atlas" + atlasnum, texturepackedimage);
+						starlingassets.addTextureAtlas("atlas" + atlasnum, new TextureAtlas(texturepackedimage, xml));
+						atlasnum++;
+						
+						//Ok, now we work though the XML and load all the images
+						for (i in xml.elementsNamed("SubTexture")) {
+							loadimagefrompackedtexture(i.get("name"), getassetpackedtexture(i.get("name")));
+						}
+						//for(i in xml.
+					}
+				}
+			}
+		}
+	}
 	
 	/** Called from resizescreen(). Sets up all our graphics buffers. */
 	private static function initgfx(width:Int, height:Int, scale:Int) {
@@ -919,9 +948,6 @@ class Gfx {
 		//temppoly4 = new Poly4();
 		
 		if(!gfxinit){
-			starlingassets = new AssetManager();
-			starlingassets.verbose = false;
-			
 			backbuffer = new RenderTexture(width, height, false);
 			drawto = backbuffer;
 			screen = new Image(backbuffer);

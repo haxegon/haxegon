@@ -6,6 +6,7 @@ import starling.text.*;
 import starling.display.*;
 import starling.textures.*;
 
+@:access(haxegon.Gfx)
 class Fontfile {
 	public function new(?_file:String) {
 		if (_file == null) {
@@ -29,7 +30,12 @@ class Fontfile {
 			}
 			sizescale = Std.parseInt(fontxml.elementsNamed("info").next().get("size"));
 			
-			fonttex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/fonts/" + _file + "/" + pngname + ".png"), false);
+			if (Gfx.imageindex.exists("fonts/" + _file + "/" + pngname)) {
+			  //We've already loaded in the font png in a packed texture!	
+				fonttex = Gfx.starlingassets.getTexture("fonts/" + _file + "/" + pngname);
+			}else{
+				fonttex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/fonts/" + _file + "/" + pngname + ".png"), false);
+			}
 			bitmapfont = new BitmapFont(fonttex, fontxml);
 			TextField.registerBitmapFont(bitmapfont);
 		}else {
