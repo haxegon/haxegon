@@ -233,6 +233,8 @@ class Starling extends EventDispatcher
     private static var sContextData:Map<Stage3D, Map<String, Dynamic>> = new Map<Stage3D, Map<String, Dynamic>>();
     private static var sAll:Vector<Starling> = new Vector<Starling>();
     
+    public var mStoredDrawCount:Int = 0;
+    
     // construction
     
     /** Creates a new Starling instance. 
@@ -549,7 +551,9 @@ class Starling extends EventDispatcher
         mSupport.finishQuadBatch();
         
         if (mStatsDisplay != null)
-            mStatsDisplay.drawCount = mSupport.drawCount;
+            mStatsDisplay.drawCount = mSupport.drawCount + mStoredDrawCount;
+        
+        mStoredDrawCount = 0;
         
         if (!mShareContext)
             mContext.present();
@@ -736,8 +740,8 @@ class Starling extends EventDispatcher
     
     private function onResize(event:Event):Void
     {
-        var stageWidth:Int  = mStage.stageWidth;
-        var stageHeight:Int = mStage.stageHeight;
+        var stageWidth:Int  = cast (event.target, FlashStage).stageWidth;
+        var stageHeight:Int = cast (event.target, FlashStage).stageHeight;
 
         function dispatchResizeEvent():Void
         {

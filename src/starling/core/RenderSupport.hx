@@ -472,6 +472,10 @@ class RenderSupport
             // an empty rectangle is not allowed, so we set it to the smallest possible size
             if (sScissorRect.width < 1 || sScissorRect.height < 1)
                 sScissorRect.setTo(0, 0, 1, 1);
+                
+            #if !flash
+              sScissorRect.y = height - sScissorRect.height - sScissorRect.y;
+            #end
             
             context.setScissorRectangle(sScissorRect);
         }
