@@ -39,9 +39,9 @@ class Music {
 		songindex.set(t, numsongs);
 		songvolumelevels.push(vol);
 		#if flash
-		musicchan.push(Assets.getMusic("data/music/" + t + ".mp3"));
+		musicchan.push(Assets.getMusic("data/sounds/" + t + ".mp3"));
 		#else
-		musicchan.push(Assets.getMusic("data/music/" + t + ".ogg"));
+		musicchan.push(Assets.getMusic("data/sounds/" + t + ".ogg"));
 		#end
 		numsongs++;
 	}

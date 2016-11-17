@@ -14,12 +14,12 @@ class Fontfile {
 			filename = "";
 			typename = "Verdana";
 			sizescale = 1;
-		}else	if (Assets.exists("data/fonts/" + _file + "/" + _file + ".fnt")) {
+		}else	if (Assets.exists("data/graphics/fonts/" + _file + "/" + _file + ".fnt")) {
 			type = "bitmap";
 			
-			fontxml = Xml.parse(Assets.getText("data/fonts/" + _file + "/" + _file + ".fnt")).firstElement();
+			fontxml = Xml.parse(Assets.getText("data/graphics/fonts/" + _file + "/" + _file + ".fnt")).firstElement();
 			typename = fontxml.elementsNamed("info").next().get("face");
-			pngname = Xml.parse(Assets.getText("data/fonts/" + _file + "/" + _file + ".fnt")).firstElement()
+			pngname = Xml.parse(Assets.getText("data/graphics/fonts/" + _file + "/" + _file + ".fnt")).firstElement()
 			               .elementsNamed("pages").next().elementsNamed("page").next().get("file");
 			if (pngname == null) {
 				throw("ERROR: Bitmap font XML file \"" + _file + ".fnt\" does not reference a .png file.");
@@ -29,13 +29,13 @@ class Fontfile {
 			}
 			sizescale = Std.parseInt(fontxml.elementsNamed("info").next().get("size"));
 			
-			fonttex = Texture.fromBitmapData(Assets.getBitmapData("data/fonts/" + _file + "/" + pngname + ".png"), false);
+			fonttex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/fonts/" + _file + "/" + pngname + ".png"), false);
 			bitmapfont = new BitmapFont(fonttex, fontxml);
 			TextField.registerBitmapFont(bitmapfont);
 		}else {
 		  type = "ttf";
 			
-			filename = "data/fonts/" + _file + "/" + _file + ".ttf";
+			filename = "data/graphics/fonts/" + _file + "/" + _file + ".ttf";
 			try {
 				font = Assets.getFont(filename);
 				typename = font.fontName;
