@@ -7,9 +7,7 @@ before_install:
   - sudo apt-get install g++-multilib gcc-multilib
   - mkdir ~/haxelib
   - haxelib setup ~/haxelib
-  #- haxelib install openfl > /dev/null
-  - git clone --recursive https://github.com/openfl/openfl ~/openfl --depth 1
-  - haxelib dev openfl ~/openfl
+  - haxelib install openfl > /dev/null
   - haxelib install lime > /dev/null
   - haxelib install hxcpp > /dev/null
   - haxelib install actuate > /dev/null
