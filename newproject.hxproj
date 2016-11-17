@@ -18,18 +18,19 @@
     <class path="C:\coding\haxe\Haxe\lib\openfl\4,4,1" />
     <class path="C:\coding\haxe\Haxe\lib\lime\3,4,1" />
     <class path="src" />
+    <class path="C:\coding\haxe\Haxe\lib\openfl\4,4,1\externs\core\flash" />
     <class path="C:\coding\haxe\Haxe\lib\openfl\4,4,1\externs\core\openfl" />
     <class path="C:\coding\haxe\Haxe\lib\openfl\4,4,1\externs\extras" />
-    <class path="bin\windows\cpp\debug\haxe" />
+    <class path="bin\flash\debug\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=4.4.1&#xA;lime=3.4.1&#xA;tools=3.4.1&#xA;no-compilation&#xA;native&#xA;lime-native&#xA;openfl-native&#xA;lime-cffi&#xA;windows&#xA;desktop&#xA;display" />
+    <option directives="openfl=4.4.1&#xA;lime=3.4.1&#xA;tools=3.4.1&#xA;no-compilation&#xA;openfl-flash&#xA;web&#xA;display" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
-    <option additional="--macro openfl._internal.utils.ExtraParams.include()&#xA;--macro lime.Lib.extraParams()&#xA;--remap flash:openfl&#xA;#--macro keep(&quot;haxegon.Load&quot;)&#xA;-debug " />
+    <option additional="--macro openfl._internal.utils.ExtraParams.include()&#xA;--macro lime.Lib.extraParams()&#xA;-swf-version 17&#xA;-debug " />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
