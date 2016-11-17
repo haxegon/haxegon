@@ -28,7 +28,6 @@ class Input {
 	
 	public static function justpressed(k:Key):Bool { 
 		if (current[keymap.get(k)] == Keystate.justpressed) {
-			//current[keymap.get(k)] = Keystate.pressed;
 			return true;
 		}else {
 			return false;
@@ -53,32 +52,22 @@ class Input {
 		}
 	}
 	
-	public static function pressheldtime(k:Key) : Int {
+	public static function pressheldtime(k:Key):Int {
 		keycode = keymap.get(k);
 		return keyheld[keycode];
 	}
 	
-	// delaypressed(): returns true at specific frame counts after the key's been pressed.
-	// The first TRUE is on frame 1 (first frame after the key is pressed)
-	// The second TRUE is on frame 2.35*repeatframes
-	// The next is on frame 3.35*repeatframes...
-	// and after (instantreps) repeats, it returns TRUE every frame
-	public static function delaypressed(k:Key, repeatframes:Int, ?instantreps:Int=-1):Bool {
+	public static function delaypressed(k:Key, delay:Int):Bool {
 		keycode = keymap.get(k);
 		if (keyheld[keycode] >= 1) {
-			if (keyheld[keycode] == 1) {
+			if (keyheld[keycode] <= 1) {
 				return true;
-			} else {
-				var repeatheld:Int = keyheld[keycode] - Std.int(2.35 * repeatframes) - 1;
-				if (repeatheld >= 0 && (repeatheld % repeatframes) == 0) {
-					return true;
-				} else if (instantreps >= 1 && repeatheld >= instantreps * repeatframes) {
-					return true;
-				}
+			}else if (keyheld[keycode] % delay == 0) {
+				return true;
 			}
 		}
 		return false;
-	}
+  }
 	
 	private static function init(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
 		starstage = _starlingstage;
@@ -86,7 +75,6 @@ class Input {
 		
 		starstage.addEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		starstage.addEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		flashstage.addEventListener(TextEvent.TEXT_INPUT, handletextinput);
 		//stage.addEventListener(Event.DEACTIVATE, handledeactivate);
 		
 		clipboardbuffer = [""];
@@ -163,7 +151,6 @@ class Input {
 	private static function unload(){
 		starstage.removeEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		starstage.removeEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		starstage.removeEventListener(TextEvent.TEXT_INPUT, handletextinput);
 		flashstage.removeEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
 
 		#if flash
@@ -262,15 +249,9 @@ class Input {
 	
 	private static function handlekeydown(event:KeyboardEvent) {
 		#if (js || html5)
-		#if terryhasntupgraded
-			if (ExternalInterface.call("bodyIsTargetted") == false) {
-				return;
-			}
-		#else
-			if (untyped __js__('document.activeElement.nodeName!="BODY"')){
-				return;
-			}
-		#end
+		if (untyped __js__('document.activeElement.nodeName!="BODY"')){
+			return;
+		}
 		
 		charcode = event.charCode;
 		
@@ -332,19 +313,16 @@ class Input {
 			#if haxegonweb
 			if (Text.inputsound > -1 && Text.input_show > 0) Webmusic.playsound(Text.inputsound, 1);
 			#end
-		}
-	}
-
-	private static function handletextinput(event:TextEvent) {
-		trace("this is called sometimes!");
-		// Ignore all text input that's not valid ANSI text
-		if (event.text.length == 1 && event.text.charCodeAt(0) >= 32 && event.text.charCodeAt(0) <= 126) {
-			if (keybuffer.length < Text.inputmaxlength) {
-				keybuffer += event.text;
-				#if haxegonweb
-				if (Text.inputsound > -1 && Text.input_show > 0) Webmusic.playsound(Text.inputsound, 1);
-				#end
-			}		
+		} else {
+			// Ignore all text input that's not valid ANSI text
+			if (charcode >= 32 && charcode <= 126) {
+				if (keybuffer.length < Text.inputmaxlength) {
+					keybuffer += String.fromCharCode(charcode);
+					#if haxegonweb
+					if (Text.inputsound > -1 && Text.input_show > 0) Webmusic.playsound(Text.inputsound, 1);
+					#end
+				}
+			}
 		}
 	}
 	

@@ -2,6 +2,7 @@ import haxegon.*;
 
 class Main {
 	var gametime:Float = 0;
+	
 	function update() {
 		gametime+= 1;
 		

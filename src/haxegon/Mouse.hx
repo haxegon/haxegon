@@ -22,6 +22,7 @@ class Mouse{
 	private static var _middlelast:Int;
 	private static var _rightcurrent:Int;
 	private static var _rightlast:Int;
+	private static var _rightheld:Int;
 	private static var gotosite:String = "";
 	
 	public static var mousewheel:Int = 0;
@@ -45,10 +46,28 @@ class Mouse{
 	public static function middlereleased():Bool { return _middlecurrent == -1; }
 	public static function middleforcerelease():Void { _middlecurrent = -1; }
 	
-	// based on Input.delaypressed(); catch repeats after an initial delay
-	public static function leftdelaypressed(repeatframes:Int, ?instantreps:Int=-1):Bool {
-		return true;// Input.procdelaypressed(_held, repeatframes, instantreps);
+	public static function leftdelaypressed(delay:Int):Bool {
+		if (_held >= 1) {
+			if (_held == 1) {
+				return true;
+			}else if (_held % delay == 0) {
+				return true;
+			}
+		}
+		return false;
 	}
+	
+	public static function rightdelaypressed(delay:Int):Bool {
+		if (_rightheld >= 1) {
+			if (_rightheld == 1) {
+				return true;
+			}else if (_rightheld % delay == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	private static function init(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
 		x = 0;
@@ -58,6 +77,7 @@ class Mouse{
 		cursormoved = false;
 		_rightcurrent = 0;
 		_rightlast = 0;
+		_rightheld = 0;
 		_middlecurrent = 0;
 		_middlelast = 0;
 		_current = 0;
@@ -113,6 +133,8 @@ class Mouse{
 				if (Input.pressed(Key.CONTROL)) {
 					if(_rightcurrent > 0) _rightcurrent = 1;
 					else _rightcurrent = 2;
+					
+					_rightheld = 0;
 				}else{
 					if(_current > 0) _current = 1;
 					else _current = 2;
@@ -136,6 +158,7 @@ class Mouse{
 				else _current = 0;
 				
 				_held = 0;
+				_rightheld = 0;
 			}else if(touch.phase == TouchPhase.MOVED){
 				//touch dragging
 			}
@@ -181,6 +204,10 @@ class Mouse{
 			_rightcurrent = 1;
 		_rightlast = _rightcurrent;
 		
+		if (_rightcurrent > 0) {
+			++_rightheld;
+    }
+		
 		if((_middlelast == -1) && (_middlecurrent == -1))
 			_middlecurrent = 0;
 		else if((_middlelast == 2) && (_middlecurrent == 2))
@@ -202,6 +229,7 @@ class Mouse{
 		_current = 0;
 		_last = 0;
 		_held = 0;
+		_rightheld = 0;
 		_rightcurrent = 0;
 		_rightlast = 0;
 		_middlecurrent = 0;
