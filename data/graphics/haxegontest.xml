@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with TexturePacker http://www.codeandweb.com/texturepacker-->
-<!-- $TexturePacker:SmartUpdate:1cb53bf209357d450ed08adc61cfb1a9:6c37858183f4f92f6f2e54acec90e3b1:039992f57d9da0c2ae59c8d925fd3837$ -->
-<TextureAtlas imagePath="haxegontest.png" width="66" height="746">
-    <SubTexture name="herotiles2" x="1" y="1" rotated="true" width="64" height="576"/>
-    <SubTexture name="leftdress2" x="1" y="579" width="48" height="84"/>
-    <SubTexture name="rightdress2" x="1" y="665" width="46" height="80" frameX="-1" frameY="-1" frameWidth="48" frameHeight="84"/>
-</TextureAtlas>
