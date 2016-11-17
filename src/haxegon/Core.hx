@@ -186,4 +186,27 @@ class Core extends Sprite {
 	
 	private static var	_rate3:Int; // The time between frames, in thirds of a millisecond.
 	private static var _target3:Int; // The ideal time to start the next frame, in thirds of a millisecond.
+	
+	
+	public static var showstats(get,set):Bool;
+	private static var _showstats:Bool;
+	private static var statsdisplay:StatsDisplay;
+
+	static function get_showstats():Bool {
+		return _showstats;
+	}
+
+	static function set_showstats(_b:Bool) {
+		if (Gfx.gfxinit) {
+			//If we've already initilised the screen, add/remove the stats display now
+			if (_b) {
+			  statsdisplay = new StatsDisplay();
+				Gfx.gfxstage.addChild(statsdisplay);
+			}else {
+			  if(statsdisplay != null) Gfx.gfxstage.removeChild(statsdisplay);
+			}
+		}
+		_showstats = _b;
+		return _showstats;
+	}
 }

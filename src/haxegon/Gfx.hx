@@ -6,10 +6,12 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import starling.display.*;
 import starling.geom.*;
+import starling.core.StatsDisplay;
 import starling.utils.AssetManager;
 import starling.textures.*;
 import openfl.Assets;
 
+@:access(haxegon.Core)
 class Gfx {
 	public static var LEFT:Int = -10000;
 	public static var RIGHT:Int = -20000;
@@ -33,8 +35,6 @@ class Gfx {
 	public static function resizescreen(width:Float, height:Float, scale:Int = 1) {
 		initgfx(Std.int(width), Std.int(height), scale);
 		Text.init(gfxstage);
-		//showfps = false;
-		
 		updategraphicsmode();
 	}
 	
@@ -887,14 +887,6 @@ class Gfx {
 		trace("warning: Gfx.updategraphicsmode is not implemented");
 	}
 	
-	/** Just gives Gfx access to the stage. */
-	private static function init(stage:Stage) {
-		gfxstage = stage;
-		linethickness = 1;
-		
-		reset();
-	}	
-	
 	public static function getscreenx(_x:Float) : Int {
 		return Math.floor((_x - screen.x) * screenwidth / screen.width);
 	}
@@ -902,6 +894,14 @@ class Gfx {
 	public static function getscreeny(_y:Float) : Int {
 		return Math.floor((_y - screen.y) * screenheight / screen.height);
 	}
+	
+	/** Just gives Gfx access to the stage. */
+	private static function init(stage:Stage) {
+		gfxstage = stage;
+		linethickness = 1;
+		
+		reset();
+	}	
 	
 	/** Called from resizescreen(). Sets up all our graphics buffers. */
 	private static function initgfx(width:Int, height:Int, scale:Int) {
@@ -929,6 +929,13 @@ class Gfx {
 			screen.scale = scale;
 			screen.smoothing = "none";
 			gfxstage.addChild(screen);
+			
+			if (Core.showstats) {
+			  Core.statsdisplay = new StatsDisplay();
+				gfxstage.addChild(Core.statsdisplay);
+			}else {
+				if(Core.statsdisplay != null) gfxstage.removeChild(Core.statsdisplay);
+			}
 		}
 		
 		gfxinit = true;
