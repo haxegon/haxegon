@@ -3,6 +3,7 @@ package haxegon;
 import haxegon.util.*;
 import openfl.geom.Matrix;
 import starling.display.*;
+import starling.utils.HAlign;
 
 @:access(haxegon.Input)
 @:access(haxegon.Gfx)
@@ -11,6 +12,7 @@ class Text {
 		gfxstage = stage;
 		input_cursorglow = 0;
 		inputmaxlength = 40;
+		wordwrapwidth = 0;
 	}
 	
 	public static function align(a:Int) {
@@ -96,34 +98,43 @@ class Text {
 	
 	//Text display functions
 	public static function wordwrap(?textwidth:Int) {
-		trace("warning: unimplemented function wordwrap");
+		if (textwidth == null) {
+			wordwrapwidth = 0;
+		}else {
+		  if (textwidth < 0) {
+			  throw("Error: Word wrap width must be a number greater than 0.");	
+			}
+			wordwrapwidth = textwidth;
+		}
 	}
 	
-	/* Given a width in pixels and a long string, return an array on strings
-	 * that wraps to the given width with the current font. */
-	public static function dowordwrap(textwidth:Int, txt:String) {
-		trace("warning: unimplemented function dowordwrap");
-	}
-	
-	private static function currentwidth():Float {
-		if (typeface.length == 0) defaultfont();
+	private static function currentlen():Float {
 		return typeface[currentindex].width;
 	}
 	
 	private static function currentheight():Float {
-		if (typeface.length == 0) defaultfont();
 		return typeface[currentindex].height;
 	}
 	
-	public static function width(text:String):Float {
-		if (typeface.length == 0) defaultfont();
+	public static function len(text:String):Float {
+		if (wordwrapwidth > 0) {
+			typeface[currentindex].updatewidth(false);
+		}else {
+			typeface[currentindex].updatewidth(true);
+		}
+		
 		typeface[currentindex].tf.text = text;
 		return typeface[currentindex].width;
 	}
 	
 	public static function height(?text:String):Float {
-		if (text == null || text == "") text = "?";
-		if (typeface.length == 0) defaultfont();
+		if (text == null) text = "?";
+		if (wordwrapwidth > 0) {
+			typeface[currentindex].updatewidth(false);
+		}else {
+			typeface[currentindex].updatewidth(true);
+		}
+		
 		typeface[currentindex].tf.text = text;
 		return typeface[currentindex].height;
 	}
@@ -138,11 +149,11 @@ class Text {
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Math.floor(Gfx.screenwidthmid - (currentwidth() / 2));
+				return t1 + Math.floor(Gfx.screenwidthmid - (currentlen() / 2));
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + Math.floor(Gfx.screenwidth - currentwidth());
+				return t3 + Math.floor(Gfx.screenwidth - currentlen());
 			}
 		}
 		
@@ -172,11 +183,11 @@ class Text {
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Math.floor(width(t) / 2);
+				return t1 + Math.floor(len(t) / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + width(t);
+				return t3 + len(t);
 			}
 		}
 		
@@ -191,10 +202,21 @@ class Text {
 	public static function display(x:Float, y:Float, text:String, col:Int = 0xFFFFFF) {
 		if (text == "") return;
 		
-		if (typeface.length == 0) defaultfont();
+		if (typeface.length == 0) {
+		  defaultfont();	
+		}
 		
 		typeface[currentindex].tf.color = col;
 		typeface[currentindex].tf.text = text;
+		
+		if (textalign == LEFT) typeface[currentindex].tf.hAlign = HAlign.LEFT;
+		if (textalign == CENTER) typeface[currentindex].tf.hAlign = HAlign.CENTER;
+		if (textalign == RIGHT)	typeface[currentindex].tf.hAlign = HAlign.RIGHT;
+		if (wordwrapwidth > 0) {
+			typeface[currentindex].updatewidth(false);
+		}else {
+			typeface[currentindex].updatewidth(true);
+		}
 		
 		x = alignx(x); y = aligny(y);
 		x -= aligntextx(text, textalign);
@@ -324,4 +346,6 @@ class Text {
 	/** Non zero when an input string is being checked. So that I can use 
 	 * the M and F keys without muting or changing to fullscreen.*/
 	public static var input_show:Int;
+	
+	private static var wordwrapwidth:Int = 0;
 }

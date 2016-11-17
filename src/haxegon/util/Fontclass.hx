@@ -8,6 +8,7 @@ import openfl.geom.*;
 @:access(haxegon.Text)
 class Fontclass {
 	public function new(_name:String, _size:Float) {
+		autosize = true;
 		type = Text.fontfile[Text.fontfileindex.get(_name)].type;
 		if (type == "bitmap") {
 			loadbitmapfont(_name, _size);
@@ -28,17 +29,37 @@ class Fontclass {
 		tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
 	}
 	
+	public function updatewidth(v:Bool) {
+		autosize = v;
+		if (v) {
+			tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
+		}else {
+		  tf.autoSize = TextFieldAutoSize.VERTICAL;
+			tf.width = Text.wordwrapwidth;		
+		}
+	}
+	
 	public var width(get, never):Float;
 	
 	function get_width():Float {
-		tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
+		if (autosize) {
+			tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
+		}else {
+		  tf.autoSize = TextFieldAutoSize.VERTICAL;
+			tf.width = Text.wordwrapwidth;
+		}
 		return Std.int(tf.width);
 	}
 	
 	public var height(get, never):Float;
 	
 	function get_height():Float {
-		tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
+		if (autosize) {
+			tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
+		}else {
+		  tf.autoSize = TextFieldAutoSize.VERTICAL;
+			tf.width = Text.wordwrapwidth;
+		}
 		return Std.int(tf.height);
 	}
 	
@@ -48,4 +69,6 @@ class Fontclass {
 	public var name:String;
 	public var type:String;
 	public var size:Float;
+	
+	public var autosize:Bool;
 }
