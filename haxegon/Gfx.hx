@@ -941,9 +941,6 @@ class Gfx {
 		deviceyres = Std.int(openfl.system.Capabilities.screenResolutionY);
 		screenscale = scale;
 		
-		trect = new Rectangle(0, 0, 0, 0);
-		shapematrix = new Matrix();
-		tempquad = new Quad(1, 1);
 		tempquad.touchable = false;
 		//temppoly4 = new Poly4();
 		
@@ -978,13 +975,13 @@ class Gfx {
 	private static var backbuffer:RenderTexture;
 	private static var drawto:RenderTexture;
 	private static var screen:Image;
-	private static var tempquad:Quad;
+	private static var tempquad:Quad = new Quad(1, 1);
 	private static var temppoly4:Poly4;
 	private static var templine:Line;
 	
 	private static var starlingassets:AssetManager;
-	private static var trect:Rectangle;
-	private static var shapematrix:Matrix;
+	private static var trect:Rectangle = new Rectangle();
+	private static var shapematrix:Matrix = new Matrix();
 	
 	private static var gfxstage:Stage;
 	
