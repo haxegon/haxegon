@@ -1,1 +1,0 @@
-Haxegon supports both Truetype fonts and Bitmap fonts. See *** for information about adding fonts to your Haxegon project.
