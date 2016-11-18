@@ -22,3 +22,6 @@ script:
   - haxelib run openfl build ~/haxegon/simple/01-helloworld flash
   - haxelib run openfl build ~/haxegon/simple/01-helloworld html5
   - haxelib run openfl build ~/haxegon/simple/01-helloworld neko
+  - haxelib run openfl build ~/haxegon/simple/02-bitmapfonts flash
+  - haxelib run openfl build ~/haxegon/simple/02-bitmapfonts html5
+  - haxelib run openfl build ~/haxegon/simple/02-bitmapfonts neko
