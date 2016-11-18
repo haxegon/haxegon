@@ -18,7 +18,8 @@ before_install:
   - mkdir ~/haxegon
   - cd ~/haxegon
   - wget https://raw.githubusercontent.com/Decad/github-downloader/master/github-downloader.sh
-  - sudo github-downloader.sh https://github.com/TerryCavanagh/haxegon-samples/tree/master/simple/01%20-%20hello%20world
+  - ls
+  - sudo ~/haxegon/github-downloader.sh https://github.com/TerryCavanagh/haxegon-samples/tree/master/simple/01%20-%20hello%20world
   - git clone --recursive https://github.com/terrycavanagh/haxegon ~/haxegon/src --depth 1
   
 script:
