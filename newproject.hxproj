@@ -21,7 +21,7 @@
     <class path="C:\coding\haxe\Haxe\lib\openfl\4,4,1\externs\core\flash" />
     <class path="C:\coding\haxe\Haxe\lib\openfl\4,4,1\externs\core\openfl" />
     <class path="C:\coding\haxe\Haxe\lib\openfl\4,4,1\externs\extras" />
-    <class path="bin\flash\debug\haxe" />
+    <class path="bin\flash\release\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -30,7 +30,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
-    <option additional="--macro openfl._internal.utils.ExtraParams.include()&#xA;--macro lime.Lib.extraParams()&#xA;-swf-version 17&#xA;-debug " />
+    <option additional="--macro openfl._internal.utils.ExtraParams.include()&#xA;--macro lime.Lib.extraParams()&#xA;-swf-version 17" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

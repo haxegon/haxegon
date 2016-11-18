@@ -173,6 +173,18 @@ class Core extends Sprite {
 		if (renderextended) extendedrenderfunction();
 	}
 	
+	public static var fps(get,set):Int;
+	private static var _fps:Int;
+	
+	static function get_fps():Int {
+		return _fps;
+	}
+
+	static function set_fps(_newfps:Int) {
+		Starling.current.nativeStage.frameRate = _newfps;
+		return _newfps;
+	}
+	
 	// Timing information.
 	private static inline var TARGETFRAMERATE:Int = 30;
 	private static inline var MAXFRAMESKIP:Int = 4;
@@ -186,7 +198,6 @@ class Core extends Sprite {
 	
 	private static var	_rate3:Int; // The time between frames, in thirds of a millisecond.
 	private static var _target3:Int; // The ideal time to start the next frame, in thirds of a millisecond.
-	
 	
 	public static var showstats(get,set):Bool;
 	private static var _showstats:Bool;

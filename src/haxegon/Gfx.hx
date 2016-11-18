@@ -713,7 +713,13 @@ class Gfx {
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT) return;
 		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, col);
-		temppoly4.alpha = alpha;
+		if(alpha == 1.0){
+			temppoly4.blendMode = BlendMode.NONE;
+			temppoly4.alpha = 1;
+		}else {
+			temppoly4.blendMode = BlendMode.NORMAL;	
+			temppoly4.alpha = alpha;
+		}
 		drawto.draw(temppoly4);
 	}
 
@@ -767,7 +773,6 @@ class Gfx {
 		tempquad.alpha = alpha;
 		drawto.draw(tempquad);
 	}
-	
 	public static inline function getred(c:Int):Int {
 		return ((c >> 16) & 0xFF);
 	}
@@ -945,6 +950,7 @@ class Gfx {
 		trect = new Rectangle(0, 0, 0, 0);
 		shapematrix = new Matrix();
 		tempquad = new Quad(1, 1);
+		tempquad.touchable = false;
 		//temppoly4 = new Poly4();
 		
 		if(!gfxinit){

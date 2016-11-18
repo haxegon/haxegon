@@ -3,9 +3,9 @@
 	"url": "https://github.com/TerryCavanagh/haxegon",
 	"license": "MIT",
 	"tags": ["beginner", "simple", "easy", "tutorial"],
-	"description": "A tiny Haxe programming library for beginners.",
-	"version": "0.0.1-alpha",
+	"description": "A tiny Haxe programming library for beginners. Powered by OpenFL and Starling.",
+	"version": "0.1.0-alpha",
 	"releasenote": "Work in progress, currently a bit unstable, but usable! If you're interested in learning more/trying it out, contact me at @terrycavanagh on twitter!",
 	"contributors": [ "TerryCavanagh" ],
-	"dependencies": { "openfl" }
+	"dependencies": { "openfl": "" }
 }
