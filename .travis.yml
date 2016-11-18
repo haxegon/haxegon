@@ -16,7 +16,7 @@ before_install:
   - haxelib install layout > /dev/null
   - haxelib install format > /dev/null
   - haxelib git haxegon https://github.com/TerryCavanagh/haxegon > /dev/null
-  - git clone --recursive https://github.com/TerryCavanagh/haxegon-samples ~/haxegon --depth 1
+  - git clone --recursive https://github.com/TerryCavanagh/haxegon-samples $(pwd) --depth 1
   
 script:
   - haxelib run openfl build $(pwd)/simple/01-helloworld flash
