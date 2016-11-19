@@ -18,6 +18,8 @@ There's no documentation yet, but there is a growing selection of example projec
 
 # Last Updates
 
+Haxegon is currently in **alpha**, because it doesn't currenty work on all it's target platforms. Once it's stable enough to do that, I'll drop the -alpha tag from the version number!
+
 0.1.0-alpha (2016-11-17)
 ------------------
 ### New features
