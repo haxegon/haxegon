@@ -8,9 +8,9 @@ import openfl.Assets;
 
 class Music {
 	//Play a sound effect! There are 16 channels, which iterate
-	public static function playsound(t:String, offset:Int = 0) {
-		temptransform = new SoundTransform(volumelevels[Std.int(effectindex.get(t))] * globalsound);
-		efchannel[currentefchan] = efchan[Std.int(effectindex.get(t))].play(offset);
+	public static function playsound(soundname:String, volume:Float = 1.0, offset:Float = 0.0) {
+		temptransform = new SoundTransform(volumelevels[Std.int(effectindex.get(soundname))] * volume * globalsound);
+		efchannel[currentefchan] = efchan[Std.int(effectindex.get(soundname))].play(offset * 1000);
 		efchannel[currentefchan].soundTransform = temptransform;
 		currentefchan++;
 		if (currentefchan > 15) currentefchan -= 16;
@@ -24,30 +24,30 @@ class Music {
 		}
 	}
 	
-	public static function loadsound(t:String, vol:Float = 1.0) {
-		effectindex.set(t, numeffects);
-		volumelevels.push(vol);
+	public static function loadsound(soundname:String, volumelevel:Float = 1.0) {
+		effectindex.set(soundname, numeffects);
+		volumelevels.push(volumelevel);
 		#if flash
-		efchan.push(Assets.getSound("data/sounds/" + t + ".mp3")); 
+		efchan.push(Assets.getSound("data/sounds/" + soundname + ".mp3")); 
 		#else
-		efchan.push(Assets.getSound("data/sounds/" + t + ".ogg")); 
+		efchan.push(Assets.getSound("data/sounds/" + soundname + ".ogg")); 
 		#end
 		numeffects++;
 	}
 	
-	public static function loadsong(t:String, vol:Float = 1.0) {	
-		songindex.set(t, numsongs);
-		songvolumelevels.push(vol);
+	public static function loadsong(songname:String, volumelevel:Float = 1.0) {	
+		songindex.set(songname, numsongs);
+		songvolumelevels.push(volumelevel);
 		#if flash
-		musicchan.push(Assets.getMusic("data/sounds/" + t + ".mp3"));
+		musicchan.push(Assets.getMusic("data/sounds/" + songname + ".mp3"));
 		#else
-		musicchan.push(Assets.getMusic("data/sounds/" + t + ".ogg"));
+		musicchan.push(Assets.getMusic("data/sounds/" + songname + ".ogg"));
 		#end
 		numsongs++;
 	}
 	
-	public static function play(t:String, ?time:Float = 0, ?loop:Bool = true) {
-		if (currentsong !=t) {
+	public static function playsong(songname:String, ?time:Float = 0.0, ?loop:Bool = true) {
+		if (currentsong != songname) {
 			if (currentsong != "nothing") {
 				//Stop the old song first
 				musicchannel.stop();
@@ -57,27 +57,27 @@ class Music {
 			musicfade = 0;
 			musicfadein = 0;
 			
-			if (t != "nothing") {
-				currentsong = t;
+			if (songname != "nothing") {
+				currentsong = songname;
 				
 				if (loop) {
 					if (time == 0) {
-						musicchannel = musicchan[Std.int(songindex.get(t))].play(0, 999999);
+						musicchannel = musicchan[Std.int(songindex.get(songname))].play(0, 999999);
 					} else {
-						musicchannel = musicchan[Std.int(songindex.get(t))].play((time * 1000) % musicchan[Std.int(songindex.get(t))].length);
+						musicchannel = musicchan[Std.int(songindex.get(songname))].play((time * 1000) % musicchan[Std.int(songindex.get(songname))].length);
 						musicchannel.addEventListener(Event.SOUND_COMPLETE, loopmusic);
 					}
 				} else {
-					musicchannel = musicchan[Std.int(songindex.get(t))].play((time * 1000) % musicchan[Std.int(songindex.get(t))].length);
+					musicchannel = musicchan[Std.int(songindex.get(songname))].play((time * 1000) % musicchan[Std.int(songindex.get(songname))].length);
 				}
-				musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(t))] * globalsound);
+				musicchannel.soundTransform = new SoundTransform(songvolumelevels[Std.int(songindex.get(songname))] * globalsound);
 			}else {	
 				currentsong = "nothing";
 			}
 		}
 	}   
 	
-	public static function stop() { 
+	public static function stopsong() { 
 		if (musicchannel != null) {
 			musicchannel.removeEventListener(Event.SOUND_COMPLETE, stopmusic);
 			musicchannel.stop();
@@ -140,7 +140,7 @@ class Music {
 		}
 	}
 	
-	public static function processmusic() {
+	private static function processmusic() {
 		if (musicfade > 0) processmusicfade();
 		if (musicfadein > 0) processmusicfadein();
 	}
