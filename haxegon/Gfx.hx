@@ -758,7 +758,18 @@ class Gfx {
 		return _linethickness;
 	}
 	
-	public static var clearscreeneachframe:Bool;
+	public static var clearcolor(get, set):Int;
+	private static var _clearcolor:Int;
+
+	static function get_clearcolor():Int {
+		return _clearcolor;
+	}
+	
+	static function set_clearcolor(color:Int) {
+		trace("warning: Gfx.clearcolor is not implemented");
+		_clearcolor = color;
+		return _clearcolor;
+	}
 	
 	public static function clearscreen(color:Int = 0x000000) {
 		drawto.clear(color, 1.0);
