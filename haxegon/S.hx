@@ -57,6 +57,11 @@ class S {
 		return currentstring.substr(currentstring.length - length, length);
 	}
 	
+	/** Return string with N characters subracted from the left. */
+	public static function subtractfromleft(currentstring:String, length:Int = 1):String {
+		return right(currentstring, currentstring.length - length);
+	}
+	
 	/** Reverse a string. */
 	public static function reversetext(currentstring:String):String {
 		var reversedstring:String = "";
@@ -100,7 +105,7 @@ class S {
 		return currentstring;
 	}
 	
-	/** Given a string currentstring, return everything after the first occurance of the "ch" character */
+	/** Given a string currentstring, return everything after the FIRST occurance of the "ch" character */
 	public static function getbranch(currentstring:String, ch:String):String {
 		for (i in 0 ... currentstring.length) {
 			if (mid(currentstring, i, 1) == ch) {
