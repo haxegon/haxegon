@@ -203,13 +203,12 @@ class Input {
 		return false;
 	}
 	
-	
-	public static var clipboardbuffer:Array<String> = [""];
-	public static var selectall:Bool;
-	public static var cut:Bool;
-	public static var paste:Bool;
-	public static var undo:Bool;
-	public static var redo:Bool;
+	private static var clipboardbuffer:Array<String> = [""];
+	private static var selectall:Bool;
+	private static var cut:Bool;
+	private static var paste:Bool;
+	private static var undo:Bool;
+	private static var redo:Bool;
 
 	private static function handlecut(event:Event) {
 		handlecopy(event);
