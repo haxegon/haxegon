@@ -24,12 +24,12 @@ class Gfx {
 	public static var screenwidthmid:Int;
 	public static var screenheightmid:Int;
 	
-	public static var screenscale:Int;
-	public static var devicexres:Int;
-	public static var deviceyres:Int;
-	public static var fullscreen:Bool;
+	private static var screenscale:Int;
+	private static var devicexres:Int;
+	private static var deviceyres:Int;
+	private static var fullscreen:Bool;
 	
-	public static var currenttilesetname:String;
+	private static var currenttilesetname:String;
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
 	public static function resizescreen(width:Float, height:Float, scale:Int = 1) {
@@ -370,7 +370,7 @@ class Gfx {
 	}
 	
 	/** Tell draw commands to draw to the given tile in the current tileset. */
-	public static function drawtotile(tilesetname:String, t:Int) {
+	public static function drawtotile(tilesetname:String, tilenum:Int) {
 		var tileset:Int = 0;
 		if(tilesetindex.exists(tilesetname)){
 			tileset = tilesetindex.get(tilesetname);
@@ -378,16 +378,16 @@ class Gfx {
 			throw("ERROR: Cannot change to tileset \"" + tilesetname + "\", no tileset with that name found.");
 		}
 		
-		if (t >= numberoftiles(tilesetname)) {
-			if (t == numberoftiles(tilesetname)) {
-				throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
+		if (tilenum >= numberoftiles(tilesetname)) {
+			if (tilenum == numberoftiles(tilesetname)) {
+				throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
 			}else{
-				throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
 			}
 		}
 
-		promotetorendertarget(tiles[tileset].tiles[t]);
-		drawto = cast(tiles[tileset].tiles[t].texture, RenderTexture);
+		promotetorendertarget(tiles[tileset].tiles[tilenum]);
+		drawto = cast(tiles[tileset].tiles[tilenum].texture, RenderTexture);
 	}
 	
 	/** Helper function for image drawing functions. */
@@ -547,23 +547,23 @@ class Gfx {
 		subimage.dispose();
 	}
 	
-	public static function grabtilefromscreen(tilenumber:Int, x:Float, y:Float) {
+	public static function grabtilefromscreen(tilesetname:String, tilenumber:Int, screenx:Float, screeny:Float) {
 		trace("warning: Gfx.grabtilefromscreen is not implemented");
 	}
 	
-	public static function grabtilefromimage(tilenumber:Int, imagename:String, x:Float, y:Float) {
+	public static function grabtilefromimage(tilesetname:String, tilenumber:Int, imagename:String, imagex:Float, imagey:Float) {
 		trace("warning: Gfx.grabtilefromimage is not implemented");
 	}
 	
-	public static function grabimagefromscreen(imagename:String, x:Float, y:Float) {
+	public static function grabimagefromscreen(imagename:String, screenx:Float, screeny:Float) {
 		trace("warning: Gfx.grabimagefromscreen is not implemented");
 	}
 	
-	public static function grabimagefromimage(imagename:String, imagetocopyfrom:String, x:Float, y:Float, w:Float = 0, h:Float = 0) {
+	public static function grabimagefromimage(imagetocopyto:String, sourceimage:String, sourceimagex:Float, sourceimagey:Float) {
 		trace("warning: Gfx.grabimagefromimage is not implemented");
 	}
 	
-	public static function copytile(totilenumber:Int, fromtileset:String, fromtilenumber:Int) {
+	public static function copytile(totileset:String, totilenumber:Int, fromtileset:String, fromtilenumber:Int) {
 		trace("warning: Gfx.copytile is not implemented");
 	}
 	
@@ -571,15 +571,15 @@ class Gfx {
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
 	 * x1, y1, w1, h1 describe the rectangle of the tile to use.
 	 * */
-	public static function drawsubtile(x:Float, y:Float, x1:Float, y1:Float, w:Float, h:Float, tilesetname:String, t:Int) {
+	public static function drawsubtile(x:Float, y:Float, tilesetname:String, tilenum:Int, x1:Float, y1:Float, w:Float, h:Float) {
 		changetileset(tilesetname);
 		
-		if (t >= numberoftiles(tilesetname)) {
-			if (t == numberoftiles(tilesetname)) {
- 			  throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
+		if (tilenum >= numberoftiles(tilesetname)) {
+			if (tilenum == numberoftiles(tilesetname)) {
+ 			  throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
 				return;
 			}else{
-				throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
 				return;
 			}
 		}
@@ -593,7 +593,7 @@ class Gfx {
 		trect.height = h;
 
 		// 2 allocs. avoidable with pooling?
-		var subtex:Texture = Texture.fromTexture(tiles[currenttileset].tiles[t].texture, trect);
+		var subtex:Texture = Texture.fromTexture(tiles[currenttileset].tiles[tilenum].texture, trect);
 		var subimage:Image = new Image(subtex);
 		subimage.touchable = false;
 		
@@ -604,22 +604,22 @@ class Gfx {
 		subimage.dispose();		
 	}
 	
-	public static function drawtile(x:Float, y:Float, tilesetname:String, t:Int) {
+	public static function drawtile(x:Float, y:Float, tilesetname:String, tilenum:Int) {
 		changetileset(tilesetname);
 		
-		if (t >= numberoftiles(tilesetname)) {
-			if (t == numberoftiles(tilesetname)) {
- 			  throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(t) + " is not a valid tile.)");
+		if (tilenum >= numberoftiles(tilesetname)) {
+			if (tilenum == numberoftiles(tilesetname)) {
+ 			  throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
 				return;
 			}else{
-				throw("ERROR: Tried to draw tile number " + Std.string(t) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
 				return;
 			}
 		}
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
-		internaldrawimage(x, y, tiles[currenttileset].tiles[t]);
+		internaldrawimage(x, y, tiles[currenttileset].tiles[tilenum]);
 	}
 	
 	private static function tilealignx(x:Float):Float {
@@ -650,17 +650,17 @@ class Gfx {
 		return y;
 	}
 	
-	public static function drawline(_x1:Float, _y1:Float, _x2:Float, _y2:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
-		templine = new Line(_x1, _y1, _x2, _y2, linethickness, col);
+	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, color:Int, alpha:Float = 1.0) {
+		if (color == Col.TRANSPARENT) return;
+		templine = new Line(x1, y1, x2, y2, linethickness, color);
 		templine.alpha = alpha;
 		
 		drawto.draw(templine);
 	}
 
-	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
-		var tempring:Ring = new Ring(radius - linethickness, radius, col, true, 6, angle);
+	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
+		if (color == Col.TRANSPARENT) return;
+		var tempring:Ring = new Ring(radius - linethickness, radius, color, true, 6, angle);
 		tempring.alpha = alpha;
 		
 		shapematrix.identity();
@@ -669,9 +669,9 @@ class Gfx {
 		drawto.draw(tempring, shapematrix);
 	}
 	
-	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
-		var tempring:Disk = new Disk(radius, col, true, 6, angle);
+	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
+		if (color == Col.TRANSPARENT) return;
+		var tempring:Disk = new Disk(radius, color, true, 6, angle);
 		tempring.alpha = alpha;
 		
 		shapematrix.identity();
@@ -680,9 +680,9 @@ class Gfx {
 		drawto.draw(tempring, shapematrix);
 	}
 	
-	public static function drawcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
-		var tempring:Ring = new Ring(radius - linethickness, radius, col);
+	public static function drawcircle(x:Float, y:Float, radius:Float, color:Int, alpha:Float = 1.0) {
+		if (color == Col.TRANSPARENT) return;
+		var tempring:Ring = new Ring(radius - linethickness, radius, color);
 		tempring.alpha = alpha;
 		
 		shapematrix.identity();
@@ -702,23 +702,22 @@ class Gfx {
 		drawto.draw(tempring, shapematrix);
 	}
 	
-	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
-		drawline(x1, y1, x2, y2, col, alpha);
-		drawline(x1, y1, x3, y3, col, alpha);
-		drawline(x2, y2, x3, y3, col, alpha);
+	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
+		if (color == Col.TRANSPARENT) return;
+		drawline(x1, y1, x2, y2, color, alpha);
+		drawline(x1, y1, x3, y3, color, alpha);
+		drawline(x2, y2, x3, y3, color, alpha);
 	}
 	
-	
-	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
-		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, col);
+	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
+		if (color == Col.TRANSPARENT) return;
+		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, color);
 		temppoly4.alpha = alpha;
 		drawto.draw(temppoly4);
 	}
 
-	public static function drawbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
+	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
+		if (color == Col.TRANSPARENT) return;
 		if (width < 0) {
 			width = -width;
 			x = x - width;
@@ -728,10 +727,21 @@ class Gfx {
 			y = y - height;
 		}
 		
-		fillbox(x, y, width, 1, col, alpha);
-		fillbox(x, y + height - 1, width - 1, 1, col, alpha);
-		fillbox(x, y + 1, 1, height - 1, col, alpha);
-		fillbox(x + width - 1, y + 1, 1, height - 1, col, alpha);
+		fillbox(x, y, width, 1, color, alpha);
+		fillbox(x, y + height - 1, width - 1, 1, color, alpha);
+		fillbox(x, y + 1, 1, height - 1, color, alpha);
+		fillbox(x + width - 1, y + 1, 1, height - 1, color, alpha);
+	}
+	
+	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT) return;
+		tempquad.x = x;
+		tempquad.y = y;
+		tempquad.width = width;
+		tempquad.height = height;
+		tempquad.color = col;
+		tempquad.alpha = alpha;
+		drawto.draw(tempquad);
 	}
 
 	public static var linethickness(get,set):Float;
@@ -748,25 +758,17 @@ class Gfx {
 		return _linethickness;
 	}
 	
-	public static function clearscreen(col:Int = 0x000000) {
-		drawto.clear(col, 1.0);
+	public static var clearscreeneachframe:Bool;
+	
+	public static function clearscreen(color:Int = 0x000000) {
+		drawto.clear(color, 1.0);
 	}
 	
-	public static function setpixel(x:Float, y:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
-		fillbox(x, y, 1, 1, col, alpha);
+	public static function setpixel(x:Float, y:Float, color:Int, alpha:Float = 1.0) {
+		if (color == Col.TRANSPARENT) return;
+		fillbox(x, y, 1, 1, color, alpha);
 	}
 
-	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
-		tempquad.x = x;
-		tempquad.y = y;
-		tempquad.width = width;
-		tempquad.height = height;
-		tempquad.color = col;
-		tempquad.alpha = alpha;
-		drawto.draw(tempquad);
-	}
 	public static inline function getred(c:Int):Int {
 		return ((c >> 16) & 0xFF);
 	}
@@ -883,11 +885,11 @@ class Gfx {
 		trace("warning: Gfx.updategraphicsmode is not implemented");
 	}
 	
-	public static function getscreenx(_x:Float) : Int {
+	private static function getscreenx(_x:Float) : Int {
 		return Math.floor((_x - screen.x) * screenwidth / screen.width);
 	}
 
-	public static function getscreeny(_y:Float) : Int {
+	private static function getscreeny(_y:Float) : Int {
 		return Math.floor((_y - screen.y) * screenheight / screen.height);
 	}
 	
