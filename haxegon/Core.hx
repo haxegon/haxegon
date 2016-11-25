@@ -140,7 +140,7 @@ class Core extends Sprite {
 		dorender();
 	}
 
-	public function doupdate(updateindex:Int, updatecount:Int) {
+	private function doupdate(updateindex:Int, updatecount:Int) {
 		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY), updateindex == 0);
 		Input.update();
 		
@@ -162,7 +162,7 @@ class Core extends Sprite {
 		Music.processmusic();
 	}
 	
-	public function dorender() {
+	private function dorender() {
 		Gfx.backbuffer.drawBundled(
 		  function(unused0:DisplayObject, unused1:Matrix, unused2:Float) {
 				Scene.render();

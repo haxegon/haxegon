@@ -2,56 +2,32 @@ package haxegon;
 
 class Random{
 	/** Return a random boolean value (true or false) */
-	#if haxegonweb
 	public static function bool():Bool{
-	#else
-	public static inline function bool():Bool{
-	#end
 		return random() < 0.5;
 	}
 	
 	/** True 1/5th of the time */
-	#if haxegonweb
 	public static function occasional():Bool{
-	#else
-	public static inline function occasional():Bool{
-	#end
 		return random() < 0.2;
 	}
 
 	/** True 5% or 1/20th of the time */
-	#if haxegonweb
 	public static function rare():Bool{
-	#else
-	public static inline function rare():Bool{
-	#end
 		return random() < 0.05;
 	}
 	
 	/** Returns true n% of the time, where n is a number between 0-100, inclusive. */
-	#if haxegonweb
 	public static function chance(n:Int):Bool{
-	#else
-	public static inline function chance(n:Int):Bool{
-	#end
 		return int(0, 100) <= n;
 	}
 	
 	/** Return a random integer between 'from' and 'to', inclusive. */
-	#if haxegonweb
 	public static function int(from:Int, to:Int):Int {
-	#else
-	public static inline function int(from:Int, to:Int):Int {
-	#end
 		return from + Math.floor(((to - from + 1) * random()));
 	}
 	
 	/** Return a random float between 'from' and 'to', inclusive. */
-	#if haxegonweb
 	public static function float(from:Float, to:Float):Float{
-	#else
-	public static inline function float(from:Float, to:Float):Float{
-	#end
 		return from + ((to - from) * random());
 	}
 	
@@ -70,7 +46,7 @@ class Random{
 	    which characters to use, otherwise the default is (a-zA-Z0-9) */
 	public static function string(length:Int, ?charactersToUse = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):String{
 		var str = "";
-		for (i in 0...length){
+		for (i in 0 ... length){
 			str += charactersToUse.charAt(int(0, charactersToUse.length - 1));
 		}
 		return str;

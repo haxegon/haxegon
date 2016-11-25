@@ -91,15 +91,15 @@ class Scene {
 		return cast scenelist[currentscene];
 	}
 	
-	public static function get<T>(newscene:Class<T>):T {
-		return cast scenelist[findscene(newscene)];
+	public static function get<T>(requiredscene:Class<T>):T {
+		return cast scenelist[findscene(requiredscene)];
 	}
 	
-	public static function getcurrentscene():String {
-		return Type.getClassName(Type.getClass(scenelist[currentscene]));
+	public static function name<T>(requiredscene:Class<T>):String {
+		return Type.getClassName(Type.getClass(scenelist[findscene(requiredscene)]));
 	}
 	
-	public static function getcurrentsceneclass():Dynamic {
+	private static function getcurrentsceneclass():Dynamic {
 		return cast scenelist[currentscene];
 	}
 	
