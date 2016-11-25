@@ -59,12 +59,10 @@ class S {
 	
 	/** Reverse a string. */
 	public static function reversetext(currentstring:String):String {
-		var t2:String = "";
+		var reversedstring:String = "";
 		
-		for (i in 0 ... currentstring.length) {
-			t2 += mid(currentstring, currentstring.length-i-1, 1);
-		}
-		return t2;
+		for (i in 0 ... currentstring.length) reversedstring += currentstring.substr(currentstring.length - i - 1, 1);
+		return reversedstring;
 	}
 	
 	/** Given a string currentstring, replace all occurances of string ch with ch2. Useful to remove characters. */

@@ -12,6 +12,7 @@ import starling.textures.*;
 import openfl.Assets;
 
 @:access(haxegon.Core)
+@:access(haxegon.Text)
 class Gfx {
 	public static var LEFT:Int = -10000;
 	public static var RIGHT:Int = -20000;

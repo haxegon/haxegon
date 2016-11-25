@@ -11,6 +11,7 @@ import starling.core.StatsDisplay;
 
 @:access(Main)
 @:access(haxegon.Gfx)
+@:access(haxegon.Text)
 @:access(haxegon.Music)
 @:access(haxegon.Mouse)
 @:access(haxegon.Input)

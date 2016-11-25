@@ -8,7 +8,7 @@ import starling.utils.HAlign;
 @:access(haxegon.Input)
 @:access(haxegon.Gfx)
 class Text {
-	public static function init(stage:Stage) {
+	private static function init(stage:Stage) {
 		gfxstage = stage;
 		input_cursorglow = 0;
 		inputmaxlength = 40;
@@ -25,36 +25,28 @@ class Text {
 		textrotateypivot = ypivot;
 	}
 	
-	public static function input_checkfortext() {
+	private static function input_checkfortext() {
 		inputtext = Input.keybuffer;
 	}
 	
-	/** Reverse a string. */
-	private static function reverse(t:String):String {
-		var reversedstring:String = "";
-		
-		for (i in 0 ... t.length) reversedstring += t.substr(t.length - i - 1, 1);
-		return reversedstring;
-	}
-	
-	public static function input(x:Float, y:Float, text:String, col:Int = 0xFFFFFF, responsecol:Int = 0xCCCCCC):Bool {
+	public static function input(x:Float, y:Float, prompt:String, questioncolor:Int = 0xFFFFFF, answercolor:Int  = 0xCCCCCC):Bool {
 		input_show = 2;
 		
 		input_font = currentfont;
 		input_textsize = currentsize;
-		typeface[currentindex].tf.text = text + inputtext;
+		typeface[currentindex].tf.text = prompt + inputtext;
 		x = alignx(x); y = aligny(y);
 		input_textxp = x;
 		input_textyp = y;
 		
-		typeface[currentindex].tf.text = text;
+		typeface[currentindex].tf.text = prompt;
 		input_responsexp = input_textxp + Math.floor(typeface[currentindex].width);
 		input_responseyp = y;
 		
-		input_text = text;
+		input_text = prompt;
 		input_response = inputtext;
-		input_textcol = col;
-		input_responsecol = responsecol;
+		input_textcol = questioncolor;
+		input_responsecol = answercolor;
 		input_checkfortext();
 		
 		if (Input.justpressed(Key.ENTER) && inputtext != "") {
@@ -74,7 +66,7 @@ class Text {
 		return response;
 	}
 	
-	public static function drawstringinput() {
+	private static function drawstringinput() {
 		if (input_show > 0) {
 			setfont(input_font, input_textsize);
 			input_cursorglow++;
@@ -199,14 +191,14 @@ class Text {
 		return 0;
 	}
 	
-	public static function display(x:Float, y:Float, text:String, col:Int = 0xFFFFFF) {
+	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF) {
 		if (text == "") return;
 		
 		if (typeface.length == 0) {
 		  defaultfont();	
 		}
 		
-		typeface[currentindex].tf.color = col;
+		typeface[currentindex].tf.color = color;
 		typeface[currentindex].tf.text = text;
 		
 		if (textalign == LEFT) typeface[currentindex].tf.hAlign = HAlign.LEFT;
@@ -233,15 +225,16 @@ class Text {
 		
 		fontmatrix.translate(x, y);
 		Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix);
-		// Clumsy work around that isn't relavent for anything other than haxegon itself!
+		// Clumsy work around to force haxegon to change to the next draw call on TTF fonts.
+		// to do: implement a pooling system for ttf fonts so that this isn't required.
 		if (typeface[currentindex].type == "ttf") {
 		  Gfx.fillbox(-1, -1, 1, 1, Col.RED);	
 		}
 	}
 	
-	public static function defaultfont() {
+	private static function defaultfont() {
 		addfont(null, 16);
-		setfont("Verdana", 16);
+		setfont("Verdana", 32);
 	}
 	
 	public static function setfont(fontname:String, size:Float = 1) {
@@ -292,12 +285,6 @@ class Text {
 		typefaceindex.set(_name + "_" + Std.string(_size), typeface.length - 1);
 	}
 	
-	/** Return a font's internal TTF name. Used for loading in fonts during setup. */
-	public static function getfonttypename(fontname:String):String {
-		trace("warning: unimplemented function getfonttypename");
-		return "";
-	}
-	
 	private static var fontfile:Array<Fontfile> = new Array<Fontfile>();
 	private static var fontfileindex:Map<String,Int> = new Map<String,Int>();
 	
@@ -327,9 +314,6 @@ class Text {
 	//Text input variables
 	public static var inputtext:String;
 	private static var lastentry:String;
-	#if haxegonweb
-	public static var inputsound:Int;
-	#end
 	public static var inputmaxlength:Int;
 	
 	private static var input_textxp:Float;
