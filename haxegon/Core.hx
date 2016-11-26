@@ -210,11 +210,15 @@ class Core extends Sprite {
 	private static var _target3:Int; // The ideal time to start the next frame, in thirds of a millisecond.
 	private static var starttime:Int;
 	
-	public static var time(get, never):Int;
-	static function get_time():Int {
-	  return flash.Lib.getTimer() - starttime;	
+	public static var time(get, set):Float;
+	static function get_time():Float {
+	  return (flash.Lib.getTimer() - starttime) / 1000;
 	}
 	
+	static function set_time(t:Float):Float {
+		starttime = Std.int(flash.Lib.getTimer() - (t * 1000));
+		return flash.Lib.getTimer() - starttime;
+	}
 	public static var showstats(get,set):Bool;
 	private static var _showstats:Bool;
 	private static var statsdisplay:StatsDisplay;
