@@ -237,7 +237,7 @@ class Text {
 		setfont("Verdana", 32);
 	}
 	
-	public static function setfont(fontname:String, size:Float = 1) {
+	private static function setfont(fontname:String, size:Float = 1) {
 		if (!fontfileindex.exists(fontname)) {
 			addfont(fontname, size);
 		}
@@ -255,7 +255,7 @@ class Text {
 		changesize(size);
 	}
 	
-	public static function changesize(t:Float) {
+	private static function changesize(t:Float) {
 		if (t != currentsize){
 			currentsize = t;
 			if (currentfont != "null") {
@@ -285,6 +285,29 @@ class Text {
 		typefaceindex.set(_name + "_" + Std.string(_size), typeface.length - 1);
 	}
 	
+	public static var font(get, set):String;
+	
+	static function get_font():String {
+		return currentfont;
+	}
+	
+	static function set_font(fontname:String):String {
+		if (fontname == "" || fontname.toLowerCase() == "verdana") fontname = "Verdana";
+		setfont(fontname, 1);
+		return currentfont;
+	}
+	
+	public static var size(get, set):Float;
+	
+	static function get_size():Float {
+		return currentsize;
+	}
+	
+	static function set_size(fontsize:Float):Float {
+		changesize(fontsize);
+		return currentsize;
+	}
+	
 	private static var fontfile:Array<Fontfile> = new Array<Fontfile>();
 	private static var fontfileindex:Map<String,Int> = new Map<String,Int>();
 	
@@ -293,8 +316,8 @@ class Text {
 	
 	private static var fontmatrix:Matrix = new Matrix();
 	private static var currentindex:Int = -1;
-	public static var currentfont:String = "null";
-	public static var currentsize:Float = -1;
+	private static var currentfont:String = "null";
+	private static var currentsize:Float = -1;
 
 	private static var gfxstage:Stage;
 	
