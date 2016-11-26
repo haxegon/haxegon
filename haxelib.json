@@ -1,11 +1,11 @@
 {
 	"name": "haxegon",
-	"url": "https://github.com/TerryCavanagh/haxegon",
+	"url": "http://www.haxegon.com",
 	"license": "MIT",
 	"tags": ["beginner", "simple", "easy", "tutorial"],
 	"description": "A tiny Haxe programming library for beginners. Powered by OpenFL and Starling.",
-	"version": "0.1.0-alpha",
-	"releasenote": "Work in progress, currently a bit unstable, but usable! If you're interested in learning more/trying it out, contact me at @terrycavanagh on twitter!",
+	"version": "0.2.0-alpha",
+	"releasenote": "Work in progress, getting more and more stable! See http://www.haxegon.com for documentation and examples.",
 	"contributors": [ "TerryCavanagh" ],
 	"dependencies": { "openfl": "" }
 }
