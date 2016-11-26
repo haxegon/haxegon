@@ -759,18 +759,7 @@ class Gfx {
 		return _linethickness;
 	}
 	
-	public static var clearcolor(get, set):Int;
-	private static var _clearcolor:Int;
-
-	static function get_clearcolor():Int {
-		return _clearcolor;
-	}
-	
-	static function set_clearcolor(color:Int) {
-		trace("warning: Gfx.clearcolor is not implemented");
-		_clearcolor = color;
-		return _clearcolor;
-	}
+	public static var clearcolor:Int = 0x000000;
 	
 	public static function clearscreen(color:Int = 0x000000) {
 		drawto.clear(color, 1.0);
@@ -959,7 +948,7 @@ class Gfx {
 		//temppoly4 = new Poly4();
 		
 		if(!gfxinit){
-			backbuffer = new RenderTexture(width, height, false);
+			backbuffer = new RenderTexture(width, height, true);
 			drawto = backbuffer;
 			screen = new Image(backbuffer);
 			screen.touchable = false;

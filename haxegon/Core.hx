@@ -156,6 +156,7 @@ class Core extends Sprite {
 		if (!Scene.hasseperaterenderfunction) {
 			Gfx.backbuffer.drawBundled(
 				function(unused0:DisplayObject, unused1:Matrix, unused2:Float) {
+					if (Gfx.clearcolor != Col.TRANSPARENT) Gfx.clearscreen(Gfx.clearcolor);
 					Scene.update();	
 					Text.drawstringinput();
 					Debug.showlog();
@@ -174,6 +175,7 @@ class Core extends Sprite {
 	private function dorender() {
 		Gfx.backbuffer.drawBundled(
 		  function(unused0:DisplayObject, unused1:Matrix, unused2:Float) {
+				if (Gfx.clearcolor != Col.TRANSPARENT) Gfx.clearscreen(Gfx.clearcolor);
 				Scene.render();
 				Text.drawstringinput();
 				Debug.showlog();
