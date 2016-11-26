@@ -84,6 +84,7 @@ class Core extends Sprite {
 		_rate3 = Math.round(3000 / TARGETFRAMERATE);
 		_target3 = 3 * Lib.getTimer() + _rate3;
 		
+		starttime = flash.Lib.getTimer();
     stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	}
 	
@@ -207,6 +208,12 @@ class Core extends Sprite {
 	
 	private static var	_rate3:Int; // The time between frames, in thirds of a millisecond.
 	private static var _target3:Int; // The ideal time to start the next frame, in thirds of a millisecond.
+	private static var starttime:Int;
+	
+	public static var time(get, never):Int;
+	static function get_time():Int {
+	  return flash.Lib.getTimer() - starttime;	
+	}
 	
 	public static var showstats(get,set):Bool;
 	private static var _showstats:Bool;
