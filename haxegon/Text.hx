@@ -293,6 +293,7 @@ class Text {
 	
 	static function set_font(fontname:String):String {
 		if (fontname == "" || fontname.toLowerCase() == "verdana") fontname = "Verdana";
+		if (fontname == currentfont) return currentfont;
 		setfont(fontname, 1);
 		return currentfont;
 	}
@@ -304,7 +305,9 @@ class Text {
 	}
 	
 	static function set_size(fontsize:Float):Float {
-		changesize(fontsize);
+	  if(currentsize != fontsize){
+      changesize(fontsize);
+    }
 		return currentsize;
 	}
 	
