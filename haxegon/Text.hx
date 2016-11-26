@@ -233,8 +233,8 @@ class Text {
 	}
 	
 	private static function defaultfont() {
-		addfont(null, 16);
-		setfont("Verdana", 32);
+		addfont(null, 24);
+		setfont("Verdana", 24);
 	}
 	
 	private static function setfont(fontname:String, size:Float = 1) {

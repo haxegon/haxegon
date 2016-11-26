@@ -64,6 +64,7 @@ class Core extends Sprite {
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
 		Gfx.init(this.stage);
+		Text.defaultfont();
 		Music.init();
 		
 		//Before we call Scene.init(), make sure we have some init values for our screen
