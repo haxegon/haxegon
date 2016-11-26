@@ -65,6 +65,13 @@ class Core extends Sprite {
 		Mouse.init(this.stage, Starling.current.nativeStage);
 		Gfx.init(this.stage);
 		Music.init();
+		
+		//Before we call Scene.init(), make sure we have some init values for our screen
+		//in the event that we don't create one in Main.new():
+		Gfx.screenwidth = stage.stageWidth; Gfx.screenheight = stage.stageHeight;
+		Gfx.screenwidthmid = Std.int(Gfx.screenwidth / 2); Gfx.screenheightmid = Std.int(Gfx.screenheight / 2);
+		
+		//Call Main.new()
 		Scene.init();
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
