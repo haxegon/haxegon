@@ -28,21 +28,8 @@ class Gfx {
 	private static var screenscale:Int;
 	private static var devicexres:Int;
 	private static var deviceyres:Int;
-	private static var fullscreen:Bool;
 	
 	private static var currenttilesetname:String;
-	
-	/** Create a screen with a given width, height and scale. Also inits Text. */
-	public static function resizescreen(width:Float, height:Float, scale:Int = 1) {
-		initgfx(Std.int(width), Std.int(height), scale);
-		Text.init(gfxstage);
-		updategraphicsmode();
-	}
-	
-	public static function setfullscreen(fs:Bool) {
-		fullscreen = fs;
-		updategraphicsmode();
-	}
 	
 	//** Clear all rotations, scales and image colour changes */
 	private static function reset() {
@@ -877,12 +864,9 @@ class Gfx {
 	//HSL conversion variables 
 	private static var hslval:Array<Float> = [0.0, 0.0, 0.0];
 	
-	private static function setzoom(t:Int) {
-		trace("warning: Gfx.setzoom is not implemented");
-	}
-	
 	private static function updategraphicsmode() {
-		trace("warning: Gfx.updategraphicsmode is not implemented");
+		Debug.log("updategraphicsmode() called: fullscreen is " + _fullscreen);
+		
 	}
 	
 	private static function getscreenx(_x:Float) : Int {
@@ -893,11 +877,33 @@ class Gfx {
 		return Math.floor((_y - screen.y) * screenheight / screen.height);
 	}
 	
-	/** Gives Gfx access to the stage, and preloads packed textures. */
-	private static function init(stage:Stage) {
-		gfxstage = stage;
-		linethickness = 1;
+	/** Create a screen with a given width, height and scale. Also inits Text. */
+	public static function resizescreen(width:Float, height:Float, scale:Int = 1) {
+		initgfx(Std.int(width), Std.int(height), scale);
+		Text.init(starstage);
+		updategraphicsmode();
+	}
+	
+	public static var fullscreen(get,set):Bool;
+	private static var _fullscreen:Bool;
+
+	static function get_fullscreen():Bool {
+		return _fullscreen;
+	}
+
+  static function set_fullscreen(fs:Bool) {
+		_fullscreen = fs;
+		updategraphicsmode();
 		
+		return _fullscreen;
+	}
+	
+	/** Gives Gfx access to the stage, and preloads packed textures. */
+	private static function init(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
+		starstage = _starlingstage;
+		flashstage = _flashstage;
+		
+		linethickness = 1;
 		loadpackedtextures();
 		
 		reset();
@@ -953,13 +959,13 @@ class Gfx {
 			screen.touchable = false;
 			screen.scale = scale;
 			screen.smoothing = "none";
-			gfxstage.addChild(screen);
+			starstage.addChild(screen);
 			
 			if (Core.showstats) {
 			  Core.statsdisplay = new StatsDisplay();
-				gfxstage.addChild(Core.statsdisplay);
+				starstage.addChild(Core.statsdisplay);
 			}else {
-				if(Core.statsdisplay != null) gfxstage.removeChild(Core.statsdisplay);
+				if(Core.statsdisplay != null) starstage.removeChild(Core.statsdisplay);
 			}
 		}
 		
@@ -985,7 +991,8 @@ class Gfx {
 	private static var trect:Rectangle = new Rectangle();
 	private static var shapematrix:Matrix = new Matrix();
 	
-	private static var gfxstage:Stage;
+	private static var starstage:starling.display.Stage;
+	private static var flashstage:openfl.display.Stage;
 	
 	private static var transform:Bool;
 	private static var coltransform:Bool;

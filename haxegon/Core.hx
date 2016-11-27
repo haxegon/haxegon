@@ -63,7 +63,7 @@ class Core extends Sprite {
 		Random.setseed(Std.int(Math.random() * 233280));
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
-		Gfx.init(this.stage);
+		Gfx.init(this.stage, Starling.current.nativeStage);
 		Text.defaultfont();
 		Music.init();
 		
@@ -234,9 +234,9 @@ class Core extends Sprite {
 			//If we've already initilised the screen, add/remove the stats display now
 			if (_b) {
 			  statsdisplay = new StatsDisplay();
-				Gfx.gfxstage.addChild(statsdisplay);
+				Gfx.starstage.addChild(statsdisplay);
 			}else {
-			  if(statsdisplay != null) Gfx.gfxstage.removeChild(statsdisplay);
+			  if(statsdisplay != null) Gfx.starstage.removeChild(statsdisplay);
 			}
 		}
 		_showstats = _b;
