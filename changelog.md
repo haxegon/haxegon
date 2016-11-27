@@ -1,3 +1,24 @@
+0.3.0-alpha (2016-11-27)
+------------------
+### New features
+* Haxegon's `project.xml` file has changed. You'll need to grab the latest `blankproject.zip` file!
+* While haxegon currently can't resize its window or change to fullscreen (I'm working on it!), as a temporary workaround for now, you can make your game start in fullscreen by toggling the following line at the top of your `project.xml` file.
+
+  ```
+  <set name="startfullscreen" value="true" />
+  ```
+
+* Added support for **.jpg** images. They're loaded the same way as **.png** images.
+* There are now basic library installation instructions at <a href="http://www.haxegon.com">http://www.haxegon.com</a>.
+* Added one new example to the <a href="https://github.com/TerryCavanagh/haxegon-samples">haxegon-samples</a> repo: **Sky Tiles**.
+  
+### Bug fixes/Tweaks
+* Renamed `S.subtractfromright()` to `S.removefromright()`. Added `S.removefromleft()` too!
+* Renamed `Data.loadcsv_2d` to `Data.load2dcsv`.
+* `Gfx.resizeimage()` was scrapped (it was causing confusion).
+* Passing negative numbers to `Text.wordwrap()` outputs an error, but doesn't stop the game from running.
+* Missing assets are now handled consistently - trying to use an asset that isn't loaded will attempt to load it, and if that asset doesn't exist, the debug system will log an error on screen. (previously, missing assets would throw an exception and stop the game from running.)
+
 0.2.0-alpha (2016-11-26)
 ------------------
 ### New features
