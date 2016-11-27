@@ -62,6 +62,11 @@ class S {
 		return right(currentstring, currentstring.length - length);
 	}
 	
+	/** Return string with N characters subracted from the right. */
+	public static function subtractfromright(currentstring:String, length:Int = 1):String {
+		return left(currentstring, currentstring.length - length);
+	}
+	
 	/** Reverse a string. */
 	public static function reversetext(currentstring:String):String {
 		var reversedstring:String = "";
