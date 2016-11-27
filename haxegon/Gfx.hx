@@ -318,11 +318,6 @@ class Gfx {
 		}
 	}
 	
-	/** Resizes an image to a new size and stores it with the same label. */
-	public static function resizeimage(imagename:String, scale:Float) {
-		trace("warning: Gfx.resizeimage is not implemented");
-	}
-	
 	/** Returns the width of the image. */
 	public static function imagewidth(imagename:String):Int {
 		if (!imageindex.exists(imagename)) {
