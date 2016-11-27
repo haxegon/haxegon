@@ -22,3 +22,19 @@ script:
   - haxelib run openfl build ~/haxegon/simple/01\ -\ Hello\ World flash
   - haxelib run openfl build ~/haxegon/simple/01\ -\ Hello\ World html5
   - haxelib run openfl build ~/haxegon/simple/01\ -\ Hello\ World neko
+  
+  - haxelib run openfl build ~/haxegon/simple/02\ -\ Moving\ Hexagon flash
+  - haxelib run openfl build ~/haxegon/simple/02\ -\ Moving\ Hexagon html5
+  - haxelib run openfl build ~/haxegon/simple/02\ -\ Moving\ Hexagon neko
+
+  - haxelib run openfl build ~/haxegon/simple/03\ -\ Simple\ Mouse\ Game flash
+  - haxelib run openfl build ~/haxegon/simple/03\ -\ Simple\ Mouse\ Game html5
+  - haxelib run openfl build ~/haxegon/simple/03\ -\ Simple\ Mouse\ Game neko
+
+  - haxelib run openfl build ~/haxegon/simple/04\ -\ Bitmap\ Fonts flash
+  - haxelib run openfl build ~/haxegon/simple/04\ -\ Bitmap\ Fonts html5
+  - haxelib run openfl build ~/haxegon/simple/04\ -\ Bitmap\ Fonts neko
+  
+  - haxelib run openfl build ~/haxegon/simple/05\ -\ Sky\ Tiles flash
+  - haxelib run openfl build ~/haxegon/simple/05\ -\ Sky\ Tiles html5
+  - haxelib run openfl build ~/haxegon/simple/05\ -\ Sky\ Tiles neko
