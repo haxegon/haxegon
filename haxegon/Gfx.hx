@@ -135,13 +135,15 @@ class Gfx {
 		  //We've already loaded the image for this somewhere, probably from a packed texture
 			//In any case, we use that texture as the source for these tiles
 			tex = getassetpackedtexture(imagename);
-		}else{
-			try {
-				tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);	
-			}catch (e:Dynamic) {
-				throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png.");
+		}else {
+			if(Assets.exists("data/graphics/" + imagename + ".png")){
+				tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);
+			}else if (Assets.exists("data/graphics/" + imagename + ".jpg")) {
+				tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".jpg"), false);
+			}else {
+				throw("ERROR: In loadtiles, cannot find data/graphics/" + imagename + ".png or data/graphics/" + imagename + ".jpg");
 				return;
-			}
+			}	
 			
 			starlingassets.addTexture(imagename, tex);
 		}
@@ -283,10 +285,12 @@ class Gfx {
 		if (imageindex.exists(imagename)) return; //This is already loaded, so we're done!
 		
 		var tex:Texture;
-		try {
-		  tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);	
-		}catch (e:Dynamic) {
-			throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png.");
+		if(Assets.exists("data/graphics/" + imagename + ".png")){
+		  tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);
+		}else if (Assets.exists("data/graphics/" + imagename + ".jpg")) {
+			tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".jpg"), false);
+		}else {
+			throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png or data/graphics/" + imagename + ".jpg");
 			return;
 		}
 		starlingassets.addTexture(imagename, tex);
