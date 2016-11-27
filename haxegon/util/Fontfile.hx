@@ -23,7 +23,7 @@ class Fontfile {
 			pngname = Xml.parse(Assets.getText("data/graphics/fonts/" + _file + "/" + _file + ".fnt")).firstElement()
 			               .elementsNamed("pages").next().elementsNamed("page").next().get("file");
 			if (pngname == null) {
-				throw("ERROR: Bitmap font XML file \"" + _file + ".fnt\" does not reference a .png file.");
+				Debug.log("ERROR: Bitmap font XML file \"" + _file + ".fnt\" does not reference a .png file.");
 			}
 			if (S.right(pngname, 4) == ".png") {
 				pngname = S.left(pngname, pngname.length - 4);
@@ -46,7 +46,7 @@ class Fontfile {
 				font = Assets.getFont(filename);
 				typename = font.fontName;
 			}catch (e:Dynamic) {
-				throw("ERROR: Cannot set font to \"" + _file + "\", no TTF or Bitmap Font found.");
+				Debug.log("ERROR: Cannot set font to \"" + _file + "\", no TTF or Bitmap Font found.");
 			}
 			sizescale = 1;
 		}

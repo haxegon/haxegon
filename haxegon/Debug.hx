@@ -19,6 +19,7 @@ class Debug {
 	
 	/** Outputs a string to the screen for testing. */
 	public static function log(t:Dynamic) {
+		trace(t);
 		debuglog.push(Convert.tostring(t));
 		showtest = true;
 		if (debuglog.length > 20) {

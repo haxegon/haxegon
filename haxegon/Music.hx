@@ -9,6 +9,10 @@ import openfl.Assets;
 class Music {
 	//Play a sound effect! There are 16 channels, which iterate
 	public static function playsound(soundname:String, volume:Float = 1.0, offset:Float = 0.0) {
+		if (!effectindex.exists(soundname)) {
+			if (!loadsound(soundname)) return;
+		}
+		
 		temptransform = new SoundTransform(volumelevels[Std.int(effectindex.get(soundname))] * volume * globalsound);
 		efchannel[currentefchan] = efchan[Std.int(effectindex.get(soundname))].play(offset * 1000);
 		efchannel[currentefchan].soundTransform = temptransform;
@@ -24,29 +28,55 @@ class Music {
 		}
 	}
 	
-	public static function loadsound(soundname:String, volumelevel:Float = 1.0) {
+	public static function loadsound(soundname:String, volumelevel:Float = 1.0):Bool {
+		#if flash
+		if(Assets.exists("data/sounds/" + soundname + ".mp3")){
+			efchan.push(Assets.getSound("data/sounds/" + soundname + ".mp3"));
+		}else {
+		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/mp3/" + soundname + ".mp3\". (.mp3 files are required for flash targets.)"); 
+			return false;
+		}
+		#else
+		if(Assets.exists("data/sounds/" + soundname + ".ogg")){
+			efchan.push(Assets.getSound("data/sounds/" + soundname + ".ogg")); 
+		}else {
+		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/ogg/" + soundname + ".ogg\". (.ogg files are required on this platform.)"); 
+			return false;
+		}
+		#end
 		effectindex.set(soundname, numeffects);
 		volumelevels.push(volumelevel);
-		#if flash
-		efchan.push(Assets.getSound("data/sounds/" + soundname + ".mp3")); 
-		#else
-		efchan.push(Assets.getSound("data/sounds/" + soundname + ".ogg")); 
-		#end
 		numeffects++;
+		return true;
 	}
 	
-	public static function loadsong(songname:String, volumelevel:Float = 1.0) {	
+	public static function loadsong(songname:String, volumelevel:Float = 1.0):Bool {	
+		#if flash
+		if(Assets.exists("data/sounds/" + songname + ".mp3")){
+			musicchan.push(Assets.getSound("data/sounds/" + songname + ".mp3"));
+		}else {
+		  Debug.log("ERROR: In loadsong, cannot find \"data/sounds/mp3/" + songname + ".mp3\". (.mp3 files are required for flash targets.)"); 
+			return false;
+		}
+		#else
+		if(Assets.exists("data/sounds/" + songname + ".ogg")){
+			musicchan.push(Assets.getSound("data/sounds/" + songname + ".ogg")); 
+		}else {
+		  Debug.log("ERROR: In loadsong, cannot find \"data/sounds/ogg/" + songname + ".ogg\". (.ogg files are required on this platform.)"); 
+			return false;
+		}
+		#end
 		songindex.set(songname, numsongs);
 		songvolumelevels.push(volumelevel);
-		#if flash
-		musicchan.push(Assets.getMusic("data/sounds/" + songname + ".mp3"));
-		#else
-		musicchan.push(Assets.getMusic("data/sounds/" + songname + ".ogg"));
-		#end
 		numsongs++;
+		return true;
 	}
 	
 	public static function playsong(songname:String, ?time:Float = 0.0, ?loop:Bool = true) {
+		if (!songindex.exists(songname)) {
+			if(!loadsong(songname)) return;
+		}
+		
 		if (currentsong != songname) {
 			if (currentsong != "nothing") {
 				//Stop the old song first

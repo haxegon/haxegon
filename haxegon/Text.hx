@@ -94,7 +94,7 @@ class Text {
 			wordwrapwidth = 0;
 		}else {
 		  if (textwidth < 0) {
-			  throw("Error: Word wrap width must be a number greater than 0.");	
+			  Debug.log("Error: Word wrap width must be a number greater than 0.");	
 			}
 			wordwrapwidth = textwidth;
 		}

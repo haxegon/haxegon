@@ -123,7 +123,7 @@ class Gfx {
 				currenttileset = tilesetindex.get(tilesetname);
 				currenttilesetname = tilesetname;
 			}else {
- 				throw("ERROR: Cannot change to tileset \"" + tilesetname + "\", no tileset with that name found.");
+ 				Debug.log("ERROR: Cannot change to tileset \"" + tilesetname + "\", no tileset with that name found.");
 			}
 		}
 	}
@@ -141,7 +141,7 @@ class Gfx {
 			}else if (Assets.exists("data/graphics/" + imagename + ".jpg")) {
 				tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".jpg"), false);
 			}else {
-				throw("ERROR: In loadtiles, cannot find data/graphics/" + imagename + ".png or data/graphics/" + imagename + ".jpg");
+				Debug.log("ERROR: In loadtiles, cannot find \"data/graphics/" + imagename + ".png\" or \"data/graphics/" + imagename + ".jpg\"");
 				return;
 			}	
 			
@@ -184,7 +184,7 @@ class Gfx {
 		if(tilesetindex.exists(tilesetname)){
 			tileset = tilesetindex.get(tilesetname);
 		}else {
-			throw("ERROR: Cannot add blank tiles to tileset \"" + tilesetname + "\", no tileset with that name found.");
+			Debug.log("ERROR: Cannot add blank tiles to tileset \"" + tilesetname + "\", no tileset with that name found.");
 		}
 		
 		var w:Int = Std.int(tiles[tileset].tiles[0].width);
@@ -267,7 +267,7 @@ class Gfx {
 		try {
 			bd = starlingassets.getTexture(imagename);
 		}catch (e:Dynamic) {
-			throw("ERROR: Cannot find " + imagename + ".png in packed textures.");
+			Debug.log("ERROR: Cannot find " + imagename + ".png in packed textures.");
 		}
 		return bd;
 	}
@@ -290,7 +290,7 @@ class Gfx {
 		}else if (Assets.exists("data/graphics/" + imagename + ".jpg")) {
 			tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".jpg"), false);
 		}else {
-			throw("ERROR: In loadimage, cannot find data/graphics/" + imagename + ".png or data/graphics/" + imagename + ".jpg");
+			Debug.log("ERROR: In loadimage, cannot find \"data/graphics/" + imagename + ".png\" or \"data/graphics/" + imagename + ".jpg\"");
 			return;
 		}
 		starlingassets.addTexture(imagename, tex);
@@ -365,7 +365,7 @@ class Gfx {
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoimage(imagename:String) {
 		if (!imageindex.exists(imagename)) {
-			throw("ERROR: In drawtoimage, cannot find image \"" + imagename + "\".");
+			Debug.log("ERROR: In drawtoimage, cannot find image \"" + imagename + "\".");
 			return;
 		}
 		
@@ -380,14 +380,14 @@ class Gfx {
 		if(tilesetindex.exists(tilesetname)){
 			tileset = tilesetindex.get(tilesetname);
 		}else {
-			throw("ERROR: Cannot change to tileset \"" + tilesetname + "\", no tileset with that name found.");
+			Debug.log("ERROR: Cannot change to tileset \"" + tilesetname + "\", no tileset with that name found.");
 		}
 		
 		if (tilenum >= numberoftiles(tilesetname)) {
 			if (tilenum == numberoftiles(tilesetname)) {
-				throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
+				Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
 			}else{
-				throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
 			}
 		}
 
@@ -527,7 +527,7 @@ class Gfx {
 	 * */
 	public static function drawsubimage(x:Float, y:Float, x1:Float, y1:Float, w1:Float, h1:Float, imagename:String) {
 		if (!imageindex.exists(imagename)) {
-			throw("ERROR: In drawsubimage, cannot find image \"" + imagename + "\".");
+			Debug.log("ERROR: In drawsubimage, cannot find image \"" + imagename + "\".");
 			return;
 		}
 		
@@ -581,10 +581,10 @@ class Gfx {
 		
 		if (tilenum >= numberoftiles(tilesetname)) {
 			if (tilenum == numberoftiles(tilesetname)) {
- 			  throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
+ 			  Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
 				return;
 			}else{
-				throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
 				return;
 			}
 		}
@@ -614,10 +614,10 @@ class Gfx {
 		
 		if (tilenum >= numberoftiles(tilesetname)) {
 			if (tilenum == numberoftiles(tilesetname)) {
- 			  throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
+ 			  Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
 				return;
 			}else{
-				throw("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
 				return;
 			}
 		}
