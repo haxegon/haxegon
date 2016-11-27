@@ -20,8 +20,12 @@ class Data {
 	public static var height:Int = 0;
 	
 	public static function loadtext(textfile:String):Array<String> {
-		tempstring = Assets.getText("data/text/" + textfile + ".txt");
-		if(tempstring == null) tempstring = "file not found";
+		if (Assets.exists("data/text/" + textfile + ".txt")) {
+			tempstring = Assets.getText("data/text/" + textfile + ".txt");
+		}else {
+		  Debug.log("ERROR: In loadtext, cannot find \"data/text/" + textfile + ".txt\"."); 
+		  return "";
+		}
 		
 		tempstring = replacechar(tempstring, "\r", "");
 		
@@ -30,7 +34,12 @@ class Data {
 	
 	@:generic
 	public static function loadcsv<T>(csvfile:String, delimiter:String = ","):Array<T> {
-		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+		if (Assets.exists("data/text/" + csvfile + ".csv")) {
+			tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+		}else {
+		  Debug.log("ERROR: In loadcsv, cannot find \"data/text/" + csvfile + ".csv\"."); 
+		  tempstring = "";
+		}
 		
 		//figure out width
 		width = 1;
@@ -63,8 +72,13 @@ class Data {
 	}
 	
 	@:generic
-	public static function loadcsv_2d<T>(csvfile:String, delimiter:String = ","):Array<Array<T>> {
-		tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+	public static function load2dcsv<T>(csvfile:String, delimiter:String = ","):Array<Array<T>> {
+		if (Assets.exists("data/text/" + csvfile + ".csv")) {
+			tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+		}else {
+		  Debug.log("ERROR: In load2dcsv, cannot find \"data/text/" + csvfile + ".csv\"."); 
+		  tempstring = "";
+		}
 		
 		//figure out width
 		width = 1;
