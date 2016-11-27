@@ -12,7 +12,7 @@ Interested in trying it out? You can install Haxegon using haxelib:
     
 Once the library is installed, use this blank project file to get started:
 
-<a href="https://github.com/TerryCavanagh/haxegon/blob/master/blankproject.zip">[blankproject.zip]</a>
+<a href="https://github.com/TerryCavanagh/haxegon/raw/master/blankproject.zip">[blankproject.zip]</a>
 
 Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and a growing selection of example projects are <a href="https://github.com/TerryCavanagh/haxegon-samples">available here</a>. More coming soon!
 
