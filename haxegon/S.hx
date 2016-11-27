@@ -57,13 +57,13 @@ class S {
 		return currentstring.substr(currentstring.length - length, length);
 	}
 	
-	/** Return string with N characters subracted from the left. */
-	public static function subtractfromleft(currentstring:String, length:Int = 1):String {
+	/** Return string with N characters removed from the left. */
+	public static function removefromleft(currentstring:String, length:Int = 1):String {
 		return right(currentstring, currentstring.length - length);
 	}
 	
-	/** Return string with N characters subracted from the right. */
-	public static function subtractfromright(currentstring:String, length:Int = 1):String {
+	/** Return string with N characters removed from the right. */
+	public static function removefromright(currentstring:String, length:Int = 1):String {
 		return left(currentstring, currentstring.length - length);
 	}
 	
