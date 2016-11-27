@@ -10,6 +10,8 @@ import starling.core.StatsDisplay;
 import starling.utils.AssetManager;
 import starling.textures.*;
 import openfl.Assets;
+import starling.events.ResizeEvent;
+import starling.core.Starling;
 
 @:access(haxegon.Core)
 @:access(haxegon.Text)
@@ -25,7 +27,7 @@ class Gfx {
 	public static var screenwidthmid:Int;
 	public static var screenheightmid:Int;
 	
-	private static var screenscale:Int;
+	private static var screenscale:Float;
 	private static var devicexres:Int;
 	private static var deviceyres:Int;
 	
@@ -865,8 +867,7 @@ class Gfx {
 	private static var hslval:Array<Float> = [0.0, 0.0, 0.0];
 	
 	private static function updategraphicsmode() {
-		Debug.log("updategraphicsmode() called: fullscreen is " + _fullscreen);
-		
+		//Debug.log("updategraphicsmode() called: fullscreen is " + _fullscreen);
 	}
 	
 	private static function getscreenx(_x:Float) : Int {
@@ -878,7 +879,7 @@ class Gfx {
 	}
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
-	public static function resizescreen(width:Float, height:Float, scale:Int = 1) {
+	public static function resizescreen(width:Float, height:Float, scale:Float = 1) {
 		initgfx(Std.int(width), Std.int(height), scale);
 		Text.init(starstage);
 		updategraphicsmode();
@@ -903,11 +904,26 @@ class Gfx {
 		starstage = _starlingstage;
 		flashstage = _flashstage;
 		
+		//starstage.addEventListener(ResizeEvent.RESIZE, onresize);
+		
 		linethickness = 1;
 		loadpackedtextures();
 		
 		reset();
-	}	
+	}
+	
+	private static function onresize(e:ResizeEvent) {
+		// set rectangle dimensions for viewPort:
+		var viewPortRectangle:Rectangle = new Rectangle();
+		viewPortRectangle.width = e.width; viewPortRectangle.height = e.height;
+		
+		// resize the viewport:
+		Starling.current.viewPort = viewPortRectangle;
+		
+		// assign the new stage width and height:
+		starstage.stageWidth = e.width;
+		starstage.stageHeight = e.height;
+	}
 	
 	private static function loadpackedtextures() {
 		if(!gfxinit){
@@ -940,7 +956,7 @@ class Gfx {
 	}
 	
 	/** Called from resizescreen(). Sets up all our graphics buffers. */
-	private static function initgfx(width:Int, height:Int, scale:Int) {
+	private static function initgfx(width:Int, height:Int, scale:Float) {
 		//We initialise a few things
 		screenwidth = width; screenheight = height;
 		screenwidthmid = Std.int(screenwidth / 2); screenheightmid = Std.int(screenheight / 2);

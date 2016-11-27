@@ -17,9 +17,12 @@ import starling.core.StatsDisplay;
 @:access(haxegon.Input)
 @:access(haxegon.Scene)
 class Core extends Sprite {
+	private static inline var WINDOW_WIDTH:String = haxe.macro.Compiler.getDefine("windowwidth");
+	private static inline var WINDOW_HEIGHT:String = haxe.macro.Compiler.getDefine("windowheight");
+	private static inline var STARTFULLSCREEN:String = haxe.macro.Compiler.getDefine("startfullscreen");
+	
 	public function new() {
-		super();	
-		
+		super();
 		addEventListener(Event.ADDED_TO_STAGE, addedtostage);
 	}
 	
@@ -69,15 +72,32 @@ class Core extends Sprite {
 		
 		//Before we call Scene.init(), make sure we have some init values for our screen
 		//in the event that we don't create one in Main.new():
-		Gfx.screenwidth = stage.stageWidth; Gfx.screenheight = stage.stageHeight;
+		//Temporary work around to allow starting in fullscreen
+		Gfx.screenwidth = Std.parseInt(WINDOW_WIDTH);
+		Gfx.screenheight = Std.parseInt(WINDOW_HEIGHT);
+		//Gfx.screenwidth = stage.stageWidth; Gfx.screenheight = stage.stageHeight;
 		Gfx.screenwidthmid = Std.int(Gfx.screenwidth / 2); Gfx.screenheightmid = Std.int(Gfx.screenheight / 2);
 		
 		//Call Main.new()
 		Scene.init();
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
-		if(!Gfx.gfxinit){
-			Gfx.resizescreen(stage.stageWidth, stage.stageHeight, 1);
+		if (!Gfx.gfxinit) {		
+			if (S.trimspaces(STARTFULLSCREEN.toLowerCase()) == "true") {
+				//Temporary work around to allow starting in fullscreen
+				var stretchscale:Float;
+				var stretchscalex:Float;
+				var stretchscaley:Float;
+				stretchscalex = Std.int(openfl.system.Capabilities.screenResolutionX) / Std.parseInt(WINDOW_WIDTH);
+				stretchscaley = Std.int(openfl.system.Capabilities.screenResolutionY) / Std.parseInt(WINDOW_HEIGHT);
+				stretchscale = Math.min(stretchscalex, stretchscaley);
+				Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT), stretchscale);
+				
+				Gfx.screen.x = Std.int((Std.int(openfl.system.Capabilities.screenResolutionX) - (Std.parseInt(WINDOW_WIDTH) * stretchscale)) / 2);
+				Gfx.screen.y = Std.int((Std.int(openfl.system.Capabilities.screenResolutionY) - (Std.parseInt(WINDOW_HEIGHT) * stretchscale)) / 2);
+			}else{
+				Gfx.resizescreen(stage.stageWidth, stage.stageHeight, 1);
+			}
 		}
 		
 		// start game loop
