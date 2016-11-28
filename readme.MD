@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
 
-# Haxegon (version 0.3.0-alpha (2016-11-27))
+# Haxegon (version 0.3.1-alpha (2016-11-28))
 
 Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. Currently only the **flash** target works, but **html5** and **desktop** targets should also work after the next OpenFL update (https://github.com/openfl/starling/issues/25)!
 
@@ -19,6 +19,11 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 # Last Updates
 
 Haxegon is currently in **alpha**, because it doesn't currenty work on all it's target platforms. Once it's stable enough to do that, I'll drop the -alpha tag from the version number!
+
+0.3.1-alpha (2016-11-28)
+------------------
+### Bug fixes/Tweaks
+* Fixed a bug with sound assets not loading.
 
 0.3.0-alpha (2016-11-27)
 ------------------
