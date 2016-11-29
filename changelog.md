@@ -1,3 +1,8 @@
+0.3.2-alpha (2016-11-29)
+------------------
+### Bug fixes/Tweaks
+* Fixed *another* bug with sound assets not loading!
+
 0.3.1-alpha (2016-11-28)
 ------------------
 ### Bug fixes/Tweaks
