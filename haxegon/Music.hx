@@ -30,14 +30,14 @@ class Music {
 	
 	public static function loadsound(soundname:String, volumelevel:Float = 1.0):Bool {
 		#if flash
-		if(Assets.exists("data/sounds/" + soundname + ".mp3")){
+		if (Assets.list().indexOf("data/sounds/" + soundname + ".mp3") >= 0) {
 			efchan.push(Assets.getSound("data/sounds/" + soundname + ".mp3"));
 		}else {
 		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/mp3/" + soundname + ".mp3\". (.mp3 files are required for flash targets.)"); 
 			return false;
 		}
 		#else
-		if(Assets.exists("data/sounds/" + soundname + ".ogg")){
+		if (Assets.list().indexOf("data/sounds/" + soundname + ".mp3") >= 0) {
 			efchan.push(Assets.getSound("data/sounds/" + soundname + ".ogg")); 
 		}else {
 		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/ogg/" + soundname + ".ogg\". (.ogg files are required on this platform.)"); 
@@ -52,14 +52,14 @@ class Music {
 	
 	public static function loadsong(songname:String, volumelevel:Float = 1.0):Bool {	
 		#if flash
-		if(Assets.list().indexOf("data/sounds/" + songname + ".mp3") > 0){
+		if(Assets.list().indexOf("data/sounds/" + songname + ".mp3") >= 0){
 			musicchan.push(Assets.getSound("data/sounds/" + songname + ".mp3"));
 		}else {
 		  Debug.log("ERROR: In loadsong, cannot find \"data/sounds/mp3/" + songname + ".mp3\". (.mp3 files are required for flash targets.)"); 
 			return false;
 		}
 		#else
-		if(Assets.list().indexOf("data/sounds/" + songname + ".ogg") > 0){
+		if(Assets.list().indexOf("data/sounds/" + songname + ".ogg") >= 0){
 			musicchan.push(Assets.getSound("data/sounds/" + songname + ".ogg")); 
 		}else {
 		  Debug.log("ERROR: In loadsong, cannot find \"data/sounds/ogg/" + songname + ".ogg\". (.ogg files are required on this platform.)"); 
