@@ -1,6 +1,5 @@
 package haxegon;
-	
-import haxegon.util.*;
+
 import openfl.display.*;
 import openfl.geom.*;
 import openfl.events.*;

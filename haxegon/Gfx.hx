@@ -13,6 +13,21 @@ import openfl.Assets;
 import starling.events.ResizeEvent;
 import starling.core.Starling;
 
+class HaxegonTileset {
+	public function new(n:String, w:Int, h:Int) {
+		name = n;
+		width = w;
+		height = h;
+		
+		tiles = [];
+	}
+	
+	public var tiles:Array<Image>;
+	public var name:String;
+	public var width:Int;
+	public var height:Int;
+}
+
 @:access(haxegon.Core)
 @:access(haxegon.Text)
 class Gfx {
@@ -141,7 +156,7 @@ class Gfx {
 		var spritesheet:Texture = starlingassets.getTexture(imagename);
 		
 		var tiles_rect:Rectangle = new Rectangle(0, 0, width, height);
-		tiles.push(new haxegon.util.Tileset(imagename, width, height));
+		tiles.push(new HaxegonTileset(imagename, width, height));
 		tilesetindex.set(imagename, tiles.length - 1);
 		currenttileset = tiles.length - 1;
 		
@@ -190,7 +205,7 @@ class Gfx {
 	public static function createtiles(tilesetname:String, width:Float, height:Float, amount:Int) {
 		var exindex:Null<Int> = tilesetindex.get(tilesetname);
 		if (exindex == null) {
-			tiles.push(new haxegon.util.Tileset(tilesetname, Std.int(width), Std.int(height)));
+			tiles.push(new HaxegonTileset(tilesetname, Std.int(width), Std.int(height)));
 			tilesetindex.set(tilesetname, tiles.length - 1);
 			currenttileset = tiles.length - 1;
 			
@@ -1032,7 +1047,7 @@ class Gfx {
 	private static var imageindex:Map<String, Int> = new Map<String, Int>();
 	private static var images:Array<Image> = new Array<Image>();
 	
-	private static var tiles:Array<haxegon.util.Tileset> = new Array<haxegon.util.Tileset>();
+	private static var tiles:Array<HaxegonTileset> = new Array<HaxegonTileset>();
 	private static var tilesetindex:Map<String, Int> = new Map<String, Int>();
 	private static var currenttileset:Int = -1;
 	
