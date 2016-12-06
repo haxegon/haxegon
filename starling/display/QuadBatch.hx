@@ -122,7 +122,7 @@ class QuadBatch extends DisplayObject
         }
         
         // hack
-        mForceTinted = true;
+    		mForceTinted = true;
 
         // Handle lost context. We use the conventional event here (not the one from Starling)
         // so we're able to create a weak event listener; this avoids memory leaks when people 
@@ -231,7 +231,6 @@ class QuadBatch extends DisplayObject
         {
             // as last parameter, we could also use 'mNumQuads * 4', but on some
             // GPU hardware (iOS!), this is slower than updating the complete buffer.
-            // hack - DO THAT come on
             #if (desktop || flash)
             			mVertexBuffer.uploadFromVector(mVertexData.rawData, 0, mNumQuads * 4);
             #else

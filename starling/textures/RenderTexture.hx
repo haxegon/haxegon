@@ -261,7 +261,7 @@ class RenderTexture extends SubTexture
         //finally
         {
             mDrawing = false;
-            mSupport.finishQuadBatch();            
+            mSupport.finishQuadBatch();
             Starling.current.mStoredDrawCount += mSupport.drawCount; // hack: report draw calls for this frame
             mSupport.nextFrame();
             mSupport.renderTarget = previousRenderTarget;

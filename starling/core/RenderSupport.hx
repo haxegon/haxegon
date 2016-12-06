@@ -84,7 +84,7 @@ class RenderSupport
     private static var sAssembler:AGALMiniAssembler = new AGALMiniAssembler();
     private static var sMatrix3D:Matrix3D = new Matrix3D();
     private static var sMatrixData:Vector<Float> = 
-        Vector.ofArray ([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        new Vector<Float> ([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     
     // construction
     
@@ -472,11 +472,11 @@ class RenderSupport
             // an empty rectangle is not allowed, so we set it to the smallest possible size
             if (sScissorRect.width < 1 || sScissorRect.height < 1)
                 sScissorRect.setTo(0, 0, 1, 1);
-                
-            #if !flash
-              sScissorRect.y = height - sScissorRect.height - sScissorRect.y;
-            #end
             
+            #if !flash
+            sScissorRect.y = height - sScissorRect.height - sScissorRect.y;
+            #end
+			
             context.setScissorRectangle(sScissorRect);
         }
         else
