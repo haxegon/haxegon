@@ -7,8 +7,8 @@ before_install:
   - sudo apt-get install g++-multilib gcc-multilib
   - mkdir ~/haxelib
   - haxelib setup ~/haxelib
-  - haxelib install openfl > /dev/null
-  - haxelib install lime > /dev/null
+  - haxelib git openfl https://github.com/openfl/openfl > /dev/null
+  - haxelib git lime https://github.com/openfl/lime > /dev/null
   - haxelib install hxcpp > /dev/null
   - haxelib install actuate > /dev/null
   - haxelib install box2d > /dev/null
