@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
+[![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon) *<- Currently failing due to a bug in Starling (https://github.com/openfl/starling/issues/33)*
 
 # Haxegon (version 0.3.2-alpha (2016-11-29))
 
