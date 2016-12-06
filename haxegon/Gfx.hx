@@ -1,6 +1,8 @@
 package haxegon;
 
+import openfl.display.StageDisplayState;
 import openfl.display.BitmapData;
+import flash.display.LoaderInfo;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -881,8 +883,44 @@ class Gfx {
 	//HSL conversion variables 
 	private static var hslval:Array<Float> = [0.0, 0.0, 0.0];
 	
-	private static function updategraphicsmode() {
-		//Debug.log("updategraphicsmode() called: fullscreen is " + _fullscreen);
+	private static function updategraphicsmode(w:Int, h:Int) {
+		if (!_fullscreen) {
+			if (flashstage.displayState == StageDisplayState.FULL_SCREEN_INTERACTIVE || 
+			    flashstage.displayState==StageDisplayState.FULL_SCREEN){
+				flashstage.displayState=StageDisplayState.NORMAL;
+			}
+		}else {
+			if (flashstage.displayState == StageDisplayState.NORMAL) {
+			  try {
+					flashstage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;	
+				}catch (e:Dynamic) {
+					#if flash
+					if (e.name == "SecurityError") {
+						if (flashstage.loaderInfo.url.indexOf("file://") == 0) {
+						}else {
+							Debug.log("Error: Haxegon is unable to toggle fullscreen in browsers due to Adobe security settings. To do: make haxegon_flash addon!");
+						}
+					}
+					#end
+				}
+			}
+		}
+		// set rectangle dimensions for viewPort:
+		var stretchscalex:Float;
+		var stretchscaley:Float;
+		var stretchscalex:Float = Std.int(w) / Std.parseInt(Core.WINDOW_WIDTH);
+		var stretchscaley:Float = Std.int(h) / Std.parseInt(Core.WINDOW_HEIGHT);
+		var stretchscale:Float = Math.min(stretchscalex, stretchscaley);
+		
+		var viewPortRectangle:Rectangle = new Rectangle();
+		viewPortRectangle.width = Std.parseInt(Core.WINDOW_WIDTH) * stretchscale; 
+		viewPortRectangle.height = Std.parseInt(Core.WINDOW_HEIGHT) * stretchscale;
+		
+		viewPortRectangle.x = Std.int((w - Std.int(Std.parseInt(Core.WINDOW_WIDTH) * stretchscale)) / 2);
+		viewPortRectangle.y = Std.int((h - Std.int(Std.parseInt(Core.WINDOW_HEIGHT) * stretchscale)) / 2);
+		
+		// resize the viewport:
+		Starling.current.viewPort = viewPortRectangle;
 	}
 	
 	private static function getscreenx(_x:Float) : Int {
@@ -897,7 +935,7 @@ class Gfx {
 	public static function resizescreen(width:Float, height:Float, scale:Float = 1) {
 		initgfx(Std.int(width), Std.int(height), scale);
 		Text.init(starstage);
-		updategraphicsmode();
+		updategraphicsmode(Std.int(width * scale), Std.int(height * scale));
 	}
 	
 	public static var fullscreen(get,set):Bool;
@@ -909,7 +947,11 @@ class Gfx {
 
   static function set_fullscreen(fs:Bool) {
 		_fullscreen = fs;
-		updategraphicsmode();
+		if (_fullscreen) {
+			updategraphicsmode(devicexres, deviceyres);
+		}else {
+			updategraphicsmode(Std.int(starstage.width), Std.int(starstage.height));
+		}
 		
 		return _fullscreen;
 	}
@@ -919,7 +961,7 @@ class Gfx {
 		starstage = _starlingstage;
 		flashstage = _flashstage;
 		
-		//starstage.addEventListener(ResizeEvent.RESIZE, onresize);
+		starstage.addEventListener(ResizeEvent.RESIZE, onresize);
 		
 		linethickness = 1;
 		loadpackedtextures();
@@ -928,16 +970,7 @@ class Gfx {
 	}
 	
 	private static function onresize(e:ResizeEvent) {
-		// set rectangle dimensions for viewPort:
-		var viewPortRectangle:Rectangle = new Rectangle();
-		viewPortRectangle.width = e.width; viewPortRectangle.height = e.height;
-		
-		// resize the viewport:
-		Starling.current.viewPort = viewPortRectangle;
-		
-		// assign the new stage width and height:
-		starstage.stageWidth = e.width;
-		starstage.stageHeight = e.height;
+		updategraphicsmode(e.width, e.height);
 	}
 	
 	private static function loadpackedtextures() {
