@@ -24,7 +24,7 @@ class Data {
 			tempstring = Assets.getText("data/text/" + textfile + ".txt");
 		}else {
 		  Debug.log("ERROR: In loadtext, cannot find \"data/text/" + textfile + ".txt\"."); 
-		  return "";
+		  return [""];
 		}
 		
 		tempstring = replacechar(tempstring, "\r", "");
