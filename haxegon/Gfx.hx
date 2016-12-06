@@ -924,11 +924,11 @@ class Gfx {
 	}
 	
 	private static function getscreenx(_x:Float) : Int {
-		return Math.floor((_x - screen.x) * screenwidth / screen.width);
+		return Math.floor((_x - Starling.current.viewPort.x) * screenwidth / Starling.current.viewPort.width);
 	}
 
 	private static function getscreeny(_y:Float) : Int {
-		return Math.floor((_y - screen.y) * screenheight / screen.height);
+		return Math.floor((_y - Starling.current.viewPort.y) * screenheight / Starling.current.viewPort.height);
 	}
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
