@@ -12,6 +12,16 @@ class S {
 	  return String.fromCharCode(asciicode);	
 	}
 	
+	/* Joins up an array into a single string. */
+	public static function join(array:Array<Dynamic>, seperator:String):String {
+		return array.join(seperator);
+	}
+	
+	/* Seperates a string into an array of strings. */
+	public static function seperate(currentstring:String, delimiter:String):Array<String> {
+		return currentstring.split(delimiter);
+	}
+	
 	/** Returns an uppercase version of the string. */
 	public static function uppercase(currentstring:String):String {
 		return currentstring.toUpperCase();
