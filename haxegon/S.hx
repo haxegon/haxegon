@@ -1,6 +1,17 @@
 package haxegon;
 
 class S {
+	/* Returns the ASCII value of the character. If character is a string, returns the ASCII
+	 * code of the first character in the string. */
+	public static function asciicode(character:String):Int {
+	  return character.charCodeAt(0);
+	}
+	
+	/* Converts an ascii code to a string. E.g. fromascii(65) == "A" */
+	public static function fromascii(asciicode:Int):String {
+	  return String.fromCharCode(asciicode);	
+	}
+	
 	/** Returns an uppercase version of the string. */
 	public static function uppercase(currentstring:String):String {
 		return currentstring.toUpperCase();

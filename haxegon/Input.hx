@@ -309,17 +309,11 @@ class Input {
 			if (keybuffer.length > 0) {
 				keybuffer = keybuffer.substr(0, keybuffer.length - 1);
 			}				
-			#if haxegonweb
-			if (Text.inputsound > -1 && Text.input_show > 0) Webmusic.playsound(Text.inputsound, 1);
-			#end
 		} else {
 			// Ignore all text input that's not valid ANSI text
 			if (charcode >= 32 && charcode <= 126) {
 				if (keybuffer.length < Text.inputmaxlength) {
 					keybuffer += String.fromCharCode(charcode);
-					#if haxegonweb
-					if (Text.inputsound > -1 && Text.input_show > 0) Webmusic.playsound(Text.inputsound, 1);
-					#end
 				}
 			}
 		}
