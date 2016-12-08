@@ -36,7 +36,7 @@ class Music {
 			return false;
 		}
 		#else
-		if (Assets.list().indexOf("data/sounds/" + soundname + ".mp3") >= 0) {
+		if (Assets.list().indexOf("data/sounds/" + soundname + ".ogg") >= 0) {
 			efchan.push(Assets.getSound("data/sounds/" + soundname + ".ogg")); 
 		}else {
 		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/ogg/" + soundname + ".ogg\". (.ogg files are required on this platform.)"); 
