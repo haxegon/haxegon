@@ -1,8 +1,7 @@
 package haxegon;
 
-import openfl.display.StageDisplayState;
-import openfl.display.BitmapData;
-import flash.display.LoaderInfo;
+import flash.display.StageDisplayState;
+import flash.display.BitmapData;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -44,7 +43,6 @@ class Gfx {
 	public static var screenwidthmid:Int;
 	public static var screenheightmid:Int;
 	
-	private static var screenscale:Float;
 	private static var devicexres:Int;
 	private static var deviceyres:Int;
 	
@@ -775,7 +773,7 @@ class Gfx {
 		fillbox(x, y, 1, 1, color, alpha);
 	}
 	
-	private static function updategraphicsmode(w:Int, h:Int) {
+	private static function updategraphicsmode(windowwidth:Int, windowheight:Int) {
 		if (!_fullscreen) {
 			if (flashstage.displayState == StageDisplayState.FULL_SCREEN_INTERACTIVE || 
 			    flashstage.displayState==StageDisplayState.FULL_SCREEN){
@@ -797,20 +795,29 @@ class Gfx {
 				}
 			}
 		}
+		
+		if (windowwidth == 0 && windowheight == 0) {
+			//if returning to windowed mode from fullscreen, don't mess with the
+			//viewport now; leave it to the onresize event to catch
+			return;
+		}
+		
+		starstage.stageWidth = screenwidth;
+    starstage.stageHeight = screenheight;
+		
 		// set rectangle dimensions for viewPort:
 		var stretchscalex:Float;
 		var stretchscaley:Float;
-		var stretchscalex:Float = Std.int(w) / Std.parseInt(Core.WINDOW_WIDTH);
-		var stretchscaley:Float = Std.int(h) / Std.parseInt(Core.WINDOW_HEIGHT);
+		var stretchscalex:Float = Std.int(windowwidth) / screenwidth;
+		var stretchscaley:Float = Std.int(windowheight) / screenheight;
 		var stretchscale:Float = Math.min(stretchscalex, stretchscaley);
 		
 		var viewPortRectangle:Rectangle = new Rectangle();
-		viewPortRectangle.width = Std.parseInt(Core.WINDOW_WIDTH) * stretchscale; 
-		viewPortRectangle.height = Std.parseInt(Core.WINDOW_HEIGHT) * stretchscale;
+		viewPortRectangle.width = screenwidth * stretchscale; 
+		viewPortRectangle.height = screenheight * stretchscale;
 		
-		viewPortRectangle.x = Std.int((w - Std.int(Std.parseInt(Core.WINDOW_WIDTH) * stretchscale)) / 2);
-		viewPortRectangle.y = Std.int((h - Std.int(Std.parseInt(Core.WINDOW_HEIGHT) * stretchscale)) / 2);
-		
+		viewPortRectangle.x = Std.int((windowwidth - Std.int(screenwidth * stretchscale)) / 2);
+		viewPortRectangle.y = Std.int((windowheight - Std.int(screenheight * stretchscale)) / 2);
 		// resize the viewport:
 		Starling.current.viewPort = viewPortRectangle;
 	}
@@ -824,10 +831,10 @@ class Gfx {
 	}
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
-	public static function resizescreen(width:Float, height:Float, scale:Float = 1) {
-		initgfx(Std.int(width), Std.int(height), scale);
+	public static function resizescreen(width:Float, height:Float) {
+		initgfx(Std.int(width), Std.int(height));
 		Text.init(starstage);
-		updategraphicsmode(Std.int(width * scale), Std.int(height * scale));
+		updategraphicsmode(starstage.stageWidth, starstage.stageHeight);
 	}
 	
 	public static var fullscreen(get,set):Bool;
@@ -842,7 +849,7 @@ class Gfx {
 		if (_fullscreen) {
 			updategraphicsmode(devicexres, deviceyres);
 		}else {
-			updategraphicsmode(Std.int(starstage.width), Std.int(starstage.height));
+			updategraphicsmode(0, 0);
 		}
 		
 		return _fullscreen;
@@ -896,14 +903,13 @@ class Gfx {
 	}
 	
 	/** Called from resizescreen(). Sets up all our graphics buffers. */
-	private static function initgfx(width:Int, height:Int, scale:Float) {
+	private static function initgfx(width:Int, height:Int) {
 		//We initialise a few things
 		screenwidth = width; screenheight = height;
 		screenwidthmid = Std.int(screenwidth / 2); screenheightmid = Std.int(screenheight / 2);
 		
 		devicexres = Std.int(openfl.system.Capabilities.screenResolutionX);
 		deviceyres = Std.int(openfl.system.Capabilities.screenResolutionY);
-		screenscale = scale;
 		
 		tempquad.touchable = false;
 		//temppoly4 = new Poly4();
@@ -913,7 +919,7 @@ class Gfx {
 			drawto = backbuffer;
 			screen = new Image(backbuffer);
 			screen.touchable = false;
-			screen.scale = scale;
+			screen.scale = 1;
 			screen.smoothing = "none";
 			starstage.addChild(screen);
 			

@@ -82,7 +82,7 @@ class Core extends Sprite {
 		Scene.init();
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
-		if (!Gfx.gfxinit) {		
+		if (!Gfx.gfxinit) {
 			if (S.trimspaces(STARTFULLSCREEN.toLowerCase()) == "true") {
 				//Temporary work around to allow starting in fullscreen
 				var stretchscale:Float;
@@ -91,12 +91,15 @@ class Core extends Sprite {
 				stretchscalex = Std.int(openfl.system.Capabilities.screenResolutionX) / Std.parseInt(WINDOW_WIDTH);
 				stretchscaley = Std.int(openfl.system.Capabilities.screenResolutionY) / Std.parseInt(WINDOW_HEIGHT);
 				stretchscale = Math.min(stretchscalex, stretchscaley);
-				Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT), stretchscale);
-				
-				Gfx.screen.x = Std.int((Std.int(openfl.system.Capabilities.screenResolutionX) - (Std.parseInt(WINDOW_WIDTH) * stretchscale)) / 2);
-				Gfx.screen.y = Std.int((Std.int(openfl.system.Capabilities.screenResolutionY) - (Std.parseInt(WINDOW_HEIGHT) * stretchscale)) / 2);
+				Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT));
 			}else{
-				Gfx.resizescreen(stage.stageWidth, stage.stageHeight, 1);
+				Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT));
+			}
+		}else {
+			if (S.trimspaces(STARTFULLSCREEN.toLowerCase()) == "true") {
+				
+			}else{
+				//Gfx.updategraphicsmode(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT));
 			}
 		}
 		
