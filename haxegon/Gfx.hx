@@ -846,6 +846,8 @@ class Gfx {
 
   static function set_fullscreen(fs:Bool) {
 		_fullscreen = fs;
+		if (!gfxinit) return fs;
+		
 		if (_fullscreen) {
 			updategraphicsmode(devicexres, deviceyres);
 		}else {
