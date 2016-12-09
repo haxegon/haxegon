@@ -845,6 +845,11 @@ class Gfx {
 	}
 
   static function set_fullscreen(fs:Bool) {
+		#if html5
+		_fullscreen = fs;
+		Debug.log("Warning: HTML5 target does not currently support fullscreen. Check again in a later version!");
+		return fs;
+		#else
 		_fullscreen = fs;
 		if (!gfxinit) return fs;
 		
@@ -855,6 +860,7 @@ class Gfx {
 		}
 		
 		return _fullscreen;
+		#end
 	}
 	
 	/** Gives Gfx access to the stage, and preloads packed textures. */
