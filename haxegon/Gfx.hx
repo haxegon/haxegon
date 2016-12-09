@@ -310,6 +310,7 @@ class Gfx {
 		var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
 		var img:Image = new Image(tex);
 		img.touchable = false;
+		img.smoothing = "none";
 
 		var exindex:Null<Int> = imageindex.get(imagename);
 		if (exindex == null) {
@@ -358,7 +359,11 @@ class Gfx {
 
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoscreen() {
+		if (drawto != null) drawto.bundleunlock();
+		
 		drawto = backbuffer;
+		
+		if (drawto != null) drawto.bundlelock();
 	}
 	
 	/** Tell draw commands to draw to the given image. */
@@ -368,9 +373,13 @@ class Gfx {
 			return;
 		}
 		
+		if (drawto != null) drawto.bundleunlock();
+		
 		var imagenum:Int = imageindex.get(imagename);
 		promotetorendertarget(images[imagenum]);
 		drawto = cast(images[imagenum].texture, RenderTexture);
+		
+		if (drawto != null) drawto.bundlelock();
 	}
 	
 	/** Tell draw commands to draw to the given tile in the current tileset. */
@@ -389,9 +398,13 @@ class Gfx {
 				Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
 			}
 		}
-
+		
+		if (drawto != null) drawto.bundleunlock();
+		
 		promotetorendertarget(tiles[tileset].tiles[tilenum]);
 		drawto = cast(tiles[tileset].tiles[tilenum].texture, RenderTexture);
+		
+		if (drawto != null) drawto.bundlelock();
 	}
 	
 	/** Helper function for image drawing functions. */
@@ -655,7 +668,7 @@ class Gfx {
 	}
 	
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT) return;
+		if (color == Col.TRANSPARENT || drawto == null) return;
 		templine = new Line(x1, y1, x2, y2, linethickness, color);
 		templine.alpha = alpha;
 		
@@ -663,7 +676,7 @@ class Gfx {
 	}
 
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT) return;
+		if (color == Col.TRANSPARENT || drawto == null) return;
 		var tempring:Ring = new Ring(radius - linethickness, radius, color, true, 6, angle);
 		tempring.alpha = alpha;
 		
@@ -674,7 +687,7 @@ class Gfx {
 	}
 	
 	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT) return;
+		if (color == Col.TRANSPARENT || drawto == null) return;
 		var tempring:Disk = new Disk(radius, color, true, 6, angle);
 		tempring.alpha = alpha;
 		
@@ -685,7 +698,7 @@ class Gfx {
 	}
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT) return;
+		if (color == Col.TRANSPARENT || drawto == null) return;
 		var tempring:Ring = new Ring(radius - linethickness, radius, color);
 		tempring.alpha = alpha;
 		
@@ -696,7 +709,7 @@ class Gfx {
 	}
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
-		if (col == Col.TRANSPARENT) return;
+		if (col == Col.TRANSPARENT || drawto == null) return;
 		var tempring:Disk = new Disk(radius, col);
 		tempring.alpha = alpha;
 		
@@ -707,14 +720,14 @@ class Gfx {
 	}
 	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT) return;
+		if (color == Col.TRANSPARENT || drawto == null) return;
 		drawline(x1, y1, x2, y2, color, alpha);
 		drawline(x1, y1, x3, y3, color, alpha);
 		drawline(x2, y2, x3, y3, color, alpha);
 	}
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT) return;
+		if (color == Col.TRANSPARENT || drawto == null) return;
 		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, color);
 		temppoly4.alpha = alpha;
 		drawto.draw(temppoly4);

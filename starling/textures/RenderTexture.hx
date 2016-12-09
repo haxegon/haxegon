@@ -198,6 +198,50 @@ class RenderTexture extends SubTexture
     {
         renderBundled(drawingBlock, null, null, 1.0, antiAliasing);
     }
+		
+		private var haxegonpreviousRenderTarget:Texture;
+		public function bundlelock(antiAliasing:Int=0):Void {
+			var context:Context3D = Starling.current.context;
+			if (context == null) throw new MissingContextError();
+			if (!Starling.current.contextValid) return;
+
+			// switch buffers
+			if (isDoubleBuffered)
+			{
+					var tmpTexture:Texture = mActiveTexture;
+					mActiveTexture = mBufferTexture;
+					mBufferTexture = tmpTexture;
+					mHelperImage.texture = mBufferTexture;
+			}
+
+			haxegonpreviousRenderTarget = mSupport.renderTarget;
+			
+			// limit drawing to relevant area
+			sClipRect.setTo(0, 0, mActiveTexture.width, mActiveTexture.height);
+
+			mSupport.pushClipRect(sClipRect);
+			mSupport.setRenderTarget(mActiveTexture, antiAliasing);
+			
+			if (isDoubleBuffered || !isPersistent || !mBufferReady)
+					mSupport.clear();
+
+			// draw buffer
+			if (isDoubleBuffered && mBufferReady)
+					mHelperImage.render(mSupport, 1.0);
+			else
+					mBufferReady = true;
+			
+			mDrawing = true;
+		}
+		
+		public function bundleunlock():Void {
+			mDrawing = false;
+			mSupport.finishQuadBatch();
+			Starling.current.mStoredDrawCount += mSupport.drawCount; // hack: report draw calls for this frame
+			mSupport.nextFrame();
+			mSupport.renderTarget = haxegonpreviousRenderTarget;
+      mSupport.popClipRect();
+		}
     
     private function render(object:DisplayObject, matrix:Matrix=null, alpha:Float=1.0):Void
     {

@@ -168,16 +168,18 @@ class Core extends Sprite {
 		Input.update();
 		
 		if (!Scene.hasseperaterenderfunction) {
-			Gfx.backbuffer.drawBundled(
-				function(unused0:DisplayObject, unused1:Matrix, unused2:Float) {
-					if (Gfx.clearcolor != Col.TRANSPARENT) Gfx.clearscreen(Gfx.clearcolor);
-					Scene.update();	
-					Text.drawstringinput();
-					Debug.showlog();
-					
-					if (updateextended) extendedupdatefunction(updateindex, updatecount);
-				}
-			);
+			//Gfx.backbuffer.drawBundled(
+			//	function(unused0:DisplayObject, unused1:Matrix, unused2:Float) {
+			Gfx.backbuffer.bundlelock();
+			if (Gfx.clearcolor != Col.TRANSPARENT) Gfx.clearscreen(Gfx.clearcolor);
+			Scene.update();	
+			Text.drawstringinput();
+			Debug.showlog();
+			
+			if (updateextended) extendedupdatefunction(updateindex, updatecount);
+			Gfx.backbuffer.bundleunlock();
+			//	}
+			//);
 		}else {
 		  Scene.update();	
 			if (updateextended) extendedupdatefunction(updateindex, updatecount);
