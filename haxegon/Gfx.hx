@@ -778,11 +778,12 @@ class Gfx {
 	public static var clearcolor:Int = 0x000000;
 	
 	public static function clearscreen(color:Int = 0x000000) {
+		if (color == Col.TRANSPARENT && drawto != null) return;
 		drawto.clear(color, 1.0);
 	}
 	
 	public static function setpixel(x:Float, y:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT) return;
+		if (color == Col.TRANSPARENT && drawto != null) return;
 		fillbox(x, y, 1, 1, color, alpha);
 	}
 	
