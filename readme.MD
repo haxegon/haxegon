@@ -6,7 +6,7 @@ Haxegon is a tiny haxe programming library aimed at beginners. It's currently in
 
 ## Trying it out
 
-Interested in trying it out? You can install Haxegon using haxelib:
+Interested in trying it out? First install openfl via <a href="http://www.openfl.org/learn/docs/getting-started/">instructions here</a>, then you can install Haxegon using haxelib:
 
     haxelib install haxegon
     
