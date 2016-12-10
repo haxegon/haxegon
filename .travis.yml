@@ -38,3 +38,11 @@ script:
   - haxelib run openfl build ~/haxegon/simple/05\ -\ Sky\ Tiles flash
   - haxelib run openfl build ~/haxegon/simple/05\ -\ Sky\ Tiles html5
   - haxelib run openfl build ~/haxegon/simple/05\ -\ Sky\ Tiles neko
+  
+  - haxelib run openfl build ~/haxegon/simple/06\ -\ Music\ and\ Sounds flash
+  - haxelib run openfl build ~/haxegon/simple/06\ -\ Music\ and\ Sounds html5
+  - haxelib run openfl build ~/haxegon/simple/06\ -\ Music\ and\ Sounds neko
+  
+  - haxelib run openfl build ~/haxegon/simple/07\ -\ Scene\ Change flash
+  - haxelib run openfl build ~/haxegon/simple/07\ -\ Scene\ Change html5
+  - haxelib run openfl build ~/haxegon/simple/07\ -\ Scene\ Change neko
