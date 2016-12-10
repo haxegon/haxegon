@@ -200,11 +200,11 @@ class RenderTexture extends SubTexture
     }
 		
 		private var haxegonpreviousRenderTarget:Texture;
-		public function bundlelock(antiAliasing:Int=0):Void {
+		public function bundlelock(antiAliasing:Int = 0):Void {
 			var context:Context3D = Starling.current.context;
 			if (context == null) throw new MissingContextError();
 			if (!Starling.current.contextValid) return;
-
+			
 			// switch buffers
 			if (isDoubleBuffered)
 			{

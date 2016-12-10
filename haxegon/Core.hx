@@ -77,7 +77,6 @@ class Core extends Sprite {
 		
 		//Call Main.new()
 		Scene.init();
-		if (Gfx.drawto != null) Gfx.drawto.bundleunlock();
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
 		if (!Gfx.gfxinit) {
@@ -169,7 +168,7 @@ class Core extends Sprite {
 		Input.update();
 		
 		if (!Scene.hasseperaterenderfunction) {
-			Gfx.backbuffer.bundlelock();
+			Gfx.drawto.bundlelock();
 			
 			if (Gfx.clearcolor != Col.TRANSPARENT) Gfx.clearscreen(Gfx.clearcolor);
 			Scene.update();	
@@ -178,7 +177,7 @@ class Core extends Sprite {
 			
 			if (updateextended) extendedupdatefunction(updateindex, updatecount);
 			
-			Gfx.backbuffer.bundleunlock();
+			Gfx.drawto.bundleunlock();
 		}else {
 		  Scene.update();	
 			if (updateextended) extendedupdatefunction(updateindex, updatecount);
@@ -188,7 +187,7 @@ class Core extends Sprite {
 	}
 	
 	private function dorender() {
-		Gfx.backbuffer.bundlelock();
+		Gfx.drawto.bundlelock();
 		
 		if (Gfx.clearcolor != Col.TRANSPARENT) Gfx.clearscreen(Gfx.clearcolor);
 		Scene.render();
@@ -196,7 +195,7 @@ class Core extends Sprite {
 		Debug.showlog();
 		if (renderextended) extendedrenderfunction();
 		
-		Gfx.backbuffer.bundleunlock();
+		Gfx.drawto.bundleunlock();
 	}
 	
 	public static var fps(get,set):Int;
