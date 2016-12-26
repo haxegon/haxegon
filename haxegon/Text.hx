@@ -93,7 +93,7 @@ class Fontfile {
 			var fontdata:String = Data.gettextasset("data/graphics/fonts/" + _file + "/" + _file + ".fnt");
 			fontxml = Xml.parse(fontdata).firstElement();
 			typename = fontxml.elementsNamed("info").next().get("face");
-			pngname = Xml.parse(fontdate).firstElement()
+			pngname = Xml.parse(fontdata).firstElement()
 			               .elementsNamed("pages").next().elementsNamed("page").next().get("file");
 			if (pngname == null) {
 				Debug.log("ERROR: Bitmap font XML file \"" + _file + ".fnt\" does not reference a .png file.");
