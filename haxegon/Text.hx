@@ -90,9 +90,10 @@ class Fontfile {
 		}else	if (Data.assetexists("data/graphics/fonts/" + _file + "/" + _file + ".fnt")) {
 			type = "bitmap";
 			
-			fontxml = Xml.parse(Data.gettextasset("data/graphics/fonts/" + _file + "/" + _file + ".fnt")).firstElement();
+			var fontdata:String = Data.gettextasset("data/graphics/fonts/" + _file + "/" + _file + ".fnt");
+			fontxml = Xml.parse(fontdata).firstElement();
 			typename = fontxml.elementsNamed("info").next().get("face");
-			pngname = Xml.parse(Data.gettextasset("data/graphics/fonts/" + _file + "/" + _file + ".fnt")).firstElement()
+			pngname = Xml.parse(fontdate).firstElement()
 			               .elementsNamed("pages").next().elementsNamed("page").next().get("file");
 			if (pngname == null) {
 				Debug.log("ERROR: Bitmap font XML file \"" + _file + ".fnt\" does not reference a .png file.");

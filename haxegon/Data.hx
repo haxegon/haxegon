@@ -171,7 +171,23 @@ class Data {
 	 
 	private static function assetexists(filename:String):Bool {
 		filename = filename.toLowerCase();
-		return Assets.list().indexOf(filename) >= 0;
+		return embeddedassets.indexOf(filename) >= 0;
+	}
+	
+	private static function assetexists_infolder(folder:String, filename:String):Bool {
+		filename = filename.toLowerCase();
+		folder = folder.toLowerCase();
+		//We look through the assets list for at one that contains the folder name and the filename
+		var folderlength:Int = folder.length;
+		var filenamelength:Int = filename.length;
+		for (i in 0 ... embeddedassets.length) {
+		  if (S.left(embeddedassets[i], folderlength) == folder) {
+				if (S.right(embeddedassets[i], filenamelength) == filename) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	private static function getsoundasset(filename:String):Sound {
