@@ -1,5 +1,7 @@
 package haxegon;
 
+import openfl.net.SharedObject;
+import openfl.net.SharedObjectFlushStatus;
 import openfl.Assets;
 
 class Data {
@@ -94,12 +96,68 @@ class Data {
 		return returnedarray2d;
 	}
 	
+	public static var savefile(get, set):String;
+	private static var _savefile:String = "";
+	
+	static function get_savefile():String {
+		return _savefile;
+	}
+	
+	static function set_savefile(newsavefile:String):String {
+	  if(savefile != newsavefile){
+      changesavefile(newsavefile);
+    }
+		return _savefile;
+	}
+	
+	private static function changesavefile(name:String) {
+		_savefile = name;
+		so = SharedObject.getLocal(_savefile);
+	}
+	
+	public static function save(key:String, value:Dynamic) {
+	  if (so == null) changesavefile("haxegongame");
+		
+		Reflect.setField(so.data, key, value);
+		
+		try { 
+			so.flush();
+		} catch (e:Dynamic) {
+		  Debug.log("Error: Unable to save \"" + key + "\"."); 
+		}
+	}
+	
+	public static function load(key:String):Dynamic {
+	  if (so == null) changesavefile("haxegongame");
+		
+		var returnval:Dynamic = Reflect.field(so.data, key);
+		if (returnval == null) {
+			if (_savefile == "haxegongame") {
+				Debug.log("Error: There is no value stored for \"" + key + "\"");
+			}else{
+				Debug.log("Error: Savefile + \"" + _savefile + "\" has no value stored for \"" + key + "\"");
+			}
+		}
+		
+		return returnval;
+	}
+	
+	public static function deletesave(name:String) {
+		if (_savefile != name) {
+			var newso:SharedObject = SharedObject.getLocal(name);
+			newso.clear();
+		}else {
+		  so.clear();	
+		}
+	}
+	
 	public static function flagset(key:String, value:Dynamic) {
-	  flags.set(key, value);	
+		_flaglistdirty = true;
+	  flags.set(key, value);
 	}
 	
 	public static function flagget(key:String):Dynamic {
-	  return flags.get(key);	
+	  return flags.get(key);
 	}
 	
 	public static function flagexists(key:String):Bool {
@@ -107,17 +165,28 @@ class Data {
 	}
 	
 	public static function flagremove(key:String) {
+		_flaglistdirty = true;
 	  flags.remove(key);
 	}
 	
-	public static function flaglist():Array<String> {
-	  var returnval:Array<String> = [];
-		for (f in flags.keys()) {
-			returnval.push(f);
+	public static var flaglist(get, never):Array<String> ;
+	private static var _flaglist:Array<String> = [];
+	private static var _flaglistdirty:Bool = true;
+	
+	static function get_flaglist():Array<String> {
+		if (_flaglistdirty) {
+			_flaglist = [];
+			for (f in flags.keys()) {
+				_flaglist.push(f);
+			}
+			
+			_flaglistdirty = false;
 		}
-		return returnval;
+		
+		return _flaglist;
 	}
 	
+	private static var so:SharedObject;
 	private static var flags:Map<String, Dynamic> = new Map<String, Dynamic>();
 	
 	private static var tempstring:String;
