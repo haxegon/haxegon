@@ -234,6 +234,7 @@ class Starling extends EventDispatcher
     private static var sAll:Vector<Starling> = new Vector<Starling>();
     
     public var mStoredDrawCount:Int = 0;
+    
     // construction
     
     /** Creates a new Starling instance. 

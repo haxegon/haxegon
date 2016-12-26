@@ -198,7 +198,7 @@ class RenderTexture extends SubTexture
     {
         renderBundled(drawingBlock, null, null, 1.0, antiAliasing);
     }
-		
+    
 		private var haxegonpreviousRenderTarget:Texture;
 		public function bundlelock(antiAliasing:Int = 0):Void {
 			var context:Context3D = Starling.current.context;

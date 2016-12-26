@@ -120,10 +120,10 @@ class QuadBatch extends DisplayObject
             var profile:Context3DProfile = Starling.current.profile;
             mForceTinted = profile != Context3DProfile.BASELINE_CONSTRAINED && profile != Context3DProfile.BASELINE;
         }
-        
+
         // hack
     		mForceTinted = true;
-
+    		
         // Handle lost context. We use the conventional event here (not the one from Starling)
         // so we're able to create a weak event listener; this avoids memory leaks when people 
         // forget to call "dispose" on the QuadBatch.

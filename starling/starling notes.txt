@@ -4,4 +4,4 @@ https://github.com/openfl/starling/tree/v1.8
 
 as of this commit:
 
-https://github.com/openfl/starling/tree/76dbd4d4d68c53b2a0984045c90f88b64d92f9f0
+https://github.com/openfl/starling/tree/c98bdc1dd171021a2371c7976ce13a206204b757
