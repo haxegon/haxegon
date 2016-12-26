@@ -15,7 +15,6 @@
 * Fixed bug where HTML5 build always displayed a fullscreen warning at startup.
 * General library cleanups.
 
-
 0.4.0-alpha (2016-12-10)
 ------------------
 ### New features
