@@ -25,7 +25,7 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 * Added new functions to Data for loading and saving key/value pairs:
 ``` haxe
   Data.save(key, value);             //e.g. Data.save("highscore", highscore);
-  Data.load(key);                    //e.g. highscore = Data.load("highscore
+  Data.load(key);                    //e.g. highscore = Data.load("highscore");
   Data.savefile = "mygame_slot1";    //Sets a name for your savefile (optional! default is "haxegongame".)
   Data.deletesave(filename:String);  //Delete a save file (leaving parameter blank deletes the default)
   ```
