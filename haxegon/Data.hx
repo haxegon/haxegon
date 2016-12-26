@@ -151,43 +151,7 @@ class Data {
 		}
 	}
 	
-	public static function flagset(key:String, value:Dynamic) {
-		_flaglistdirty = true;
-	  flags.set(key, value);
-	}
-	
-	public static function flagget(key:String):Dynamic {
-	  return flags.get(key);
-	}
-	
-	public static function flagexists(key:String):Bool {
-	  return flags.exists(key);
-	}
-	
-	public static function flagremove(key:String) {
-		_flaglistdirty = true;
-	  flags.remove(key);
-	}
-	
-	public static var flaglist(get, never):Array<String> ;
-	private static var _flaglist:Array<String> = [];
-	private static var _flaglistdirty:Bool = true;
-	
-	static function get_flaglist():Array<String> {
-		if (_flaglistdirty) {
-			_flaglist = [];
-			for (f in flags.keys()) {
-				_flaglist.push(f);
-			}
-			
-			_flaglistdirty = false;
-		}
-		
-		return _flaglist;
-	}
-	
 	private static var so:SharedObject;
-	private static var flags:Map<String, Dynamic> = new Map<String, Dynamic>();
 	
 	private static var tempstring:String;
 }
