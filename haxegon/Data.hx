@@ -78,8 +78,8 @@ class Data {
 			i++;
 		}
 		
-		tempstring = replacechar(tempstring, "\r", "");
-		tempstring = replacechar(tempstring, "\n", delimiter);
+		tempstring = S.replacechar(tempstring, "\r", "");
+		tempstring = S.replacechar(tempstring, "\n", delimiter);
 		
 		var returnedarray:Array<T> = new Array<T>();
 		var stringarray:Array<String> = tempstring.split(delimiter);
@@ -92,23 +92,6 @@ class Data {
 		
 		var returnedarray2d:Array<Array<T>> = [for (x in 0 ... width) [for (y in 0 ... height) returnedarray[x + (y * width)]]];
 		return returnedarray2d;
-	}
-	
-	/** Return characters from the middle of a string. */
-	private static function mid(currentstring:String, start:Int = 0, length:Int = 1):String {
-		return currentstring.substr(start,length);
-	}
-	
-	private static function replacechar(currentstring:String, ch:String = "|", ch2:String = ""):String {
-		var fixedstring:String = "";
-		for (i in 0 ... currentstring.length) {
-			if (mid(currentstring, i) == ch) {
-				fixedstring += ch2;
-			}else {
-				fixedstring += mid(currentstring, i);
-			}
-		}
-		return fixedstring;
 	}
 	
 	private static var tempstring:String;
