@@ -14,7 +14,7 @@ class Data {
 		  return [""];
 		}
 		
-		tempstring = replacechar(tempstring, "\r", "");
+		tempstring = S.replacechar(tempstring, "\r", "");
 		
 		return tempstring.split("\n");
 	}
@@ -32,15 +32,15 @@ class Data {
 		width = 1;
 		var i:Int = 0;
 		while (i < tempstring.length) {
-			if (mid(tempstring, i) == delimiter) width++;
-			if (mid(tempstring, i) == "\n") {
+			if (S.mid(tempstring, i) == delimiter) width++;
+			if (S.mid(tempstring, i) == "\n") {
 				break;
 			}
 			i++;
 		}
 		
-		tempstring = replacechar(tempstring, "\r", "");
-		tempstring = replacechar(tempstring, "\n", delimiter);
+		tempstring = S.replacechar(tempstring, "\r", "");
+		tempstring = S.replacechar(tempstring, "\n", delimiter);
 		
 		var returnedarray:Array<T> = new Array<T>();
 		var stringarray:Array<String> = tempstring.split(delimiter);
@@ -71,8 +71,8 @@ class Data {
 		width = 1;
 		var i:Int = 0;
 		while (i < tempstring.length) {
-			if (mid(tempstring, i) == delimiter) width++;
-			if (mid(tempstring, i) == "\n") {
+			if (S.mid(tempstring, i) == delimiter) width++;
+			if (S.mid(tempstring, i) == "\n") {
 				break;
 			}
 			i++;
@@ -93,6 +93,32 @@ class Data {
 		var returnedarray2d:Array<Array<T>> = [for (x in 0 ... width) [for (y in 0 ... height) returnedarray[x + (y * width)]]];
 		return returnedarray2d;
 	}
+	
+	public static function flagset(key:String, value:Dynamic) {
+	  flags.set(key, value);	
+	}
+	
+	public static function flagget(key:String):Dynamic {
+	  return flags.get(key);	
+	}
+	
+	public static function flagexists(key:String):Bool {
+	  return flags.exists(key);
+	}
+	
+	public static function flagremove(key:String) {
+	  flags.remove(key);
+	}
+	
+	public static function flaglist():Array<String> {
+	  var returnval:Array<String> = [];
+		for (f in flags.keys()) {
+			returnval.push(f);
+		}
+		return returnval;
+	}
+	
+	private static var flags:Map<String, Dynamic> = new Map<String, Dynamic>();
 	
 	private static var tempstring:String;
 }
