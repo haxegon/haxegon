@@ -8,8 +8,10 @@ import starling.events.*;
 import starling.display.*;
 import starling.core.Starling;
 import starling.core.StatsDisplay;
+import openfl.Assets;
 
 @:access(Main)
+@:access(haxegon.Data)
 @:access(haxegon.Gfx)
 @:access(haxegon.Text)
 @:access(haxegon.Music)
@@ -65,6 +67,7 @@ class Core extends Sprite {
 		Random.setseed(Std.int(Math.random() * 233280));
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
+		Data.initassets();
 		Gfx.init(this.stage, Starling.current.nativeStage);
 		Text.defaultfont();
 		Music.init();

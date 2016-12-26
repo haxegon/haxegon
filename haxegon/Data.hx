@@ -1,8 +1,11 @@
 package haxegon;
 
+import openfl.display.BitmapData;
+import openfl.media.Sound;
 import openfl.net.SharedObject;
 import openfl.net.SharedObjectFlushStatus;
 import openfl.Assets;
+import openfl.text.Font;
 
 class Data {
 	public static var width:Int = 0;
@@ -155,4 +158,43 @@ class Data {
 	private static var so:SharedObject;
 	
 	private static var tempstring:String;
+	
+	/* Data.hx asset loading functions are used internally by haxegon
+	 * to make sure case in-insensitive loading works ok */
+	private static var embeddedassets_original:Array<String>;
+	private static var embeddedassets:Array<String>;
+	private static function initassets() {
+		embeddedassets_original = Assets.list();
+		embeddedassets = [];
+		for (i in 0 ... embeddedassets_original.length) embeddedassets.push(embeddedassets_original[i].toLowerCase());		
+	}
+	 
+	private static function assetexists(filename:String):Bool {
+		filename = filename.toLowerCase();
+		return Assets.list().indexOf(filename) >= 0;
+	}
+	
+	private static function getsoundasset(filename:String):Sound {
+		filename = filename.toLowerCase();
+		var realfilename:String = embeddedassets_original[embeddedassets.indexOf(filename)];
+	  return Assets.getSound(realfilename);
+	}
+	
+	private static function getgraphicsasset(filename:String):BitmapData {
+		filename = filename.toLowerCase();
+		var realfilename:String = embeddedassets_original[embeddedassets.indexOf(filename)];
+	  return Assets.getBitmapData(realfilename);
+	}
+	
+	private static function getfontasset(filename:String):Font {
+		filename = filename.toLowerCase();
+		var realfilename:String = embeddedassets_original[embeddedassets.indexOf(filename)];
+	  return Assets.getFont(realfilename);
+	}
+	
+	private static function gettextasset(filename:String):String {
+		filename = filename.toLowerCase();
+		var realfilename:String = embeddedassets_original[embeddedassets.indexOf(filename)];
+	  return Assets.getText(realfilename);
+	}
 }

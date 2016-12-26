@@ -30,6 +30,7 @@ class HaxegonTileset {
 }
 
 @:access(haxegon.Core)
+@:access(haxegon.Data)
 @:access(haxegon.Text)
 class Gfx {
 	public static var LEFT:Int = -10000;
@@ -140,10 +141,10 @@ class Gfx {
 			//In any case, we use that texture as the source for these tiles
 			tex = getassetpackedtexture(imagename);
 		}else {
-			if(Assets.exists("data/graphics/" + imagename + ".png")){
-				tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);
-			}else if (Assets.exists("data/graphics/" + imagename + ".jpg")) {
-				tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".jpg"), false);
+			if(Data.assetexists("data/graphics/" + imagename + ".png")){
+				tex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/" + imagename + ".png"), false);
+			}else if (Data.assetexists("data/graphics/" + imagename + ".jpg")) {
+				tex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/" + imagename + ".jpg"), false);
 			}else {
 				Debug.log("ERROR: In loadtiles, cannot find \"data/graphics/" + imagename + ".png\" or \"data/graphics/" + imagename + ".jpg\"");
 				return;
@@ -289,10 +290,10 @@ class Gfx {
 		if (imageindex.exists(imagename)) return; //This is already loaded, so we're done!
 		
 		var tex:Texture;
-		if(Assets.exists("data/graphics/" + imagename + ".png")){
-		  tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".png"), false);
-		}else if (Assets.exists("data/graphics/" + imagename + ".jpg")) {
-			tex = Texture.fromBitmapData(Assets.getBitmapData("data/graphics/" + imagename + ".jpg"), false);
+		if(Data.assetexists("data/graphics/" + imagename + ".png")){
+		  tex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/" + imagename + ".png"), false);
+		}else if (Data.assetexists("data/graphics/" + imagename + ".jpg")) {
+			tex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/" + imagename + ".jpg"), false);
 		}else {
 			Debug.log("ERROR: In loadimage, cannot find \"data/graphics/" + imagename + ".png\" or \"data/graphics/" + imagename + ".jpg\"");
 			return;

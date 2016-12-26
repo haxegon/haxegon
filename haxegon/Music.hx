@@ -3,8 +3,8 @@ package haxegon;
 import openfl.display.*;          
 import openfl.media.*; 
 import openfl.events.*;
-import openfl.Assets;
 
+@:access(haxegon.Data)
 class Music {
 	//Play a sound effect! There are 16 channels, which iterate
 	public static function playsound(soundname:String, volume:Float = 1.0, offset:Float = 0.0) {
@@ -29,15 +29,15 @@ class Music {
 	
 	public static function loadsound(soundname:String, volumelevel:Float = 1.0):Bool {
 		#if flash
-		if (Assets.list().indexOf("data/sounds/" + soundname + ".mp3") >= 0) {
-			efchan.push(Assets.getSound("data/sounds/" + soundname + ".mp3"));
+		if (Data.assetexists("data/sounds/" + soundname + ".mp3")) {
+			efchan.push(Data.getsoundasset("data/sounds/" + soundname + ".mp3"));
 		}else {
 		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/mp3/" + soundname + ".mp3\". (.mp3 files are required for flash targets.)"); 
 			return false;
 		}
 		#else
-		if (Assets.list().indexOf("data/sounds/" + soundname + ".ogg") >= 0) {
-			efchan.push(Assets.getSound("data/sounds/" + soundname + ".ogg")); 
+		if (Data.assetexists("data/sounds/" + soundname + ".ogg")) {
+			efchan.push(Data.getsoundasset("data/sounds/" + soundname + ".ogg")); 
 		}else {
 		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/ogg/" + soundname + ".ogg\". (.ogg files are required on this platform.)"); 
 			return false;
@@ -51,15 +51,15 @@ class Music {
 	
 	public static function loadsong(songname:String, volumelevel:Float = 1.0):Bool {	
 		#if flash
-		if(Assets.list().indexOf("data/sounds/" + songname + ".mp3") >= 0){
-			musicchan.push(Assets.getSound("data/sounds/" + songname + ".mp3"));
+		if (Data.assetexists("data/sounds/" + songname + ".mp3")) {
+			musicchan.push(Data.getsoundasset("data/sounds/" + songname + ".mp3"));
 		}else {
 		  Debug.log("ERROR: In loadsong, cannot find \"data/sounds/mp3/" + songname + ".mp3\". (.mp3 files are required for flash targets.)"); 
 			return false;
 		}
 		#else
-		if(Assets.list().indexOf("data/sounds/" + songname + ".ogg") >= 0){
-			musicchan.push(Assets.getSound("data/sounds/" + songname + ".ogg")); 
+		if (Data.assetexists("data/sounds/" + songname + ".ogg")) {
+			musicchan.push(Data.getsoundasset("data/sounds/" + songname + ".ogg")); 
 		}else {
 		  Debug.log("ERROR: In loadsong, cannot find \"data/sounds/ogg/" + songname + ".ogg\". (.ogg files are required on this platform.)"); 
 			return false;
