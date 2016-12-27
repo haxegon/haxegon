@@ -2,7 +2,9 @@
 
 # Haxegon (version 0.5.0 (2016-12-26))
 
-Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. Haxegon uses haxe to compile natively to make games for **html5**, **desktop** and **Flash/AIR**.
+Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. 
+
+Haxegon compile natively to **HTML5**, **Desktop** (Win, Mac, Linux) and **Flash/AIR**.
 
 ## Trying it out
 
