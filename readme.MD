@@ -4,7 +4,7 @@
 
 Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. 
 
-Haxegon compile natively to **HTML5**, **Desktop** (Win, Mac, Linux) and **Flash/AIR**.
+Haxegon compiles natively to **HTML5**, **Desktop** (Win, Mac, Linux) and **Flash/AIR**.
 
 ## Trying it out
 
