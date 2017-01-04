@@ -78,6 +78,11 @@ class Core extends Sprite {
 		Gfx.screenheight = Std.parseInt(WINDOW_HEIGHT);
 		Gfx.screenwidthmid = Std.int(Gfx.screenwidth / 2); Gfx.screenheightmid = Std.int(Gfx.screenheight / 2);
 		
+		//Some stuff mysteriouly doesn't work correctly unless we wait for a millisecond first!
+		Timer.delay(continueloading, 1);
+	}
+	
+  private function continueloading() {
 		//Call Main.new()
 		Scene.init();
 		
