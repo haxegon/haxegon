@@ -2,6 +2,7 @@ package haxegon;
 
 import haxe.Constraints.Function;
 import haxe.Timer;
+import lime.ui.Window;
 import openfl.Lib;
 import openfl.geom.Matrix;
 import starling.events.*;
@@ -264,6 +265,20 @@ class Core extends Sprite {
 		return _showstats;
 	}
 	
+	public static var window(get, never):Window;
+	
+	static function get_window():Window {
+		#if html5
+			Debug.log("ERROR: Core.window is not available in HTML5.");
+			return null;
+		#elseif flash
+			Debug.log("ERROR: Core.window is not available in Flash.");
+			return null;
+		#else
+		return Lib.application.window;
+		#end
+	}
+
 	public static function quit(?code:Int) {
 		#if html5
 			Debug.log("ERROR: Core.quit() has no effect in HTML5.");
