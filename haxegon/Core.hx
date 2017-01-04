@@ -263,4 +263,18 @@ class Core extends Sprite {
 		_showstats = _b;
 		return _showstats;
 	}
+	
+	public static function quit(?code:Int) {
+		#if html5
+			Debug.log("ERROR: Core.quit() has no effect in HTML5.");
+		#elseif flash
+			Debug.log("ERROR: Core.quit() has no effect in Flash.");
+		#else
+		  if (code == null) {
+			  Sys.exit(0);
+			}else{
+				Sys.exit(code);
+			}
+		#end
+	}
 }
