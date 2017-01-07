@@ -223,17 +223,21 @@ class Text {
 	}
 	
 	//Text display functions
-	public static function wordwrap(?textwidth:Int) {
-		if (textwidth == null) {
+	public static var wordwrap(get, set):Int;
+	
+	static function get_wordwrap():Int {
+	  return wordwrapwidth;	
+	}
+	
+	static function set_wordwrap(textwidth:Int) {
+		if (textwidth < 0) {
+			Debug.log("Error: Text.wordwrap must be a number greater than 0.");	
 			wordwrapwidth = 0;
-		}else {
-		  if (textwidth < 0) {
-			  Debug.log("Error: Word wrap width must be a number greater than 0.");	
-				wordwrapwidth = 0;
-			}else{
-				wordwrapwidth = textwidth;
-			}
+		}else{
+			wordwrapwidth = textwidth;
 		}
+		
+		return wordwrapwidth;
 	}
 	
 	private static function currentwidth():Float {
