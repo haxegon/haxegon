@@ -172,6 +172,8 @@ class Core extends Sprite {
 		dorender();
 	}
 
+	private static var currentupdateindex:Int;
+	private static var currentupdatecount:Int;
 	private function doupdate(updateindex:Int, updatecount:Int) {
 		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY), updateindex == 0);
 		Input.update();
@@ -184,12 +186,21 @@ class Core extends Sprite {
 			Text.drawstringinput();
 			Debug.showlog();
 			
-			if (updateextended) extendedupdatefunction(updateindex, updatecount);
+			if (updateextended) {
+				currentupdateindex = updateindex;
+				currentupdatecount = updatecount;
+				extendedupdatefunction();
+			}
 			
 			Gfx.drawto.bundleunlock();
 		}else {
 		  Scene.update();	
-			if (updateextended) extendedupdatefunction(updateindex, updatecount);
+			
+			if (updateextended) {
+				currentupdateindex = updateindex;
+				currentupdatecount = updatecount;
+				extendedupdatefunction();
+			}
 		}
 		
 		Music.processmusic();
