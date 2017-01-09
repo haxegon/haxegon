@@ -403,7 +403,7 @@ class Gfx {
 			}
 		}
 		
-		Gfx.endquadbatch();
+		endquadbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		promotetorendertarget(tiles[tileset].tiles[tilenum]);
@@ -521,7 +521,10 @@ class Gfx {
 			}else {
 				quadbatch.addImage(image, 1.0, shapematrix);
 			}
-		}		
+		}
+		
+		//This could definitely be improved later. See #118
+		endquadbatch();
 	}
 	
 	/** Draws image by name. 
