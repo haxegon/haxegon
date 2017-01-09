@@ -668,13 +668,15 @@ class Gfx {
 		if (y == RIGHT || y == BOTTOM) return tiles[currenttileset].height;
 		return y;
 	}
-	
+		
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		updatequadbatch();
+		
 		templine = new Line(x1, y1, x2, y2, linethickness, color);
 		templine.alpha = alpha;
 		
-		drawto.draw(templine);
+		quadbatch.addQuad(templine);
 	}
 
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
@@ -736,7 +738,7 @@ class Gfx {
 	}
 
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT) return;
+		if (color == Col.TRANSPARENT || drawto == null) return;
 		if (width < 0) {
 			width = -width;
 			x = x - width;
