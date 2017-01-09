@@ -32,7 +32,8 @@ class HaxegonTileset {
 @:access(haxegon.Core)
 @:access(haxegon.Data)
 @:access(haxegon.Text)
-class Gfx {
+class Gfx {    
+	private static inline var MAX_NUM_QUADS:Int = 16383;
 	public static var LEFT:Int = -10000;
 	public static var RIGHT:Int = -20000;
 	public static var TOP:Int = -10000;
@@ -753,13 +754,28 @@ class Gfx {
 	
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT) return;
+		updatequadbatch();
+		
 		tempquad.x = x;
 		tempquad.y = y;
 		tempquad.width = width;
 		tempquad.height = height;
 		tempquad.color = col;
 		tempquad.alpha = alpha;
-		drawto.draw(tempquad);
+		
+		quadbatch.addQuad(tempquad);
+	}
+	
+	private inline static function updatequadbatch() {
+		quadbatchcount++;
+	  if (quadbatchcount >= MAX_NUM_QUADS) endquadbatch();	
+	}
+	
+	private static function endquadbatch() {
+		drawto.draw(quadbatch);
+		
+		quadbatch.reset();
+		quadbatchcount = 0;
 	}
 
 	public static var linethickness(get,set):Float;
@@ -934,7 +950,8 @@ class Gfx {
 		devicexres = Std.int(openfl.system.Capabilities.screenResolutionX);
 		deviceyres = Std.int(openfl.system.Capabilities.screenResolutionY);
 		
-		tempquad.touchable = false;
+		quadbatch = new QuadBatch();
+		starstage.touchable = false;
 		//temppoly4 = new Poly4();
 		
 		if(!gfxinit){
@@ -964,6 +981,22 @@ class Gfx {
 		trect.width = w;
 		trect.height = h;
 	}
+	
+	private static function startframe() {
+		drawto.bundlelock();	
+		
+		if (clearcolor != Col.TRANSPARENT) clearscreen(clearcolor);
+		quadbatch.reset();
+		quadbatchcount = 0;
+	}
+	
+	private static function endframe() {
+		endquadbatch();
+		drawto.bundleunlock();
+	}
+	
+	private static var quadbatchcount:Int = 0;
+	private static var quadbatch:QuadBatch = null;
 	
 	private static var backbuffer:RenderTexture;
 	private static var drawto:RenderTexture;

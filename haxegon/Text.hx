@@ -201,6 +201,8 @@ class Text {
 	}
 	
 	private static function drawstringinput() {
+		Gfx.endquadbatch();
+		
 		if (input_show > 0) {
 			setfont(input_font, input_textsize);
 			input_cursorglow++;
@@ -333,6 +335,7 @@ class Text {
 	
 	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF) {
 		if (text == "") return;
+		Gfx.endquadbatch();
 		
 		if (typeface.length == 0) {
 		  defaultfont();	

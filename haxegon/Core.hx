@@ -179,9 +179,8 @@ class Core extends Sprite {
 		Input.update();
 		
 		if (!Scene.hasseperaterenderfunction) {
-			Gfx.drawto.bundlelock();
+			Gfx.startframe();
 			
-			if (Gfx.clearcolor != Col.TRANSPARENT) Gfx.clearscreen(Gfx.clearcolor);
 			Scene.update();	
 			Text.drawstringinput();
 			Debug.showlog();
@@ -192,7 +191,7 @@ class Core extends Sprite {
 				extendedupdatefunction();
 			}
 			
-			Gfx.drawto.bundleunlock();
+			Gfx.endframe();
 		}else {
 		  Scene.update();	
 			
@@ -207,15 +206,14 @@ class Core extends Sprite {
 	}
 	
 	private function dorender() {
-		Gfx.drawto.bundlelock();
+		Gfx.startframe();
 		
-		if (Gfx.clearcolor != Col.TRANSPARENT) Gfx.clearscreen(Gfx.clearcolor);
 		Scene.render();
 		Text.drawstringinput();
 		Debug.showlog();
 		if (renderextended) extendedrenderfunction();
 		
-		Gfx.drawto.bundleunlock();
+		Gfx.endframe();
 	}
 	
 	public static var fps(get,set):Int;
