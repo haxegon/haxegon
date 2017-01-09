@@ -691,7 +691,7 @@ class Gfx {
 		
 		quadbatch.addQuad(templine);
 	}
-
+	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		Gfx.endquadbatch();
@@ -754,13 +754,14 @@ class Gfx {
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		Gfx.endquadbatch();
+		updatequadbatch();
 		
 		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, color);
 		temppoly4.alpha = alpha;
-		drawto.draw(temppoly4);
+		
+		quadbatch.addQuad(temppoly4);
 	}
-
+	
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		
@@ -799,7 +800,7 @@ class Gfx {
 	}
 	
 	private static function endquadbatch() {
-		drawto.draw(quadbatch);
+		if(quadbatchcount > 0) drawto.draw(quadbatch);
 		
 		quadbatch.reset();
 		quadbatchcount = 0;
