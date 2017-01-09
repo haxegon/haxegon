@@ -746,7 +746,6 @@ class Gfx {
 	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		Gfx.endquadbatch();
 		
 		drawline(x1, y1, x2, y2, color, alpha);
 		drawline(x1, y1, x3, y3, color, alpha);
@@ -764,7 +763,6 @@ class Gfx {
 
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		Gfx.endquadbatch();
 		
 		if (width < 0) {
 			width = -width;
@@ -832,7 +830,6 @@ class Gfx {
 	
 	public static function setpixel(x:Float, y:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT && drawto != null) return;
-		Gfx.endquadbatch();
 		
 		fillbox(x, y, 1, 1, color, alpha);
 	}
