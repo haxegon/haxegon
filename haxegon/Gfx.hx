@@ -491,7 +491,7 @@ class Gfx {
 		if (!transform && !coltransform) {
 			shapematrix.identity();
 			shapematrix.translate(Std.int(x), Std.int(y));
-			drawto.draw(image, shapematrix);
+			quadbatch.addImage(image, 1.0, shapematrix);
 		}else {
 			tempxalign = 0;	tempyalign = 0;
 			
@@ -516,10 +516,10 @@ class Gfx {
 			shapematrix.translate(x, y);
 			if (coltransform) {
 				image.color = imagecolormult;
-				drawto.draw(image, shapematrix, imagealphamult);
+				quadbatch.addImage(image, 1.0, shapematrix);
 				image.color = Col.WHITE;
 			}else {
-				drawto.draw(image, shapematrix);
+				quadbatch.addImage(image, 1.0, shapematrix);
 			}
 		}		
 	}
@@ -531,7 +531,8 @@ class Gfx {
 		if (!imageindex.exists(imagename)) {
 			loadimage(imagename);
 		}
-		Gfx.endquadbatch();
+		
+		updatequadbatch();
 		
 		var image:Image = images[imageindex.get(imagename)];
 		x = imagealignx(image, x); y = imagealigny(image, y);
@@ -548,7 +549,8 @@ class Gfx {
 			Debug.log("ERROR: In drawsubimage, cannot find image \"" + imagename + "\".");
 			return;
 		}
-		Gfx.endquadbatch();
+		
+		updatequadbatch();
 		
 		var image:Image = images[imageindex.get(imagename)];
 		x = imagealignx(image, x); y = imagealigny(image, y);
@@ -612,7 +614,8 @@ class Gfx {
 				return;
 			}
 		}
-		Gfx.endquadbatch();
+		
+		updatequadbatch();
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
@@ -647,7 +650,7 @@ class Gfx {
 			}
 		}
 		
-		Gfx.endquadbatch();
+		updatequadbatch();
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
@@ -932,6 +935,9 @@ class Gfx {
 		
 		starstage.addEventListener(ResizeEvent.RESIZE, onresize);
 		
+		quadbatch = new QuadBatch();
+		starstage.touchable = false;
+		
 		linethickness = 1;
 		loadpackedtextures();
 		
@@ -980,10 +986,6 @@ class Gfx {
 		
 		devicexres = Std.int(openfl.system.Capabilities.screenResolutionX);
 		deviceyres = Std.int(openfl.system.Capabilities.screenResolutionY);
-		
-		quadbatch = new QuadBatch();
-		starstage.touchable = false;
-		//temppoly4 = new Poly4();
 		
 		if(!gfxinit){
 			backbuffer = new RenderTexture(width, height, true);
