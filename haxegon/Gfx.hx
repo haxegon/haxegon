@@ -361,6 +361,7 @@ class Gfx {
 
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoscreen() {
+		Gfx.endquadbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		drawto = backbuffer;
@@ -375,6 +376,7 @@ class Gfx {
 			return;
 		}
 		
+		Gfx.endquadbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		var imagenum:Int = imageindex.get(imagename);
@@ -401,6 +403,7 @@ class Gfx {
 			}
 		}
 		
+		Gfx.endquadbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		promotetorendertarget(tiles[tileset].tiles[tilenum]);
@@ -528,7 +531,8 @@ class Gfx {
 		if (!imageindex.exists(imagename)) {
 			loadimage(imagename);
 		}
-
+		Gfx.endquadbatch();
+		
 		var image:Image = images[imageindex.get(imagename)];
 		x = imagealignx(image, x); y = imagealigny(image, y);
 		internaldrawimage(x, y, image);
@@ -544,6 +548,7 @@ class Gfx {
 			Debug.log("ERROR: In drawsubimage, cannot find image \"" + imagename + "\".");
 			return;
 		}
+		Gfx.endquadbatch();
 		
 		var image:Image = images[imageindex.get(imagename)];
 		x = imagealignx(image, x); y = imagealigny(image, y);
@@ -567,22 +572,27 @@ class Gfx {
 	}
 	
 	public static function grabtilefromscreen(tilesetname:String, tilenumber:Int, screenx:Float, screeny:Float) {
+		Gfx.endquadbatch();
 		trace("warning: Gfx.grabtilefromscreen is not implemented");
 	}
 	
 	public static function grabtilefromimage(tilesetname:String, tilenumber:Int, imagename:String, imagex:Float, imagey:Float) {
+		Gfx.endquadbatch();
 		trace("warning: Gfx.grabtilefromimage is not implemented");
 	}
 	
 	public static function grabimagefromscreen(imagename:String, screenx:Float, screeny:Float) {
+		Gfx.endquadbatch();
 		trace("warning: Gfx.grabimagefromscreen is not implemented");
 	}
 	
 	public static function grabimagefromimage(imagetocopyto:String, sourceimage:String, sourceimagex:Float, sourceimagey:Float) {
+		Gfx.endquadbatch();
 		trace("warning: Gfx.grabimagefromimage is not implemented");
 	}
 	
 	public static function copytile(totileset:String, totilenumber:Int, fromtileset:String, fromtilenumber:Int) {
+		Gfx.endquadbatch();
 		trace("warning: Gfx.copytile is not implemented");
 	}
 	
@@ -602,6 +612,7 @@ class Gfx {
 				return;
 			}
 		}
+		Gfx.endquadbatch();
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
@@ -635,6 +646,8 @@ class Gfx {
 				return;
 			}
 		}
+		
+		Gfx.endquadbatch();
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
@@ -681,6 +694,8 @@ class Gfx {
 
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		Gfx.endquadbatch();
+		
 		var tempring:Ring = new Ring(radius - linethickness, radius, color, true, 6, angle);
 		tempring.alpha = alpha;
 		
@@ -692,6 +707,8 @@ class Gfx {
 	
 	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		Gfx.endquadbatch();
+		
 		var tempring:Disk = new Disk(radius, color, true, 6, angle);
 		tempring.alpha = alpha;
 		
@@ -703,6 +720,8 @@ class Gfx {
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		Gfx.endquadbatch();
+		
 		var tempring:Ring = new Ring(radius - linethickness, radius, color);
 		tempring.alpha = alpha;
 		
@@ -714,6 +733,8 @@ class Gfx {
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT || drawto == null) return;
+		Gfx.endquadbatch();
+		
 		var tempring:Disk = new Disk(radius, col);
 		tempring.alpha = alpha;
 		
@@ -725,6 +746,8 @@ class Gfx {
 	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		Gfx.endquadbatch();
+		
 		drawline(x1, y1, x2, y2, color, alpha);
 		drawline(x1, y1, x3, y3, color, alpha);
 		drawline(x2, y2, x3, y3, color, alpha);
@@ -732,6 +755,8 @@ class Gfx {
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		Gfx.endquadbatch();
+		
 		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, color);
 		temppoly4.alpha = alpha;
 		drawto.draw(temppoly4);
@@ -739,6 +764,8 @@ class Gfx {
 
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		Gfx.endquadbatch();
+		
 		if (width < 0) {
 			width = -width;
 			x = x - width;
@@ -798,11 +825,15 @@ class Gfx {
 	
 	public static function clearscreen(color:Int = 0x000000) {
 		if (color == Col.TRANSPARENT && drawto != null) return;
+		Gfx.endquadbatch();
+		
 		drawto.clear(color, 1.0);
 	}
 	
 	public static function setpixel(x:Float, y:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT && drawto != null) return;
+		Gfx.endquadbatch();
+		
 		fillbox(x, y, 1, 1, color, alpha);
 	}
 	
