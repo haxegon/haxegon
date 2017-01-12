@@ -135,11 +135,7 @@ class Data {
 		
 		var returnval:Dynamic = Reflect.field(so.data, key);
 		if (returnval == null) {
-			if (_savefile == "haxegongame") {
-				Debug.log("Error: There is no value stored for \"" + key + "\"");
-			}else{
-				Debug.log("Error: Savefile + \"" + _savefile + "\" has no value stored for \"" + key + "\"");
-			}
+			return 0;
 		}
 		
 		return returnval;
