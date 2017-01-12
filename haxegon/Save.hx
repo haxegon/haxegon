@@ -52,7 +52,7 @@ class Save {
 		return returnval;
 	}
 	
-	public static function deletesave(?name:String) {
+	public static function delete(?name:String) {
 		if (name == null) name = "haxegongame";
 		if (_savefile != name) {
 			var newso:SharedObject = SharedObject.getLocal(name);
