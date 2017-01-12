@@ -2,8 +2,6 @@ package haxegon;
 
 import openfl.display.BitmapData;
 import openfl.media.Sound;
-import openfl.net.SharedObject;
-import openfl.net.SharedObjectFlushStatus;
 import openfl.Assets;
 import openfl.text.Font;
 
@@ -98,60 +96,6 @@ class Data {
 		var returnedarray2d:Array<Array<T>> = [for (x in 0 ... width) [for (y in 0 ... height) returnedarray[x + (y * width)]]];
 		return returnedarray2d;
 	}
-	
-	public static var savefile(get, set):String;
-	private static var _savefile:String = "";
-	
-	static function get_savefile():String {
-		return _savefile;
-	}
-	
-	static function set_savefile(newsavefile:String):String {
-	  if(savefile != newsavefile){
-      changesavefile(newsavefile);
-    }
-		return _savefile;
-	}
-	
-	private static function changesavefile(name:String) {
-		_savefile = name;
-		so = SharedObject.getLocal(_savefile);
-	}
-	
-	public static function save(key:String, value:Dynamic) {
-	  if (so == null) changesavefile("haxegongame");
-		
-		Reflect.setField(so.data, key, value);
-		
-		try { 
-			so.flush();
-		} catch (e:Dynamic) {
-		  Debug.log("Error: Unable to save \"" + key + "\"."); 
-		}
-	}
-	
-	public static function load(key:String):Dynamic {
-	  if (so == null) changesavefile("haxegongame");
-		
-		var returnval:Dynamic = Reflect.field(so.data, key);
-		if (returnval == null) {
-			return 0;
-		}
-		
-		return returnval;
-	}
-	
-	public static function deletesave(?name:String) {
-		if (name == null) name = "haxegongame";
-		if (_savefile != name) {
-			var newso:SharedObject = SharedObject.getLocal(name);
-			newso.clear();
-		}else {
-		  so.clear();	
-		}
-	}
-	
-	private static var so:SharedObject;
 	
 	private static var tempstring:String;
 	
