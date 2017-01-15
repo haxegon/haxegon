@@ -678,8 +678,20 @@ class Gfx {
 	}
 	
 	public static function copytile(totileset:String, totilenumber:Int, fromtileset:String, fromtilenumber:Int) {
-		Gfx.endquadbatch();
-		trace("warning: Gfx.copytile is not implemented");
+		if (tilesetindex.exists(fromtileset)) {
+			if (tiles[currenttileset].width == tiles[tilesetindex.get(fromtileset)].width && tiles[currenttileset].height == tiles[tilesetindex.get(fromtileset)].height) {
+				promotetorendertarget(tiles[tilesetindex.get(totileset)].tiles[totilenumber]);
+				
+				shapematrix.identity();
+				cast(tiles[tilesetindex.get(totileset)].tiles[totilenumber].texture, RenderTexture).draw(tiles[tilesetindex.get(fromtileset)].tiles[fromtilenumber], shapematrix);
+			}else {
+				Debug.log("ERROR: Tilesets " + totileset + " (" + Std.string(tilewidth(totileset)) + "x" + Std.string(tileheight(totileset)) + ") and " + fromtileset + " (" + Std.string(tiles[tilesetindex.get(fromtileset)].width) + "x" + Std.string(tiles[tilesetindex.get(fromtileset)].height) + ") are different sizes. Maybe try just drawing to the tile you want instead with Gfx.drawtotile()?");
+				return;
+			}
+		}else {
+			Debug.log("ERROR: Tileset " + fromtileset + " hasn't been loaded or created.");
+			return;
+		}
 	}
 	
 	/** Draws tile number t from current tileset.
