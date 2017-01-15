@@ -21,12 +21,16 @@ class HaxegonTileset {
 		height = h;
 		
 		tiles = [];
+		
+		sharedatlas = true;
 	}
 	
 	public var tiles:Array<Image>;
 	public var name:String;
 	public var width:Int;
 	public var height:Int;
+	
+	public var sharedatlas:Bool;
 }
 
 @:access(haxegon.Core)
@@ -201,6 +205,8 @@ class Gfx {
 			img.touchable = false;
 			tiles[tileset].tiles.push(img);
 		}
+		
+		tiles[tileset].sharedatlas = false;
 	}
 	
 	/** Creates a blank tileset, with the name "tilesetname", with each tile a given width and height, containing "amount" tiles. */
@@ -218,9 +224,11 @@ class Gfx {
 				tiles[currenttileset].tiles.push(img);
 			}
 			
+			tiles[currenttileset].sharedatlas = false;
 			changetileset(tilesetname);
 		}else {
 			changetileset(tilesetname);
+			tiles[currenttileset].sharedatlas = false;
 			
 			var purge:Bool = (tiles[currenttileset].width != Math.floor(width) || tiles[currenttileset].height != Math.floor(height));
 			tiles[currenttileset].width = Math.floor(width);
@@ -522,9 +530,6 @@ class Gfx {
 				quadbatch.addImage(image, 1.0, shapematrix);
 			}
 		}
-		
-		//This could definitely be improved later. See #118
-		endquadbatch();
 	}
 	
 	/** Draws image by name. 
@@ -535,11 +540,16 @@ class Gfx {
 			loadimage(imagename);
 		}
 		
+		//This could definitely be improved later. See #118
+		endquadbatch();
 		updatequadbatch();
 		
 		var image:Image = images[imageindex.get(imagename)];
 		x = imagealignx(image, x); y = imagealigny(image, y);
 		internaldrawimage(x, y, image);
+		
+		//This could definitely be improved later. See #118
+		endquadbatch();
 	}
 	
 	/** Draws image by name. 
@@ -553,6 +563,8 @@ class Gfx {
 			return;
 		}
 		
+		//This could definitely be improved later. See #118
+		endquadbatch();
 		updatequadbatch();
 		
 		var image:Image = images[imageindex.get(imagename)];
@@ -570,7 +582,10 @@ class Gfx {
 		subimage.touchable = false;
 		
 		internaldrawimage(x, y, subimage);
-
+		
+		//This could definitely be improved later. See #118
+		endquadbatch();
+		
 		// all done! clean up
 		subtex.dispose();
 		subimage.dispose();
@@ -618,6 +633,8 @@ class Gfx {
 			}
 		}
 		
+		//This could definitely be improved later. See #118
+		endquadbatch();
 		updatequadbatch();
 		
 		x = tilealignx(x); y = tilealigny(y);
@@ -634,7 +651,10 @@ class Gfx {
 		subimage.touchable = false;
 		
 		internaldrawimage(x, y, subimage);
-
+		
+		//This could definitely be improved later. See #118
+		endquadbatch();
+		
 		// all done! clean up
 		subtex.dispose();
 		subimage.dispose();		
@@ -653,11 +673,21 @@ class Gfx {
 			}
 		}
 		
+		//WIP: If we're using a tileset then we can batch draw stuff because it's all on the same texture
+		//(providing we haven't messed with the tileset by creating images)
+		if (!tiles[currenttileset].sharedatlas) {
+			endquadbatch();
+		}
 		updatequadbatch();
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
 		internaldrawimage(x, y, tiles[currenttileset].tiles[tilenum]);
+		
+		if (!tiles[currenttileset].sharedatlas) {
+			//This could definitely be improved later. See #118
+			endquadbatch();
+		}
 	}
 	
 	private static function tilealignx(x:Float):Float {
@@ -806,10 +836,12 @@ class Gfx {
 	}
 	
 	private static function endquadbatch() {
-		if(quadbatchcount > 0) drawto.draw(quadbatch);
-		
-		quadbatch.reset();
-		quadbatchcount = 0;
+		if (quadbatchcount > 0) {
+			drawto.draw(quadbatch);
+			
+			quadbatch.reset();
+			quadbatchcount = 0;
+		}
 	}
 
 	public static var linethickness(get,set):Float;
