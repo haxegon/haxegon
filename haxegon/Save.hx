@@ -4,7 +4,7 @@ import openfl.net.SharedObject;
 import openfl.net.SharedObjectFlushStatus;
 
 class Save {
-	public static function save(key:String, value:Dynamic) {
+	public static function savevalue(key:String, value:Dynamic) {
 	  if (so == null) changesavefile("haxegongame");
 		
 		Reflect.setField(so.data, key, value);
@@ -31,7 +31,7 @@ class Save {
 		return true;
 	}
 	
-	public static function load(key:String):Dynamic {
+	public static function loadvalue(key:String):Dynamic {
 	  if (so == null) changesavefile("haxegongame");
 		
 		var returnval:Dynamic = Reflect.field(so.data, key);
