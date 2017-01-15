@@ -307,10 +307,10 @@ class Gfx {
 	/** Loads a packed texture into Gfx. */
 	private static function loadimagefrompackedtexture(imagename:String, tex:Texture) {
 		imageindex.set(imagename, images.length);
-		var imagecontainer:HaxegonImage = new HaxegonImage(imagename);
-		imagecontainer.contents = new Image(tex);
-		imagecontainer.fetchsize();
-		images.push(imagecontainer);
+		haxegonimage = new HaxegonImage(imagename);
+		haxegonimage.contents = new Image(tex);
+		haxegonimage.fetchsize();
+		images.push(haxegonimage);
 		images[images.length - 1].contents.smoothing = "none";
 	}		
 	
@@ -330,12 +330,12 @@ class Gfx {
 		starlingassets.addTexture(imagename, tex);
 		
 		imageindex.set(imagename, images.length);
-		var imagecontainer:HaxegonImage = new HaxegonImage(imagename);
-		imagecontainer.contents = new Image(starlingassets.getTexture(imagename));
-		imagecontainer.contents.smoothing = "none";
-		imagecontainer.fetchsize();
+		haxegonimage = new HaxegonImage(imagename);
+		haxegonimage.contents = new Image(starlingassets.getTexture(imagename));
+		haxegonimage.contents.smoothing = "none";
+		haxegonimage.fetchsize();
 		
-		images.push(imagecontainer);
+		images.push(haxegonimage);
 		
 		//loadimagefrompackedtexture(imagename, getassetpackedtexture(imagename));
 	}
@@ -350,11 +350,11 @@ class Gfx {
 		var exindex:Null<Int> = imageindex.get(imagename);
 		if (exindex == null) {
 			imageindex.set(imagename, images.length);
-			var imagecontainer:HaxegonImage = new HaxegonImage(imagename);
-			imagecontainer.contents = img;
-			imagecontainer.fetchsize();
+			haxegonimage = new HaxegonImage(imagename);
+			haxegonimage.contents = img;
+			haxegonimage.fetchsize();
 			
-			images.push(imagecontainer);
+			images.push(haxegonimage);
 		}else {
 			images[exindex].contents.texture.dispose();
 			images[exindex].contents.dispose();
@@ -574,9 +574,9 @@ class Gfx {
 		endquadbatch();
 		updatequadbatch();
 		
-		var image:HaxegonImage = images[imageindex.get(imagename)];
-		x = imagealignx(image.width, x); y = imagealigny(image.height, y);
-		internaldrawimage(x, y, image.contents, image.width, image.height);
+		haxegonimage = images[imageindex.get(imagename)];
+		x = imagealignx(haxegonimage.width, x); y = imagealigny(haxegonimage.height, y);
+		internaldrawimage(x, y, haxegonimage.contents, haxegonimage.width, haxegonimage.height);
 		
 		//This could definitely be improved later. See #118
 		endquadbatch();
@@ -597,8 +597,8 @@ class Gfx {
 		endquadbatch();
 		updatequadbatch();
 		
-		var image:HaxegonImage = images[imageindex.get(imagename)];
-		x = imagealignx(image.width, x); y = imagealigny(image.height, y);
+		haxegonimage = images[imageindex.get(imagename)];
+		x = imagealignx(haxegonimage.width, x); y = imagealigny(haxegonimage.height, y);
 		
 		// Acquire SubTexture and build an Image from it.
 		trect.x = x1;
@@ -607,7 +607,7 @@ class Gfx {
 		trect.height = h1;
 
 		// 2 allocs. avoidable with pooling?
-		var subtex:Texture = Texture.fromTexture(image.contents.texture, trect);
+		var subtex:Texture = Texture.fromTexture(haxegonimage.contents.texture, trect);
 		var subimage:Image = new Image(subtex); // alloc. avoidable with pooling?
 		subimage.touchable = false;
 		
@@ -632,11 +632,26 @@ class Gfx {
 	}
 	
 	public static function grabimagefromscreen(imagename:String, screenx:Float, screeny:Float) {
-		Gfx.endquadbatch();
-		trace("warning: Gfx.grabimagefromscreen is not implemented");
+		if (!imageindex.exists(imagename)) {
+			Debug.log("ERROR: In Gfx.grabimagefromscreen, \"" + imagename + "\" does not exist. You need to create an image label first before using this function.");
+			return;
+		}
+		
+		//Make sure everything's on the screen before we grab it
+		endquadbatch();
+		
+		haxegonimage = images[imageindex.get(imagename)];
+		// Acquire SubTexture and build an Image from it.
+		promotetorendertarget(haxegonimage.contents);
+		
+		// Copy the old texture to the new RenderTexture
+		shapematrix.identity();
+		shapematrix.translate(-screenx, -screeny);
+		
+		cast(haxegonimage.contents.texture, RenderTexture).draw(screen, shapematrix);
 	}
 	
-	public static function grabimagefromimage(imagetocopyto:String, sourceimage:String, sourceimagex:Float, sourceimagey:Float) {
+	public static function grabimagefromimage(destinationimage:String, sourceimage:String, sourceimagex:Float, sourceimagey:Float) {
 		Gfx.endquadbatch();
 		trace("warning: Gfx.grabimagefromimage is not implemented");
 	}
@@ -868,6 +883,15 @@ class Gfx {
 	private static function endquadbatch() {
 		if (quadbatchcount > 0) {
 			drawto.draw(quadbatch);
+			
+			quadbatch.reset();
+			quadbatchcount = 0;
+		}
+	}
+	
+	private static function endquadbatchonsurface(d:RenderTexture) {
+		if (quadbatchcount > 0) {
+			d.draw(quadbatch);
 			
 			quadbatch.reset();
 			quadbatchcount = 0;
@@ -1128,6 +1152,7 @@ class Gfx {
 	private static var ty:Float;
 	private static var tx2:Float;
   private static var ty2:Float;
+	private static var haxegonimage:HaxegonImage;
 	
 	private static var imageindex:Map<String, Int> = new Map<String, Int>();
 	private static var images:Array<HaxegonImage> = new Array<HaxegonImage>();
