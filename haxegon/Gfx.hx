@@ -2,6 +2,7 @@ package haxegon;
 
 import flash.display.StageDisplayState;
 import flash.display.BitmapData;
+import haxegon.Gfx.HaxegonImage;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -13,6 +14,22 @@ import starling.textures.*;
 import openfl.Assets;
 import starling.events.ResizeEvent;
 import starling.core.Starling;
+
+class HaxegonImage {
+	public function new(n:String) {
+		name = n;
+	}
+	
+	public function fetchsize() {
+	  width = Std.int(contents.width);
+		height = Std.int(contents.height);
+	}
+	
+	public var contents:Image;
+	public var name:String;
+	public var width:Int;
+	public var height:Int;
+}
 
 class HaxegonTileset {
 	public function new(n:String, w:Int, h:Int) {
@@ -290,8 +307,11 @@ class Gfx {
 	/** Loads a packed texture into Gfx. */
 	private static function loadimagefrompackedtexture(imagename:String, tex:Texture) {
 		imageindex.set(imagename, images.length);
-		images.push(new Image(tex));
-		images[images.length - 1].smoothing = "none";
+		var imagecontainer:HaxegonImage = new HaxegonImage(imagename);
+		imagecontainer.contents = new Image(tex);
+		imagecontainer.fetchsize();
+		images.push(imagecontainer);
+		images[images.length - 1].contents.smoothing = "none";
 	}		
 	
 	/** Loads an image into the game. */
@@ -310,8 +330,13 @@ class Gfx {
 		starlingassets.addTexture(imagename, tex);
 		
 		imageindex.set(imagename, images.length);
-		images.push(new Image(starlingassets.getTexture(imagename)));
-		images[images.length - 1].smoothing = "none";
+		var imagecontainer:HaxegonImage = new HaxegonImage(imagename);
+		imagecontainer.contents = new Image(starlingassets.getTexture(imagename));
+		imagecontainer.contents.smoothing = "none";
+		imagecontainer.fetchsize();
+		
+		images.push(imagecontainer);
+		
 		//loadimagefrompackedtexture(imagename, getassetpackedtexture(imagename));
 	}
 	
@@ -325,11 +350,16 @@ class Gfx {
 		var exindex:Null<Int> = imageindex.get(imagename);
 		if (exindex == null) {
 			imageindex.set(imagename, images.length);
-			images.push(img);
+			var imagecontainer:HaxegonImage = new HaxegonImage(imagename);
+			imagecontainer.contents = img;
+			imagecontainer.fetchsize();
+			
+			images.push(imagecontainer);
 		}else {
-			images[exindex].texture.dispose();
-			images[exindex].dispose();
-			images[exindex] = img;
+			images[exindex].contents.texture.dispose();
+			images[exindex].contents.dispose();
+			images[exindex].contents = img;
+			images[exindex].fetchsize();
 		}
 	}
 	
@@ -340,7 +370,7 @@ class Gfx {
 		}	
 		
 		var imagenum:Int = imageindex.get(imagename);
-		return Std.int(images[imagenum].width);
+		return images[imagenum].width;
 	}
 	
 	/** Returns the height of the image. */
@@ -350,7 +380,7 @@ class Gfx {
 		}	
 		
 		var imagenum:Int = imageindex.get(imagename);
-		return Std.int(images[imagenum].height);
+		return images[imagenum].height;
 	}
 	
 	private static function promotetorendertarget(image:Image) {
@@ -388,8 +418,8 @@ class Gfx {
 		if (drawto != null) drawto.bundleunlock();
 		
 		var imagenum:Int = imageindex.get(imagename);
-		promotetorendertarget(images[imagenum]);
-		drawto = cast(images[imagenum].texture, RenderTexture);
+		promotetorendertarget(images[imagenum].contents);
+		drawto = cast(images[imagenum].contents.texture, RenderTexture);
 		
 		if (drawto != null) drawto.bundlelock();
 	}
@@ -424,17 +454,17 @@ class Gfx {
 	private static var t1:Float;
 	private static var t2:Float;
 	private static var t3:Float;
-	private static function imagealignx(image:Image, x:Float):Float {
+	private static function imagealignx(imagewidth:Int, x:Float):Float {
 		if (x <= -5000) {
 			t1 = x - CENTER;
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Gfx.screenwidthmid - Std.int(image.width / 2);
+				return t1 + Gfx.screenwidthmid - Std.int(imagewidth / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + image.width;
+				return t3 + imagewidth;
 			}
 		}
 		
@@ -442,17 +472,17 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealigny(image:Image, y:Float):Float {
+	private static function imagealigny(imageheight:Int, y:Float):Float {
 		if (y <= -5000) {
 			t1 = y - CENTER;
 			t2 = y - TOP;
 			t3 = y - BOTTOM;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Gfx.screenheightmid - Std.int(image.height / 2);
+				return t1 + Gfx.screenheightmid - Std.int(imageheight / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + image.height;
+				return t3 + imageheight;
 			}
 		}
 		
@@ -460,17 +490,17 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealignonimagex(image:Image, x:Float):Float {
+	private static function imagealignonimagex(imagewidth:Int, x:Float):Float {
 		if (x <= -5000) {
 			t1 = x - CENTER;
 			t2 = x - LEFT;
 			t3 = x - RIGHT;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Std.int(image.width / 2);
+				return t1 + Std.int(imagewidth / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + image.width;
+				return t3 + imagewidth;
 			}
 		}
 		
@@ -478,24 +508,24 @@ class Gfx {
 	}
 	
 	/** Helper function for image drawing functions. */
-	private static function imagealignonimagey(image:Image, y:Float):Float {
+	private static function imagealignonimagey(imageheight:Int, y:Float):Float {
 		if (y <= -5000) {
 			t1 = y - CENTER;
 			t2 = y - TOP;
 			t3 = y - BOTTOM;
 			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
-				return t1 + Std.int(image.height / 2);
+				return t1 + Std.int(imageheight / 2);
 			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
 				return t2;
 			}else {
-				return t3 + image.height;
+				return t3 + imageheight;
 			}
 		}
 		
 		return y;
 	}
 	
-	private static function internaldrawimage(x:Float, y:Float, image:Image) {
+	private static function internaldrawimage(x:Float, y:Float, image:Image, imagewidth:Int, imageheight:Int) {
 		if (!transform && !coltransform) {
 			shapematrix.identity();
 			shapematrix.translate(Std.int(x), Std.int(y));
@@ -506,16 +536,16 @@ class Gfx {
 			shapematrix.identity();
 			
 			if (imagexscale != 1.0 || imageyscale != 1.0) {
-				if (imagescalexpivot != 0.0) tempxalign = imagealignonimagex(image, imagescalexpivot);
-				if (imagescaleypivot != 0.0) tempyalign = imagealignonimagey(image, imagescaleypivot);
+				if (imagescalexpivot != 0.0) tempxalign = imagealignonimagex(imagewidth, imagescalexpivot);
+				if (imagescaleypivot != 0.0) tempyalign = imagealignonimagey(imageheight, imagescaleypivot);
 				shapematrix.translate( -tempxalign, -tempyalign);
 				shapematrix.scale(imagexscale, imageyscale);
 				shapematrix.translate( tempxalign, tempyalign);
 			}
 			
 			if (imagerotate != 0) {
-				if (imagerotatexpivot != 0.0) tempxalign = imagealignonimagex(image, imagerotatexpivot);
-				if (imagerotateypivot != 0.0) tempyalign = imagealignonimagey(image, imagerotateypivot);
+				if (imagerotatexpivot != 0.0) tempxalign = imagealignonimagex(imagewidth, imagerotatexpivot);
+				if (imagerotateypivot != 0.0) tempyalign = imagealignonimagey(imageheight, imagerotateypivot);
 				shapematrix.translate( -tempxalign, -tempyalign);
 				shapematrix.rotate((imagerotate * 3.1415) / 180);
 				shapematrix.translate( tempxalign, tempyalign);
@@ -544,9 +574,9 @@ class Gfx {
 		endquadbatch();
 		updatequadbatch();
 		
-		var image:Image = images[imageindex.get(imagename)];
-		x = imagealignx(image, x); y = imagealigny(image, y);
-		internaldrawimage(x, y, image);
+		var image:HaxegonImage = images[imageindex.get(imagename)];
+		x = imagealignx(image.width, x); y = imagealigny(image.height, y);
+		internaldrawimage(x, y, image.contents, image.width, image.height);
 		
 		//This could definitely be improved later. See #118
 		endquadbatch();
@@ -567,8 +597,8 @@ class Gfx {
 		endquadbatch();
 		updatequadbatch();
 		
-		var image:Image = images[imageindex.get(imagename)];
-		x = imagealignx(image, x); y = imagealigny(image, y);
+		var image:HaxegonImage = images[imageindex.get(imagename)];
+		x = imagealignx(image.width, x); y = imagealigny(image.height, y);
 		
 		// Acquire SubTexture and build an Image from it.
 		trect.x = x1;
@@ -577,11 +607,11 @@ class Gfx {
 		trect.height = h1;
 
 		// 2 allocs. avoidable with pooling?
-		var subtex:Texture = Texture.fromTexture(image.texture, trect);
+		var subtex:Texture = Texture.fromTexture(image.contents.texture, trect);
 		var subimage:Image = new Image(subtex); // alloc. avoidable with pooling?
 		subimage.touchable = false;
 		
-		internaldrawimage(x, y, subimage);
+		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
 		
 		//This could definitely be improved later. See #118
 		endquadbatch();
@@ -650,7 +680,7 @@ class Gfx {
 		var subimage:Image = new Image(subtex);
 		subimage.touchable = false;
 		
-		internaldrawimage(x, y, subimage);
+		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
 		
 		//This could definitely be improved later. See #118
 		endquadbatch();
@@ -682,7 +712,7 @@ class Gfx {
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
-		internaldrawimage(x, y, tiles[currenttileset].tiles[tilenum]);
+		internaldrawimage(x, y, tiles[currenttileset].tiles[tilenum], tiles[currenttileset].width, tiles[currenttileset].height);
 		
 		if (!tiles[currenttileset].sharedatlas) {
 			//This could definitely be improved later. See #118
@@ -1100,7 +1130,7 @@ class Gfx {
   private static var ty2:Float;
 	
 	private static var imageindex:Map<String, Int> = new Map<String, Int>();
-	private static var images:Array<Image> = new Array<Image>();
+	private static var images:Array<HaxegonImage> = new Array<HaxegonImage>();
 	
 	private static var tiles:Array<HaxegonTileset> = new Array<HaxegonTileset>();
 	private static var tilesetindex:Map<String, Int> = new Map<String, Int>();
