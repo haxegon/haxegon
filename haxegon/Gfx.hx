@@ -648,8 +648,34 @@ class Gfx {
 	}
 	
 	public static function grabtilefromimage(tilesetname:String, tilenumber:Int, imagename:String, imagex:Float, imagey:Float) {
-		Gfx.endquadbatch();
-		trace("warning: Gfx.grabtilefromimage is not implemented");
+		if (!imageindex.exists(imagename)) {
+			throw("ERROR: In grabtilefromimage, \"" + imagename + "\" does not exist.");
+			return;
+		}
+		
+		changetileset(tilesetname);
+		
+		if (tilenumber >= numberoftiles(tilesetname)) {
+			if (tilenumber == numberoftiles(tilesetname)) {
+ 			  Debug.log("ERROR: Tried to grab tile from image to tile number " + Std.string(tilenumber) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenumber) + " is not a valid tile.)");
+				return;
+			}else{
+				Debug.log("ERROR: Tried to grab tile from image to tile number " + Std.string(tilenumber) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\".");
+				return;
+			}
+		}
+		
+		//Make sure everything's on the screen before we grab it
+		endquadbatch();
+		
+		// Acquire SubTexture and build an Image from it.
+		promotetorendertarget(tiles[currenttileset].tiles[tilenumber]);
+		
+		// Copy the old texture to the new RenderTexture
+		shapematrix.identity();
+		shapematrix.translate(-imagex, -imagey);
+		
+		cast(tiles[currenttileset].tiles[tilenumber].texture, RenderTexture).draw(images[imageindex.get(imagename)].contents, shapematrix);
 	}
 	
 	public static function grabimagefromscreen(imagename:String, screenx:Float, screeny:Float) {
