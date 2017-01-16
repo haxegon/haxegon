@@ -673,8 +673,30 @@ class Gfx {
 	}
 	
 	public static function grabimagefromimage(destinationimage:String, sourceimage:String, sourceimagex:Float, sourceimagey:Float) {
-		Gfx.endquadbatch();
-		trace("warning: Gfx.grabimagefromimage is not implemented");
+		if (!imageindex.exists(destinationimage)) {
+			Debug.log("ERROR: In grabimagefromimage, \"" + destinationimage + "\" does not exist. You need to create an image label first before using this function.");
+			return;
+		}
+		
+		if (!imageindex.exists(sourceimage)) {
+			Debug.log("ERROR: No image called \"" + sourceimage + "\" found.");
+			return;
+		}
+		
+		//Make sure everything's on the screen before we grab it
+		endquadbatch();
+		
+		haxegonimage = images[imageindex.get(destinationimage)];
+		var sourceimage:HaxegonImage = images[imageindex.get(sourceimage)];
+		
+		// Make sure the destination image is a render target
+		promotetorendertarget(haxegonimage.contents);
+		
+		// Copy the old texture to the new RenderTexture
+		shapematrix.identity();
+		shapematrix.translate(-sourceimagex, -sourceimagey);
+		
+		cast(haxegonimage.contents.texture, RenderTexture).draw(sourceimage.contents, shapematrix);
 	}
 	
 	public static function copytile(totileset:String, totilenumber:Int, fromtileset:String, fromtilenumber:Int) {
