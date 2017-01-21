@@ -1106,7 +1106,6 @@ class Gfx {
 		starstage.addEventListener(ResizeEvent.RESIZE, onresize);
 		
 		quadbatch = new QuadBatch();
-		starstage.touchable = false;
 		
 		linethickness = 1;
 		loadpackedtextures();
