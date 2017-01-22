@@ -1194,6 +1194,8 @@ class Gfx {
 		if (clearcolor != Col.TRANSPARENT) clearscreen(clearcolor);
 		quadbatch.reset();
 		quadbatchcount = 0;
+		
+		Text.resettextfields();
 	}
 	
 	private static function endframe() {

@@ -13,23 +13,37 @@ class Fontclass {
 	public function new(_name:String, _size:Float) {
 		autosize = true;
 		type = Text.fontfile[Text.fontfileindex.get(_name)].type;
-		if (type == "bitmap") {
-			loadbitmapfont(_name, _size);
-		}else if (type == "ttf") {
-			loadbitmapfont(_name, _size);
-		}
+		loadfont(_name, _size);
 	}
 	
-	public function loadbitmapfont(_name:String, _size:Float) {
+	public function loadfont(_name:String, _size:Float) {
 		name = _name;
 		size = _size;
 		
 		fontfile = Text.fontfile[Text.fontfileindex.get(_name)];
+		tflist = [];
+		tflist.push(inittextfield());
+	}
+	
+	private function inittextfield():TextField {
+		var newtf:TextField = new TextField(Gfx.screenwidth, Gfx.screenheight, "???", fontfile.typename, fontfile.sizescale * size);
+		newtf.vAlign = "top";
+		newtf.hAlign = "left";
+		newtf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
 		
-		tf = new TextField(Gfx.screenwidth, Gfx.screenheight, "???", fontfile.typename, fontfile.sizescale * size);
-		tf.vAlign = "top";
-		tf.hAlign = "left";
-		tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
+		return newtf;
+	}
+	
+	
+	private function reset() {
+		currenttextfield = -1;
+	}
+	
+	private function nexttextfield() {
+	  currenttextfield++;
+		if (currenttextfield >= tflist.length) tflist.push(inittextfield());
+		
+		tf = tflist[currenttextfield];
 	}
 	
 	public function updatewidth(v:Bool) {
@@ -67,6 +81,9 @@ class Fontclass {
 	}
 	
 	public var tf:TextField;
+	
+	private var tflist:Array<TextField>;
+	private var currenttextfield:Int;
 	public var fontfile:Fontfile;
 	
 	public var name:String;
@@ -132,7 +149,6 @@ class Fontfile {
 	public var fonttex:Texture;
 	private var pngname:String;
 	public var sizescale:Int;
-	//public var fontimage:BitmapData;
 	
 	public var font:Font;
 	public var filename:String;
@@ -140,7 +156,9 @@ class Fontfile {
 }
 
 @:access(haxegon.Input)
+@:access(haxegon.Fontclass)
 @:access(haxegon.Gfx)
+@:access(starling.text.TextField)
 class Text {
 	private static function init(stage:Stage) {
 		gfxstage = stage;
@@ -201,11 +219,6 @@ class Text {
 	}
 	
 	private static function drawstringinput() {
-		Gfx.endquadbatch();
-		//if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
-		//Gfx.updatequadbatch();
-		//Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
-		
 		if (input_show > 0) {
 			setfont(input_font, input_textsize);
 			input_cursorglow++;
@@ -338,16 +351,15 @@ class Text {
 	
 	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF) {
 		if (text == "") return;
-		Gfx.endquadbatch();
-		//Future developments!
-		//if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
-		//Gfx.updatequadbatch();
-		//Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
+		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
+		Gfx.updatequadbatch();
+		Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
 		
 		if (typeface.length == 0) {
 		  defaultfont();	
 		}
 		
+		typeface[currentindex].nexttextfield();
 		typeface[currentindex].tf.color = color;
 		typeface[currentindex].tf.text = text;
 		
@@ -374,14 +386,11 @@ class Text {
 		}
 		
 		fontmatrix.translate(x, y);
-		// Clumsy work around to force haxegon to change to the next draw call on TTF fonts.
-		// to do: implement a pooling system for ttf fonts so that this isn't required.
 		if (typeface[currentindex].type == "ttf") {
 			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix);
-		  Gfx.fillbox(-1, -1, 1, 1, Col.RED);	
-		}else {			
-			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix);
-			//Gfx.quadbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);	
+		}else {
+			typeface[currentindex].tf.createComposedContents();
+			Gfx.quadbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);	
 		}
 	}
 	
@@ -425,6 +434,12 @@ class Text {
 		}
 	}
 	
+	private static function resettextfields() {
+	  for (i in 0 ... typeface.length) {
+		  typeface[i].reset();	
+		}
+	}
+	
 	private static function addfont(fontname:String, defaultsize:Float = 1) {
 		fontfile.push(new Fontfile(fontname));
 		if (fontname == null) fontname = "Verdana";
@@ -448,7 +463,7 @@ class Text {
 		if (fontname == "" || fontname.toLowerCase() == "verdana") fontname = "Verdana";
 		if (fontname == currentfont) return currentfont;
 		
-		//if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
+		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
 		setfont(fontname, 1);
 		return currentfont;
 	}
@@ -461,7 +476,7 @@ class Text {
 	
 	static function set_size(fontsize:Float):Float {
 	  if (currentsize != fontsize) {
-			//if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();	
+			if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();	
       changesize(fontsize);
     }
 		return currentsize;
