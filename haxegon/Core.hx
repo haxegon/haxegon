@@ -63,6 +63,10 @@ class Core extends Sprite {
 		}
 	}
 	
+	public static function delaycall(f:Function, time:Float) {
+	  Timer.delay(function() { f(); }, Std.int(time * 1000));	
+	}
+	
 	private function loaded() {
 		//Init library classes
 		Random.setseed(Std.int(Math.random() * 233280));
