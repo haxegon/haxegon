@@ -43,12 +43,22 @@ class Input {
 		}
 	}
 	
-	public static function forcerelease(k:Key):Void {
-		keycode = keymap.get(k);
-		if (keyheld[keycode] >= 0) {
-			current[keycode] = Keystate.forcerelease;
-			last[keycode] = Keystate.forcerelease;
-			keyheld[keycode] = -1;
+	public static function forcerelease(?k:Key):Void {
+		if(k != null){
+			keycode = keymap.get(k);
+			if (keyheld[keycode] >= 0) {
+				current[keycode] = Keystate.forcerelease;
+				last[keycode] = Keystate.forcerelease;
+				keyheld[keycode] = -1;
+			}
+		}else {
+		  for (k2 in 0 ... keyheld.length) {
+			  if (keyheld[k2] >= 0) {
+					current[k2] = Keystate.forcerelease;
+					last[k2] = Keystate.forcerelease;
+					keyheld[k2] = -1;
+				}
+			}
 		}
 	}
 	
