@@ -22,6 +22,10 @@ class Help {
 		return rect1.intersects(rect2);
 	}
 	
+	public static inline function clamp(value:Float, min:Float, max:Float):Float {
+	  return Math.min(max, Math.max(value, min));
+	}
+	
 	public static inline function distance(x1:Float, y1:Float, x2:Float, y2:Float):Float {
 		return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 	}
