@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
 
-# Haxegon (version 0.6.0 (2017-01-21))
+# Haxegon (version 0.7.0 (2017-01-22))
 
 Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. 
 
@@ -20,53 +20,34 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 
 # Last Updates
 
-0.6.0 (2017-01-21)
+0.7.0 (2017-01-22)
 ------------------
 ### New features
-* Added a new example game to the <a href="https://github.com/TerryCavanagh/haxegon-samples">haxegon-samples</a> repo: **Tiny Heist**.
-* Haxegon now uses Starling's QuadBatches internally, which speeds up drawing of primitives in many cases, especially HTML5.
-* A number of surface drawing functions have been implemented:
+* Added a new simple example to the <a href="https://github.com/TerryCavanagh/haxegon-samples">haxegon-samples</a> repo: **Truetype Fonts**.
+* Added `Core.delaycall(f:Function, time:Float)`, which calls a function after a specified number of seconds. E.g.
 ``` haxe
-  //Grab an image from the screen
-  Gfx.grabimagefromscreen(imagename, screenx, screeny);
-  
-  //Grab a tile from the screen
-  Gfx.grabtilefromscreen(tilesetname, tilenumber, screenx, screeny);
-  
-  //Grab an image from an image
-  Gfx.grabimagefromimage(destinationimage, sourceimage, sourceimagex, sourceimagey);
-  
-  //Grab a tile from an image
-  Gfx.grabtilefromimage(tilesetname, tilenumber, imagename, imagex, imagey);
-  
-  //Copy a tile from one tileset to another
-  Gfx.copytile(totileset, totilenumber, fromtileset, fromtilenumber);
+trace("go!");
+Core.delaycall(callmelater, 2.5);
+
+function callmelater(){
+  trace("two and half seconds have passed!");
+}
 ```
-* The new save functions from the last version have been moved to Save.hx. Some functions have been renamed, and some new functions have been added:
+* Added a couple of useful helper functions in a new Help class. (Suggestions for a better class name welcome!)
 ``` haxe
-  //Loading and saving values:
-  Save.savevalue(key, value);             //e.g. Save.savevalue("highscore", highscore);
-  Save.loadvalue(key);                    //e.g. highscore = Save.loadvalue("highscore");
-  Save.exists(key);                       //e.g. if(!Save.exists("highscore")) highscore = 0;
-  
-  //Changing or deleting the save files
-  Save.fileexists(filename:String);       //Returns true if this file exists (i.e. it has at least one key saved)
-  Save.filename = "mygame_slot1";         //Sets a name for your savefile (optional! default is "haxegongame".)
-  Save.delete(filename:String);           //Delete a save file (leaving parameter blank deletes the default)
+  Help.inbox(x, y, rectx, recty, rectw, recth);  //True if point (x, y) is in rectangle
+  Help.overlap(x1, y1, w1, h1, x2, y2, w2, h2);  //True if rectangles overlap
+  Help.distance(x1, y1, x2, y2);                 //Distance in pixels between two points
+  Help.getangle(x1, y1, x2, y2);                 //Angle [0-360] between two points
+  Help.clamp(value, min, max);                   //Clamps a value between [min, max]
   ```
- * `Save.keys` is an array of strings containing all the saved keys for the current savefile. An example usage:
-``` haxe
-  for(i in 0 ... Save.keys.length){
-    trace(Save.keys[i] + ": " + Save.loadvalue(Save.keys[i]));
-  }
-  ```
-* Added `Core.window`, for native targets only. Allows you to control parameters of the current application window. See <a href="http://api.openfl.org/lime/ui/Window.html">OpenFL documentation</a> for more information.
-* Added `Core.quit()`, for native targets only. Quits the application.
-  
+* Added `Mouse.deltax` and `Mouse.deltay`, which return the change in mouse position since the last frame.
+
 ### Bug fixes/Tweaks
-* Fixed a bug where `Gfx.drawtoimage()` and `Gfx.drawtotile()` didn't work if called in `Main.new()`.
-* Default value for `Save.loadvalue(key)` is always 0 - it no longer logs a warning.
-* Implemented `Text.wordwrap` as a variable instead of a function.
-* Fixed `Core.callafterupdate(f:Function)`.
+* Removed `Mouse.previousx` and `Mouse.previousy`.
+* Passing no arguments to `Input.forcerelease()` releases all keys currently being held.
+* Sped up `Data.loadtext()` on native targets.
+* Sped up bitmap font rendering (using starling QuadBatches).
+* Improvements to drawtile quadbatching. 
 
 *(For a full update history, see <a href="https://github.com/TerryCavanagh/haxegon/blob/master/changelog.md">the changelog</a>.)*
