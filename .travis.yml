@@ -46,3 +46,8 @@ script:
   - haxelib run openfl build ~/haxegon/simple/07\ -\ Scene\ Change flash
   - haxelib run openfl build ~/haxegon/simple/07\ -\ Scene\ Change html5
   - haxelib run openfl build ~/haxegon/simple/07\ -\ Scene\ Change neko
+  
+  - haxelib run openfl build ~/haxegon/simple/08\ -\ Truetype\ Fonts flash
+  - haxelib run openfl build ~/haxegon/simple/08\ -\ Truetype\ Fonts html5
+  - haxelib run openfl build ~/haxegon/simple/08\ -\ Truetype\ Fonts neko
+
