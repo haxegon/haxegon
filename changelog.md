@@ -28,7 +28,6 @@ function callmelater(){
 * Sped up bitmap font rendering (using starling QuadBatches).
 * Improvements to drawtile quadbatching. 
 
-
 0.6.0 (2017-01-21)
 ------------------
 ### New features
