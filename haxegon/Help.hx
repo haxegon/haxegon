@@ -2,11 +2,11 @@ package haxegon;
 import openfl.geom.Rectangle;
 
 class Help {
-  public static function inbox(xp:Float, yp:Float, rectx:Float, recty:Float, rectw:Float, recth:Float):Bool {
-	  if (xp >= rectx) {
-			if (xp < rectx + rectw) {
-				if (yp >= recty) {
-					if (yp < recty + recth) {
+  public static function inbox(x:Float, y:Float, rectx:Float, recty:Float, rectw:Float, recth:Float):Bool {
+	  if (x >= rectx) {
+			if (x < rectx + rectw) {
+				if (y >= recty) {
+					if (y < recty + recth) {
 						return true;
 					}
 				}

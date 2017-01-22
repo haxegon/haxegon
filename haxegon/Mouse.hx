@@ -28,7 +28,7 @@ class Mouse{
 	
 	public static var mousewheel:Int = 0;
 	
-	public static function mouseoffstage():Bool { return _mouseoffstage; }
+	public static function offstage():Bool { return _mouseoffstage; }
 	private static var _mouseoffstage:Bool;
 	
 	public static function cursormoved():Bool { return _cursormoved; }
@@ -108,11 +108,12 @@ class Mouse{
 		flashstage = _flashstage;
 		
     starstage.addEventListener(TouchEvent.TOUCH, ontouch);
-    
     #if !flash
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
     #end
+		flashstage.addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
+		flashstage.addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
     
@@ -177,6 +178,16 @@ class Mouse{
 		private static function handleRightMouseDown(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
 		private static function handleRightMouseUp(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
 	#end
+	
+	private static function handleMouseOver(event:MouseEvent) {
+		trace("mouse over event");
+		_mouseoffstage = false;
+	}
+	
+	private static function handleMouseOut(event:MouseEvent) {
+		trace("mouse out event");
+		_mouseoffstage = true;
+	}
 	
 	private static function handleMiddleMouseDown(event:MouseEvent) { if (_middlecurrent > 0) { _middlecurrent = 1; } else { _middlecurrent = 2; } }
 	private static function handleMiddleMouseUp(event:MouseEvent) { if (_middlecurrent > 0) { _middlecurrent = -1; _middleheld = 0; } else { _middlecurrent = 0; }	}
