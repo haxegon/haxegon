@@ -3,17 +3,17 @@ package haxegon;
 class S {
 	/* Returns the ASCII value of the character. If character is a string, returns the ASCII
 	 * code of the first character in the string. */
-	public static function asciicode(character:String):Int {
+	public static inline function asciicode(character:String):Int {
 	  return character.charCodeAt(0);
 	}
 	
 	/* Converts an ascii code to a string. E.g. fromascii(65) == "A" */
-	public static function fromascii(asciicode:Int):String {
+	public static inline function fromascii(asciicode:Int):String {
 	  return String.fromCharCode(asciicode);	
 	}
 	
 	/* Joins up an array into a single string. */
-	public static function join(array:Array<Dynamic>, seperator:String):String {
+	public static inline function join(array:Array<Dynamic>, seperator:String):String {
 		return array.join(seperator);
 	}
 	
@@ -23,17 +23,17 @@ class S {
 	}
 	
 	/** Returns an uppercase version of the string. */
-	public static function uppercase(currentstring:String):String {
+	public static inline function uppercase(currentstring:String):String {
 		return currentstring.toUpperCase();
 	}
 	
 	/** Returns an lowercase version of the string. */
-	public static function lowercase(currentstring:String):String {
+	public static inline function lowercase(currentstring:String):String {
 		return currentstring.toLowerCase();
 	}
 	
 	/** Splits a string into an array, divided by a given delimiter character (e.g. ",")*/
-	public static function split(currentstring:String, delimiter:String):Array<String> {
+	public static inline function split(currentstring:String, delimiter:String):Array<String> {
 		return currentstring.split(delimiter);
 	}
 	
@@ -54,37 +54,37 @@ class S {
 	}
 	
 	/** Return the position of a substring in a given string. -1 if not found. */
-	public static function positioninstring(fullstring:String, substring:String, start:Int = 0):Int {
+	public static inline function positioninstring(fullstring:String, substring:String, start:Int = 0):Int {
 		return (fullstring.indexOf(substring, start));
 	}
 	
 	/** Return character at given position */
-	public static function letterat(currentstring:String, position:Int = 0):String {
+	public static inline function letterat(currentstring:String, position:Int = 0):String {
 		return currentstring.substr(position, 1);
 	}
 	
 	/** Return characters from the middle of a string. */
-	public static function mid(currentstring:String, start:Int = 0, length:Int = 1):String {
+	public static inline function mid(currentstring:String, start:Int = 0, length:Int = 1):String {
 		return currentstring.substr(start,length);
 	}
 	
 	/** Return characters from the left of a string. */
-	public static function left(currentstring:String, length:Int = 1):String {
+	public static inline function left(currentstring:String, length:Int = 1):String {
 		return currentstring.substr(0,length);
 	}
 	
 	/** Return characters from the right of a string. */
-	public static function right(currentstring:String, length:Int = 1):String {
+	public static inline function right(currentstring:String, length:Int = 1):String {
 		return currentstring.substr(currentstring.length - length, length);
 	}
 	
 	/** Return string with N characters removed from the left. */
-	public static function removefromleft(currentstring:String, length:Int = 1):String {
+	public static inline function removefromleft(currentstring:String, length:Int = 1):String {
 		return right(currentstring, currentstring.length - length);
 	}
 	
 	/** Return string with N characters removed from the right. */
-	public static function removefromright(currentstring:String, length:Int = 1):String {
+	public static inline function removefromright(currentstring:String, length:Int = 1):String {
 		return left(currentstring, currentstring.length - length);
 	}
 	
@@ -98,15 +98,7 @@ class S {
 	
 	/** Given a string currentstring, replace all occurances of string ch with ch2. Useful to remove characters. */
 	public static function replacechar(currentstring:String, ch:String = "|", ch2:String = ""):String {
-		var fixedstring:String = "";
-		for (i in 0 ... currentstring.length) {
-			if (mid(currentstring, i) == ch) {
-				fixedstring += ch2;
-			}else {
-				fixedstring += mid(currentstring, i);
-			}
-		}
-		return fixedstring;
+		return StringTools.replace(currentstring, ch, ch2);
 	}
 	
 	/** Given a string currentstring, return everything after the LAST occurance of the "ch" character */
