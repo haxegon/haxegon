@@ -10,8 +10,10 @@ import openfl.Lib;
 class Mouse{		
 	public static var x:Int;
 	public static var y:Int;
-	public static var previousx:Int;
-	public static var previousy:Int;
+	private static var previousx:Int;
+	private static var previousy:Int;
+	public static var deltax:Int;
+	public static var deltay:Int;
 	
 	private static var starstage:starling.display.Stage;
 	private static var flashstage:openfl.display.Stage;
@@ -202,7 +204,9 @@ class Mouse{
 		
 		if (x == previousx && y == previousy) {
 		  _cursormoved = false;	
+			deltax = 0; deltay = 0;
 		}else {
+			deltax = x - previousx; deltay = y - previousy;
 		  previousx = x; previousy = y;
 			_cursormoved = true;
 		}
