@@ -146,6 +146,7 @@ class Gfx {
 	/* Internal function for changing tile index to correct values for tileset */
 	private static function changetileset(tilesetname:String) {
 		if (currenttilesetname != tilesetname) {
+			drawstate = DRAWSTATE_NONE;
 			if(tilesetindex.exists(tilesetname)){
 				currenttileset = tilesetindex.get(tilesetname);
 				currenttilesetname = tilesetname;
@@ -554,12 +555,12 @@ class Gfx {
 			shapematrix.translate(x, y);
 			if (coltransform) {
 				image.color = imagecolormult;
-				quadbatch.addImage(image, 1.0, shapematrix);
+				quadbatch.addImage(image, imagealphamult, shapematrix);
 				image.color = Col.WHITE;
 			}else {
 				quadbatch.addImage(image, 1.0, shapematrix);
 			}
-		}
+		} 
 	}
 	
 	/** Draws image by name. 
@@ -573,6 +574,7 @@ class Gfx {
 		//This could definitely be improved later. See #118
 		endquadbatch();
 		updatequadbatch();
+		drawstate = DRAWSTATE_IMAGE;
 		
 		haxegonimage = images[imageindex.get(imagename)];
 		x = imagealignx(haxegonimage.width, x); y = imagealigny(haxegonimage.height, y);
@@ -801,19 +803,13 @@ class Gfx {
 		
 		//WIP: If we're using a tileset then we can batch draw stuff because it's all on the same texture
 		//(providing we haven't messed with the tileset by creating images)
-		if (!tiles[currenttileset].sharedatlas) {
-			endquadbatch();
-		}
+		if (drawstate != DRAWSTATE_TILES) endquadbatch();
 		updatequadbatch();
+		drawstate = DRAWSTATE_TILES;
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
 		internaldrawimage(x, y, tiles[currenttileset].tiles[tilenum], tiles[currenttileset].width, tiles[currenttileset].height);
-		
-		if (!tiles[currenttileset].sharedatlas) {
-			//This could definitely be improved later. See #118
-			endquadbatch();
-		}
 	}
 	
 	private static function tilealignx(x:Float):Float {
@@ -846,7 +842,9 @@ class Gfx {
 		
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
 		updatequadbatch();
+		drawstate = DRAWSTATE_QUAD;
 		
 		templine = new Line(x1, y1, x2, y2, linethickness, color);
 		templine.alpha = alpha;
@@ -916,7 +914,9 @@ class Gfx {
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		if (drawstate != DRAWSTATE_POLY4) endquadbatch();
 		updatequadbatch();
+		drawstate = DRAWSTATE_POLY4;
 		
 		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, color);
 		temppoly4.alpha = alpha;
@@ -944,7 +944,9 @@ class Gfx {
 	
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT) return;
+		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
 		updatequadbatch();
+		drawstate = DRAWSTATE_QUAD;
 		
 		tempquad.x = x;
 		tempquad.y = y;
@@ -967,6 +969,7 @@ class Gfx {
 			
 			quadbatch.reset();
 			quadbatchcount = 0;
+			drawstate = DRAWSTATE_NONE;
 		}
 	}
 	
@@ -1185,6 +1188,7 @@ class Gfx {
 	}
 	
 	private static function startframe() {
+		drawstate = DRAWSTATE_NONE;
 		drawto.bundlelock();	
 		
 		if (clearcolor != Col.TRANSPARENT) clearscreen(clearcolor);
@@ -1206,6 +1210,14 @@ class Gfx {
 	private static var tempquad:Quad = new Quad(1, 1);
 	private static var temppoly4:Poly4;
 	private static var templine:Line;
+	
+	private static var drawstate:Int = 0;
+	private static inline var DRAWSTATE_NONE:Int = 0;
+	private static inline var DRAWSTATE_QUAD:Int = 1;
+	private static inline var DRAWSTATE_POLY4:Int = 2;
+	private static inline var DRAWSTATE_IMAGE:Int = 3;
+	private static inline var DRAWSTATE_TILES:Int = 4;
+	private static inline var DRAWSTATE_TEXT:Int = 5;
 	
 	private static var starlingassets:AssetManager;
 	private static var trect:Rectangle = new Rectangle();

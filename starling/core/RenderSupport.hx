@@ -196,8 +196,25 @@ class RenderSupport
     /** Changes the modelview matrix to the identity matrix. */
     public function loadIdentity():Void
     {
-        mModelViewMatrix.identity();
-        mModelViewMatrix3D.identity();
+		mModelViewMatrix.identity();
+
+        //mModelViewMatrix3D.identity();
+		mModelViewMatrix3D.rawData[0] = 1.0;
+		mModelViewMatrix3D.rawData[1] = 0.0;
+		mModelViewMatrix3D.rawData[2] = 0.0;
+		mModelViewMatrix3D.rawData[3] = 0.0;
+		mModelViewMatrix3D.rawData[4] = 0.0;
+		mModelViewMatrix3D.rawData[5] = 1.0;
+		mModelViewMatrix3D.rawData[6] = 0.0;
+		mModelViewMatrix3D.rawData[7] = 0.0;
+		mModelViewMatrix3D.rawData[8] = 0.0;
+		mModelViewMatrix3D.rawData[9] = 0.0;
+		mModelViewMatrix3D.rawData[10] = 1.0;
+		mModelViewMatrix3D.rawData[11] = 0.0;
+		mModelViewMatrix3D.rawData[12] = 0.0;
+		mModelViewMatrix3D.rawData[13] = 0.0;
+		mModelViewMatrix3D.rawData[14] = 0.0;
+		mModelViewMatrix3D.rawData[15] = 1.0;
     }
     
     /** Prepends a translation to the modelview matrix. */

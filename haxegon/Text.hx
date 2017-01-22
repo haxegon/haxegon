@@ -202,6 +202,9 @@ class Text {
 	
 	private static function drawstringinput() {
 		Gfx.endquadbatch();
+		//if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
+		//Gfx.updatequadbatch();
+		//Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
 		
 		if (input_show > 0) {
 			setfont(input_font, input_textsize);
@@ -336,6 +339,10 @@ class Text {
 	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF) {
 		if (text == "") return;
 		Gfx.endquadbatch();
+		//Future developments!
+		//if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
+		//Gfx.updatequadbatch();
+		//Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
 		
 		if (typeface.length == 0) {
 		  defaultfont();	
@@ -367,11 +374,14 @@ class Text {
 		}
 		
 		fontmatrix.translate(x, y);
-		Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix);
 		// Clumsy work around to force haxegon to change to the next draw call on TTF fonts.
 		// to do: implement a pooling system for ttf fonts so that this isn't required.
 		if (typeface[currentindex].type == "ttf") {
+			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix);
 		  Gfx.fillbox(-1, -1, 1, 1, Col.RED);	
+		}else {			
+			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix);
+			//Gfx.quadbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);	
 		}
 	}
 	
@@ -437,6 +447,8 @@ class Text {
 	static function set_font(fontname:String):String {
 		if (fontname == "" || fontname.toLowerCase() == "verdana") fontname = "Verdana";
 		if (fontname == currentfont) return currentfont;
+		
+		//if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
 		setfont(fontname, 1);
 		return currentfont;
 	}
@@ -448,7 +460,8 @@ class Text {
 	}
 	
 	static function set_size(fontsize:Float):Float {
-	  if(currentsize != fontsize){
+	  if (currentsize != fontsize) {
+			//if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();	
       changesize(fontsize);
     }
 		return currentsize;
