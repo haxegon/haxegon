@@ -14,6 +14,7 @@ class Fontclass {
 		autosize = true;
 		type = Text.fontfile[Text.fontfileindex.get(_name)].type;
 		loadfont(_name, _size);
+		nexttextfield();
 	}
 	
 	public function loadfont(_name:String, _size:Float) {
