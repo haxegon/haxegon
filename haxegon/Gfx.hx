@@ -1166,14 +1166,7 @@ class Gfx {
 			screen.touchable = false;
 			screen.scale = 1;
 			screen.smoothing = "none";
-			starstage.addChild(screen);
-			
-			if (Core.showstats) {
-			  Core.statsdisplay = new StatsDisplay();
-				starstage.addChild(Core.statsdisplay);
-			}else {
-				if(Core.statsdisplay != null) starstage.removeChild(Core.statsdisplay);
-			}
+			starstage.addChildAt(screen, 0);
 		}
 		
 		gfxinit = true;

@@ -120,8 +120,6 @@ class Mouse{
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
     #end
-		//flashstage.addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
-		//flashstage.addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
     

@@ -265,17 +265,8 @@ class Core extends Sprite {
 	}
 
 	static function set_showstats(_b:Bool) {
-		if (Gfx.gfxinit) {
-			//If we've already initilised the screen, add/remove the stats display now
-			if (_b) {
-			  statsdisplay = new StatsDisplay();
-				Gfx.starstage.addChild(statsdisplay);
-			}else {
-			  if(statsdisplay != null) Gfx.starstage.removeChild(statsdisplay);
-			}
-		}
-		_showstats = _b;
-		return _showstats;
+		Starling.current.showStats = _b;
+		return _b;
 	}
 	
 	public static var window(get, never):Window;
