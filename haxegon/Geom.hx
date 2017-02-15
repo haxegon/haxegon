@@ -1,7 +1,7 @@
 package haxegon;
 import openfl.geom.Rectangle;
 
-class Help {
+class Geom {
   public static function inbox(x:Float, y:Float, rectx:Float, recty:Float, rectw:Float, recth:Float):Bool {
 	  if (x >= rectx) {
 			if (x < rectx + rectw) {
