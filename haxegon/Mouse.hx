@@ -30,7 +30,13 @@ class Mouse{
 	
 	public static var mousewheel:Int = 0;
 	
-	public static function offstage():Bool { return _mouseoffstage; }
+	public static function offscreen():Bool { 
+		if (Geom.inbox(Mouse.x, Mouse.y, 0, 0, Gfx.screenwidth, Gfx.screenheight)) {
+			return _mouseoffstage;
+		}else{
+			return true;
+		}
+	}
 	private static var _mouseoffstage:Bool;
 	
 	public static function cursormoved():Bool { return _cursormoved; }
@@ -114,8 +120,8 @@ class Mouse{
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
     #end
-		flashstage.addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
-		flashstage.addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
+		//flashstage.addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
+		//flashstage.addEventListener(MouseEvent.MOUSE_OVER, handleMouseOver);
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
     
@@ -146,8 +152,16 @@ class Mouse{
 	
 	private static function ontouch(e:TouchEvent) {
 		var touch:Touch = e.getTouch(starstage);
+		_mouseoffstage = true;
+		
 		if (touch != null) {
-			if(touch.phase == TouchPhase.BEGAN){
+			if (touch.phase == TouchPhase.HOVER) {
+				_mouseoffstage = false;
+			}	
+			
+			if (touch.phase == TouchPhase.BEGAN) {
+				_mouseoffstage = false;	
+				
 				//There was a touch (same as mouse down event)
 				if (Input.pressed(Key.CONTROL)) {
 					if(_rightcurrent > 0) _rightcurrent = 1;
@@ -170,7 +184,8 @@ class Mouse{
 				
 				_held = 0;
 				_rightheld = 0;
-			}else if(touch.phase == TouchPhase.MOVED){
+			}else if (touch.phase == TouchPhase.MOVED) {
+				_mouseoffstage = false;	
 				//touch dragging
 			}
 		}
@@ -180,16 +195,6 @@ class Mouse{
 		private static function handleRightMouseDown(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
 		private static function handleRightMouseUp(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
 	#end
-	
-	private static function handleMouseOver(event:MouseEvent) {
-		trace("mouse over event");
-		_mouseoffstage = false;
-	}
-	
-	private static function handleMouseOut(event:MouseEvent) {
-		trace("mouse out event");
-		_mouseoffstage = true;
-	}
 	
 	private static function handleMiddleMouseDown(event:MouseEvent) { if (_middlecurrent > 0) { _middlecurrent = 1; } else { _middlecurrent = 2; } }
 	private static function handleMiddleMouseUp(event:MouseEvent) { if (_middlecurrent > 0) { _middlecurrent = -1; _middleheld = 0; } else { _middlecurrent = 0; }	}
