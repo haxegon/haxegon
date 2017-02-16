@@ -8,12 +8,46 @@ import openfl.net.*;
 import openfl.Lib;
 	
 class Mouse{		
-	public static var x:Int;
-	public static var y:Int;
+	private static var _x:Int;
+	private static var _y:Int;
 	private static var previousx:Int;
 	private static var previousy:Int;
 	public static var deltax:Int;
 	public static var deltay:Int;
+	
+	public static var x(get, set):Int;
+	static function get_x():Int {
+		return _x;
+	}
+	
+	static function set_x(_newx:Float):Int {
+		_x = Std.int(_newx);
+		#if html5
+		Debug.log("ERROR: Cannot set value of Mouse.x in HTML5.");
+		#elseif flash
+		Debug.log("ERROR: Cannot set value of Mouse.x in Flash.");
+		#else
+		lime.ui.Mouse.warp(_x, _y, Core.window);
+		#end
+		return _x;
+	}
+	
+	public static var y(get, set):Int;
+	static function get_y():Int {
+		return _y;
+	}
+	
+	static function set_y(_newy:Float):Int {
+		_y = Std.int(_newy);
+		#if html5
+		Debug.log("ERROR: Cannot set value of Mouse.y in HTML5.");
+		#elseif flash
+		Debug.log("ERROR: Cannot set value of Mouse.y in Flash.");
+		#else
+		lime.ui.Mouse.warp(_x, _y, Core.window);
+		#end
+		return _y;
+	}
 	
 	private static var starstage:starling.display.Stage;
 	private static var flashstage:openfl.display.Stage;
@@ -201,9 +235,9 @@ class Mouse{
 		mousewheel = (event.delta > 0) ? 2 : -2;
 	}
 	
-	private static function update(X:Int, Y:Int, firstframe:Bool) {
-		x = X;
-		y = Y;
+	private static function update(mx:Int, my:Int, firstframe:Bool) {
+		_x = mx;
+		_y = my;
 		
 		if (x == previousx && y == previousy) {
 		  _cursormoved = false;	
