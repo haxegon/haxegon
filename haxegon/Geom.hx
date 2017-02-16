@@ -32,7 +32,7 @@ class Geom {
 	}
 	
 	public static inline function getangle(x1:Float, y1:Float, x2:Float, y2:Float):Float {
-    return Std.int(360 - ((Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI)) % 360;
+    return ((Math.PI * 2) - Math.atan2(y2 - y1, x2 - x1)) % (Math.PI * 2);
   }
 	
 	public static inline function todegrees(rad:Float):Float {
@@ -41,6 +41,10 @@ class Geom {
 	
 	public static inline function toradians(degrees:Float):Float {
 		return ((degrees * Math.PI) / 180);
+	}
+	
+	public static inline function anglebetween(angle1:Float, angle2:Float):Float {
+		return -Math.atan2(Math.sin(angle1 - angle2), Math.cos(angle1 - angle2));
 	}
 	
 	private static var rect1:Rectangle = new Rectangle();
