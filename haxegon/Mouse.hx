@@ -128,8 +128,8 @@ class Mouse{
 	}
 	
 	private static function init(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
-		x = 0;
-		y = 0;
+		_x = 0;
+		_y = 0;
 	  previousx = 0;
 		previousy = 0;
 		_cursormoved = false;
