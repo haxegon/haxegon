@@ -1,5 +1,6 @@
 package haxegon;
 
+import haxegon.embeddedassets.DefaultFont;
 import openfl.Assets;
 import openfl.geom.Matrix;
 import openfl.text.Font;
@@ -100,11 +101,18 @@ class Fontclass {
 class Fontfile {
 	public function new(?_file:String) {
 		if (_file == null) {
-			type = "ttf";
+			type = "bitmap";
+			
+			fontxml = Xml.parse(DefaultFont.xmlstring).firstElement();
+			typename = fontxml.elementsNamed("info").next().get("face");
+			sizescale = Std.parseInt(fontxml.elementsNamed("info").next().get("size"));
+			fonttex = Texture.fromBitmapData(DefaultFont.bitmapdata, false);
+			bitmapfont = new BitmapFont(fonttex, fontxml);
+			TextField.registerBitmapFont(bitmapfont);
 			
 			filename = "";
-			typename = "Verdana";
-			sizescale = 1;
+			typename = "default";
+			sizescale = Std.parseInt(fontxml.elementsNamed("info").next().get("size"));
 		}else	if (Data.assetexists("data/graphics/fonts/" + _file + "/" + _file + ".fnt")) {
 			type = "bitmap";
 			
@@ -396,8 +404,8 @@ class Text {
 	}
 	
 	private static function defaultfont() {
-		addfont(null, 24);
-		setfont("Verdana", 24);
+		addfont(null, 1);
+		setfont("default", 1);
 	}
 	
 	private static function setfont(fontname:String, size:Float = 1) {
@@ -430,7 +438,7 @@ class Text {
 				}
 			}else {
 			  addfont(null, t);
-				setfont("Verdana", t);
+				setfont("default", t);
 			}
 		}
 	}
@@ -443,7 +451,7 @@ class Text {
 	
 	private static function addfont(fontname:String, defaultsize:Float = 1) {
 		fontfile.push(new Fontfile(fontname));
-		if (fontname == null) fontname = "Verdana";
+		if (fontname == null) fontname = "default";
 		fontfileindex.set(fontname, fontfile.length - 1);
 		
 		changesize(defaultsize);
@@ -461,7 +469,7 @@ class Text {
 	}
 	
 	static function set_font(fontname:String):String {
-		if (fontname == "" || fontname.toLowerCase() == "verdana") fontname = "Verdana";
+		if (fontname == "" || fontname.toLowerCase() == "default") fontname = "default";
 		if (fontname == currentfont) return currentfont;
 		
 		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
