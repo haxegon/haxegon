@@ -427,7 +427,19 @@ class Text {
 	}
 	
 	private static function changesize(t:Float) {
-		if (t != currentsize){
+		if (t != currentsize) {
+			if (t == -1) {
+			  t = 1;
+				if (fontfileindex.exists(currentfont)) {
+				  if (fontfile[fontfileindex.get(currentfont)].type == "ttf") {
+					  t = 24;	
+					}
+				}else {
+				  Debug.log("Error: changesize called on a font that hasn't been loaded yet");	
+				}
+			}
+			
+			fontlastsize.set(currentfont, t);	
 			currentsize = t;
 			if (currentfont != "null") {
 				if (typefaceindex.exists(currentfont + "_" + Std.string(currentsize))) {
@@ -449,11 +461,18 @@ class Text {
 		}
 	}
 	
-	private static function addfont(fontname:String, defaultsize:Float = 1) {
+	private static function addfont(fontname:String, defaultsize:Float = -1) {
 		fontfile.push(new Fontfile(fontname));
 		if (fontname == null) fontname = "default";
 		fontfileindex.set(fontname, fontfile.length - 1);
 		
+		if (defaultsize == -1) {
+			if (fontfile[fontfile.length - 1].type == "ttf") {
+				defaultsize = 24;	
+			}else {
+				defaultsize = 1;
+			}
+		}
 		changesize(defaultsize);
 	}
 	
@@ -472,8 +491,9 @@ class Text {
 		if (fontname == "" || fontname.toLowerCase() == "default") fontname = "default";
 		if (fontname == currentfont) return currentfont;
 		
-		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
-		setfont(fontname, 1);
+		Gfx.endquadbatch();
+		
+		setfont(fontname, fontlastsize.exists(fontname)?fontlastsize.get(fontname): -1);
 		return currentfont;
 	}
 	
@@ -484,8 +504,8 @@ class Text {
 	}
 	
 	static function set_size(fontsize:Float):Float {
-	  if (currentsize != fontsize) {
-			if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();	
+		if (currentsize != fontsize) {
+			Gfx.endquadbatch();	
       changesize(fontsize);
     }
 		return currentsize;
@@ -493,6 +513,7 @@ class Text {
 	
 	private static var fontfile:Array<Fontfile> = new Array<Fontfile>();
 	private static var fontfileindex:Map<String,Int> = new Map<String,Int>();
+	private static var fontlastsize:Map<String,Float> = new Map<String,Float>();
 	
 	private static var typeface:Array<Fontclass> = new Array<Fontclass>();
 	private static var typefaceindex:Map<String,Int> = new Map<String,Int>();
