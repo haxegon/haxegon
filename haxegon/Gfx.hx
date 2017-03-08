@@ -111,7 +111,11 @@ class Gfx {
 	
 	/** Scales image drawing functions. Optionally takes a second argument 
 	 * to scale X and Y seperately. */
-	public static function scale(xscale:Float, yscale:Float, xpivot:Float = -10000, ypivot:Float = -10000) {
+	public static function scale(?xscale:Float, ?yscale:Float, ?xpivot:Float = -10000, ?ypivot:Float = -10000) {
+		if (xscale == null && yscale == null) {
+		  xscale = 1.0; yscale = 1.0;
+		}
+		if (yscale == null && xscale != null) yscale = xscale;
 		imagexscale = xscale;
 		imageyscale = yscale;
 		imagescalexpivot = xpivot;
