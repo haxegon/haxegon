@@ -8,6 +8,7 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import starling.display.*;
 import starling.geom.*;
+import starling.core.RenderSupport;
 import starling.core.StatsDisplay;
 import starling.utils.AssetManager;
 import starling.textures.*;
@@ -1017,6 +1018,89 @@ class Gfx {
 		if (color == Col.TRANSPARENT && drawto != null) return;
 		
 		fillbox(x, y, 1, 1, color, alpha);
+	}
+	
+	public static function getpixel(x:Float, y:Float):Int {
+		var w:Int;
+		var h:Int;
+		var xs:Float;
+		var ys:Float;
+		var resultpixel:Int = Col.TRANSPARENT;
+		
+		if (drawto == backbuffer) {
+			//To do: caching the screen for repeated getpixel calls
+			//Getting a pixel from the screen
+			//First, we take a screenshot
+			w = screenwidth;
+			h = screenheight;
+			xs = Starling.current.viewPort.width / w;
+			ys = Starling.current.viewPort.height / h;
+			
+			var screenshot:BitmapData = new BitmapData(w, h);
+			screenshot = Starling.current.stage.drawToBitmapData(screenshot, false);
+			
+			var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+			var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+			
+			if (pixelalpha == 0) {
+				resultpixel = Col.TRANSPARENT;
+			}else{
+				resultpixel = pixel;
+			}
+			
+			screenshot.dispose();
+		}else {
+			//To do: getting a pixel from a static texture loaded from a bitmapdata
+			//To do: caching the screenshots from getpixel on rendertextures
+			
+		  //We're getting a pixel from a rendertexture image. 
+			//Ok, this is the awful worst case, but here's how we do it:
+			//Starling doesn't support drawing an arbitrary texture to a bitmapdata. 
+			//We can only do this with the screen. Therefore, we:
+			// - Grab a screenshot
+			// - Clear the screen, then draw our image to it
+			// - Get the pixel
+			// - Redraw the screenshot over the screen
+			
+			//First, we take a screenshot
+			w = screenwidth;
+			h = screenheight;
+			xs = Starling.current.viewPort.width / w;
+			ys = Starling.current.viewPort.height / h;
+			
+			endquadbatch();
+			drawto.bundleunlock();
+			var screenshot:BitmapData = new BitmapData(w, h);
+			screenshot = Starling.current.stage.drawToBitmapData(screenshot, false);
+			
+			//Now, we clear the screen
+			backbuffer.bundlelock();
+			backbuffer.clear();
+			
+			//And we draw our image to this
+			backbuffer.draw(new Image(drawto));
+			backbuffer.bundleunlock();
+			
+			var screenshot2:BitmapData = new BitmapData(w, h);
+			screenshot2 = Starling.current.stage.drawToBitmapData(screenshot2, true);
+			
+			var pixelalpha:Int = screenshot2.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+			var pixel:Int = screenshot2.getPixel(Std.int(x * xs), Std.int(y * ys));
+			
+			if (pixelalpha == 0) {
+				resultpixel = Col.TRANSPARENT;
+			}else{
+				resultpixel = pixel;
+			}
+			
+			screenshot2.dispose();
+			
+			//Now we redraw the screen
+			backbuffer.draw(new Image(Texture.fromBitmapData(screenshot)));
+			screenshot.dispose();
+		}
+		
+		return resultpixel;
 	}
 	
 	private static function updategraphicsmode(windowwidth:Int, windowheight:Int) {
