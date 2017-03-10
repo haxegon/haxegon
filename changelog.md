@@ -1,3 +1,30 @@
+0.8.0 (2017-03-17)
+------------------
+### New features
+* Implemented `Gfx.getpixel()`. It's very slow right now - I'll work on speeding it up for the next version!
+* Default font has changed from Verdana to the bitmap font **PC Paint Normal**. This is included in the engine, and doesn't require you to include any assets.
+* Calling `Gfx.clearscreen(Col.TRANSPARENT)` when drawing to an image now restores the transparency of that image.
+* On Native targets, you can capture the mouse cursor by setting the values of `Mouse.x` and `Mouse.y`.
+* Implemented `Mouse.offscreen()`.
+* Some new helper functions added to `Geom` (which was called `Help` in the last build). All `Geom` functions work in Radians, to be consistant with Haxe's Math class.
+``` haxe
+  //Return the smallest angle between a and b, including sign:
+  var smallestangle:Float = Geom.anglebetween(a, b);
+  
+  //Clamp a value between a minimum and maximum value
+  var clamptedvalue:Float = Geom.clamp(value, min, max);
+  
+  //Convert radians to degrees, and vice versa
+  var rad:Float = Geom.todegrees(deg);
+  var deg:Float = Geom.todegrees(rad);
+```
+
+### Bug fixes/Tweaks
+* The `Help` class has been renamed `Geom`. The renamed functions are `Geom.inbox`, `Geom.overlap`, `Geom.getangle` and `Geom.distance`.
+* `Gfx.scale()` can be called with no parameters to reset image scale setting (Same as `Gfx.scale(1, 1)`).
+* `Gfx.scale()` can be called with a single parameter scale x and y the same.
+* Fixed a crash when calling Text.width() on a font you haven't drawn with yet.
+
 0.7.0 (2017-01-22)
 ------------------
 ### New features
