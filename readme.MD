@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
 
-# Haxegon (version 0.7.0 (2017-01-22))
+# Haxegon (version 0.8.0 (2017-03-17))
 
 Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. 
 
@@ -20,34 +20,31 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 
 # Last Updates
 
-0.7.0 (2017-01-22)
+0.8.0 (2017-03-17)
 ------------------
 ### New features
-* Added a new simple example to the <a href="https://github.com/TerryCavanagh/haxegon-samples">haxegon-samples</a> repo: **Truetype Fonts**.
-* Added `Core.delaycall(f:Function, time:Float)`, which calls a function after a specified number of seconds. E.g.
+* Implemented `Gfx.getpixel()`. It's very slow right now - I'll work on speeding it up for the next version!
+* Default font has changed from Verdana to the bitmap font **PC Paint Normal**. This is included in the engine, and doesn't require you to include any assets.
+* Calling `Gfx.clearscreen(Col.TRANSPARENT)` when drawing to an image now restores the transparency of that image.
+* On Native targets, you can capture the mouse cursor by setting the values of `Mouse.x` and `Mouse.y`.
+* Implemented `Mouse.offscreen()`.
+* Some new helper functions added to `Geom` (which was called `Help` in the last build). All `Geom` functions work in Radians, to be consistant with Haxe's Math class.
 ``` haxe
-trace("go!");
-Core.delaycall(callmelater, 2.5);
-
-function callmelater(){
-  trace("two and half seconds have passed!");
-}
+  //Return the smallest angle between a and b, including sign:
+  var smallestangle:Float = Geom.anglebetween(a, b);
+  
+  //Clamp a value between a minimum and maximum value
+  var clamptedvalue:Float = Geom.clamp(value, min, max);
+  
+  //Convert radians to degrees, and vice versa
+  var rad:Float = Geom.todegrees(deg);
+  var deg:Float = Geom.todegrees(rad);
 ```
-* Added a couple of useful helper functions in a new Help class. (Suggestions for a better class name welcome!)
-``` haxe
-  Help.inbox(x, y, rectx, recty, rectw, recth);  //True if point (x, y) is in rectangle
-  Help.overlap(x1, y1, w1, h1, x2, y2, w2, h2);  //True if rectangles overlap
-  Help.distance(x1, y1, x2, y2);                 //Distance in pixels between two points
-  Help.getangle(x1, y1, x2, y2);                 //Angle [0-360] between two points
-  Help.clamp(value, min, max);                   //Clamps a value between [min, max]
-  ```
-* Added `Mouse.deltax` and `Mouse.deltay`, which return the change in mouse position since the last frame.
 
 ### Bug fixes/Tweaks
-* Removed `Mouse.previousx` and `Mouse.previousy`.
-* Passing no arguments to `Input.forcerelease()` releases all keys currently being held.
-* Sped up `Data.loadtext()` on native targets.
-* Sped up bitmap font rendering (using starling QuadBatches).
-* Improvements to drawtile quadbatching. 
+* The `Help` class has been renamed `Geom`. The renamed functions are `Geom.inbox`, `Geom.overlap`, `Geom.getangle` and `Geom.distance`.
+* `Gfx.scale()` can be called with no parameters to reset image scale setting (Same as `Gfx.scale(1, 1)`).
+* `Gfx.scale()` can be called with a single parameter scale x and y the same.
+* Fixed a crash when calling Text.width() on a font you haven't drawn with yet.
 
 *(For a full update history, see <a href="https://github.com/TerryCavanagh/haxegon/blob/master/changelog.md">the changelog</a>.)*
