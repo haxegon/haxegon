@@ -45,6 +45,6 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 * The `Help` class has been renamed `Geom`. The renamed functions are `Geom.inbox`, `Geom.overlap`, `Geom.getangle` and `Geom.distance`.
 * `Gfx.scale()` can be called with no parameters to reset image scale setting (Same as `Gfx.scale(1, 1)`).
 * `Gfx.scale()` can be called with a single parameter scale x and y the same.
-* Fixed a crash when calling Text.width() on a font you haven't drawn with yet.
+* Fixed a crash when calling `Text.width()` on a font you haven't drawn with yet.
 
 *(For a full update history, see <a href="https://github.com/TerryCavanagh/haxegon/blob/master/changelog.md">the changelog</a>.)*
