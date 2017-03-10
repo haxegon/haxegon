@@ -1,4 +1,4 @@
-0.8.0 (2017-03-17)
+0.8.0 (2017-03-10)
 ------------------
 ### New features
 * Implemented `Gfx.getpixel()`. It's very slow right now - I'll work on speeding it up for the next version!
