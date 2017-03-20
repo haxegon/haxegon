@@ -36,6 +36,33 @@ class Col {
 		return (c & 0xFF);
 	}
 	
+	public static inline function shiftred(c:Int, shift:Float):Int {
+	  return rgb(Std.int(Geom.clamp(getred(c) + shift, 0, 255)), getgreen(c), getblue(c));
+	}
+	
+	public static inline function shiftgreen(c:Int, shift:Float):Int {
+	  return rgb(getred(c), Std.int(Geom.clamp(getgreen(c) + shift, 0, 255)), getblue(c));
+	}
+	
+	public static inline function shiftblue(c:Int, shift:Float):Int {
+	  return rgb(getred(c), getgreen(c), Std.int(Geom.clamp(getblue(c) + shift, 0, 255)));
+	}
+	
+	public static function shifthue(c:Int, shift:Float):Int {
+		if (shift < 0) {
+			while (shift < 0) shift += 360;
+		}
+	  return hsl((gethue(c) + Std.int(shift)) % 360, getsaturation(c), getlightness(c));
+	}
+	
+	public static function shiftsaturation(c:Int, shift:Float):Int {
+		return hsl(gethue(c), Geom.clamp(getsaturation(c) + shift, 0, 1.0), getlightness(c));
+	}
+	
+	public static function shiftlightness(c:Int, shift:Float):Int {
+		return hsl(gethue(c), getsaturation(c), Geom.clamp(getlightness(c) + shift, 0, 1.0));
+	}
+	
 	/** Get the Hue value (0-360) of a hex code colour. **/
 	public static function gethue(c:Int):Int {	
     var r:Float = getred(c) / 255;
