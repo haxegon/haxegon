@@ -617,6 +617,7 @@ class Gfx {
 		var subtex:Texture = Texture.fromTexture(haxegonimage.contents.texture, trect);
 		var subimage:Image = new Image(subtex); // alloc. avoidable with pooling?
 		subimage.touchable = false;
+		subimage.smoothing = "none";
 		
 		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
 		
