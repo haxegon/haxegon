@@ -153,6 +153,8 @@ class Mouse{
     #if !flash
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
+		#else
+		flashstage.addEventListener(MouseEvent.RIGHT_CLICK, function(event:MouseEvent){});
     #end
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
