@@ -54,7 +54,8 @@ class HaxegonTileset {
 @:access(haxegon.Core)
 @:access(haxegon.Data)
 @:access(haxegon.Text)
-class Gfx {    
+@:access(haxegon.Filter)
+class Gfx {
 	private static inline var MAX_NUM_QUADS:Int = 16383;
 	public static var LEFT:Int = -10000;
 	public static var RIGHT:Int = -20000;
@@ -1260,6 +1261,8 @@ class Gfx {
 			screen.scale = 1;
 			screen.smoothing = "none";
 			starstage.addChildAt(screen, 0);
+			
+			Filter.init();
 		}
 		
 		gfxinit = true;
