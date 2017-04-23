@@ -46,19 +46,20 @@ class Filter {
 	  //When a filter changes, call this function internally to update the currently active filter	
 		Gfx.screen.filter = null;
 		
-		//Currently only one filter at a time is supported!
-		if (_blur) {
-		  Gfx.screen.filter = blurfilter;
-			return;
-		}
-		
 		if (_bloom > 0) {
 			bloomfilter.red = (_bloom / 2) + 0.5;
 			bloomfilter.green = (_bloom / 2) + 0.5;
 			bloomfilter.blue = (_bloom / 2) + 0.5;
-			bloomfilter.blur = Geom.clamp((_bloom + 0.5) * 2, 0, 2.5);
+			bloomfilter.blur = Geom.clamp((_bloom + 0.5) * 2, 0, 2.5) + (_blur?1:0);
 			
 			Gfx.screen.filter = bloomfilter;
+			return;
+		}
+		
+		//Currently only one filter at a time is supported, but since we only have blur and bloom
+		//for now we can just set it up to use bloom's build in blur instead
+		if (_blur) {
+		  Gfx.screen.filter = blurfilter;
 			return;
 		}
 	}
