@@ -196,7 +196,8 @@ class Mouse{
 			if (touch.phase == TouchPhase.BEGAN) {
 				_mouseoffstage = false;	
 				
-				//There was a touch (same as mouse down event)
+				//There was a touch (same as mouse down event
+				#if flash
 				if (Input.pressed(Key.CONTROL)) {
 					if(_rightcurrent > 0) _rightcurrent = 1;
 					else _rightcurrent = 2;
@@ -208,10 +209,18 @@ class Mouse{
 					
 					_held = 0;
 				}
+				#else
+				if(_current > 0) _current = 1;
+				else _current = 2;
+				
+				_held = 0;
+				#end
 			}else if(touch.phase == TouchPhase.ENDED){
 				//The Touch ended (same as mouse up event)
+				#if flash
 				if(_rightcurrent > 0) _rightcurrent = -1;
 				else _rightcurrent = 0;
+				#end
 				
 				if(_current > 0) _current = -1;
 				else _current = 0;
