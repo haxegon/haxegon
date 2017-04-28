@@ -55,12 +55,12 @@ class Col {
 	  return hsl((gethue(c) + Std.int(shift)) % 360, getsaturation(c), getlightness(c));
 	}
 	
-	public static function shiftsaturation(c:Int, shift:Float):Int {
-		return hsl(gethue(c), Geom.clamp(getsaturation(c) + shift, 0, 1.0), getlightness(c));
+	public static function multiplysaturation(c:Int, shift:Float):Int {
+		return hsl(gethue(c), Geom.clamp(getsaturation(c) * shift, 0, 1.0), getlightness(c));
 	}
 	
-	public static function shiftlightness(c:Int, shift:Float):Int {
-		return hsl(gethue(c), getsaturation(c), Geom.clamp(getlightness(c) + shift, 0, 1.0));
+	public static function multiplylightness(c:Int, shift:Float):Int {
+		return hsl(gethue(c), getsaturation(c), Geom.clamp(getlightness(c) * shift, 0, 1.0));
 	}
 	
 	/** Get the Hue value (0-360) of a hex code colour. **/

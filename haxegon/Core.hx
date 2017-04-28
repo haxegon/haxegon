@@ -19,6 +19,7 @@ import openfl.Assets;
 @:access(haxegon.Mouse)
 @:access(haxegon.Input)
 @:access(haxegon.Scene)
+@:access(haxegon.Debug)
 class Core extends Sprite {
 	private static inline var WINDOW_WIDTH:String = haxe.macro.Compiler.getDefine("windowwidth");
 	private static inline var WINDOW_HEIGHT:String = haxe.macro.Compiler.getDefine("windowheight");
@@ -73,6 +74,7 @@ class Core extends Sprite {
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
 		Data.initassets();
+		Debug.init();
 		Gfx.init(this.stage, Starling.current.nativeStage);
 		Text.defaultfont();
 		Music.init();
@@ -94,7 +96,7 @@ class Core extends Sprite {
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
 		if (!Gfx.gfxinit) {
 			Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT));
-			if (Gfx.fullscreen) { 
+			if (Gfx.fullscreen) {
 				Gfx.fullscreen = true;
 			}else {
 				Gfx.fullscreen = false;	
@@ -185,9 +187,10 @@ class Core extends Sprite {
 		if (!Scene.hasseperaterenderfunction) {
 			Gfx.startframe();
 			
+			Debug.update();
 			Scene.update();	
 			Text.drawstringinput();
-			Debug.showlog();
+			Debug.render();
 			
 			if (updateextended) {
 				currentupdateindex = updateindex;
@@ -197,6 +200,7 @@ class Core extends Sprite {
 			
 			Gfx.endframe();
 		}else {
+			Debug.update();
 		  Scene.update();	
 			
 			if (updateextended) {
@@ -214,7 +218,7 @@ class Core extends Sprite {
 		
 		Scene.render();
 		Text.drawstringinput();
-		Debug.showlog();
+		Debug.render();
 		if (renderextended) extendedrenderfunction();
 		
 		Gfx.endframe();
