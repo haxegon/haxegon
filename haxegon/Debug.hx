@@ -85,9 +85,9 @@ class Debug {
 		}
 		
 		gui.scrollpos = drawscrollbar(
-		  gui.x + gui.width - 12, 
+		  Std.int(gui.x + gui.width - 12 * gui.scale), 
 			Std.int(gui.y + (gui.scale * 10) + gui.scale), 
-			10, Std.int(gui.height - (gui.scale * 10) - (2 * gui.scale)), 
+			Std.int(10 * gui.scale), Std.int(gui.height - (gui.scale * 10) - (2 * gui.scale)), 
 		  gui.scrollpos, history.length - (Math.floor(gui.height / (gui.scale * 10)) - 1), 
 		  true, 1);
 	}
@@ -121,7 +121,7 @@ class Debug {
 	
 	private static function init() {
 		gui = { 
-			x: 0, y: 0, width: 400, height: 150, scale: 1.0,
+			x: 0, y: 0, width: 400, height: 150, scale: 2.0,
 			xdragoffset: 0, ydragoffset: 0,
 			showscrollbar: false, scrollpos: 0, scrolldelay: 0, scrollspeed: 1, 
 			windowdrag: false,
@@ -133,12 +133,12 @@ class Debug {
 	private static function drawicon(x:Int, y:Int, c:Int, type:String) {
 	  switch(type) {	
 			case "arrowup":
-				Gfx.filltri(x, y + 8, x + 4, y, x + 8, y + 8, c);
+				Gfx.filltri(x, y + 7 * gui.scale, x + 4 * gui.scale, y + 1 * gui.scale, x + 8 * gui.scale, y + 7 * gui.scale, c);
 			case "arrowdown":
-				Gfx.filltri(x, y, x + 4, y + 8, x + 8, y, c);
+				Gfx.filltri(x, y + 1 * gui.scale, x + 4 * gui.scale, y + 7 * gui.scale, x + 8 * gui.scale, y + 1 * gui.scale, c);
 			case "close":
-				Gfx.drawline(x, y, x + 8, y + 8, c);
-				Gfx.drawline(x, y + 8, x + 8, y, c);
+				Gfx.drawline(x, y, x + 8 * gui.scale, y + 8 * gui.scale, c);
+				Gfx.drawline(x, y + 8 * gui.scale, x + 8 * gui.scale, y, c);
 			default:
 		}
 	}
@@ -190,19 +190,12 @@ class Debug {
 			
 			scrollpos = Std.int(Geom.clamp(scrollpos, 0, scrollmax));
 			
-			var scrollbarposition:Int = Math.round((scrollpos * (height - (10 * 2) - 15)) / scrollmax);
+			var scrollbarposition:Int = Math.round((scrollpos * (height - (10 * 2 * gui.scale) - 15)) / scrollmax);
 			Gfx.fillbox(x, y, width, height, 0x2a282f);
-			Gfx.fillbox(x + 1, y + 10 + scrollbarposition, width - 1, 15, 0xb9bcc1);
+			Gfx.fillbox(x + 1, y + (10 * gui.scale) + scrollbarposition, width - 1, 15, 0xb9bcc1);
 			
-			//if(drawbacking){
-			//	Gfx.fillbox(x + 1, y, width - 1, 10, 0x828085);
-			//}
-			drawicon(x + 2, y + 3, 0x828085, "arrowup");
-			
-			//if(drawbacking){
-			//	Gfx.fillbox(x + 1, y + height - 10, width - 1, 10, 0x828085);
-			//}			
-			drawicon(x + 2, y + height - 10 + 3, 0x828085, "arrowdown");
+			drawicon(x + 2, y + 1, 0x828085, "arrowup");
+			drawicon(x + 2, Std.int(y + height + ( -10 + 3) * gui.scale), 0x828085, "arrowdown");
 		} else {
 			// No scrolling. Draw a basic skeleton of a scrollbar
 			Gfx.fillbox(x, y, width, height, 0x2a282f);
