@@ -32,6 +32,15 @@ class Debug {
 		#end
 		posinfo.push(pos);
 		history.push(Convert.tostring(t));
+		
+		if (gui.height < history.length) gui.height = history.length;
+		/*
+		if (gui.height > Gfx.screenheight / (10 * gui.scale)) {
+		  gui.height = Std.int(Gfx.screenheight / (10 * gui.scale));
+		}*/
+		if (gui.height > gui.maxlines) {
+		  gui.height = gui.maxlines;
+		}
 		showlogwindow = true;
 	}
 	
@@ -39,32 +48,8 @@ class Debug {
 	private static function update():Bool {
 		if (showlogwindow) {
 			var capturinginput:Bool = false;
-			if (Geom.inbox(Mouse.x, Mouse.y, gui.x - 1, gui.y - 1, gui.width + 2, gui.height + 2) || gui.windowdrag) {
+			if (Geom.inbox(Mouse.x, Mouse.y, 0, 0, Gfx.screenwidth, (gui.height * gui.scale * 10) + 2)) {
 				capturinginput = true;
-				
-				//if we're currently dragging, move the window
-				if (!gui.windowdrag) {
-					//otherwise start dragging from here
-					if (Mouse.leftclick()) {
-						if(Geom.inbox(Mouse.x, Mouse.y, gui.x, gui.y, gui.width, 20)){
-							gui.windowdrag = true;
-							gui.xdragoffset = Mouse.x - gui.x; gui.ydragoffset = Mouse.y - gui.y;
-					  }
-					}
-				}
-				
-				if (gui.windowdrag) {
-					//Drag anything else that's in this window
-					gui.x = Mouse.x - gui.xdragoffset;
-					gui.y = Mouse.y - gui.ydragoffset;
-					if (gui.x < 0) gui.x = 0;
-					if (gui.y < 0) gui.y = 0;
-					
-					if (gui.x > Gfx.screenwidth - gui.width) gui.x = Gfx.screenwidth - gui.width;
-					if (gui.y > Gfx.screenheight - gui.height) gui.y = Gfx.screenheight - gui.height;
-					
-					if (!Mouse.leftheld()) gui.windowdrag = false;
-				}
 			}
 			
 			return capturinginput;
@@ -74,21 +59,19 @@ class Debug {
 	}
 	
 	private static function drawwindow() {
-		Gfx.fillbox(gui.x, gui.y, gui.width, gui.height, 0x272822, 0.75);
-		Gfx.fillbox(gui.x, gui.y, gui.width, gui.scale * 10, 0xcacaca, 0.5);
+		Gfx.fillbox(0, 0, Gfx.screenwidth, gui.height * gui.scale * 10, 0x272822, 0.75);
 		
-		for (j in 0 ... (Math.floor(gui.height / (gui.scale * 10)) - 1)) {
+		for (j in 0 ... gui.height) {
 			var i:Int = j + gui.scrollpos;
 			if(i >= 0 && i < history.length){
-				Text.display(gui.x + gui.scale, gui.y + (gui.scale * 10) + gui.scale + (j * (gui.scale * 10)), history[i], 0xcacaca);
+				Text.display(0, (j * (gui.scale * 10)), history[i], 0xcacaca);
 			}
 		}
 		
 		gui.scrollpos = drawscrollbar(
-		  Std.int(gui.x + gui.width - 12 * gui.scale), 
-			Std.int(gui.y + (gui.scale * 10) + gui.scale), 
-			Std.int(10 * gui.scale), Std.int(gui.height - (gui.scale * 10) - (2 * gui.scale)), 
-		  gui.scrollpos, history.length - (Math.floor(gui.height / (gui.scale * 10)) - 1), 
+		  Std.int(Gfx.screenwidth - (12 * gui.scale)), 0, 
+			Std.int(10 * gui.scale), Std.int(gui.height * gui.scale * 10),
+		  gui.scrollpos, history.length - (gui.height - 1) - 1, 
 		  true, 1);
 	}
 	
@@ -121,11 +104,9 @@ class Debug {
 	
 	private static function init() {
 		gui = { 
-			x: 0, y: 0, width: 400, height: 150, scale: 2.0,
-			xdragoffset: 0, ydragoffset: 0,
-			showscrollbar: false, scrollpos: 0, scrolldelay: 0, scrollspeed: 1, 
-			windowdrag: false,
-			mousefocus: "none"
+			height: 0, scale: 2.0,
+			showscrollbar: false, scrollpos: 0, scrolldelay: 0, scrollspeed: 1, mousefocus: "none",
+			maxlines: 8
 		};
 	}
 	
@@ -197,8 +178,7 @@ class Debug {
 			drawicon(x + 2, y + 1, 0x828085, "arrowup");
 			drawicon(x + 2, Std.int(y + height + ( -10 + 3) * gui.scale), 0x828085, "arrowdown");
 		} else {
-			// No scrolling. Draw a basic skeleton of a scrollbar
-			Gfx.fillbox(x, y, width, height, 0x2a282f);
+			// No scrolling. Draw nothing
 			scrollpos = 0; // reset
 			if (!Mouse.leftheld()) {
 				gui.mousefocus = "none";
