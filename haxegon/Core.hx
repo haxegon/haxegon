@@ -25,6 +25,8 @@ class Core extends Sprite {
 	private static inline var WINDOW_HEIGHT:String = haxe.macro.Compiler.getDefine("windowheight");
 	
 	public function new() {
+		_fps = TARGETFRAMERATE = Math.round(Starling.current.nativeStage.frameRate);
+		
 		super();
 		addEventListener(Event.ADDED_TO_STAGE, addedtostage);
 	}
@@ -233,11 +235,12 @@ class Core extends Sprite {
 
 	static function set_fps(_newfps:Int) {
 		Starling.current.nativeStage.frameRate = _newfps;
+		TARGETFRAMERATE = _newfps;
 		return _newfps;
 	}
 	
 	// Timing information.
-	private static inline var TARGETFRAMERATE:Int = 30;
+	private static var TARGETFRAMERATE:Int = 60;
 	private static inline var MAXFRAMESKIP:Int = 4;
 
 	private static var extendedstartframefunction:Dynamic = null;
