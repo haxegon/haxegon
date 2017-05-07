@@ -113,7 +113,7 @@ class Debug {
 			var i:Int = j + gui.scrollpos;
 			if(i >= 0 && i < history.length){
 				Text.align(Text.LEFT);
-				Text.display(0, (j * (gui.scale * 10)), history[i], 0xcacaca);
+				Text.display(gui.scale * 2, (gui.scale * 2) + (j * (gui.scale * 10)), history[i], 0xcacaca);
 				if (repeatcount[i] > 1) {
 					Text.align(Text.RIGHT);
 					Text.display(Std.int(Gfx.screenwidth - (gui.showscrollbar?(14 * gui.scale):(2 * gui.scale))), (j * (gui.scale * 10)), "x" + repeatcount[i], 0xffbaba);

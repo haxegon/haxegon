@@ -13,6 +13,7 @@ import starling.core.StatsDisplay;
 import starling.utils.AssetManager;
 import starling.textures.*;
 import openfl.Assets;
+import openfl.utils.AssetType;
 import starling.events.ResizeEvent;
 import starling.core.Starling;
 
