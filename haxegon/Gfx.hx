@@ -854,7 +854,9 @@ class Gfx {
 		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
 		
-		templine = new Line(x1, y1, x2, y2, linethickness, color);
+		templine.setPosition(x1, y1, x2, y2);
+		templine.thickness = linethickness;
+		templine.color = color;
 		templine.alpha = alpha;
 		
 		quadbatch.addQuad(templine);
@@ -926,7 +928,8 @@ class Gfx {
 		updatequadbatch();
 		drawstate = DRAWSTATE_POLY4;
 		
-		temppoly4 = new Poly4(x1, y1, x2, y2, x3, y3, x3, y3, color);
+		temppoly4.setVertexPositions(x1, y1, x2, y2, x3, y3, x3, y3);
+		temppoly4.color = color;
 		temppoly4.alpha = alpha;
 		
 		quadbatch.addQuad(temppoly4);
@@ -1300,8 +1303,8 @@ class Gfx {
 	private static var drawto:RenderTexture;
 	private static var screen:Image;
 	private static var tempquad:Quad = new Quad(1, 1);
-	private static var temppoly4:Poly4;
-	private static var templine:Line;
+	private static var temppoly4:Poly4 = new Poly4();
+	private static var templine:Line = new Line(1, 1, 2, 2,1, 0xFFFFFF);
 	
 	private static var drawstate:Int = 0;
 	private static inline var DRAWSTATE_NONE:Int = 0;

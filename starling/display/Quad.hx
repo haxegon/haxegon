@@ -70,6 +70,16 @@ class Quad extends DisplayObject
         
         onVertexDataChanged();
     }
+	
+	public function setWidthHeight(width:Float, height:Float)
+	{
+        mVertexData.setPosition(0, 0.0, 0.0);
+        mVertexData.setPosition(1, width, 0.0);
+        mVertexData.setPosition(2, 0.0, height);
+        mVertexData.setPosition(3, width, height);
+        onVertexDataChanged();
+		
+	}
     
     /** Call this method after manually changing the contents of 'mVertexData'. */
     private function onVertexDataChanged():Void

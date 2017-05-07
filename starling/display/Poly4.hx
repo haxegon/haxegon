@@ -70,6 +70,33 @@ class Poly4 extends Quad
 		_lowerRight.setTo(xmax - xmin, ymax - ymin);
 	}
 	
+	
+	public function setVertexPositions(x1:Float = 0, y1:Float = 0, x2:Float = 0, y2:Float = 0, 
+										  x3:Float = 0, y3:Float = 0, x4:Float = 0, y4:Float = 0)
+	{
+		p1.setTo(x1, y1);
+		p2.setTo(x2, y2);
+		p3.setTo(x3, y3);
+		p4.setTo(x4, y4);
+		
+		xmin = min4(p1.x, p2.x, p3.x, p4.x);
+		ymin = min4(p1.y, p2.y, p3.y, p4.y);
+		xmax = max4(p1.x, p2.x, p3.x, p4.x);
+		ymax = max4(p1.y, p2.y, p3.y, p4.y);
+		setWidthHeight(xmax - xmin, ymax - ymin);
+		
+		mVertexData.setPosition(0, p1.x - xmin, p1.y - ymin);
+		mVertexData.setPosition(1, p2.x - xmin, p2.y - ymin);
+		mVertexData.setPosition(2, p3.x - xmin, p3.y - ymin);
+		mVertexData.setPosition(3, p4.x - xmin, p4.y - ymin);
+		onVertexDataChanged();
+		x = xmin;
+		y = ymin;
+		_lowerRight.setTo(xmax - xmin, ymax - ymin);
+		
+		
+	}
+	
   private var _lowerRight:Point = new Point(0, 0);
 		
 	private inline function min4(a:Float, b:Float, c:Float, d:Float):Float {
