@@ -864,54 +864,54 @@ class Gfx {
 	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		Gfx.endquadbatch();
+		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
+		updatequadbatch();
+		drawstate = DRAWSTATE_QUAD;
 		
-		var tempring:Ring = new Ring(radius - linethickness, radius, color, true, 6, angle);
-		tempring.alpha = alpha;
+		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, true, 6, angle);
 		
-		shapematrix.identity();
-		shapematrix.translate(x - radius, y - radius);
-		
-		drawto.draw(tempring, shapematrix);
+		for(i in 0 ... tempring._polygons.length){
+			quadbatch.addQuad(tempring._polygons[i]);
+		}
 	}
 	
 	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		Gfx.endquadbatch();
+		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
+		updatequadbatch();
+		drawstate = DRAWSTATE_QUAD;
 		
-		var tempring:Disk = new Disk(radius, color, true, 6, angle);
-		tempring.alpha = alpha;
+		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, true, 6, angle);
 		
-		shapematrix.identity();
-		shapematrix.translate(x - radius, y - radius);
-		
-		drawto.draw(tempring, shapematrix);
+		for(i in 0 ... tempring._polygons.length){
+			quadbatch.addQuad(tempring._polygons[i]);
+		}
 	}
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		Gfx.endquadbatch();
+		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
+		updatequadbatch();
+		drawstate = DRAWSTATE_QUAD;
 		
-		var tempring:Ring = new Ring(radius - linethickness, radius, color);
-		tempring.alpha = alpha;
+		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha);
 		
-		shapematrix.identity();
-		shapematrix.translate(x - radius, y - radius);
-		
-		drawto.draw(tempring, shapematrix);
+		for(i in 0 ... tempring._polygons.length){
+			quadbatch.addQuad(tempring._polygons[i]);
+		}
 	}
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT || drawto == null) return;
-		Gfx.endquadbatch();
+		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
+		updatequadbatch();
+		drawstate = DRAWSTATE_QUAD;
 		
-		var tempring:Disk = new Disk(radius, col);
-		tempring.alpha = alpha;
+		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, alpha);
 		
-		shapematrix.identity();
-		shapematrix.translate(x - radius, y - radius);
-		
-		drawto.draw(tempring, shapematrix);
+		for(i in 0 ... tempring._polygons.length){
+			quadbatch.addQuad(tempring._polygons[i]);
+		}
 	}
 	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
@@ -1303,7 +1303,7 @@ class Gfx {
 	private static var drawto:RenderTexture;
 	private static var screen:Image;
 	private static var tempquad:Quad = new Quad(1, 1);
-	private static var temppoly4:Poly4 = new Poly4();
+	private static var temppoly4:Poly4 = new Poly4(0, 0, 1, 0, 1, 1, 0, 1);
 	private static var templine:Line = new Line(1, 1, 2, 2,1, 0xFFFFFF);
 	
 	private static var drawstate:Int = 0;
