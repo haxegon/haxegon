@@ -177,7 +177,7 @@ class Text {
 	}
 	
 	public static function align(a:Int) {
-	  textalign = a;	
+	  textalign = a;
 	}
 	
 	public static function rotation(a:Float, xpivot:Int = -15000, ypivot:Int = -15000) {

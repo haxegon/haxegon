@@ -13,11 +13,13 @@ import starling.textures.*;
 import starling.display.*;
 
 @:access(haxegon.Gfx)
+@:access(haxegon.Text)
 class Debug {
 	/** Clear the debug buffer */
 	public static function clear() {
 		history = [];
 		posinfo = [];
+		repeatcount = [];
 		showlogwindow = false;
 		init();
 	}
@@ -32,15 +34,41 @@ class Debug {
 		#else
 		trace(pos.fileName + ":" + pos.lineNumber + ": " + t)
 		#end
-		posinfo.push(pos);
-		history.push(Convert.tostring(t));
-		gui.scrollpos++;
+		//if our message and position haven't changed, it's being repeated
+		if (posinfo.length == 0) {
+			posinfo.push(pos);
+			history.push(Convert.tostring(t));
+			repeatcount.push(1);
+			gui.scrollpos++;
+		}else {
+			if (positionmatch(posinfo[posinfo.length - 1], pos) && history[history.length - 1] == Convert.tostring(t)) {
+				repeatcount[repeatcount.length - 1]++;
+			}else {
+				posinfo.push(pos);
+				history.push(Convert.tostring(t));
+				repeatcount.push(1);
+				gui.scrollpos++;			
+			}
+		}
 		
 		if (gui.height < history.length) gui.height = history.length;
 		if (gui.height > gui.maxlines) gui.height = gui.maxlines;
 		
 		if (gui.scrollpos > history.length - (gui.height - 1) - 1) gui.scrollpos = history.length - (gui.height - 1) - 1;
 		showlogwindow = true;
+	}
+	
+	private static function positionmatch(p1:haxe.PosInfos, p2:haxe.PosInfos):Bool {
+		if (p1.fileName == p2.fileName) {
+			if (p1.className == p2.className) {
+				if (p1.lineNumber == p2.lineNumber) {
+					if (p1.methodName == p2.methodName) {
+					  return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	/* Returns true if the debug log is capturing mouse input right now */
@@ -75,19 +103,23 @@ class Debug {
 	  	Text.display(Gfx.screenwidth - clearwidth + (gui.scale * 12), Std.int(windowheight + (gui.scale * 1)), "clear", 0xcacaca);
 		}
 		
-		
-		for (j in 0 ... gui.height) {
-			var i:Int = j + gui.scrollpos;
-			if(i >= 0 && i < history.length){
-				Text.display(0, (j * (gui.scale * 10)), history[i], 0xcacaca);
-			}
-		}
-		
 		gui.scrollpos = drawscrollbar(
 		  Std.int(Gfx.screenwidth - (12 * gui.scale)), 0, 
 			Std.int(10 * gui.scale), Std.int(gui.height * gui.scale * 10),
 		  gui.scrollpos, history.length - (gui.height - 1) - 1, 
 		  true, 1);
+		
+		for (j in 0 ... gui.height) {
+			var i:Int = j + gui.scrollpos;
+			if(i >= 0 && i < history.length){
+				Text.align(Text.LEFT);
+				Text.display(0, (j * (gui.scale * 10)), history[i], 0xcacaca);
+				if (repeatcount[i] > 1) {
+					Text.align(Text.RIGHT);
+					Text.display(Std.int(Gfx.screenwidth - (gui.showscrollbar?(14 * gui.scale):(2 * gui.scale))), (j * (gui.scale * 10)), "x" + repeatcount[i], 0xffbaba);
+				}
+			}
+		}
 	}
 	
 	private static function render() {
@@ -95,6 +127,7 @@ class Debug {
 			var olddrawto:RenderTexture = Gfx.drawto;
 			var oldfontsize:Float = Text.size;
 			var oldfont:String = Text.font;
+			var oldalign:Int = Text.textalign;
 			
 			//Figure out GUI scale before we draw anything
 			gui.scale = Math.floor(Gfx.screenheight / 300) + 1;
@@ -112,12 +145,14 @@ class Debug {
 			Gfx.drawto = olddrawto;
 			Gfx.drawto.bundlelock();
 			Text.font = oldfont; Text.size = oldfontsize;
+			Text.textalign = oldalign;
 		}
 	}
 	
 	private static var showlogwindow:Bool;
 	private static var history:Array<String> = [];
 	private static var posinfo:Array<haxe.PosInfos> = [];
+	private static var repeatcount:Array<Int> = [];
 	private static var gui;
 	
 	private static function init() {
@@ -198,6 +233,8 @@ class Debug {
 			
 			drawicon(x + 2, y + 1, 0x828085, "arrowup");
 			drawicon(x + 2, Std.int(y + height + ( -10 + 3) * gui.scale), 0x828085, "arrowdown");
+			
+			gui.showscrollbar = true;
 		} else {
 			// No scrolling. Draw nothing
 			scrollpos = 0; // reset
@@ -205,6 +242,8 @@ class Debug {
 				gui.mousefocus = "none";
 			}
 			gui.scrolldelay = 0;
+			
+			gui.showscrollbar = false;
 		}
 		
 		return scrollpos;
