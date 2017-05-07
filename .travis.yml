@@ -3,6 +3,13 @@ language: haxe
 haxe:
   - "3.2.1"
 
+env:
+  #- TARGET=flash
+  #- TARGET=neko
+  #- TARGET=cpp
+  #- TARGET=html5
+  - TARGET=docs
+
 sudo: false
 
 before_install:
@@ -55,7 +62,3 @@ script:
   - haxelib run openfl build ~/haxegon/simple/08\ -\ Truetype\ Fonts flash
   - haxelib run openfl build ~/haxegon/simple/08\ -\ Truetype\ Fonts html5
   - haxelib run openfl build ~/haxegon/simple/08\ -\ Truetype\ Fonts neko
-
-cache:
-  directories:
-- $HOME/haxe/lib
