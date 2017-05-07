@@ -18,6 +18,8 @@ class Debug {
 	public static function clear() {
 		history = [];
 		posinfo = [];
+		showlogwindow = false;
+		init();
 	}
 	
 	public static function log(t:Dynamic, ?pos:haxe.PosInfos) {
@@ -32,15 +34,12 @@ class Debug {
 		#end
 		posinfo.push(pos);
 		history.push(Convert.tostring(t));
+		gui.scrollpos++;
 		
 		if (gui.height < history.length) gui.height = history.length;
-		/*
-		if (gui.height > Gfx.screenheight / (10 * gui.scale)) {
-		  gui.height = Std.int(Gfx.screenheight / (10 * gui.scale));
-		}*/
-		if (gui.height > gui.maxlines) {
-		  gui.height = gui.maxlines;
-		}
+		if (gui.height > gui.maxlines) gui.height = gui.maxlines;
+		
+		if (gui.scrollpos > history.length - (gui.height - 1) - 1) gui.scrollpos = history.length - (gui.height - 1) - 1;
 		showlogwindow = true;
 	}
 	
@@ -59,7 +58,23 @@ class Debug {
 	}
 	
 	private static function drawwindow() {
-		Gfx.fillbox(0, 0, Gfx.screenwidth, gui.height * gui.scale * 10, 0x272822, 0.75);
+		var windowheight:Int = Std.int(gui.height * gui.scale * 10);
+		Gfx.fillbox(0, 0, Gfx.screenwidth, windowheight, 0x272822, 0.75);
+		var clearwidth:Int = Std.int(Text.width("clear") + (16 * gui.scale));
+		
+		if (Geom.inbox(Mouse.x, Mouse.y, Gfx.screenwidth - clearwidth, windowheight, clearwidth, gui.scale * 10)) {
+			Gfx.fillbox(Gfx.screenwidth - clearwidth, windowheight, clearwidth, gui.scale * 10, 0x272822);
+			drawicon(Std.int(Gfx.screenwidth - clearwidth + (gui.scale * 2)), Std.int(windowheight + (gui.scale * 2)), 0xFFFFFF, "close");
+  		Text.display(Gfx.screenwidth - clearwidth + (gui.scale * 12), Std.int(windowheight + (gui.scale * 1)), "clear", 0xFFFFFF);
+			if (gui.mousefocus == "none" && Mouse.leftheld()) {
+			  clear();
+			}
+		}else {
+			Gfx.fillbox(Gfx.screenwidth - clearwidth, windowheight, clearwidth, gui.scale * 10, 0x272822, 0.5);
+			drawicon(Std.int(Gfx.screenwidth - clearwidth + (gui.scale * 2)), Std.int(windowheight + (gui.scale * 2)), 0xcacaca, "close");
+	  	Text.display(Gfx.screenwidth - clearwidth + (gui.scale * 12), Std.int(windowheight + (gui.scale * 1)), "clear", 0xcacaca);
+		}
+		
 		
 		for (j in 0 ... gui.height) {
 			var i:Int = j + gui.scrollpos;
@@ -80,6 +95,9 @@ class Debug {
 			var olddrawto:RenderTexture = Gfx.drawto;
 			var oldfontsize:Float = Text.size;
 			var oldfont:String = Text.font;
+			
+			//Figure out GUI scale before we draw anything
+			gui.scale = Math.floor(Gfx.screenheight / 300) + 1;
 			
 			Text.font = "default"; Text.size = gui.scale;
 			//Draw to our special window
@@ -112,16 +130,19 @@ class Debug {
 	
 	/* Draw little 8x8 icons for the debug UI! */
 	private static function drawicon(x:Int, y:Int, c:Int, type:String) {
+		var oldlinethickness:Float = Gfx.linethickness;
+		Gfx.linethickness = gui.scale;
 	  switch(type) {	
 			case "arrowup":
 				Gfx.filltri(x, y + 7 * gui.scale, x + 4 * gui.scale, y + 1 * gui.scale, x + 8 * gui.scale, y + 7 * gui.scale, c);
 			case "arrowdown":
 				Gfx.filltri(x, y + 1 * gui.scale, x + 4 * gui.scale, y + 7 * gui.scale, x + 8 * gui.scale, y + 1 * gui.scale, c);
 			case "close":
-				Gfx.drawline(x, y, x + 8 * gui.scale, y + 8 * gui.scale, c);
-				Gfx.drawline(x, y + 8 * gui.scale, x + 8 * gui.scale, y, c);
+				Gfx.drawline(x + 1, y + 1, x + 6 * gui.scale, y + 6 * gui.scale, c);
+				Gfx.drawline(x + 1, y + 6 * gui.scale, x + 6 * gui.scale, y + 1, c);
 			default:
 		}
+		Gfx.linethickness = oldlinethickness;
 	}
 	
 	private static function drawscrollbar(x:Int, y:Int, width:Int, height:Int, scrollpos:Int, scrollmax:Int, applywheel:Bool, scrolladjustment:Int = 1):Int {
