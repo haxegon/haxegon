@@ -85,7 +85,7 @@ class Input {
 		
 		starstage.addEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		starstage.addEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		//stage.addEventListener(Event.DEACTIVATE, handledeactivate);
+		flashstage.addEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
 		
 		clipboardbuffer = [""];
 		cut = false;
@@ -329,7 +329,7 @@ class Input {
 		}
 	}
 	
-	private static function handledeactivate(e:Event) {
+	private static function handledeactivate(e:openfl.events.Event) {
 		for(keycode in 0 ... numletters){				
 			current[keycode] = Keystate.notpressed;
 			keyheld[keycode] = -1;

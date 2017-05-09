@@ -2,6 +2,7 @@ package haxegon;
 
 import starling.display.*;
 import starling.events.*;
+import openfl.events.Event;
 import openfl.events.MouseEvent;
 import openfl.ui.Mouse;
 import openfl.net.*;
@@ -160,6 +161,8 @@ class Mouse{
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
     
     flashstage.addEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
+    flashstage.addEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
+    flashstage.addEventListener(openfl.events.Event.MOUSE_LEAVE, mouseLeave);
 	}
 	
 	private static function unload(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
@@ -174,6 +177,8 @@ class Mouse{
     _flashstage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
     
     _flashstage.removeEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
+    _flashstage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
+    _flashstage.removeEventListener(openfl.events.Event.MOUSE_LEAVE, mouseLeave);
 	}
 	
 	public static function show() {
@@ -244,6 +249,15 @@ class Mouse{
 
 	private static function handleMouseWheel(event:MouseEvent) {
 		mousewheel = (event.delta > 0) ? 2 : -2;
+	}
+	
+	private static function mouseOver(event:MouseEvent) {
+		_mouseoffstage = false;
+	}
+	
+	private static function mouseLeave(event:openfl.events.Event) {
+		_mouseoffstage = true;
+		reset();
 	}
 	
 	private static function update(mx:Int, my:Int, firstframe:Bool) {
