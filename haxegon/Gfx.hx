@@ -864,6 +864,9 @@ class Gfx {
 	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		if (radius <= 0) return;
+		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
+		
 		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
 		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
@@ -877,6 +880,9 @@ class Gfx {
 	
 	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		if (radius <= 0) return;
+		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
+		
 		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
 		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
@@ -890,6 +896,9 @@ class Gfx {
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		if (radius <= 0) return;
+		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
+		
 		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
 		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
@@ -903,6 +912,9 @@ class Gfx {
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT || drawto == null) return;
+		if (radius <= 0) return;
+		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
+		
 		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
 		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
