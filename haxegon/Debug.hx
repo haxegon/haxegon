@@ -39,7 +39,7 @@ class Debug {
 			posinfo.push(pos);
 			history.push(Convert.tostring(t));
 			repeatcount.push(1);
-			gui.scrollpos++;
+			gui.scrollpos = history.length;
 		}else {
 			if (positionmatch(posinfo[posinfo.length - 1], pos) && history[history.length - 1] == Convert.tostring(t)) {
 				repeatcount[repeatcount.length - 1]++;
@@ -47,7 +47,7 @@ class Debug {
 				posinfo.push(pos);
 				history.push(Convert.tostring(t));
 				repeatcount.push(1);
-				gui.scrollpos++;			
+				gui.scrollpos = history.length;			
 			}
 		}
 		
