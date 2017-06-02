@@ -959,10 +959,10 @@ class Gfx {
 			y = y - height;
 		}
 		
-		fillbox(x, y, width, 1, color, alpha);
-		fillbox(x, y + height - 1, width - 1, 1, color, alpha);
-		fillbox(x, y + 1, 1, height - 1, color, alpha);
-		fillbox(x + width - 1, y + 1, 1, height - 1, color, alpha);
+		fillbox(x, y, width, linethickness, color, alpha);
+		fillbox(x, y + height - linethickness, width - linethickness, linethickness, color, alpha);
+		fillbox(x, y + linethickness, linethickness, height - linethickness, color, alpha);
+		fillbox(x + width - linethickness, y + linethickness, linethickness, height - linethickness, color, alpha);
 	}
 	
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
