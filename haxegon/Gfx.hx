@@ -960,7 +960,7 @@ class Gfx {
 		}
 		
 		fillbox(x, y, width, linethickness, color, alpha);
-		fillbox(x, y + height - linethickness, width - linethickness, linethickness, color, alpha);
+		fillbox(x + linethickness, y + height - linethickness, width - (linethickness * 2), linethickness, color, alpha);
 		fillbox(x, y + linethickness, linethickness, height - linethickness, color, alpha);
 		fillbox(x + width - linethickness, y + linethickness, linethickness, height - linethickness, color, alpha);
 	}
