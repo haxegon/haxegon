@@ -72,7 +72,7 @@ class Core extends Sprite {
 	
 	private function loaded() {
 		//Init library classes
-		Random.setseed(Std.int(Math.random() * 233280));
+		Random.seed = Std.int(Math.random() * 233280);
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
 		Data.initassets();

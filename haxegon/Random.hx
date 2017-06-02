@@ -22,7 +22,7 @@ class Random{
 	}
 	
 	@:generic
-	public static function shufflearray<T>(arr:Array<T>) {
+	public static function shuffle<T>(arr:Array<T>) {
 		var tmp:T, j:Int, i:Int = arr.length;
 		while (--i > 0) {
 			j = Random.int(0, i);
@@ -47,15 +47,21 @@ class Random{
 	}
 	
 	public static function random():Float {
-		seed = (seed * 16807) % 2147483647; 
-		return Math.abs(seed/2147483647);
+		_actualseed = (_actualseed * 16807) % 2147483647;
+		return Math.abs(_actualseed / 2147483647);
 	}
 	
-	public static function setseed(s:Int) {
-		seed = Std.int(Math.abs(s % 2147483647));
-		Math.random();
+	public static var seed(get,set):Int;
+	private static var _initialseed:Int = 0;
+	private static var _actualseed:Int = 0;
+
+	static function get_seed():Int {
+		return _initialseed;
 	}
-	
-	private static var temp:Int;
-	public static var seed:Int = 0;
+
+	static function set_seed(s:Int) {
+		_initialseed = s;
+		_actualseed = Std.int(Math.abs(_initialseed % 2147483647));
+		return _initialseed;
+	}
 }
