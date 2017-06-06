@@ -52,14 +52,15 @@ class Random{
 	}
 	
 	public static var seed(get,set):Int;
-	private static var _initialseed:Int = 0;
-	private static var _actualseed:Int = 0;
+	private static var _initialseed:Int = 1;
+	private static var _actualseed:Int = 1;
 
 	static function get_seed():Int {
 		return _initialseed;
 	}
 
 	static function set_seed(s:Int) {
+		if(s == 0) s = 1;
 		_initialseed = s;
 		_actualseed = Std.int(Math.abs(_initialseed % 2147483647));
 		return _initialseed;
