@@ -8,7 +8,7 @@ class Random{
 	
 	/** Returns true n% of the time, where n is a float between 0-100, inclusive. */
 	public static function chance(n:Float):Bool{
-		return float(0, 100) <= n;
+		return float(0, 100) < n;
 	}
 	
 	/** Return a random integer between 'from' and 'to', inclusive. */
@@ -22,7 +22,7 @@ class Random{
 	}
 	
 	@:generic
-	public static function shuffle<T>(arr:Array<T>) {
+	public static function shuffle<T>(arr:Array<T>):Array<T> {
 		var tmp:T, j:Int, i:Int = arr.length;
 		while (--i > 0) {
 			j = Random.int(0, i);
@@ -30,6 +30,8 @@ class Random{
 			arr[i] = arr[j];
 			arr[j] = tmp;
 		}
+		
+		return arr;
 	}
 
 	/** Return a random string of a certain length.  You can optionally specify 
@@ -62,6 +64,7 @@ class Random{
 	static function set_seed(s:Int) {
 		_initialseed = s;
 		_actualseed = Std.int(Math.abs(_initialseed % 2147483647));
+		for (i in 0 ... 10) random(); //Shuffle it a few times
 		return _initialseed;
 	}
 }
