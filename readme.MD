@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
 
-# Haxegon (version 0.9.0 (2017-06-02))
+# Haxegon (version 0.9.1 (2017-07-16))
 
 Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. 
 
@@ -19,6 +19,12 @@ Once the library is installed, use this blank project file to get started:
 Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and a growing selection of example projects are <a href="https://github.com/TerryCavanagh/haxegon-samples">available here</a>. More coming soon!
 
 # Last Updates
+
+0.9.1 (2017-07-16)
+------------------
+### Bug fixes/Tweaks
+* Fixed a crash bug with drawing too many circles or hexagons to the screen in one frame.
+* Fixed Random.chance(0) having a very low change of occasionally being true (thanks @randomnine!)
 
 0.9.0 (2017-06-02)
 ------------------
