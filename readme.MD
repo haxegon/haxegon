@@ -24,7 +24,7 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 ------------------
 ### Bug fixes/Tweaks
 * Fixed a crash bug with drawing too many circles or hexagons to the screen in one frame.
-* Fixed Random.chance(0) having a very low change of occasionally being true (thanks @randomnine!)
+* Fixed `Random.chance(0)` having a very low change of occasionally being true (thanks @randomnine!)
 
 0.9.0 (2017-06-02)
 ------------------
