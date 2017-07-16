@@ -868,12 +868,12 @@ class Gfx {
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
 		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
 		
 		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, true, 6, angle);
 		
-		for(i in 0 ... tempring._polygons.length){
+		for (i in 0 ... tempring._polygons.length){
+			updatequadbatch();
 			quadbatch.addQuad(tempring._polygons[i]);
 		}
 	}
@@ -884,12 +884,12 @@ class Gfx {
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
 		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
 		
 		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, true, 6, angle);
 		
-		for(i in 0 ... tempring._polygons.length){
+		for (i in 0 ... tempring._polygons.length){
+			updatequadbatch();
 			quadbatch.addQuad(tempring._polygons[i]);
 		}
 	}
@@ -900,12 +900,12 @@ class Gfx {
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
 		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
 		
 		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha);
 		
-		for(i in 0 ... tempring._polygons.length){
+		for (i in 0 ... tempring._polygons.length){
+			updatequadbatch();
 			quadbatch.addQuad(tempring._polygons[i]);
 		}
 	}
@@ -916,12 +916,12 @@ class Gfx {
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
 		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		updatequadbatch();
 		drawstate = DRAWSTATE_QUAD;
 		
 		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, alpha);
 		
 		for(i in 0 ... tempring._polygons.length){
+		  updatequadbatch();
 			quadbatch.addQuad(tempring._polygons[i]);
 		}
 	}
