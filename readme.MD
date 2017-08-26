@@ -24,7 +24,7 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 ------------------
 ### New features
 * This is mostly just a compatibility update for OpenFL 6.0. Haxegon now works with the latest versions of OpenFL and Lime.
-* Added support for `Key.ANY` - e.g.:
+* Added support for `Key.ANY`.  (Thanks to @nachoverdon for the suggestion!):
 ``` haxe
   if(Input.pressed(Key.ANY)) // True if ANY key is being pressed right now
   if(Input.justpressed(Key.ANY)) // True if ANY key has just been pressed
@@ -32,14 +32,14 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 * Changed `Gfx.imagealpha` and `Gfx.imagecolor` to variables instead of functions. Also added three new shortcut functions to reset image drawing settings - `Gfx.resetalpha()`, `Gfx.resetcolor()` and `Gfx.reset()`:
 ``` haxe
   Gfx.imagealpha = 0.5;
-  Gfx.imagecolor = 0.5;
+  Gfx.imagecolor = Col.GREEN;
   Gfx.drawimage(x, y, "someimage");
   
   Gfx.resetalpha(); //Same as calling Gfx.imagealpha = 1
   Gfx.resetcolor(); //Same as calling Gfx.imagecolor = Col.WHITE
   Gfx.reset();      //Resets colour, alpha, rotation and scale
 ```
-* Added an optional alpha parameter to `Text.display()`.
+* Added an optional alpha parameter to `Text.display()`. (Thanks to @nachoverdon for the suggestion!)
 ``` haxe
   Text.display(x, y, "spooky see through text", Col.WHITE, 0.5);
 ```
