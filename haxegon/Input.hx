@@ -23,10 +23,22 @@ enum Keystate {
 @:access(haxegon.Text)
 class Input {
 	public static function pressed(k:Key):Bool {
+		if (k == Key.ANY){
+			for (a in keymap.keys()){
+				if (keyheld[keymap.get(a)] >= 0) return true;
+			}
+			return false;
+		}
 		return keyheld[keymap.get(k)] >= 0;
 	}
 	
 	public static function justpressed(k:Key):Bool { 
+		if (k == Key.ANY){
+			for (a in keymap.keys()){
+				if (current[keymap.get(a)] == Keystate.justpressed) return true;
+			}
+			return false;
+		}
 		if (current[keymap.get(k)] == Keystate.justpressed) {
 			return true;
 		}else {
@@ -35,6 +47,15 @@ class Input {
 	}
 	
 	public static function justreleased(k:Key):Bool { 
+		if (k == Key.ANY){
+			for (a in keymap.keys()){
+				if (current[keymap.get(a)] == Keystate.justreleased){
+					current[keymap.get(a)] = Keystate.notpressed;
+					return true;
+				}
+			}
+			return false;
+		}
 		if (current[keymap.get(k)] == Keystate.justreleased) {
 			current[keymap.get(k)] = Keystate.notpressed;
 			return true;
@@ -44,7 +65,7 @@ class Input {
 	}
 	
 	public static function forcerelease(?k:Key):Void {
-		if(k != null){
+		if(k != null || k == Key.ANY){
 			keycode = keymap.get(k);
 			if (keyheld[keycode] >= 0) {
 				current[keycode] = Keystate.forcerelease;
@@ -63,11 +84,36 @@ class Input {
 	}
 	
 	public static function pressheldtime(k:Key):Int {
+		if (k == Key.ANY){
+			//Get the longest time any key has been pressed
+			var longestkeypress:Int = 0;
+			var longestkey:Key = null;
+			for (a in keymap.keys()){
+				if (a != Key.ANY){
+					if (keyheld[keymap.get(a)] > longestkeypress){
+						longestkeypress = keyheld[keymap.get(a)];
+						longestkey = a;
+					}
+				}
+			}
+			return longestkeypress;
+		}
 		keycode = keymap.get(k);
 		return keyheld[keycode];
 	}
 	
 	public static function delaypressed(k:Key, delay:Int):Bool {
+		if (k == Key.ANY){
+			//Find the FIRST key that's being held down, and use it.
+			for (a in keymap.keys()){
+				if (a != Key.ANY){
+					if (pressed(a)){
+						return delaypressed(a, delay);
+					}
+				}
+			}
+			return false;
+		}
 		keycode = keymap.get(k);
 		if (keyheld[keycode] >= 1) {
 			if (keyheld[keycode] <= 1) {
@@ -550,6 +596,7 @@ class Input {
 			case Key.END: return "End";
 			case Key.PAGEUP: return "Page Up";
 			case Key.PAGEDOWN: return "Page Down";
+			case Key.ANY: return "Any Key";
 		}
 		return "";
 	}

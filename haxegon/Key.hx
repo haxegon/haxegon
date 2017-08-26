@@ -1,6 +1,7 @@
 package haxegon;
 
 enum Key {
+	ANY;
 	A;
 	B;
 	C;
