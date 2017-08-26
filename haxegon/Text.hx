@@ -358,7 +358,7 @@ class Text {
 		return 0;
 	}
 	
-	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF) {
+	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
 		if (text == "") return;
 		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
 		Gfx.updatequadbatch();
@@ -396,10 +396,14 @@ class Text {
 		
 		fontmatrix.translate(x, y);
 		if (typeface[currentindex].type == "ttf") {
-			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix);
+			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
 		}else {
-			typeface[currentindex].tf.createComposedContents();
-			Gfx.quadbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);	
+			if (alpha != 1.0){
+				Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
+			}else{
+			  typeface[currentindex].tf.createComposedContents();
+			  Gfx.quadbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);
+			}
 		}
 	}
 	
