@@ -75,7 +75,7 @@ class Gfx {
 	private static var currenttilesetname:String;
 	
 	//** Clear all rotations, scales and image colour changes */
-	private static function reset() {
+	public static function reset() {
 		transform = false;
 		imagerotate = 0; 
 		imagerotatexpivot = 0; imagerotateypivot = 0;
@@ -129,20 +129,36 @@ class Gfx {
 	}
 	
 	/** Set an alpha multipler for image drawing functions. */
-	public static function imagealpha(?alpha:Float) {
-		if (alpha == null) alpha = 1.0;
-		imagealphamult = alpha;
+	public static var imagealpha(get, set):Float;
+	public static function resetalpha(){ imagealpha = 1.0; }
+
+	static function set_imagealpha(_alpha:Float) {
+		imagealphamult = _alpha;
 		coltransform = true;
 		reset_ifclear();
+		
+		return imagealphamult;
+	}
+	
+	static function get_imagealpha():Float {
+		return imagealphamult;
 	}
 	
 	/** Set a colour multipler and offset for image drawing functions. */
-		public static function imagecolor(?color:Int) {
-		if (color == null) color = 0xFFFFFF;
-		imagecolormult = color;
+	public static var imagecolor(get, set):Int;
+	public static function resetcolor(){ imagecolor = 0xFFFFFF; }
+	
+	static function set_imagecolor(_color:Int) {
+		imagecolormult = _color;
 		
 		coltransform = true;
 		reset_ifclear();
+		
+		return imagecolormult;
+	}
+	
+	static function get_imagecolor():Int {
+		return imagecolormult;
 	}
 	
 	public static function numberoftiles(tileset:String):Int {
