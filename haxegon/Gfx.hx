@@ -407,6 +407,15 @@ class Gfx {
 		return images[imagenum].height;
 	}
 	
+	public static function imagesmoothing(imagename:String, smoothing:String) {
+		if (!imageindex.exists(imagename)) {
+			loadimage(imagename);
+		}	
+		
+		var imagenum:Int = imageindex.get(imagename);
+		images[imagenum].contents.smoothing = smoothing;
+	}
+	
 	private static function promotetorendertarget(image:Image) {
 		if (!Std.is(image.texture, RenderTexture)) {
 			var newtexture:RenderTexture = new RenderTexture(Std.int(image.texture.width), Std.int(image.texture.height));
@@ -570,9 +579,9 @@ class Gfx {
 			if (imagerotate != 0) {
 				if (imagerotatexpivot != 0.0) tempxalign = imagealignonimagex(imagewidth, imagerotatexpivot);
 				if (imagerotateypivot != 0.0) tempyalign = imagealignonimagey(imageheight, imagerotateypivot);
-				shapematrix.translate( -tempxalign, -tempyalign);
+				shapematrix.translate( -tempxalign * imagexscale, -tempyalign * imageyscale);
 				shapematrix.rotate((imagerotate * 3.1415) / 180);
-				shapematrix.translate( tempxalign, tempyalign);
+				shapematrix.translate( tempxalign * imagexscale, tempyalign * imageyscale);
 			}
 			
 			shapematrix.translate(x, y);
@@ -1198,7 +1207,7 @@ class Gfx {
 	public static function resizescreen(width:Float, height:Float) {
 		initgfx(Std.int(width), Std.int(height));
 		Text.init(starstage);
-		updategraphicsmode(starstage.stageWidth, starstage.stageHeight);
+		updategraphicsmode(Std.int(width), Std.int(height));
 	}
 	
 	public static var fullscreen(get,set):Bool;
@@ -1285,7 +1294,14 @@ class Gfx {
 		devicexres = Std.int(openfl.system.Capabilities.screenResolutionX);
 		deviceyres = Std.int(openfl.system.Capabilities.screenResolutionY);
 		
-		if(!gfxinit){
+		var resizebuffers:Bool = gfxinit && (backbuffer.width < width || backbuffer.height < height);
+
+		if (resizebuffers) {
+			backbuffer.dispose();
+			screen.dispose();
+		}
+		
+		if (!gfxinit || resizebuffers){
 			backbuffer = new RenderTexture(width, height, true);
 			drawto = backbuffer;
 			screen = new Image(backbuffer);
@@ -1293,7 +1309,9 @@ class Gfx {
 			screen.scale = 1;
 			screen.smoothing = "none";
 			starstage.addChildAt(screen, 0);
-			
+		}
+		
+		if (!gfxinit) {
 			Filter.init();
 		}
 		
