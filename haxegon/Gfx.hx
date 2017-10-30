@@ -407,15 +407,6 @@ class Gfx {
 		return images[imagenum].height;
 	}
 	
-	public static function imagesmoothing(imagename:String, smoothing:String) {
-		if (!imageindex.exists(imagename)) {
-			loadimage(imagename);
-		}	
-		
-		var imagenum:Int = imageindex.get(imagename);
-		images[imagenum].contents.smoothing = smoothing;
-	}
-	
 	private static function promotetorendertarget(image:Image) {
 		if (!Std.is(image.texture, RenderTexture)) {
 			var newtexture:RenderTexture = new RenderTexture(Std.int(image.texture.width), Std.int(image.texture.height));
