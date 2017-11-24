@@ -1,10 +1,10 @@
 [![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
 
-# Haxegon (version 0.9.1 (2017-07-16))
+# Haxegon (version 0.10.0 (2017-08-26))
 
 Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. 
 
-Haxegon compiles natively to **HTML5**, **Desktop** (Win, Mac) and **Flash**. (Linux support is currently broken, but <a href="https://github.com/openfl/starling/issues/38">is being worked on!</a>)
+Haxegon compiles natively to **HTML5** and **Desktop** (Win, Mac, Linux). **Flash** is also supported as a legacy/development platform.
 
 ## Trying it out
 
@@ -20,65 +20,32 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 
 # Last Updates
 
-0.9.1 (2017-07-16)
-------------------
-### Bug fixes/Tweaks
-* Fixed a crash bug with drawing too many circles or hexagons to the screen in one frame.
-* Fixed `Random.chance(0)` having a very low change of occasionally being true (thanks @randomnine!)
-
-0.9.0 (2017-06-02)
+0.10.0 (2017-08-26)
 ------------------
 ### New features
-* Added a new simple example to the <a href="https://github.com/TerryCavanagh/haxegon-samples">haxegon-samples</a> repo: **Filters**.
-* Added support for simple fullscreen filters. Currently just `bloom` and `blur`, but more coming soon!
+* This is mostly just a compatibility update for OpenFL 6.0. Haxegon now works with the latest versions of OpenFL and Lime.
+* Added support for `Key.ANY`.  (Thanks to @nachoverdon for the suggestion!):
 ``` haxe
-  Filter.bloom = 1.0; // Enable bloom filter
-  Filter.bloom = 2.0; // Enable really bright bloom filter
-  Filter.blur = true; // Enable blur filter
-  
-  Filter.reset(); //Disable all active filters
+  if(Input.pressed(Key.ANY)) // True if ANY key is being pressed right now
+  if(Input.justpressed(Key.ANY)) // True if ANY key has just been pressed
 ```
-* Redesign of the `Debug` class. There's now a nicer and more useful Debug window, with the following two functions:
+* Changed `Gfx.imagealpha` and `Gfx.imagecolor` to variables instead of functions. Also added three new shortcut functions to reset image drawing settings - `Gfx.resetalpha()`, `Gfx.resetcolor()` and `Gfx.reset()`:
 ``` haxe
-  Debug.log("Error!"); //Output an error to the console and the debug window
-  Debug.clear(); //Clear the debug window
+  Gfx.imagealpha = 0.5;
+  Gfx.imagecolor = Col.GREEN;
+  Gfx.drawimage(x, y, "someimage");
+  
+  Gfx.resetalpha(); //Same as calling Gfx.imagealpha = 1
+  Gfx.resetcolor(); //Same as calling Gfx.imagecolor = Col.WHITE
+  Gfx.reset();      //Resets colour, alpha, rotation and scale
 ```
-* Added handy new colour shifting functions:
+* Added an optional alpha parameter to `Text.display()`. (Thanks to @nachoverdon for the suggestion!)
 ``` haxe
-  //Returns a colour with the RGB components (0-255) adjusted.
-  newcolour = Col.shiftred(oldcolour, amount);
-  newcolour = Col.shiftgreen(oldcolour, amount);
-  newcolour = Col.shiftblue(oldcolour, amount);
-  
-  //Returns a colour with the hue component (0-360) adjusted.
-  newcolour = Col.shifthue(oldcolour, amount);
-  
-  //Returns a colour with the saturation or lightness (0-1.0) adjusted.
-  newcolour = Col.multiplysaturation(oldcolour, amount);
-  newcolour = Col.multiplylightness(oldcolour, amount);
-```
-* Cleanup to `Random.hx`. Some old cluttery functions have been removed - `Random.pickint()`, `Random.pickfloat()`, `Random.pickstring()` (just use `Random.pick()`!), also `Random.occasional()` and `Random.rare()` (just use `Random.chance(percentodds:Float)`!).
-* Added `Random.shuffle()`.
-``` haxe
-  var temparray:Array< String> = ["cat", "dog", "pig", "rabbit", "frog"];
-  Debug.log("Original order is: " + temparray);
-  
-  Random.shuffle(temparray);
-  Debug.log("After shuffling: " + temparray);
+  Text.display(x, y, "spooky see through text", Col.WHITE, 0.5);
 ```
 
 ### Bug fixes/Tweaks
-* Updated to work with the latest 5.0 versions of OpenFL and Lime.
-* Fixed smoothing issue with `Gfx.drawsubimage()`.
-* Disabled right click on Flash target. You can press <i>Ctrl + Left Click</i> to simulate a right click on Flash.
-* Fixed a bug where haxegon wasn't using the fps value from `project.xml`. (via https://twitter.com/randomnine/)
-* Default FPS is now 60 instead of 30.
-* Internal improvements to drawing primatives. (via https://twitter.com/KommanderKlobb/)
-* Support for quadbatching on `Gfx.drawhexagon()`, `Gfx.fillhexagon()`, `Gfx.drawcircle()` and `Gfx.fillcircle()`, resulting in speed improvements on all those functions.
-* Fixed `Mouse.offscreen()` (via https://twitter.com/randomnine/) 
-* Fixed a crash bug if you draw a circle of radius 0.
-* Fixed line thickness on `Gfx.drawbox()`.
-* Fixed `Random.seed`.
-* General cleanups to the library.
+* Removed deprecated `startfullscreen` setting from blankproject.zip.
+* Documentation updates.
 
 *(For a full update history, see <a href="https://github.com/TerryCavanagh/haxegon/blob/master/changelog.md">the changelog</a>.)*
