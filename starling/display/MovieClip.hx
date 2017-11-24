@@ -10,11 +10,12 @@
 
 package starling.display;
 
-import flash.errors.ArgumentError;
-import flash.errors.IllegalOperationError;
-import flash.media.Sound;
-import flash.media.SoundTransform;
-
+import haxe.Constraints.Function;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import openfl.errors.IllegalOperationError;
+import openfl.media.Sound;
+import openfl.media.SoundTransform;
 import openfl.Vector;
 
 import starling.animation.IAnimatable;
@@ -33,7 +34,7 @@ import starling.textures.Texture;
  *  
  *  <p>You can specify the desired framerate via the constructor. You can, however, manually 
  *  give each frame a custom duration. You can also play a sound whenever a certain frame 
- *  appears.</p>
+ *  appears, or execute a callback (a "frame action").</p>
  *  
  *  <p>The methods <code>play</code> and <code>pause</code> control playback of the movie. You
  *  will receive an event of type <code>Event.COMPLETE</code> when the movie finished
@@ -47,19 +48,15 @@ import starling.textures.Texture;
  */    
 class MovieClip extends Image implements IAnimatable
 {
-    private var mTextures:Vector<Texture>;
-    private var mSounds:Vector<Sound>;
-    private var mDurations:Vector<Float>;
-    private var mStartTimes:Vector<Float>;
-
-    private var mDefaultFrameDuration:Float;
-    private var mCurrentTime:Float;
-    private var mCurrentFrame:Int;
-    private var mLoop:Bool;
-    private var mPlaying:Bool;
-    private var mMuted:Bool;
-    private var mWasStopped:Bool;
-    private var mSoundTransform:SoundTransform = null;
+    private var __frames:Vector<MovieClipFrame>;
+    private var __defaultFrameDuration:Float;
+    private var __currentTime:Float;
+    private var __currentFrameID:Int;
+    private var __loop:Bool;
+    private var __playing:Bool;
+    private var __muted:Bool;
+    private var __wasStopped:Bool;
+    private var __soundTransform:SoundTransform = null;
     
     /** Creates a movie clip from the provided textures and with the specified default framerate.
      * The movie will have the size of the first frame. */  
@@ -81,22 +78,17 @@ class MovieClip extends Image implements IAnimatable
         if (fps <= 0) throw new ArgumentError("Invalid fps: " + fps);
         var numFrames:Int = textures.length;
         
-        mDefaultFrameDuration = 1.0 / fps;
-        mLoop = true;
-        mPlaying = true;
-        mCurrentTime = 0.0;
-        mCurrentFrame = 0;
-        mWasStopped = true;
-        mTextures = textures.concat();
-        mSounds = new Vector<Sound>(numFrames);
-        mDurations = new Vector<Float>(numFrames);
-        mStartTimes = new Vector<Float>(numFrames);
+        __defaultFrameDuration = 1.0 / fps;
+        __loop = true;
+        __playing = true;
+        __currentTime = 0.0;
+        __currentFrameID = 0;
+        __wasStopped = true;
+        __frames = new Vector<MovieClipFrame>();
         
         for (i in 0...numFrames)
-        {
-            mDurations[i] = mDefaultFrameDuration;
-            mStartTimes[i] = i * mDefaultFrameDuration;
-        }
+            __frames[i] = new MovieClipFrame(
+                     textures[i], __defaultFrameDuration, __defaultFrameDuration * i);
     }
     
     // frame manipulation
@@ -113,20 +105,18 @@ class MovieClip extends Image implements IAnimatable
                                duration:Float=-1):Void
     {
         if (frameID < 0 || frameID > numFrames) throw new ArgumentError("Invalid frame id");
-        if (duration < 0) duration = mDefaultFrameDuration;
-        
-        //#if flash
-        //mTextures.splice(frameID, 0, texture);
-        //mSounds.splice(frameID, 0, sound);
-        //mDurations.splice(frameID, 0, duration);
-        //#else
-        mTextures.insertAt(frameID, texture);
-        mSounds.insertAt(frameID, sound);
-        mDurations.insertAt(frameID, duration);
-        //#end
-        
-        if (frameID > 0 && frameID == numFrames) 
-            mStartTimes[frameID] = mStartTimes[frameID-1] + mDurations[frameID-1];
+        if (duration < 0) duration = __defaultFrameDuration;
+
+        var frame:MovieClipFrame = new MovieClipFrame(texture, duration);
+        frame.sound = sound;
+        __frames.insertAt(frameID, frame);
+
+        if (frameID == numFrames)
+        {
+            var prevStartTime:Float = frameID > 0 ? __frames[frameID - 1].startTime : 0.0;
+            var prevDuration:Float  = frameID > 0 ? __frames[frameID - 1].duration  : 0.0;
+            frame.startTime = prevStartTime + prevDuration;
+        }
         else
             updateStartTimes();
     }
@@ -136,33 +126,32 @@ class MovieClip extends Image implements IAnimatable
     {
         if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
         if (numFrames == 1) throw new IllegalOperationError("Movie clip must not be empty");
-        
-        mTextures.splice(frameID, 1);
-        mSounds.splice(frameID, 1);
-        mDurations.splice(frameID, 1);
-        
-        updateStartTimes();
+
+        __frames.removeAt(frameID);
+
+        if (frameID != numFrames)
+            updateStartTimes();
     }
     
     /** Returns the texture of a certain frame. */
     public function getFrameTexture(frameID:Int):Texture
     {
         if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
-        return mTextures[frameID];
+        return __frames[frameID].texture;
     }
     
     /** Sets the texture of a certain frame. */
     public function setFrameTexture(frameID:Int, texture:Texture):Void
     {
         if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
-        mTextures[frameID] = texture;
+        __frames[frameID].texture = texture;
     }
     
     /** Returns the sound of a certain frame. */
     public function getFrameSound(frameID:Int):Sound
     {
         if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
-        return mSounds[frameID];
+        return __frames[frameID].sound;
     }
     
     /** Sets the sound of a certain frame. The sound will be played whenever the frame 
@@ -170,21 +159,35 @@ class MovieClip extends Image implements IAnimatable
     public function setFrameSound(frameID:Int, sound:Sound):Void
     {
         if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
-        mSounds[frameID] = sound;
+        __frames[frameID].sound = sound;
+    }
+
+    /** Returns the method that is executed at a certain frame. */
+    public function getFrameAction(frameID:Int):Function
+    {
+        if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
+        return __frames[frameID].action;
+    }
+
+    /** Sets an action that will be executed whenever a certain frame is reached. */
+    public function setFrameAction(frameID:Int, action:Function):Void
+    {
+        if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
+        __frames[frameID].action = action;
     }
     
     /** Returns the duration of a certain frame (in seconds). */
     public function getFrameDuration(frameID:Int):Float
     {
         if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
-        return mDurations[frameID];
+        return __frames[frameID].duration;
     }
     
     /** Sets the duration of a certain frame (in seconds). */
     public function setFrameDuration(frameID:Int, duration:Float):Void
     {
         if (frameID < 0 || frameID >= numFrames) throw new ArgumentError("Invalid frame id");
-        mDurations[frameID] = duration;
+        __frames[frameID].duration = duration;
         updateStartTimes();
     }
 
@@ -192,14 +195,10 @@ class MovieClip extends Image implements IAnimatable
      * Makes sure that the currently visible frame stays the same. */
     public function reverseFrames():Void
     {
-        mTextures.reverse();
-        mSounds.reverse();
-        mDurations.reverse();
-
+        __frames.reverse();
+        __currentTime = totalTime - __currentTime;
+        __currentFrameID = numFrames - __currentFrameID - 1;
         updateStartTimes();
-
-        mCurrentTime = totalTime - mCurrentTime;
-        mCurrentFrame = numFrames - mCurrentFrame - 1;
     }
     
     // playback methods
@@ -207,20 +206,20 @@ class MovieClip extends Image implements IAnimatable
     /** Starts playback. Beware that the clip has to be added to a juggler, too! */
     public function play():Void
     {
-        mPlaying = true;
+        __playing = true;
     }
     
     /** Pauses playback. */
     public function pause():Void
     {
-        mPlaying = false;
+        __playing = false;
     }
     
     /** Stops playback, resetting "currentFrame" to zero. */
     public function stop():Void
     {
-        mPlaying = false;
-        mWasStopped = true;
+        __playing = false;
+        __wasStopped = true;
         currentFrame = 0;
     }
 
@@ -229,163 +228,210 @@ class MovieClip extends Image implements IAnimatable
     private function updateStartTimes():Void
     {
         var numFrames:Int = this.numFrames;
-        
-        mStartTimes.length = 0;
-        mStartTimes[0] = 0;
+        var prevFrame:MovieClipFrame = __frames[0];
+        prevFrame.startTime = 0;
         
         for (i in 1...numFrames)
-            mStartTimes[i] = mStartTimes[i-1] + mDurations[i-1];
+        {
+            __frames[i].startTime = prevFrame.startTime + prevFrame.duration;
+            prevFrame = __frames[i];
+        }
     }
 
-    private function playSound(frame:Int):Void
-    {
-        if (!mMuted && mSounds[frame] != null)
-            mSounds[frame].play(0, 0, mSoundTransform);
-    }
-    
     // IAnimatable
-    
+
     /** @inheritDoc */
     public function advanceTime(passedTime:Float):Void
     {
-        if (!mPlaying || passedTime <= 0.0) return;
+        if (!__playing) return;
 
-        var finalFrame:Int;
-        var previousFrame:Int = mCurrentFrame;
-        var restTime:Float = 0.0;
-        var dispatchCompleteEvent:Bool = false;
-        var totalTime:Float = this.totalTime;
+        // The tricky part in this method is that whenever a callback is executed
+        // (a frame action or a 'COMPLETE' event handler), that callback might modify the clip.
+        // Thus, we have to start over with the remaining time whenever that happens.
 
-        if (mWasStopped)
+        var frame:MovieClipFrame = __frames[__currentFrameID];
+
+        if (__wasStopped)
         {
             // if the clip was stopped and started again,
-            // we need to play the frame's sound manually.
+            // sound and action of this frame need to be repeated.
 
-            mWasStopped = false;
-            playSound(mCurrentFrame);
-        }
+            __wasStopped = false;
+            frame.playSound(__soundTransform);
 
-        if (mLoop && mCurrentTime >= totalTime)
-        { 
-            mCurrentTime = 0.0; 
-            mCurrentFrame = 0; 
-        }
-        
-        if (mCurrentTime < totalTime)
-        {
-            mCurrentTime += passedTime;
-            finalFrame = mTextures.length - 1;
-            
-            while (mCurrentTime > mStartTimes[mCurrentFrame] + mDurations[mCurrentFrame])
+            if (frame.action != null)
             {
-                if (mCurrentFrame == finalFrame)
-                {
-                    if (mLoop && !hasEventListener(Event.COMPLETE))
-                    {
-                        mCurrentTime -= totalTime;
-                        mCurrentFrame = 0;
-                    }
-                    else
-                    {
-                        restTime = mCurrentTime - totalTime;
-                        dispatchCompleteEvent = true;
-                        mCurrentFrame = finalFrame;
-                        mCurrentTime = totalTime;
-                        break;
-                    }
-                }
-                else
-                {
-                    mCurrentFrame++;
-                }
-
-                if (mSounds[mCurrentFrame] != null) playSound(mCurrentFrame);
+                frame.executeAction(this, __currentFrameID);
+                advanceTime(passedTime);
+                return;
             }
-            
-            // special case when we reach *exactly* the total time.
-            if (mCurrentFrame == finalFrame && mCurrentTime == totalTime)
-                dispatchCompleteEvent = true;
         }
-        
-        if (mCurrentFrame != previousFrame)
-            texture = mTextures[mCurrentFrame];
-        
-        if (dispatchCompleteEvent)
-            dispatchEventWith(Event.COMPLETE);
-        
-        if (mLoop && restTime > 0.0)
-            advanceTime(restTime);
+
+        if (__currentTime == totalTime)
+        {
+            if (__loop)
+            {
+                __currentTime = 0.0;
+                __currentFrameID = 0;
+                frame = __frames[0];
+                frame.playSound(__soundTransform);
+                texture = frame.texture;
+
+                if (frame.action != null)
+                {
+                    frame.executeAction(this, __currentFrameID);
+                    advanceTime(passedTime);
+                    return;
+                }
+            }
+            else return;
+        }
+
+        var finalFrameID:Int = __frames.length - 1;
+        var restTimeInFrame:Float = frame.duration - __currentTime + frame.startTime;
+        var dispatchCompleteEvent:Bool = false;
+        var frameAction:Function = null;
+        var previousFrameID:Int = __currentFrameID;
+        var changedFrame:Bool;
+
+        while (passedTime >= restTimeInFrame)
+        {
+            changedFrame = false;
+            passedTime -= restTimeInFrame;
+            __currentTime = frame.startTime + frame.duration;
+
+            if (__currentFrameID == finalFrameID)
+            {
+                if (hasEventListener(Event.COMPLETE))
+                {
+                    dispatchCompleteEvent = true;
+                }
+                else if (__loop)
+                {
+                    __currentTime = 0;
+                    __currentFrameID = 0;
+                    changedFrame = true;
+                }
+                else return;
+            }
+            else
+            {
+                __currentFrameID += 1;
+                changedFrame = true;
+            }
+
+            frame = __frames[__currentFrameID];
+            frameAction = frame.action;
+
+            if (changedFrame)
+                frame.playSound(__soundTransform);
+
+            if (dispatchCompleteEvent)
+            {
+                texture = frame.texture;
+                dispatchEventWith(Event.COMPLETE);
+                advanceTime(passedTime);
+                return;
+            }
+            else if (frameAction != null)
+            {
+                texture = frame.texture;
+                frame.executeAction(this, __currentFrameID);
+                advanceTime(passedTime);
+                return;
+            }
+
+            restTimeInFrame = frame.duration;
+
+            // prevent a mean floating point problem (issue #851)
+            if (passedTime + 0.0001 > restTimeInFrame && passedTime - 0.0001 < restTimeInFrame)
+                passedTime = restTimeInFrame;
+        }
+
+        if (previousFrameID != __currentFrameID)
+            texture = __frames[__currentFrameID].texture;
+
+        __currentTime += passedTime;
     }
     
-    // properties  
+    // properties
+
+    /** The total number of frames. */
+    public var numFrames(get, never):Int;
+    private function get_numFrames():Int { return __frames.length; }
     
     /** The total duration of the clip in seconds. */
     public var totalTime(get, never):Float;
     private function get_totalTime():Float 
     {
-        var numFrames:Int = mTextures.length;
-        return mStartTimes[numFrames-1] + mDurations[numFrames-1];
+        var lastFrame:MovieClipFrame = __frames[__frames.length-1];
+        return lastFrame.startTime + lastFrame.duration;
     }
     
     /** The time that has passed since the clip was started (each loop starts at zero). */
-    public var currentTime(get, never):Float;
-    private function get_currentTime():Float { return mCurrentTime; }
-    
-    /** The total Float of frames. */
-    public var numFrames(get, never):Int;
-    private function get_numFrames():Int { return mTextures.length; }
-    
-    /** Indicates if the clip should loop. */
+    public var currentTime(get, set):Float;
+    private function get_currentTime():Float { return __currentTime; }
+    private function set_currentTime(value:Float):Float
+    {
+        if (value < 0 || value > totalTime) throw new ArgumentError("Invalid time: " + value);
+
+        var lastFrameID:Int = __frames.length - 1;
+        __currentTime = value;
+        __currentFrameID = 0;
+
+        while (__currentFrameID < lastFrameID && __frames[__currentFrameID + 1].startTime <= value)
+            ++__currentFrameID;
+
+        var frame:MovieClipFrame = __frames[__currentFrameID];
+        texture = frame.texture;
+        return value;
+    }
+
+    /** Indicates if the clip should loop. @default true */
     public var loop(get, set):Bool;
-    private function get_loop():Bool { return mLoop; }
-    private function set_loop(value:Bool):Bool { return mLoop = value; }
+    private function get_loop():Bool { return __loop; }
+    private function set_loop(value:Bool):Bool { return __loop = value; }
     
     /** If enabled, no new sounds will be started during playback. Sounds that are already
      * playing are not affected. */
     public var muted(get, set):Bool;
-    private function get_muted():Bool { return mMuted; }
-    private function set_muted(value:Bool):Bool { return mMuted = value; }
+    private function get_muted():Bool { return __muted; }
+    private function set_muted(value:Bool):Bool { return __muted = value; }
 
     /** The SoundTransform object used for playback of all frame sounds. @default null */
     public var soundTransform(get, set):SoundTransform;
-    private function get_soundTransform():SoundTransform { return mSoundTransform; }
-    private function set_soundTransform(value:SoundTransform):SoundTransform { return mSoundTransform = value; }
+    private function get_soundTransform():SoundTransform { return __soundTransform; }
+    private function set_soundTransform(value:SoundTransform):SoundTransform { return __soundTransform = value; }
 
     /** The index of the frame that is currently displayed. */
     public var currentFrame(get, set):Int;
-    private function get_currentFrame():Int { return mCurrentFrame; }
+    private function get_currentFrame():Int { return __currentFrameID; }
     private function set_currentFrame(value:Int):Int
     {
-        mCurrentFrame = value;
-        mCurrentTime = 0.0;
-        
-        for (i in 0...value)
-            mCurrentTime += getFrameDuration(i);
-        
-        texture = mTextures[mCurrentFrame];
-        if (mPlaying && !mWasStopped) playSound(mCurrentFrame);
-        return mCurrentFrame;
+        if (value < 0 || value >= numFrames) throw new ArgumentError("Invalid frame id");
+        currentTime = __frames[value].startTime;
+        return value;
     }
     
     /** The default number of frames per second. Individual frames can have different 
      * durations. If you change the fps, the durations of all frames will be scaled 
      * relatively to the previous value. */
     public var fps(get, set):Float;
-    private function get_fps():Float { return 1.0 / mDefaultFrameDuration; }
+    private function get_fps():Float { return 1.0 / __defaultFrameDuration; }
     private function set_fps(value:Float):Float
     {
         if (value <= 0) throw new ArgumentError("Invalid fps: " + value);
         
         var newFrameDuration:Float = 1.0 / value;
-        var acceleration:Float = newFrameDuration / mDefaultFrameDuration;
-        mCurrentTime *= acceleration;
-        mDefaultFrameDuration = newFrameDuration;
+        var acceleration:Float = newFrameDuration / __defaultFrameDuration;
+        __currentTime *= acceleration;
+        __defaultFrameDuration = newFrameDuration;
         
         for (i in 0...numFrames) 
-            mDurations[i] *= acceleration;
+            __frames[i].duration *= acceleration;
 
         updateStartTimes();
-        return 1.0 / mDefaultFrameDuration;
+        return value;
     }
     
     /** Indicates if the clip is still playing. Returns <code>false</code> when the end 
@@ -393,8 +439,8 @@ class MovieClip extends Image implements IAnimatable
     public var isPlaying(get, never):Bool;
     private function get_isPlaying():Bool 
     {
-        if (mPlaying)
-            return mLoop || mCurrentTime < totalTime;
+        if (__playing)
+            return __loop || __currentTime < totalTime;
         else
             return false;
     }
@@ -403,6 +449,50 @@ class MovieClip extends Image implements IAnimatable
     public var isComplete(get, never):Bool;
     private function get_isComplete():Bool
     {
-        return !mLoop && mCurrentTime >= totalTime;
+        return !__loop && __currentTime >= totalTime;
+    }
+}
+
+
+private class MovieClipFrame
+{
+    public function new(texture:Texture, duration:Float=0.1,  startTime:Float=0)
+    {
+        this.texture = texture;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public var texture:Texture;
+    public var sound:Sound;
+    public var duration:Float;
+    public var startTime:Float;
+    public var action:Function;
+
+    public function playSound(transform:SoundTransform):Void
+    {
+        if (sound != null) sound.play(0, 0, transform);
+    }
+
+    public function executeAction(movie:MovieClip, frameID:Int):Void
+    {
+        if (action != null)
+        {
+            #if (flash || js)
+            var numArgs:Int = untyped action.length;
+            #elseif neko
+            var numArgs:Int = untyped ($nargs)(action);
+            #elseif cpp
+            var numArgs:Int = untyped action.__ArgCount();
+            #else
+            var numArgs:Int = 2;
+            #end
+
+            if (numArgs == 0) action();
+            else if (numArgs == 1) action(movie);
+            else if (numArgs == 2) action(movie, frameID);
+            else throw new Error("Frame actions support zero, one or two parameters: " +
+                    "movie:MovieClip, frameID:int");
+        }
     }
 }

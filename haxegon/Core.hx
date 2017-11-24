@@ -29,6 +29,10 @@ class Core extends Sprite {
 		
 		super();
 		addEventListener(Event.ADDED_TO_STAGE, addedtostage);
+		
+		#if (sys && desktop)
+		Sys.putEnv("NvOptimusEnablement", "0x00000001");// 0x00000001);
+		#end
 	}
 	
 	private function addedtostage(e:Event = null) {

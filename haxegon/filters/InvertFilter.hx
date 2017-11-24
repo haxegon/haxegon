@@ -7,6 +7,7 @@ import flash.display3D.Program3D;
 import openfl.display3D.Context3DProgramType;
 import openfl.Vector;
 
+/* TO DO: This is broken now */
 class InvertFilter extends BaseFilter {
 	public function new() {
 	  super();	

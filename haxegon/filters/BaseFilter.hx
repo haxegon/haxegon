@@ -6,6 +6,7 @@ import starling.textures.Texture;
 import flash.display3D.Context3D;
 import flash.display3D.Program3D;
 
+/* TO DO: This is totally broken now */
 class BaseFilter extends FragmentFilter {
 	// Shaders
 	public var FRAGMENT_SHADER:String;
@@ -16,7 +17,7 @@ class BaseFilter extends FragmentFilter {
 	
 	/** @private */
 	public function new() {
-		super(1, 1.0);
+		super();
 	}
 	
 	/** Dispose */
@@ -27,10 +28,10 @@ class BaseFilter extends FragmentFilter {
 	}
 	
 	/** Create Programs */
-	override public function createPrograms(){
-		setAgal();
-		this.program = assembleAgal(FRAGMENT_SHADER, VERTEX_SHADER);
-	}
+	//override public function createPrograms(){
+	//	setAgal();
+		//this.program = assembleAgal(FRAGMENT_SHADER, VERTEX_SHADER);
+	//}
 	
 	/** Set AGAL */
 	public function setAgal(){
@@ -38,7 +39,7 @@ class BaseFilter extends FragmentFilter {
 	}
 	
 	/** Activate */
-	override public function activate(pass:Int, context:Context3D, texture:Texture){
-		context.setProgram(this.program);
-	}
+	//override public function activate(pass:Int, context:Context3D, texture:Texture){
+  //	context.setProgram(this.program);
+	//}
 }

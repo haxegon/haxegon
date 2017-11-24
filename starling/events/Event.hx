@@ -46,8 +46,6 @@ class Event
     public static inline var REMOVED_FROM_STAGE:String = "removedFromStage";
     /** Event type for a triggered button. */
     public static inline var TRIGGERED:String = "triggered";
-    /** Event type for a display object that is being flattened. */
-    public static inline var FLATTEN:String = "flatten";
     /** Event type for a resized Flash Player. */
     public static inline var RESIZE:String = "resize";
     /** Event type that may be used whenever something finishes. */
@@ -59,7 +57,7 @@ class Event
     /** Event type that indicates that the root DisplayObject has been created. */
     public static inline var ROOT_CREATED:String = "rootCreated";
     /** Event type for an animated object that requests to be removed from the juggler. */
-    public static inline var REMOVE_FROM_JUGGLER:String = "removeFromJuggler";
+    public static inline var REMOVE_FROM_JUGGLER:String = "removeFro__juggler";
     /** Event type that is dispatched by the AssetManager after a context loss. */
     public static inline var TEXTURES_RESTORED:String = "texturesRestored";
     /** Event type that is dispatched by the AssetManager when a file/url cannot be loaded. */
@@ -87,7 +85,9 @@ class Event
     public static inline var SELECT:String = "select";
     /** An event type to be utilized in custom events. Not used by Starling right now. */
     public static inline var READY:String = "ready";
-    
+    /** An event type to be utilized in custom events. Not used by Starling right now. */
+    public static inline var UPDATE:String = "update";
+
     private static var sEventPool:Vector<Event> = new Vector<Event>();
     
     /** Creates an event object that can be passed to listeners. */
@@ -101,7 +101,7 @@ class Event
     /** Prevents listeners at the next bubble stage from receiving the event. */
     public function stopPropagation():Void
     {
-        this.stopsPropagation = true;            
+        this.stopsPropagation = true;
     }
     
     /** Prevents any other listeners from receiving the event. */
@@ -113,7 +113,7 @@ class Event
     /** Returns a description of the event, containing type and bubble information. */
     public function toString():String
     {
-        return StringUtil.formatString("[{0} type=\"{1}\" bubbles={2}]", 
+        return StringUtil.format("[{0} type=\"{1}\" bubbles={2}]", 
             [Type.getClassName(Type.getClass(this)).split("::").pop(), type, bubbles]);
     }
     
@@ -135,38 +135,38 @@ class Event
     // properties for public use
     
     /** @private */
-    private function setTarget(value:EventDispatcher):Void { target = value; }
+    @:allow(starling) private function setTarget(value:EventDispatcher):Void { target = value; }
     
     /** @private */
-    private function setCurrentTarget(value:EventDispatcher):Void { currentTarget = value; } 
+    @:allow(starling) private function setCurrentTarget(value:EventDispatcher):Void { currentTarget = value; } 
     
     /** @private */
-    private function setData(value:Dynamic):Void { data = value; }
+    @:allow(starling) private function setData(value:Dynamic):Void { data = value; }
     
     /** @private */
-    private var stopsPropagation(default, null):Bool;
+    @:allow(starling) private var stopsPropagation(default, null):Bool;
     
     /** @private */
-    private var stopsImmediatePropagation(default, null):Bool;
+    @:allow(starling) private var stopsImmediatePropagation(default, null):Bool;
     
     // event pooling
     
     /** @private */
-    private static function fromPool(type:String, bubbles:Bool=false, data:Dynamic=null):Event
+    @:allow(starling) private static function fromPool(type:String, bubbles:Bool=false, data:Dynamic=null):Event
     {
         if (sEventPool.length != 0) return sEventPool.pop().reset(type, bubbles, data);
         else return new Event(type, bubbles, data);
     }
     
     /** @private */
-    private static function toPool(event:Event):Void
+    @:allow(starling) private static function toPool(event:Event):Void
     {
         event.data = event.target = event.currentTarget = null;
         sEventPool[sEventPool.length] = event; // avoiding 'push'
     }
     
     /** @private */
-    private function reset(type:String, bubbles:Bool=false, data:Dynamic=null):Event
+    @:allow(starling) private function reset(type:String, bubbles:Bool=false, data:Dynamic=null):Event
     {
         this.type = type;
         this.bubbles = bubbles;

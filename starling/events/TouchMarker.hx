@@ -10,9 +10,9 @@
 
 package starling.events;
 
-import flash.display.BitmapData;
-import flash.display.Shape;
-import flash.geom.Point;
+import openfl.display.BitmapData;
+import openfl.display.Shape;
+import openfl.geom.Point;
 
 import starling.core.Starling;
 import starling.display.Image;
@@ -22,20 +22,21 @@ import starling.textures.Texture;
 /** The TouchMarker is used internally to mark touches created through "simulateMultitouch". */
 class TouchMarker extends Sprite
 {
-    private var mCenter:Point;
-    private var mTexture:Texture;
+    private var __center:Point;
+    private var __texture:Texture;
     
     public function new()
     {
         super();
-        mCenter = new Point();
-        mTexture = createTexture();
+
+        __center = new Point();
+        __texture = createTexture();
         
         for (i in 0...2)
         {
-            var marker:Image = new Image(mTexture);
-            marker.pivotX = mTexture.width / 2;
-            marker.pivotY = mTexture.height / 2;
+            var marker:Image = new Image(__texture);
+            marker.pivotX = __texture.width / 2;
+            marker.pivotY = __texture.height / 2;
             marker.touchable = false;
             addChild(marker);
         }
@@ -43,7 +44,7 @@ class TouchMarker extends Sprite
     
     public override function dispose():Void
     {
-        mTexture.dispose();
+        __texture.dispose();
         super.dispose();
     }
     
@@ -51,20 +52,20 @@ class TouchMarker extends Sprite
     {
         if (withCenter)
         {
-            mCenter.x += x - realMarker.x;
-            mCenter.y += y - realMarker.y;
+            __center.x += x - realMarker.x;
+            __center.y += y - realMarker.y;
         }
         
         realMarker.x = x;
         realMarker.y = y;
-        mockMarker.x = 2*mCenter.x - x;
-        mockMarker.y = 2*mCenter.y - y;
+        mockMarker.x = 2*__center.x - x;
+        mockMarker.y = 2*__center.y - y;
     }
     
     public function moveCenter(x:Float, y:Float):Void
     {
-        mCenter.x = x;
-        mCenter.y = y;
+        __center.x = x;
+        __center.y = y;
         moveMarker(realX, realY); // reset mock position
     }
     

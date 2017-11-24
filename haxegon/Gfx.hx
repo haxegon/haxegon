@@ -8,7 +8,6 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import starling.display.*;
 import starling.geom.*;
-import starling.core.RenderSupport;
 import starling.core.StatsDisplay;
 import starling.utils.AssetManager;
 import starling.textures.*;
@@ -57,7 +56,7 @@ class HaxegonTileset {
 @:access(haxegon.Text)
 @:access(haxegon.Filter)
 class Gfx {
-	private static inline var MAX_NUM_QUADS:Int = 16383;
+	private static inline var MAX_NUM_MESH:Int = 16383;
 	public static var LEFT:Int = -10000;
 	public static var RIGHT:Int = -20000;
 	public static var TOP:Int = -10000;
@@ -224,7 +223,7 @@ class Gfx {
 				var rect:Rectangle = new openfl.geom.Rectangle(framex + (i * width), framey + (j * height), width, height);
 				var newtex:Texture = Texture.fromTexture(spritesheet, rect);
 				tiles[currenttileset].tiles.push(new Image(newtex));
-				tiles[currenttileset].tiles[tiles[currenttileset].tiles.length - 1].smoothing = "none";
+				tiles[currenttileset].tiles[tiles[currenttileset].tiles.length - 1].textureSmoothing = "none";
 			}
 		}
 	}
@@ -335,7 +334,7 @@ class Gfx {
 		haxegonimage.contents = new Image(tex);
 		haxegonimage.fetchsize();
 		images.push(haxegonimage);
-		images[images.length - 1].contents.smoothing = "none";
+		images[images.length - 1].contents.textureSmoothing = "none";
 	}		
 	
 	/** Loads an image into the game. */
@@ -356,7 +355,7 @@ class Gfx {
 		imageindex.set(imagename, images.length);
 		haxegonimage = new HaxegonImage(imagename);
 		haxegonimage.contents = new Image(starlingassets.getTexture(imagename));
-		haxegonimage.contents.smoothing = "none";
+		haxegonimage.contents.textureSmoothing = "none";
 		haxegonimage.fetchsize();
 		
 		images.push(haxegonimage);
@@ -369,7 +368,7 @@ class Gfx {
 		var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
 		var img:Image = new Image(tex);
 		img.touchable = false;
-		img.smoothing = "none";
+		img.textureSmoothing = "none";
 
 		var exindex:Null<Int> = imageindex.get(imagename);
 		if (exindex == null) {
@@ -423,7 +422,7 @@ class Gfx {
 
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoscreen() {
-		Gfx.endquadbatch();
+		Gfx.endmeshbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		drawto = backbuffer;
@@ -438,7 +437,7 @@ class Gfx {
 			return;
 		}
 		
-		Gfx.endquadbatch();
+		Gfx.endmeshbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		var imagenum:Int = imageindex.get(imagename);
@@ -465,7 +464,7 @@ class Gfx {
 			}
 		}
 		
-		endquadbatch();
+		endmeshbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		promotetorendertarget(tiles[tileset].tiles[tilenum]);
@@ -553,7 +552,7 @@ class Gfx {
 		if (!transform && !coltransform) {
 			shapematrix.identity();
 			shapematrix.translate(Std.int(x), Std.int(y));
-			quadbatch.addImage(image, 1.0, shapematrix);
+			meshbatch.addMesh(image, shapematrix, 1.0);
 		}else {
 			tempxalign = 0;	tempyalign = 0;
 			
@@ -578,10 +577,10 @@ class Gfx {
 			shapematrix.translate(x, y);
 			if (coltransform) {
 				image.color = imagecolormult;
-				quadbatch.addImage(image, imagealphamult, shapematrix);
+				meshbatch.addMesh(image, shapematrix, imagealphamult);
 				image.color = Col.WHITE;
 			}else {
-				quadbatch.addImage(image, 1.0, shapematrix);
+				meshbatch.addMesh(image, shapematrix, 1.0);
 			}
 		} 
 	}
@@ -595,8 +594,8 @@ class Gfx {
 		}
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
-		updatequadbatch();
+		endmeshbatch();
+		updatemeshbatch();
 		drawstate = DRAWSTATE_IMAGE;
 		
 		haxegonimage = images[imageindex.get(imagename)];
@@ -604,7 +603,7 @@ class Gfx {
 		internaldrawimage(x, y, haxegonimage.contents, haxegonimage.width, haxegonimage.height);
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
+		endmeshbatch();
 	}
 	
 	/** Draws image by name. 
@@ -619,8 +618,8 @@ class Gfx {
 		}
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
-		updatequadbatch();
+		endmeshbatch();
+		updatemeshbatch();
 		
 		haxegonimage = images[imageindex.get(imagename)];
 		x = imagealignx(haxegonimage.width, x); y = imagealigny(haxegonimage.height, y);
@@ -635,12 +634,12 @@ class Gfx {
 		var subtex:Texture = Texture.fromTexture(haxegonimage.contents.texture, trect);
 		var subimage:Image = new Image(subtex); // alloc. avoidable with pooling?
 		subimage.touchable = false;
-		subimage.smoothing = "none";
+		subimage.textureSmoothing = "none";
 		
 		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
+		endmeshbatch();
 		
 		// all done! clean up
 		subtex.dispose();
@@ -661,7 +660,7 @@ class Gfx {
 		}
 		
 		//Make sure everything's on the screen before we grab it
-		endquadbatch();
+		endmeshbatch();
 		
 		// Acquire SubTexture and build an Image from it.
 		promotetorendertarget(tiles[currenttileset].tiles[tilenumber]);
@@ -692,7 +691,7 @@ class Gfx {
 		}
 		
 		//Make sure everything's on the screen before we grab it
-		endquadbatch();
+		endmeshbatch();
 		
 		// Acquire SubTexture and build an Image from it.
 		promotetorendertarget(tiles[currenttileset].tiles[tilenumber]);
@@ -711,7 +710,7 @@ class Gfx {
 		}
 		
 		//Make sure everything's on the screen before we grab it
-		endquadbatch();
+		endmeshbatch();
 		
 		haxegonimage = images[imageindex.get(imagename)];
 		// Acquire SubTexture and build an Image from it.
@@ -736,7 +735,7 @@ class Gfx {
 		}
 		
 		//Make sure everything's on the screen before we grab it
-		endquadbatch();
+		endmeshbatch();
 		
 		haxegonimage = images[imageindex.get(destinationimage)];
 		var sourceimage:HaxegonImage = images[imageindex.get(sourceimage)];
@@ -786,8 +785,8 @@ class Gfx {
 		}
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
-		updatequadbatch();
+		endmeshbatch();
+		updatemeshbatch();
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
@@ -805,7 +804,7 @@ class Gfx {
 		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
+		endmeshbatch();
 		
 		// all done! clean up
 		subtex.dispose();
@@ -827,8 +826,8 @@ class Gfx {
 		
 		//WIP: If we're using a tileset then we can batch draw stuff because it's all on the same texture
 		//(providing we haven't messed with the tileset by creating images)
-		if (drawstate != DRAWSTATE_TILES) endquadbatch();
-		updatequadbatch();
+		if (drawstate != DRAWSTATE_TILES) endmeshbatch();
+		updatemeshbatch();
 		drawstate = DRAWSTATE_TILES;
 		
 		x = tilealignx(x); y = tilealigny(y);
@@ -866,16 +865,16 @@ class Gfx {
 		
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		updatequadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		updatemeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
 		templine.setPosition(x1, y1, x2, y2);
 		templine.thickness = linethickness;
 		templine.color = color;
 		templine.alpha = alpha;
 		
-		quadbatch.addQuad(templine);
+		meshbatch.addMesh(templine);
 	}
 	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
@@ -883,14 +882,14 @@ class Gfx {
 		if (radius <= 0) return;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, true, 6, angle);
+		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatequadbatch();
-			quadbatch.addQuad(tempring._polygons[i]);
+			updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i]);
 		}
 	}
 	
@@ -899,47 +898,51 @@ class Gfx {
 		if (radius <= 0) return;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, true, 6, angle);
+		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatequadbatch();
-			quadbatch.addQuad(tempring._polygons[i]);
+			updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i]);
 		}
 	}
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, color:Int, alpha:Float = 1.0) {
+		/* TO DO
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
 		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatequadbatch();
-			quadbatch.addQuad(tempring._polygons[i]);
+			updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i]);
 		}
+		*/
 	}
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
+		/* TO DO
 		if (col == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
 		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, alpha);
 		
 		for(i in 0 ... tempring._polygons.length){
-		  updatequadbatch();
-			quadbatch.addQuad(tempring._polygons[i]);
+		  updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i]);
 		}
+		*/
 	}
 	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
@@ -951,16 +954,18 @@ class Gfx {
 	}
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
+		/* TO DO
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		if (drawstate != DRAWSTATE_POLY4) endquadbatch();
-		updatequadbatch();
+		if (drawstate != DRAWSTATE_POLY4) endmeshbatch();
+		updatemeshbatch();
 		drawstate = DRAWSTATE_POLY4;
 		
 		temppoly4.setVertexPositions(x1, y1, x2, y2, x3, y3, x3, y3);
 		temppoly4.color = color;
 		temppoly4.alpha = alpha;
 		
-		quadbatch.addQuad(temppoly4);
+		meshbatch.addMesh(temppoly4);
+		*/
 	}
 	
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
@@ -983,9 +988,9 @@ class Gfx {
 	
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT) return;
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		updatequadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		updatemeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
 		tempquad.x = x;
 		tempquad.y = y;
@@ -994,30 +999,30 @@ class Gfx {
 		tempquad.color = col;
 		tempquad.alpha = alpha;
 		
-		quadbatch.addQuad(tempquad);
+		meshbatch.addMesh(tempquad);
 	}
 	
-	private inline static function updatequadbatch() {
-		quadbatchcount++;
-	  if (quadbatchcount >= MAX_NUM_QUADS) endquadbatch();	
+	private inline static function updatemeshbatch() {
+		meshbatchcount++;
+	  if (meshbatchcount >= MAX_NUM_MESH) endmeshbatch();	
 	}
 	
-	private static function endquadbatch() {
-		if (quadbatchcount > 0) {
-			drawto.draw(quadbatch);
+	private static function endmeshbatch() {
+		if (meshbatchcount > 0) {
+			drawto.draw(meshbatch);
 			
-			quadbatch.reset();
-			quadbatchcount = 0;
+			meshbatch.clear();
+			meshbatchcount = 0;
 			drawstate = DRAWSTATE_NONE;
 		}
 	}
 	
-	private static function endquadbatchonsurface(d:RenderTexture) {
-		if (quadbatchcount > 0) {
-			d.draw(quadbatch);
+	private static function endmeshbatchonsurface(d:RenderTexture) {
+		if (meshbatchcount > 0) {
+			d.draw(meshbatch);
 			
-			quadbatch.reset();
-			quadbatchcount = 0;
+			meshbatch.clear();
+			meshbatchcount = 0;
 		}
 	}
 
@@ -1039,12 +1044,14 @@ class Gfx {
 	
 	public static function clearscreen(color:Int = 0x000000) {
 		if (drawto == null) return;
-		Gfx.endquadbatch();
+		Gfx.endmeshbatch();
 		
 		if(color == Col.TRANSPARENT){
 			drawto.clear();
 		}else {
-			drawto.clear(color, 1.0);
+			//Not working with starling 2.0, so workaround is:
+			//drawto.clear(color, 1.0);
+			fillbox(0, 0, screenwidth, screenheight, color); // TO Do: This isn't getting called every frame?
 		}
 	}
 	
@@ -1055,6 +1062,7 @@ class Gfx {
 	}
 	
 	public static function getpixel(x:Float, y:Float):Int {
+		/* TO DO
 		var w:Int;
 		var h:Int;
 		var xs:Float;
@@ -1102,7 +1110,7 @@ class Gfx {
 			xs = Starling.current.viewPort.width / w;
 			ys = Starling.current.viewPort.height / h;
 			
-			endquadbatch();
+			endmeshbatch();
 			drawto.bundleunlock();
 			var screenshot:BitmapData = new BitmapData(w, h);
 			screenshot = Starling.current.stage.drawToBitmapData(screenshot, false);
@@ -1133,8 +1141,9 @@ class Gfx {
 			backbuffer.draw(new Image(Texture.fromBitmapData(screenshot)));
 			screenshot.dispose();
 		}
-		
 		return resultpixel;
+		*/
+		return 0x0;
 	}
 	
 	private static function updategraphicsmode(windowwidth:Int, windowheight:Int) {
@@ -1234,7 +1243,7 @@ class Gfx {
 		
 		starstage.addEventListener(ResizeEvent.RESIZE, onresize);
 		
-		quadbatch = new QuadBatch();
+		meshbatch = new MeshBatch();
 		
 		linethickness = 1;
 		loadpackedtextures();
@@ -1291,7 +1300,7 @@ class Gfx {
 			screen = new Image(backbuffer);
 			screen.touchable = false;
 			screen.scale = 1;
-			screen.smoothing = "none";
+			screen.textureSmoothing = "none";
 			starstage.addChildAt(screen, 0);
 			
 			Filter.init();
@@ -1313,30 +1322,30 @@ class Gfx {
 		drawto.bundlelock();	
 		
 		if (clearcolor != Col.TRANSPARENT) clearscreen(clearcolor);
-		quadbatch.reset();
-		quadbatchcount = 0;
+		meshbatch.clear();
+		meshbatchcount = 0;
 		
 		Text.resettextfields();
 	}
 	
 	private static function endframe() {
-		endquadbatch();
+		endmeshbatch();
 		drawto.bundleunlock();
 	}
 	
-	private static var quadbatchcount:Int = 0;
-	private static var quadbatch:QuadBatch = null;
+	private static var meshbatchcount:Int = 0;
+	private static var meshbatch:MeshBatch = null;
 	
 	private static var backbuffer:RenderTexture;
 	private static var drawto:RenderTexture;
 	private static var screen:Image;
 	private static var tempquad:Quad = new Quad(1, 1);
-	private static var temppoly4:Poly4 = new Poly4(0, 0, 1, 0, 1, 1, 0, 1);
+	//private static var temppoly4:Poly4 = new Poly4(0, 0, 1, 0, 1, 1, 0, 1);
 	private static var templine:Line = new Line(1, 1, 2, 2,1, 0xFFFFFF);
 	
 	private static var drawstate:Int = 0;
 	private static inline var DRAWSTATE_NONE:Int = 0;
-	private static inline var DRAWSTATE_QUAD:Int = 1;
+	private static inline var DRAWSTATE_MESH:Int = 1;
 	private static inline var DRAWSTATE_POLY4:Int = 2;
 	private static inline var DRAWSTATE_IMAGE:Int = 3;
 	private static inline var DRAWSTATE_TILES:Int = 4;

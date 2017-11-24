@@ -15,8 +15,6 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
 
-import starling.core.RenderSupport;
-import starling.utils.VertexData;
 import starling.display.Sprite;
 import starling.display.Quad;
 
@@ -28,7 +26,7 @@ class Ring extends Sprite
   private var _outerRadius2:Float;
   public var _polygons:Array<Poly4>;
 
-  public function new(xoff:Float, yoff:Float, innerRadius:Float, outerRadius:Float, color:Int=0xffffff, alpha:Float = 1.0, premultipliedAlpha:Bool=true, nsides:Int = -1, ?startangle:Float)
+  public function new(xoff:Float, yoff:Float, innerRadius:Float, outerRadius:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float)
   {
 		super();
     _polygons = new Array<Poly4>();
@@ -58,7 +56,7 @@ class Ring extends Sprite
       p0.y = yoff + (outerRadius + sa0 * outerRadius);
       p1.x = xoff + ( outerRadius + ca1 * outerRadius);
       p1.y = yoff + (outerRadius + sa1 * outerRadius);
-      var q:Poly4 = new Poly4(c0.x, c0.y, p0.x, p0.y, c1.x, c1.y, p1.x, p1.y, color, premultipliedAlpha);
+      var q:Poly4 = new Poly4(c0.x, c0.y, p0.x, p0.y, c1.x, c1.y, p1.x, p1.y, color);
 			if(alpha != 1.0) q.alpha = alpha;
       _polygons.push(q);
       addChild(q);
@@ -69,15 +67,6 @@ class Ring extends Sprite
     for (i in 0 ... _polygons.length) {
       _polygons[i].color = value;
     }
-  }
-
-  public override function hitTest(localPoint:Point, forTouch:Bool = false):DisplayObject {
-    // on a touch test, invisible or untouchable objects cause the test to fail
-    if (forTouch && (!visible || !touchable)) return null;
-    var vx:Float = localPoint.x - _outerRadius;
-    var vy:Float = localPoint.y - _outerRadius;
-    var l2:Float = vx*vx + vy*vy;
-    return (l2 < _outerRadius2) ? this : null;
   }
 }
 

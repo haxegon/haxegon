@@ -5,7 +5,7 @@ import openfl.Assets;
 import openfl.geom.Matrix;
 import openfl.text.Font;
 import starling.display.*;
-import starling.utils.HAlign;
+import starling.utils.Align;
 import starling.text.*;
 import starling.textures.*;
 
@@ -28,9 +28,11 @@ class Fontclass {
 	}
 	
 	private function inittextfield():TextField {
-		var newtf:TextField = new TextField(Gfx.screenwidth, Gfx.screenheight, "???", fontfile.typename, fontfile.sizescale * size);
-		newtf.vAlign = "top";
-		newtf.hAlign = "left";
+		var newformat:TextFormat = new TextFormat(fontfile.typename, fontfile.sizescale * size);
+		newformat.horizontalAlign = Align.LEFT;
+		newformat.verticalAlign = Align.TOP;
+		
+		var newtf:TextField = new TextField(Gfx.screenwidth, Gfx.screenheight, "???", newformat);
 		newtf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
 		
 		return newtf;
@@ -108,7 +110,7 @@ class Fontfile {
 			sizescale = Std.parseInt(fontxml.elementsNamed("info").next().get("size"));
 			fonttex = Texture.fromBitmapData(DefaultFont.bitmapdata, false);
 			bitmapfont = new BitmapFont(fonttex, fontxml);
-			TextField.registerBitmapFont(bitmapfont);
+			TextField.registerCompositor(bitmapfont, bitmapfont.name);
 			
 			filename = "";
 			typename = "default";
@@ -136,7 +138,7 @@ class Fontfile {
 				fonttex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/fonts/" + _file + "/" + pngname + ".png"), false);
 			}
 			bitmapfont = new BitmapFont(fonttex, fontxml);
-			TextField.registerBitmapFont(bitmapfont);
+			TextField.registerCompositor(bitmapfont, bitmapfont.name);
 		}else {
 		  type = "ttf";
 			
@@ -360,8 +362,8 @@ class Text {
 	
 	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
 		if (text == "") return;
-		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endquadbatch();
-		Gfx.updatequadbatch();
+		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endmeshbatch();
+		Gfx.updatemeshbatch();
 		Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
 		
 		if (typeface.length == 0) {
@@ -369,12 +371,12 @@ class Text {
 		}
 		
 		typeface[currentindex].nexttextfield();
-		typeface[currentindex].tf.color = color;
+		typeface[currentindex].tf.format.color = color;
 		typeface[currentindex].tf.text = text;
 		
-		if (textalign == LEFT) typeface[currentindex].tf.hAlign = HAlign.LEFT;
-		if (textalign == CENTER) typeface[currentindex].tf.hAlign = HAlign.CENTER;
-		if (textalign == RIGHT)	typeface[currentindex].tf.hAlign = HAlign.RIGHT;
+		if (textalign == LEFT) typeface[currentindex].tf.format.horizontalAlign = Align.LEFT;
+		if (textalign == CENTER) typeface[currentindex].tf.format.horizontalAlign = Align.CENTER;
+		if (textalign == RIGHT)	typeface[currentindex].tf.format.horizontalAlign = Align.RIGHT;
 		if (wordwrapwidth > 0) {
 			typeface[currentindex].updatewidth(false);
 		}else {
@@ -401,8 +403,10 @@ class Text {
 			if (alpha != 1.0){
 				Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
 			}else{
-			  typeface[currentindex].tf.createComposedContents();
-			  Gfx.quadbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);
+				/* TO DO */
+			  //typeface[currentindex].tf.createComposedContents();
+			  //Gfx.meshbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);
+				Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
 			}
 		}
 	}
@@ -495,7 +499,7 @@ class Text {
 		if (fontname == "" || fontname.toLowerCase() == "default") fontname = "default";
 		if (fontname == currentfont) return currentfont;
 		
-		Gfx.endquadbatch();
+		Gfx.endmeshbatch();
 		
 		setfont(fontname, fontlastsize.exists(fontname)?fontlastsize.get(fontname): -1);
 		return currentfont;
@@ -509,7 +513,7 @@ class Text {
 	
 	static function set_size(fontsize:Float):Float {
 		if (currentsize != fontsize) {
-			Gfx.endquadbatch();	
+			Gfx.endmeshbatch();	
       changesize(fontsize);
     }
 		return currentsize;

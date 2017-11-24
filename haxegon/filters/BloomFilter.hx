@@ -34,6 +34,7 @@ import flash.display3D.Program3D;
 import openfl.display3D.Context3DProgramType;
 import openfl.Vector;
 
+/* TO DO: This is broken now */
 class BloomFilter extends BaseFilter {
 	private var fc0:Vector<Float>;
 	private var fc1:Vector<Float>;
@@ -61,7 +62,7 @@ class BloomFilter extends BaseFilter {
 		green = _green;
 		blue = _blue;
 		
-		this.numPasses = numPasses;
+		//this.numPasses = numPasses;
 		
 		fc0 = Vector.ofArray(cast [0, 0, 0, 2.5]);
 		fc1 = Vector.ofArray(cast [-1.0, 0.0, 1.0, 9.0]);
@@ -158,6 +159,7 @@ class BloomFilter extends BaseFilter {
 		"mul oc, ft1, fc2";
 	}
 	
+	/*
 	override public function activate(pass:Int, context:Context3D, texture:Texture) {
 		fc0[1] = texture.width;
 		fc0[2] = texture.height;
@@ -172,5 +174,5 @@ class BloomFilter extends BaseFilter {
 		context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, _color, 1);
 		
 		super.activate(pass, context, texture);
-	}
+	}*/
 }
