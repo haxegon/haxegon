@@ -422,6 +422,7 @@ class Gfx {
 
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoscreen() {
+		screenshotdirty = true;
 		Gfx.endmeshbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
@@ -432,6 +433,7 @@ class Gfx {
 	
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoimage(imagename:String) {
+		screenshotdirty = true;
 		if (!imageindex.exists(imagename)) {
 			Debug.log("ERROR: In drawtoimage, cannot find image \"" + imagename + "\".");
 			return;
@@ -449,6 +451,7 @@ class Gfx {
 	
 	/** Tell draw commands to draw to the given tile in the current tileset. */
 	public static function drawtotile(tilesetname:String, tilenum:Int) {
+		screenshotdirty = true;
 		var tileset:Int = 0;
 		if(tilesetindex.exists(tilesetname)){
 			tileset = tilesetindex.get(tilesetname);
@@ -549,6 +552,7 @@ class Gfx {
 	}
 	
 	private static function internaldrawimage(x:Float, y:Float, image:Image, imagewidth:Int, imageheight:Int) {
+		screenshotdirty = true;
 		if (!transform && !coltransform) {
 			shapematrix.identity();
 			shapematrix.translate(Std.int(x), Std.int(y));
@@ -772,6 +776,7 @@ class Gfx {
 	 * x1, y1, w1, h1 describe the rectangle of the tile to use.
 	 * */
 	public static function drawsubtile(x:Float, y:Float, tilesetname:String, tilenum:Int, x1:Float, y1:Float, w:Float, h:Float) {
+		screenshotdirty = true;
 		changetileset(tilesetname);
 		
 		if (tilenum >= numberoftiles(tilesetname)) {
@@ -812,6 +817,7 @@ class Gfx {
 	}
 	
 	public static function drawtile(x:Float, y:Float, tilesetname:String, tilenum:Int) {
+		screenshotdirty = true;
 		changetileset(tilesetname);
 		
 		if (tilenum >= numberoftiles(tilesetname)) {
@@ -865,6 +871,7 @@ class Gfx {
 		
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		screenshotdirty = true;
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
 		updatemeshbatch();
 		drawstate = DRAWSTATE_MESH;
@@ -880,6 +887,7 @@ class Gfx {
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
+		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
@@ -896,6 +904,7 @@ class Gfx {
 	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
+		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
@@ -910,9 +919,9 @@ class Gfx {
 	}
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, color:Int, alpha:Float = 1.0) {
-		/* TO DO
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
+		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
@@ -924,13 +933,12 @@ class Gfx {
 			updatemeshbatch();
 			meshbatch.addMesh(tempring._polygons[i]);
 		}
-		*/
 	}
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
-		/* TO DO
 		if (col == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
+		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
@@ -942,7 +950,6 @@ class Gfx {
 		  updatemeshbatch();
 			meshbatch.addMesh(tempring._polygons[i]);
 		}
-		*/
 	}
 	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
@@ -954,8 +961,8 @@ class Gfx {
 	}
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
-		/* TO DO
 		if (color == Col.TRANSPARENT || drawto == null) return;
+		screenshotdirty = true;
 		if (drawstate != DRAWSTATE_POLY4) endmeshbatch();
 		updatemeshbatch();
 		drawstate = DRAWSTATE_POLY4;
@@ -965,7 +972,6 @@ class Gfx {
 		temppoly4.alpha = alpha;
 		
 		meshbatch.addMesh(temppoly4);
-		*/
 	}
 	
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
@@ -988,6 +994,7 @@ class Gfx {
 	
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT) return;
+		screenshotdirty = true;
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
 		updatemeshbatch();
 		drawstate = DRAWSTATE_MESH;
@@ -1056,13 +1063,12 @@ class Gfx {
 	}
 	
 	public static function setpixel(x:Float, y:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT && drawto != null) return;
-		
 		fillbox(x, y, 1, 1, color, alpha);
 	}
 	
+	private static var screenshot:BitmapData;
+	private static var screenshotdirty:Bool = true;
 	public static function getpixel(x:Float, y:Float):Int {
-		/* TO DO
 		var w:Int;
 		var h:Int;
 		var xs:Float;
@@ -1070,7 +1076,6 @@ class Gfx {
 		var resultpixel:Int = Col.TRANSPARENT;
 		
 		if (drawto == backbuffer) {
-			//To do: caching the screen for repeated getpixel calls
 			//Getting a pixel from the screen
 			//First, we take a screenshot
 			w = screenwidth;
@@ -1078,8 +1083,12 @@ class Gfx {
 			xs = Starling.current.viewPort.width / w;
 			ys = Starling.current.viewPort.height / h;
 			
-			var screenshot:BitmapData = new BitmapData(w, h);
-			screenshot = Starling.current.stage.drawToBitmapData(screenshot, false);
+			if (screenshotdirty){
+				if (screenshot != null) screenshot.dispose();
+				screenshot = new BitmapData(w, h);
+				screenshot = Starling.current.stage.drawToBitmapData(screenshot);
+				screenshotdirty = false;
+			}
 			
 			var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
 			var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
@@ -1089,12 +1098,7 @@ class Gfx {
 			}else{
 				resultpixel = pixel;
 			}
-			
-			screenshot.dispose();
 		}else {
-			//To do: getting a pixel from a static texture loaded from a bitmapdata
-			//To do: caching the screenshots from getpixel on rendertextures
-			
 		  //We're getting a pixel from a rendertexture image. 
 			//Ok, this is the awful worst case, but here's how we do it:
 			//Starling doesn't support drawing an arbitrary texture to a bitmapdata. 
@@ -1109,41 +1113,57 @@ class Gfx {
 			h = screenheight;
 			xs = Starling.current.viewPort.width / w;
 			ys = Starling.current.viewPort.height / h;
-			
-			endmeshbatch();
-			drawto.bundleunlock();
-			var screenshot:BitmapData = new BitmapData(w, h);
-			screenshot = Starling.current.stage.drawToBitmapData(screenshot, false);
-			
-			//Now, we clear the screen
-			backbuffer.bundlelock();
-			backbuffer.clear();
-			
-			//And we draw our image to this
-			backbuffer.draw(new Image(drawto));
-			backbuffer.bundleunlock();
-			
-			var screenshot2:BitmapData = new BitmapData(w, h);
-			screenshot2 = Starling.current.stage.drawToBitmapData(screenshot2, true);
-			
-			var pixelalpha:Int = screenshot2.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
-			var pixel:Int = screenshot2.getPixel(Std.int(x * xs), Std.int(y * ys));
-			
-			if (pixelalpha == 0) {
-				resultpixel = Col.TRANSPARENT;
+				
+			if (screenshotdirty){
+				endmeshbatch();
+				
+				drawto.bundleunlock();
+				var originalscreenshot:BitmapData = new BitmapData(w, h);
+				originalscreenshot = Starling.current.stage.drawToBitmapData(originalscreenshot);
+				
+				//Now, we clear the screen
+				if (backbuffer == null){
+					//If we're trying to do this before we've actually set up a screen to draw on, then
+					//we need to create the screen first!
+					resizescreen(Starling.current.viewPort.width, Starling.current.viewPort.height);
+				}
+				backbuffer.bundlelock();
+				backbuffer.clear();
+				
+				//And we draw our image to this
+				backbuffer.draw(new Image(drawto));
+				backbuffer.bundleunlock();
+				
+				if (screenshot != null) screenshot.dispose();
+				screenshot = new BitmapData(w, h);
+				screenshot = Starling.current.stage.drawToBitmapData(screenshot);
+				screenshotdirty = false;
+				
+				var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+				var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+				
+				if (pixelalpha == 0) {
+					resultpixel = Col.TRANSPARENT;
+				}else{
+					resultpixel = pixel;
+				}
+				
+				//Now we redraw the screen
+				backbuffer.draw(new Image(Texture.fromBitmapData(originalscreenshot)));
+				originalscreenshot.dispose();
 			}else{
-				resultpixel = pixel;
+				//If our current screenshot is still good, then this is a LOT simplier
+				var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+				var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+				
+				if (pixelalpha == 0) {
+					resultpixel = Col.TRANSPARENT;
+				}else{
+					resultpixel = pixel;
+				}
 			}
-			
-			screenshot2.dispose();
-			
-			//Now we redraw the screen
-			backbuffer.draw(new Image(Texture.fromBitmapData(screenshot)));
-			screenshot.dispose();
 		}
 		return resultpixel;
-		*/
-		return 0x0;
 	}
 	
 	private static function updategraphicsmode(windowwidth:Int, windowheight:Int) {
@@ -1334,6 +1354,11 @@ class Gfx {
 		meshbatch.clear();
 		meshbatchcount = 0;
 		
+		if (!screenshotdirty){
+			if (screenshot != null) screenshot.dispose();
+			screenshotdirty = true;
+		}
+		
 		Text.resettextfields();
 	}
 	
@@ -1349,7 +1374,7 @@ class Gfx {
 	private static var drawto:RenderTexture;
 	private static var screen:Image;
 	private static var tempquad:Quad = new Quad(1, 1);
-	//private static var temppoly4:Poly4 = new Poly4(0, 0, 1, 0, 1, 1, 0, 1);
+	private static var temppoly4:Poly4 = new Poly4(0, 0, 1, 0, 1, 1, 0, 1);
 	private static var templine:Line = new Line(1, 1, 2, 2,1, 0xFFFFFF);
 	
 	private static var drawstate:Int = 0;
