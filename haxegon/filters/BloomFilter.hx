@@ -24,19 +24,72 @@
  * Produces a Bloom/Glow effect with adjustable color properties.
  * @author Devon O.
  */
-
 package haxegon.filters;
 
-import starling.textures.Texture;
-
-import flash.display3D.Context3D;
-import flash.display3D.Program3D;
-import openfl.display3D.Context3DProgramType;
+import openfl.display3D.*;
+import openfl.errors.*;
 import openfl.Vector;
 
-/* TO DO: This is broken now */
-class BloomFilter extends BaseFilter {
-	private var fc0:Vector<Float>;
+import starling.rendering.*;
+import starling.filters.*;
+import starling.utils.Color;
+
+class Bloomfilter extends FragmentFilter{
+	public var _red:Float = 1;
+	public var red(get, set):Float;
+	function get_red():Float { return _red; }
+  function set_red(_r:Float):Float {
+		_red = _r;
+		if(actualeffect != null) cast(actualeffect, BloomEffect).red = _red;
+		
+	  return _red;
+	}
+	
+	public var _green:Float = 1;
+	public var green(get, set):Float;
+	function get_green():Float { return _green; }
+  function set_green(_g:Float):Float {
+		_green = _g;
+		if(actualeffect != null) cast(actualeffect, BloomEffect).green = _green;
+		
+	  return _green;
+	}
+	
+	public var _blue:Float = 1;
+	public var blue(get, set):Float;
+	function get_blue():Float { return _blue; }
+  function set_blue(_b:Float):Float {
+		_blue = _b;
+		if(actualeffect != null) cast(actualeffect, BloomEffect).blue = _blue;
+		
+	  return _blue;
+	}
+	
+	public var _blur:Float = 2;
+	public var blur(get, set):Float;
+	function get_blur():Float { return _blur; }
+  function set_blur(_b:Float):Float {
+		_blur = _b;
+		if(actualeffect != null) cast(actualeffect, BloomEffect).blur = _blur;
+		
+	  return _blur;
+	}
+
+	public function new(){
+		super();
+	}
+	
+	/** @private */
+	override private function createEffect():FilterEffect{
+		actualeffect = new BloomEffect(blur, red, green, blue);
+		return actualeffect;
+	}
+	
+	private var actualeffect:FilterEffect;
+}
+
+class BloomEffect extends FilterEffect {
+ 	private var fc0:Vector<Float>;
 	private var fc1:Vector<Float>;
 	private var _color:Vector<Float>;
 	
@@ -68,10 +121,11 @@ class BloomFilter extends BaseFilter {
 		fc1 = Vector.ofArray(cast [-1.0, 0.0, 1.0, 9.0]);
 		_color = Vector.ofArray(cast [1.0, 1.0, 1.0, 1.0]);
 	}
-	
-	override public function setAgal() {
-		FRAGMENT_SHADER =
-	  //original texture
+  
+  override private function createProgram():Program {
+		var vertexShader:String = FilterEffect.STD_VERTEX_SHADER;
+		var fragmentShader:String = 
+		//original texture
 		"tex ft0, v0, fs0<2d, clamp, linear, mipnone>  \n" +
 		
 		//output
@@ -157,10 +211,11 @@ class BloomFilter extends BaseFilter {
 		
 		// multiply by color
 		"mul oc, ft1, fc2";
-	}
-	
-	/*
-	override public function activate(pass:Int, context:Context3D, texture:Texture) {
+		
+    return Program.fromSource(vertexShader, fragmentShader);
+  }
+
+  override private function beforeDraw(context:Context3D):Void {
 		fc0[1] = texture.width;
 		fc0[2] = texture.height;
 		fc0[3] = 1 / blur;
@@ -169,10 +224,10 @@ class BloomFilter extends BaseFilter {
 		_color[1] = green;
 		_color[2] = blue;
 		
-		context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, fc0,    1);
-		context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, fc1,    1);
-		context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, _color, 1);
-		
-		super.activate(pass, context, texture);
-	}*/
+		super.beforeDraw(context);
+    
+		context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, fc0);
+		context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, fc1);
+		context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, _color);
+  }
 }

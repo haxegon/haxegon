@@ -19,6 +19,7 @@ import openfl.Assets;
 @:access(haxegon.Mouse)
 @:access(haxegon.Input)
 @:access(haxegon.Scene)
+@:access(haxegon.Filter)
 @:access(haxegon.Debug)
 class Core extends Sprite {
 	private static inline var WINDOW_WIDTH:String = haxe.macro.Compiler.getDefine("windowwidth");
@@ -78,6 +79,7 @@ class Core extends Sprite {
 		Data.initassets();
 		Debug.init();
 		Gfx.init(this.stage, Starling.current.nativeStage);
+		Filter.init();
 		Text.defaultfont();
 		Music.init();
 		
@@ -91,7 +93,7 @@ class Core extends Sprite {
 		Timer.delay(continueloading, 1);
 	}
 	
-  private function continueloading() {
+  private function continueloading() {		
 		//Call Main.new()
 		Scene.init();
 		
@@ -110,6 +112,8 @@ class Core extends Sprite {
 				Gfx.fullscreen = false;	
 			}
 		}
+		
+		Filter.updatefilters();
 		
 		// start game loop
 		_rate3 = Math.round(3000 / TARGETFRAMERATE);

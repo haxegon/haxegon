@@ -1058,7 +1058,7 @@ class Gfx {
 		}else {
 			//Not working with starling 2.0, so workaround is:
 			//drawto.clear(color, 1.0);
-			fillbox(0, 0, screenwidth, screenheight, color); // TO Do: This isn't getting called every frame?
+			fillbox(0, 0, screenwidth, screenheight, color);
 		}
 	}
 	
@@ -1347,10 +1347,6 @@ class Gfx {
 			starstage.addChildAt(screen, 0);
 		}
 		
-		if (!gfxinit) {
-			Filter.init();
-		}
-		
 		gfxinit = true;
 	}
 	
@@ -1366,9 +1362,9 @@ class Gfx {
 		drawstate = DRAWSTATE_NONE;
 		drawto.bundlelock();	
 		
-		if (clearcolor != Col.TRANSPARENT) clearscreen(clearcolor);
 		meshbatch.clear();
 		meshbatchcount = 0;
+		if (clearcolor != Col.TRANSPARENT) clearscreen(clearcolor);
 		
 		if (!screenshotdirty){
 			if (screenshot != null) screenshot.dispose();
@@ -1381,6 +1377,8 @@ class Gfx {
 	private static function endframe() {
 		endmeshbatch();
 		drawto.bundleunlock();
+		
+		if(screen != null) screen.setRequiresRedraw();
 	}
 	
 	private static var meshbatchcount:Int = 0;

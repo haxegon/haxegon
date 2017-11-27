@@ -7,17 +7,16 @@ import starling.filters.*;
 class Filter {
 	/* Turn all filter effects off */
 	public static function reset() {
-	  Gfx.screen.filter = null;
+		if(Gfx.screen != null) Gfx.screen.filter = null;
 		
-		_blur = false;
+		_blur = 0;
 		_bloom = 0;
 	}
 	
-	public static var blur(get, set):Bool;
-	private static var _blur:Bool;
-	private static var blurfilter:BlurFilter;
-	static function get_blur():Bool { return _blur; }
-	static function set_blur(_b:Bool):Bool {
+	public static var blur(get, set):Float;
+	private static var _blur:Float;
+	static function get_blur():Float { return _blur; }
+	static function set_blur(_b:Float):Float {
 		_blur = _b;
 		updatefilters();
 		
@@ -26,7 +25,7 @@ class Filter {
 	
 	public static var bloom(get, set):Float;
 	private static var _bloom:Float;
-	private static var bloomfilter:BloomFilter;
+	private static var bloomfilter:Bloomfilter;
 	static function get_bloom():Float { return _bloom; }
 	static function set_bloom(_b:Float):Float {
 		_bloom = _b;
@@ -36,31 +35,39 @@ class Filter {
 	}
 	
 	private static function init() {
-		_blur = false; blurfilter = new BlurFilter();
-		_bloom = 0;    bloomfilter = new BloomFilter();
+		_blur = 0;
+		_bloom = 0;
+		bloomfilter = new Bloomfilter();
 		
 		reset();
 	}
 	
 	private static function updatefilters() {
 	  //When a filter changes, call this function internally to update the currently active filter	
-		Gfx.screen.filter = null;
-		
-		if (_bloom > 0) {
-			bloomfilter.red = (_bloom / 2) + 0.5;
-			bloomfilter.green = (_bloom / 2) + 0.5;
-			bloomfilter.blue = (_bloom / 2) + 0.5;
-			bloomfilter.blur = Geom.clamp((_bloom + 0.5) * 2, 0, 2.5) + (_blur?1:0);
+		if (Gfx.screen != null){
+			Gfx.screen.filter = null;
 			
-			Gfx.screen.filter = bloomfilter;
-			return;
-		}
-		
-		//Currently only one filter at a time is supported, but since we only have blur and bloom
-		//for now we can just set it up to use bloom's build in blur instead
-		if (_blur) {
-		  Gfx.screen.filter = blurfilter;
-			return;
+			if (_bloom > 0) {
+				bloomfilter.red = (_bloom / 2) + 0.5;
+				bloomfilter.green = (_bloom / 2) + 0.5;
+				bloomfilter.blue = (_bloom / 2) + 0.5;
+				bloomfilter.blur = Geom.clamp((_bloom + 0.5) * 2, 0, 2.5) + _blur;
+				
+				Gfx.screen.filter = bloomfilter;
+				return;
+			}
+			
+			//Currently only one filter at a time is supported, but since we only have blur and bloom
+			//for now we can just set it up to use bloom's build in blur instead
+			if (_blur > 0) {
+				bloomfilter.red = 0.5;
+				bloomfilter.green = 0.5;
+				bloomfilter.blue = 0.5;
+				bloomfilter.blur = _blur;
+				
+				Gfx.screen.filter = bloomfilter;
+				return;
+			}
 		}
 	}
 }	

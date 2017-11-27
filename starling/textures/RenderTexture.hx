@@ -193,7 +193,6 @@ class RenderTexture extends SubTexture
     private var haxegonpreviousRenderTarget:Texture;
     public function bundlelock(antiAliasing:Int = 0):Void
     {
-			/*
         var painter:Painter = Starling.current.painter;
         var state:RenderState = painter.state;
 
@@ -233,16 +232,14 @@ class RenderTexture extends SubTexture
             _bufferReady = true;
         
         _drawing = true;
-				*/
     }
     
     
     public function bundleunlock():Void
     {
-			/*
         _drawing = false;
 				var painter:Painter = Starling.current.painter;
-				painter.popState();*/
+				painter.popState();
     }
     
     private function __render(object:DisplayObject, matrix:Matrix=null, alpha:Float=1.0):Void
