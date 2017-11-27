@@ -1243,7 +1243,7 @@ class Gfx {
 	public static function resizescreen(width:Float, height:Float) {
 		initgfx(Std.int(width), Std.int(height));
 		Text.init(starstage);
-		updategraphicsmode(Std.int(width), Std.int(height));
+		updategraphicsmode(Std.int(Starling.current.stage.stageWidth), Std.int(Starling.current.stage.stageHeight));
 	}
 	
 	public static var fullscreen(get,set):Bool;
