@@ -1069,23 +1069,63 @@ class Gfx {
 	private static var screenshot:BitmapData;
 	private static var screenshotdirty:Bool = true;
 	public static function getpixel(x:Float, y:Float):Int {
-		var w:Int;
-		var h:Int;
-		var xs:Float;
-		var ys:Float;
 		var resultpixel:Int = Col.TRANSPARENT;
 		
-		if (drawto == backbuffer) {
+		var xs:Float = Starling.current.viewPort.width / screenwidth;
+		var ys:Float = Starling.current.viewPort.height / screenheight;
+		
+		if (!screenshotdirty){
+			//If our current screenshot is still good, then this is a LOT simplier
+			
+			var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+			var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+			
+			if (pixelalpha == 0) {
+				resultpixel = Col.TRANSPARENT;
+			}else{
+				resultpixel = pixel;
+			}
+		}else if (backbuffer == null){
+			if(drawto != null){
+				//Weird case: we haven't defined the backbuffer yet because we're trying to call
+				//getpixel in Main.new().
+				endmeshbatch();
+				
+				drawto.bundleunlock();
+				
+				var tempimage:Image = new Image(drawto);
+				Starling.current.stage.addChildAt(tempimage, 0);
+				
+				if (screenshot != null) screenshot.dispose();
+				screenshot = new BitmapData(screenwidth, screenheight);
+				screenshot = Starling.current.stage.drawToBitmapData(screenshot);
+				screenshotdirty = false;
+				
+				var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+				var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+				
+				if (pixelalpha == 0) {
+					resultpixel = Col.TRANSPARENT;
+				}else{
+					resultpixel = pixel;
+				}
+				
+				Starling.current.stage.removeChild(tempimage, false);
+				tempimage.dispose();
+				tempimage = null;
+				
+				drawto.bundlelock();
+			}else{
+				throw("Error: Sorry, Gfx.getpixel() can't be used on the screen in Main.new()!\n" +
+							"If you want to do some drawing in Main.new(), instead try creating a\n" +
+							"surface with Gfx.createimage(), and drawing to and grabbing from that.");
+			}
+		}else	if (drawto == backbuffer) {
 			//Getting a pixel from the screen
 			//First, we take a screenshot
-			w = screenwidth;
-			h = screenheight;
-			xs = Starling.current.viewPort.width / w;
-			ys = Starling.current.viewPort.height / h;
-			
 			if (screenshotdirty){
 				if (screenshot != null) screenshot.dispose();
-				screenshot = new BitmapData(w, h);
+				screenshot = new BitmapData(screenwidth, screenheight);
 				screenshot = Starling.current.stage.drawToBitmapData(screenshot);
 				screenshotdirty = false;
 			}
@@ -1107,61 +1147,37 @@ class Gfx {
 			// - Clear the screen, then draw our image to it
 			// - Get the pixel
 			// - Redraw the screenshot over the screen
+			endmeshbatch();
 			
-			//First, we take a screenshot
-			w = screenwidth;
-			h = screenheight;
-			xs = Starling.current.viewPort.width / w;
-			ys = Starling.current.viewPort.height / h;
-				
-			if (screenshotdirty){
-				endmeshbatch();
-				
-				drawto.bundleunlock();
-				var originalscreenshot:BitmapData = new BitmapData(w, h);
-				originalscreenshot = Starling.current.stage.drawToBitmapData(originalscreenshot);
-				
-				//Now, we clear the screen
-				if (backbuffer == null){
-					//If we're trying to do this before we've actually set up a screen to draw on, then
-					//we need to create the screen first!
-					resizescreen(Starling.current.viewPort.width, Starling.current.viewPort.height);
-				}
-				backbuffer.bundlelock();
-				backbuffer.clear();
-				
-				//And we draw our image to this
-				backbuffer.draw(new Image(drawto));
-				backbuffer.bundleunlock();
-				
-				if (screenshot != null) screenshot.dispose();
-				screenshot = new BitmapData(w, h);
-				screenshot = Starling.current.stage.drawToBitmapData(screenshot);
-				screenshotdirty = false;
-				
-				var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
-				var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
-				
-				if (pixelalpha == 0) {
-					resultpixel = Col.TRANSPARENT;
-				}else{
-					resultpixel = pixel;
-				}
-				
-				//Now we redraw the screen
-				backbuffer.draw(new Image(Texture.fromBitmapData(originalscreenshot)));
-				originalscreenshot.dispose();
+			drawto.bundleunlock();
+			var originalscreenshot:BitmapData = new BitmapData(screenwidth, screenheight);
+			originalscreenshot = Starling.current.stage.drawToBitmapData(originalscreenshot);
+			
+			//Now, we clear the screen
+			backbuffer.bundlelock();
+			backbuffer.clear();
+			
+			//And we draw our image to this
+			backbuffer.draw(new Image(drawto));
+			backbuffer.bundleunlock();
+			
+			if (screenshot != null) screenshot.dispose();
+			screenshot = new BitmapData(screenwidth, screenheight);
+			screenshot = Starling.current.stage.drawToBitmapData(screenshot);
+			screenshotdirty = false;
+			
+			var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+			var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+			
+			if (pixelalpha == 0) {
+				resultpixel = Col.TRANSPARENT;
 			}else{
-				//If our current screenshot is still good, then this is a LOT simplier
-				var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
-				var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
-				
-				if (pixelalpha == 0) {
-					resultpixel = Col.TRANSPARENT;
-				}else{
-					resultpixel = pixel;
-				}
+				resultpixel = pixel;
 			}
+			
+			//Now we redraw the screen
+			backbuffer.draw(new Image(Texture.fromBitmapData(originalscreenshot)));
+			originalscreenshot.dispose();
 		}
 		return resultpixel;
 	}
