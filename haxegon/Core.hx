@@ -159,6 +159,10 @@ class Core extends Sprite {
 			frameupdates = MAXFRAMESKIP;
 		}
 		
+		if (!frameskip) {
+			frameupdates = 1;
+		}
+		
 		if (frameupdates == 1) {
 			// TIME TWEAK: That 0.5 frame offset only helps smoothness if we can line up _target
 			// with our regular frame times from OpenFL. This does that, by sliding _target backwards
@@ -246,6 +250,7 @@ class Core extends Sprite {
 	// Timing information.
 	private static var TARGETFRAMERATE:Int = 60;
 	private static inline var MAXFRAMESKIP:Int = 4;
+	private static var frameskip:Bool = false;
 
 	private static var extendedstartframefunction:Dynamic = null;
 	private static var extendedupdatefunction:Dynamic = null;
