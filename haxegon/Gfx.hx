@@ -577,7 +577,6 @@ class Gfx {
 				shapematrix.rotate((imagerotate * 3.1415) / 180);
 				shapematrix.translate( tempxalign * imagexscale, tempyalign * imageyscale);
 			}
-			
 			shapematrix.translate(x, y);
 			if (coltransform) {
 				image.color = imagecolormult;
@@ -879,9 +878,8 @@ class Gfx {
 		templine.setPosition(x1, y1, x2, y2);
 		templine.thickness = linethickness;
 		templine.color = color;
-		templine.alpha = alpha;
 		
-		meshbatch.addMesh(templine);
+		meshbatch.addMesh(templine, null, alpha);
 	}
 	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
@@ -893,11 +891,11 @@ class Gfx {
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
 		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, 6, angle);
+		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, 1.0, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
 			updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i]);
+			meshbatch.addMesh(tempring._polygons[i], null, alpha);
 		}
 	}
 	
@@ -910,11 +908,11 @@ class Gfx {
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
 		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, 6, angle);
+		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, 1.0, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
 			updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i]);
+			meshbatch.addMesh(tempring._polygons[i], null, alpha);
 		}
 	}
 	
@@ -927,11 +925,11 @@ class Gfx {
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
 		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha);
+		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, 1.0);
 		
 		for (i in 0 ... tempring._polygons.length){
 			updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i]);
+			meshbatch.addMesh(tempring._polygons[i], null, alpha);
 		}
 	}
 	
@@ -944,11 +942,11 @@ class Gfx {
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
 		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, alpha);
+		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, 1.0);
 		
 		for(i in 0 ... tempring._polygons.length){
 		  updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i]);
+			meshbatch.addMesh(tempring._polygons[i], null, alpha);
 		}
 	}
 	
@@ -969,9 +967,8 @@ class Gfx {
 		
 		temppoly4.setVertexPositions(x1, y1, x2, y2, x3, y3, x3, y3);
 		temppoly4.color = color;
-		temppoly4.alpha = alpha;
 		
-		meshbatch.addMesh(temppoly4);
+		meshbatch.addMesh(temppoly4, null, alpha);
 	}
 	
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
@@ -1004,9 +1001,8 @@ class Gfx {
 		tempquad.width = width;
 		tempquad.height = height;
 		tempquad.color = col;
-		tempquad.alpha = alpha;
 		
-		meshbatch.addMesh(tempquad);
+		meshbatch.addMesh(tempquad, null, alpha);
 	}
 	
 	private inline static function updatemeshbatch() {
