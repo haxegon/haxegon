@@ -577,6 +577,7 @@ class Gfx {
 				shapematrix.rotate((imagerotate * 3.1415) / 180);
 				shapematrix.translate( tempxalign * imagexscale, tempyalign * imageyscale);
 			}
+			
 			shapematrix.translate(x, y);
 			if (coltransform) {
 				image.color = imagecolormult;
