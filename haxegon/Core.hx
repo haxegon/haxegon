@@ -250,7 +250,7 @@ class Core extends Sprite {
 	// Timing information.
 	private static var TARGETFRAMERATE:Int = 60;
 	private static inline var MAXFRAMESKIP:Int = 4;
-	private static var frameskip:Bool = false;
+	public static var frameskip:Bool = false;
 
 	private static var extendedstartframefunction:Dynamic = null;
 	private static var extendedupdatefunction:Dynamic = null;
