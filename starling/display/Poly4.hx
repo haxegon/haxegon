@@ -15,8 +15,6 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.geom.Vector3D;
 
-import starling.core.RenderSupport;
-import starling.utils.VertexData;
 import starling.display.Quad;
 
 /** A Poly4 represents an abitrary quad with a uniform color or a color gradient.
@@ -48,7 +46,7 @@ class Poly4 extends Quad
 	
 	public function new(x1:Float = 0, y1:Float = 0, x2:Float = 0, y2:Float = 0, 
 										  x3:Float = 0, y3:Float = 0, x4:Float = 0, y4:Float = 0, 
-											color:Int = 0xffffff, premultipliedAlpha:Bool = true) {
+											color:Int = 0xffffff) {
 		p1.setTo(x1, y1);
 		p2.setTo(x2, y2);
 		p3.setTo(x3, y3);
@@ -58,13 +56,13 @@ class Poly4 extends Quad
 		ymin = min4(p1.y, p2.y, p3.y, p4.y);
 		xmax = max4(p1.x, p2.x, p3.x, p4.x);
 		ymax = max4(p1.y, p2.y, p3.y, p4.y);
-		super(xmax - xmin, ymax - ymin, color, premultipliedAlpha);
+		super(xmax - xmin, ymax - ymin, color);
 		
-		mVertexData.setPosition(0, p1.x - xmin, p1.y - ymin);
-		mVertexData.setPosition(1, p2.x - xmin, p2.y - ymin);
-		mVertexData.setPosition(2, p3.x - xmin, p3.y - ymin);
-		mVertexData.setPosition(3, p4.x - xmin, p4.y - ymin);
-		onVertexDataChanged();
+		vertexData.setPoint(0, "position", p1.x - xmin, p1.y - ymin);
+		vertexData.setPoint(1, "position", p2.x - xmin, p2.y - ymin);
+		vertexData.setPoint(2, "position", p3.x - xmin, p3.y - ymin);
+		vertexData.setPoint(3, "position", p4.x - xmin, p4.y - ymin);
+		//onVertexDataChanged();
 		x = xmin;
 		y = ymin;
 		_lowerRight.setTo(xmax - xmin, ymax - ymin);
@@ -83,13 +81,13 @@ class Poly4 extends Quad
 		ymin = min4(p1.y, p2.y, p3.y, p4.y);
 		xmax = max4(p1.x, p2.x, p3.x, p4.x);
 		ymax = max4(p1.y, p2.y, p3.y, p4.y);
-		setWidthHeight(xmax - xmin, ymax - ymin);
+		readjustSize(xmax - xmin, ymax - ymin);
 		
-		mVertexData.setPosition(0, p1.x - xmin, p1.y - ymin);
-		mVertexData.setPosition(1, p2.x - xmin, p2.y - ymin);
-		mVertexData.setPosition(2, p3.x - xmin, p3.y - ymin);
-		mVertexData.setPosition(3, p4.x - xmin, p4.y - ymin);
-		onVertexDataChanged();
+		vertexData.setPoint(0, "position", p1.x - xmin, p1.y - ymin);
+		vertexData.setPoint(1, "position", p2.x - xmin, p2.y - ymin);
+		vertexData.setPoint(2, "position", p3.x - xmin, p3.y - ymin);
+		vertexData.setPoint(3, "position", p4.x - xmin, p4.y - ymin);
+		//onVertexDataChanged();
 		x = xmin;
 		y = ymin;
 		_lowerRight.setTo(xmax - xmin, ymax - ymin);

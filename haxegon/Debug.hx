@@ -134,7 +134,7 @@ class Debug {
 			
 			Text.font = "default"; Text.size = gui.scale;
 			//Draw to our special window
-			Gfx.endquadbatch();
+			Gfx.endmeshbatch();
 			if (Gfx.drawto != null) Gfx.drawto.bundleunlock();
 			
 			Gfx.drawtoscreen();

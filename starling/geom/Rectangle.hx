@@ -2,44 +2,44 @@ package starling.geom;
 
 import openfl.Vector;
 
+import starling.rendering.IndexData;
+
 class Rectangle extends ImmutablePolygon
 {
-    private var mX:Float;
-    private var mY:Float;
-    private var mWidth:Float;
-    private var mHeight:Float;
+    private var __x:Float;
+    private var __y:Float;
+    private var __width:Float;
+    private var __height:Float;
 
     public function new(x:Float, y:Float, width:Float, height:Float)
     {
-        mX = x;
-        mY = y;
-        mWidth = width;
-        mHeight = height;
+        __x = x;
+        __y = y;
+        __width = width;
+        __height = height;
 
         super([x, y, x + width, y, x + width, y + height, x, y + height]);
     }
 
-    override public function triangulate(result:Vector<UInt> = null):Vector<UInt>
+    override public function triangulate(indexData:IndexData=null, offset:Int=0):IndexData
     {
-        if (result == null) result = new Vector<UInt>();
-        result.push(0);
-        result.push(1);
-        result.push(3);
-        result.push(1);
-        result.push(2);
-        result.push(3);
-        return result;
+        if (indexData == null) indexData = new IndexData(6);
+
+        indexData.addTriangle(offset,     offset + 1, offset + 3);
+        indexData.addTriangle(offset + 1, offset + 2, offset + 3);
+
+        return indexData;
     }
 
     override public function contains(x:Float, y:Float):Bool
     {
-        return x >= mX && x <= mX + mWidth &&
-               y >= mY && y <= mY + mHeight;
+        return x >= __x && x <= __x + __width &&
+               y >= __y && y <= __y + __height;
     }
 
     override private function get_area():Float
     {
-        return mWidth * mHeight;
+        return __width * __height;
     }
 
     override private function get_isSimple():Bool

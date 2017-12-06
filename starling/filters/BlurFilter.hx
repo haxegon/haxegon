@@ -10,285 +10,321 @@
 
 package starling.filters;
 
-import flash.display3D.Context3D;
-import flash.display3D.Context3DProgramType;
-import flash.display3D.Program3D;
-
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DProgramType;
 import openfl.Vector;
 
 import starling.core.Starling;
+import starling.rendering.FilterEffect;
+import starling.rendering.Painter;
+import starling.rendering.Program;
 import starling.textures.Texture;
-import starling.utils.Color;
+import starling.utils.MathUtil;
 
 /** The BlurFilter applies a Gaussian blur to an object. The strength of the blur can be
- *  set for x- and y-axis separately (always relative to the stage).
- *  A blur filter can also be set up as a drop shadow or glow filter. Use the respective
- *  static methods to create such a filter.
- */
+ *  set for x- and y-axis separately. */
 class BlurFilter extends FragmentFilter
 {
-    private static inline var NORMAL_PROGRAM_NAME:String = "BF_n";
-    private static inline var TINTED_PROGRAM_NAME:String = "BF_t";
-    private static inline var MAX_SIGMA:Float = 2.0;
-    
-    private var mNormalProgram:Program3D;
-    private var mTintedProgram:Program3D;
-    
-    private var mOffsets:Vector<Float> = Vector.ofArray ([0, 0, 0, 0.]);
-    private var mWeights:Vector<Float> = Vector.ofArray ([0, 0, 0, 0.]);
-    private var mColor:Vector<Float>   = Vector.ofArray ([1, 1, 1, 1.]);
-    
-    private var mBlurX:Float;
-    private var mBlurY:Float;
-    private var mUniformColor:Bool;
-    
-    /** helper object */
-    private var sTmpWeights:Vector<Float> = Vector.ofArray ([0, 0, 0, 0, 0.]);
-    
+    private var __blurX:Float;
+    private var __blurY:Float;
+
     /** Create a new BlurFilter. For each blur direction, the number of required passes is
-     * <code>Math.ceil(blur)</code>. 
-     * 
-     * <ul><li>blur = 0.5: 1 pass</li>  
-     *     <li>blur = 1.0: 1 pass</li>
-     *     <li>blur = 1.5: 2 passes</li>
-     *     <li>blur = 2.0: 2 passes</li>
-     *     <li>etc.</li>
-     * </ul>
-     * 
-     * <p>Instead of raising the number of passes, you should consider lowering the resolution.
-     * A lower resolution will result in a blurrier image, while reducing the rendering
-     * cost.</p>
+     *
+     *  <p>The blur is rendered for each direction (x and y) separately; the number of
+     *  draw calls add up. The blur value itself is internally multiplied with the current
+     *  <code>contentScaleFactor</code> in order to guarantee a consistent look on HiDPI
+     *  displays (dubbed 'totalBlur' below).</p>
+     *
+     *  <p>The number of draw calls per blur value is the following:</p>
+     *  <ul><li>totalBlur &lt;= 1: 1 draw call</li>
+     *      <li>totalBlur &lt;= 2: 2 draw calls</li>
+     *      <li>totalBlur &lt;= 4: 3 draw calls</li>
+     *      <li>totalBlur &lt;= 8: 4 draw calls</li>
+     *      <li>... etc.</li>
+     *  </ul>
      */
-    public function new(blurX:Float=1, blurY:Float=1, resolution:Float=1)
+    public function new(blurX:Float=1.0, blurY:Float=1.0, resolution:Float=1.0)
     {
-        super(1, resolution);
-        mBlurX = blurX;
-        mBlurY = blurY;
-        updateMarginsAndPasses();
+        super();
+        __blurX = Math.abs(blurX);
+        __blurY = Math.abs(blurY);
+        this.resolution = resolution;
     }
-    
-    /** Creates a blur filter that is set up for a drop shadow effect. */
-    public static function createDropShadow(distance:Float=4.0, angle:Float=0.785, 
-                                            color:UInt=0x0, alpha:Float=0.5, blur:Float=1.0, 
-                                            resolution:Float=0.5):BlurFilter
-    {
-        var dropShadow:BlurFilter = new BlurFilter(blur, blur, resolution);
-        dropShadow.offsetX = Math.cos(angle) * distance;
-        dropShadow.offsetY = Math.sin(angle) * distance;
-        dropShadow.mode = FragmentFilterMode.BELOW;
-        dropShadow.setUniformColor(true, color, alpha);
-        return dropShadow;
-    }
-    
-    /** Creates a blur filter that is set up for a glow effect. */
-    public static function createGlow(color:UInt=0xffff00, alpha:Float=1.0, blur:Float=1.0,
-                                      resolution:Float=0.5):BlurFilter
-    {
-        var glow:BlurFilter = new BlurFilter(blur, blur, resolution);
-        glow.mode = FragmentFilterMode.BELOW;
-        glow.setUniformColor(true, color, alpha);
-        return glow;
-    }
-    
+
     /** @private */
-    private override function createPrograms():Void
+    override public function process(painter:Painter, helper:IFilterHelper,
+                                     input0:Texture = null, input1:Texture = null,
+                                     input2:Texture = null, input3:Texture = null):Texture
     {
-        mNormalProgram = createProgram(false);
-        mTintedProgram = createProgram(true);
+        var effect:BlurEffect = cast this.effect;
+
+        if (__blurX == 0 && __blurY == 0)
+        {
+            effect.strength = 0;
+            return super.process(painter, helper, input0);
+        }
+
+        var inTexture:Texture;
+        var outTexture:Texture = input0;
+        var strengthX:Float = totalBlurX;
+        var strengthY:Float = totalBlurY;
+
+        effect.direction = BlurEffect.HORIZONTAL;
+
+        while (strengthX > 0)
+        {
+            effect.strength = strengthX;
+
+            inTexture = outTexture;
+            outTexture = super.process(painter, helper, inTexture);
+
+            if (inTexture != input0) helper.putTexture(inTexture);
+            if (strengthX <= 1) break; else strengthX /= 2;
+        }
+
+        effect.direction = BlurEffect.VERTICAL;
+
+        while (strengthY > 0)
+        {
+            effect.strength = strengthY;
+
+            inTexture = outTexture;
+            outTexture = super.process(painter, helper, inTexture);
+
+            if (inTexture != input0) helper.putTexture(inTexture);
+            if (strengthY <= 1) break; else strengthY /= 2;
+        }
+
+        return outTexture;
     }
-    
-    private function createProgram(tinted:Bool):Program3D
+
+    /** @private */
+    override private function createEffect():FilterEffect
     {
-        var programName:String = tinted ? TINTED_PROGRAM_NAME : NORMAL_PROGRAM_NAME;
-        var target:Starling = Starling.current;
-        
-        if (target.hasProgram(programName))
-            return target.getProgram(programName);
-        
-        // vc0-3 - mvp matrix
-        // vc4   - kernel offset
-        // va0   - position 
-        // va1   - texture coords
-        
-        var vertexShader:String =
-            "m44 op, va0, vc0       \n" + // 4x4 matrix transform to output space
-            "mov v0, va1            \n" + // pos:  0 |
-            "sub v1, va1, vc4.zwxx  \n" + // pos: -2 |
-            "sub v2, va1, vc4.xyxx  \n" + // pos: -1 | --> kernel positions
-            "add v3, va1, vc4.xyxx  \n" + // pos: +1 |     (only 1st two parts are relevant)
-            "add v4, va1, vc4.zwxx  \n";  // pos: +2 |
-        
-        // v0-v4 - kernel position
+        return new BlurEffect();
+    }
+
+    /** @private */
+    override private function set_resolution(value:Float):Float
+    {
+        super.resolution = value;
+        updatePadding();
+        return value;
+    }
+
+    private function updatePadding():Void
+    {
+        var paddingX:Float = __blurX != 0 ? (totalBlurX * 3 + 2) / resolution : 0;
+        var paddingY:Float = __blurY != 0 ? (totalBlurY * 3 + 2) / resolution : 0;
+
+        padding.setTo(paddingX, paddingX, paddingY, paddingY);
+    }
+
+    /** @private */
+    override private function get_numPasses():Int
+    {
+        if (__blurX == 0 && __blurY == 0) return 1;
+        else return getNumPasses(totalBlurX) + getNumPasses(totalBlurY);
+    }
+
+    private static function getNumPasses(blur:Float):Int
+    {
+        var numPasses:Int = 1;
+        while (blur > 1) { numPasses += 1; blur /= 2; }
+        return numPasses;
+    }
+
+    /** The blur values scaled by the current contentScaleFactor. */
+    private var totalBlurX(get, never):Float;
+    private function get_totalBlurX():Float { return __blurX * Starling.current.contentScaleFactor; }
+    private var totalBlurY(get, never):Float;
+    private function get_totalBlurY():Float { return __blurY * Starling.current.contentScaleFactor; }
+
+    /** The blur factor in x-direction.
+     *  The number of required passes will be <code>Math.ceil(value)</code>. */
+    public var blurX(get, set):Float;
+    private function get_blurX():Float { return __blurX; }
+    private function set_blurX(value:Float):Float
+    {
+        __blurX = Math.abs(value);
+        updatePadding();
+        return value;
+    }
+
+    /** The blur factor in y-direction.
+     *  The number of required passes will be <code>Math.ceil(value)</code>. */
+    public var blurY(get, set):Float;
+    private function get_blurY():Float { return __blurY; }
+    private function set_blurY(value:Float):Float
+    {
+        __blurY = Math.abs(value);
+        updatePadding();
+        return value;
+    }
+}
+
+
+class BlurEffect extends FilterEffect
+{
+    public static inline var HORIZONTAL:String = "horizontal";
+    public static inline var VERTICAL:String = "vertical";
+
+    private var _strength:Float;
+    private var _direction:String;
+
+    private static var sTmpWeights:Vector<Float> = Vector.ofArray([0, 0, 0, 0.]);
+    private static var sWeights:Vector<Float> = Vector.ofArray([0, 0, 0, 0.]);
+    private static var sOffsets:Vector<Float> = Vector.ofArray([0, 0, 0, 0.]);
+
+    /** Creates a new BlurEffect. */
+    public function new():Void
+    {
+        super();
+        _strength = 0.0;
+        _direction = HORIZONTAL;
+    }
+
+    override private function createProgram():Program
+    {
+        if (_strength == 0) return super.createProgram();
+
+        // vc4.xy - offset1
+        // vc4.zw - offset2
+
+        var vertexShader:String = [
+            "m44 op, va0, vc0      ", // 4x4 matrix transform to output space
+            "mov v0, va1           ", // pos:  0 (center)
+
+            "add v1,  va1, vc4.xyww", // pos: +1
+            "sub v2,  va1, vc4.xyww", // pos: -1
+
+            "add v3,  va1, vc4.zwxx", // pos: +2
+            "sub v4,  va1, vc4.zwxx"  // pos: -2
+        ].join("\n");
+
+        // v0-v6 - kernel positions
         // fs0   - input texture
         // fc0   - weight data
-        // fc1   - color (optional)
         // ft0-4 - pixel color from texture
         // ft5   - output color
-        
-        var fragmentShader:String =
-            "tex ft0,  v0, fs0 <2d, clamp, linear, mipnone> \n" +  // read center pixel
-            "mul ft5, ft0, fc0.xxxx                         \n" +  // multiply with center weight
-            
-            "tex ft1,  v1, fs0 <2d, clamp, linear, mipnone> \n" +  // read pixel -2
-            "mul ft1, ft1, fc0.zzzz                         \n" +  // multiply with weight
-            "add ft5, ft5, ft1                              \n" +  // add to output color
-            
-            "tex ft2,  v2, fs0 <2d, clamp, linear, mipnone> \n" +  // read pixel -1
-            "mul ft2, ft2, fc0.yyyy                         \n" +  // multiply with weight
-            "add ft5, ft5, ft2                              \n" +  // add to output color
 
-            "tex ft3,  v3, fs0 <2d, clamp, linear, mipnone> \n" +  // read pixel +1
-            "mul ft3, ft3, fc0.yyyy                         \n" +  // multiply with weight
-            "add ft5, ft5, ft3                              \n" +  // add to output color
+        var fragmentShader:String = [
+            FilterEffect.tex("ft0", "v0", 0, texture),    // read center pixel
+            "mul ft5, ft0, fc0.xxxx       ", // multiply with center weight
 
-            "tex ft4,  v4, fs0 <2d, clamp, linear, mipnone> \n" +  // read pixel +2
-            "mul ft4, ft4, fc0.zzzz                         \n";   // multiply with weight
+            FilterEffect.tex("ft1", "v1", 0, texture),    // read pixel +1
+            "mul ft1, ft1, fc0.yyyy       ", // multiply with weight
+            "add ft5, ft5, ft1            ", // add to output color
 
-        if (tinted) fragmentShader +=
-            "add ft5, ft5, ft4                              \n" + // add to output color
-            "mul ft5.xyz, fc1.xyz, ft5.www                  \n" + // set rgb with correct alpha
-            "mul oc, ft5, fc1.wwww                          \n";  // multiply alpha
-        
-        else fragmentShader +=
-            "add  oc, ft5, ft4                              \n";   // add to output color
-        
-        return target.registerProgramFromSource(programName, vertexShader, fragmentShader);
+            FilterEffect.tex("ft2", "v2", 0, texture),    // read pixel -1
+            "mul ft2, ft2, fc0.yyyy       ", // multiply with weight
+            "add ft5, ft5, ft2            ", // add to output color
+
+            FilterEffect.tex("ft3", "v3", 0, texture),    // read pixel +2
+            "mul ft3, ft3, fc0.zzzz       ", // multiply with weight
+            "add ft5, ft5, ft3            ", // add to output color
+
+            FilterEffect.tex("ft4", "v4", 0, texture),    // read pixel -2
+            "mul ft4, ft4, fc0.zzzz       ", // multiply with weight
+            "add  oc, ft5, ft4            "  // add to output color
+        ].join("\n");
+
+        return Program.fromSource(vertexShader, fragmentShader);
     }
-    
-    /** @private */
-    private override function activate(pass:Int, context:Context3D, texture:Texture):Void
+
+    override private function beforeDraw(context:Context3D):Void
     {
-        // already set by super class:
-        // 
-        // vertex constants 0-3: mvpMatrix (3D)
-        // vertex attribute 0:   vertex position (FLOAT_2)
-        // vertex attribute 1:   texture coordinates (FLOAT_2)
-        // texture 0:            input texture
-        
-        updateParameters(pass, Std.int(texture.nativeWidth), Std.int(texture.nativeHeight));
-        
-        context.setProgramConstantsFromVector(Context3DProgramType.VERTEX,   4, mOffsets);
-        context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mWeights);
-        
-        if (mUniformColor && pass == numPasses - 1)
+        super.beforeDraw(context);
+
+        if (_strength != 0)
         {
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mColor);
-            context.setProgram(mTintedProgram);
+            updateParameters();
+
+            context.setProgramConstantsFromVector(Context3DProgramType.VERTEX,   4, sOffsets);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, sWeights);
+        }
+    }
+
+    private function updateParameters():Void
+    {
+        var offset1:Float, offset2:Float;
+        var pixelSize:Float = 1.0 / (_direction == HORIZONTAL ?
+                texture.root.nativeWidth : texture.root.nativeHeight);
+
+        if (_strength <= 1)
+        {
+            // algorithm described here:
+            // http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+            //
+            // To support the baseline constrained profile, we can only make 5 texture look-ups
+            // in the fragment shader. By making use of linear texture sampling, we can produce
+            // similar output to what would be 9 look-ups.
+
+            var sigma:Float = _strength * 2;
+            var twoSigmaSq:Float = 2 * sigma * sigma;
+            var multiplier:Float = 1.0 / Math.sqrt(twoSigmaSq * Math.PI);
+
+            // get weights on the exact pixels (sTmpWeights) and calculate sums (sWeights)
+
+            for (i in 0...5)
+                sTmpWeights[i] = multiplier * Math.exp(-i*i / twoSigmaSq);
+
+            sWeights[0] = sTmpWeights[0];
+            sWeights[1] = sTmpWeights[1] + sTmpWeights[2];
+            sWeights[2] = sTmpWeights[3] + sTmpWeights[4];
+
+            // normalize weights so that sum equals "1.0"
+
+            var weightSum:Float = sWeights[0] + 2 * sWeights[1] + 2 * sWeights[2];
+            var invWeightSum:Float = 1.0 / weightSum;
+
+            sWeights[0] *= invWeightSum;
+            sWeights[1] *= invWeightSum;
+            sWeights[2] *= invWeightSum;
+
+            // calculate intermediate offsets
+
+            offset1 = (    sTmpWeights[1] + 2 * sTmpWeights[2]) / sWeights[1];
+            offset2 = (3 * sTmpWeights[3] + 4 * sTmpWeights[4]) / sWeights[2];
         }
         else
         {
-            context.setProgram(mNormalProgram);
-        }
-    }
-    
-    private function updateParameters(pass:Int, textureWidth:Int, textureHeight:Int):Void
-    {
-        // algorithm described here: 
-        // http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
-        // 
-        // To run in constrained mode, we can only make 5 texture lookups in the fragment
-        // shader. By making use of linear texture sampling, we can produce similar output
-        // to what would be 9 lookups.
-        
-        var sigma:Float;
-        var horizontal:Bool = pass < mBlurX;
-        var pixelSize:Float;
-        
-        if (horizontal)
-        {
-            sigma = Math.min(1.0, mBlurX - pass) * MAX_SIGMA;
-            pixelSize = 1.0 / textureWidth; 
-        }
-        else
-        {
-            sigma = Math.min(1.0, mBlurY - (pass - Math.ceil(mBlurX))) * MAX_SIGMA;
-            pixelSize = 1.0 / textureHeight;
-        }
-        
-        var twoSigmaSq:Float = 2 * sigma * sigma; 
-        var multiplier:Float = 1.0 / Math.sqrt(twoSigmaSq * Math.PI);
-        
-        // get weights on the exact pixels (sTmpWeights) and calculate sums (mWeights)
-        
-        for (i in 0...5)
-            sTmpWeights[i] = multiplier * Math.exp(-i*i / twoSigmaSq);
-        
-        mWeights[0] = sTmpWeights[0];
-        mWeights[1] = sTmpWeights[1] + sTmpWeights[2]; 
-        mWeights[2] = sTmpWeights[3] + sTmpWeights[4];
+            // All other passes look up 5 texels with a standard gauss distribution and bigger
+            // offsets. In itself, this looks as if the object was drawn multiple times; combined
+            // with the last pass (strength <= 1), though, the result is a very strong blur.
 
-        // normalize weights so that sum equals "1.0"
-        
-        var weightSum:Float = mWeights[0] + 2*mWeights[1] + 2*mWeights[2];
-        var invWeightSum:Float = 1.0 / weightSum;
-        
-        mWeights[0] *= invWeightSum;
-        mWeights[1] *= invWeightSum;
-        mWeights[2] *= invWeightSum;
-        
-        // calculate intermediate offsets
-        
-        var offset1:Float = (  pixelSize * sTmpWeights[1] + 2*pixelSize * sTmpWeights[2]) / mWeights[1];
-        var offset2:Float = (3*pixelSize * sTmpWeights[3] + 4*pixelSize * sTmpWeights[4]) / mWeights[2];
-        
+            sWeights[0] = 0.29412;
+            sWeights[1] = 0.23529;
+            sWeights[2] = 0.11765;
+
+            offset1 = _strength * 1.3; // the additional '0.3' compensate the difference between
+            offset2 = _strength * 2.3; // the two gauss distributions.
+        }
+
         // depending on pass, we move in x- or y-direction
-        
-        if (horizontal) 
+
+        if (_direction == HORIZONTAL)
         {
-            mOffsets[0] = offset1;
-            mOffsets[1] = 0;
-            mOffsets[2] = offset2;
-            mOffsets[3] = 0;
+            sOffsets[0] = offset1 * pixelSize; sOffsets[1] = 0;
+            sOffsets[2] = offset2 * pixelSize; sOffsets[3] = 0;
         }
         else
         {
-            mOffsets[0] = 0;
-            mOffsets[1] = offset1;
-            mOffsets[2] = 0;
-            mOffsets[3] = offset2;
+            sOffsets[0] = 0; sOffsets[1] = offset1 * pixelSize;
+            sOffsets[2] = 0; sOffsets[3] = offset2 * pixelSize;
         }
     }
-    
-    private function updateMarginsAndPasses():Void
+
+    override private function get_programVariantName():UInt
     {
-        if (mBlurX == 0 && mBlurY == 0) mBlurX = 0.001;
-        
-        numPasses = Math.ceil(mBlurX) + Math.ceil(mBlurY);
-        marginX = (3 + Math.ceil(mBlurX)) / resolution;
-        marginY = (3 + Math.ceil(mBlurY)) / resolution;
+        return super.programVariantName | (_strength != 0 ? 1 << 4 : 0);
     }
-    
-    /** A uniform color will replace the RGB values of the input color, while the alpha
-     * value will be multiplied with the given factor. Pass <code>false</code> as the
-     * first parameter to deactivate the uniform color. */
-    public function setUniformColor(enable:Bool, color:UInt=0x0, alpha:Float=1.0):Void
-    {
-        mColor[0] = Color.getRed(color)   / 255.0;
-        mColor[1] = Color.getGreen(color) / 255.0;
-        mColor[2] = Color.getBlue(color)  / 255.0;
-        mColor[3] = alpha;
-        mUniformColor = enable;
-    }
-    
-    /** The blur factor in x-direction (stage coordinates). 
-     * The number of required passes will be <code>Math.ceil(value)</code>. */
-    public var blurX(get, set):Float;
-    private function get_blurX():Float { return mBlurX; }
-    private function set_blurX(value:Float):Float 
-    { 
-        mBlurX = value; 
-        updateMarginsAndPasses(); 
-        return mBlurX; 
-    }
-    
-    /** The blur factor in y-direction (stage coordinates). 
-     * The number of required passes will be <code>Math.ceil(value)</code>. */
-    public var blurY(get, set):Float;
-    private function get_blurY():Float { return mBlurY; }
-    private function set_blurY(value:Float):Float 
-    { 
-        mBlurY = value; 
-        updateMarginsAndPasses(); 
-        return mBlurY; 
-    }
+
+    public var direction(get, set):String;
+    private function get_direction():String { return _direction; }
+    private function set_direction(value:String):String { return _direction = value; }
+
+    public var strength(get, set):Float;
+    private function get_strength():Float { return _strength; }
+    private function set_strength(value:Float):Float { return _strength = value; }
 }

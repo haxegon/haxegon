@@ -8,7 +8,6 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import starling.display.*;
 import starling.geom.*;
-import starling.core.RenderSupport;
 import starling.core.StatsDisplay;
 import starling.utils.AssetManager;
 import starling.textures.*;
@@ -57,7 +56,7 @@ class HaxegonTileset {
 @:access(haxegon.Text)
 @:access(haxegon.Filter)
 class Gfx {
-	private static inline var MAX_NUM_QUADS:Int = 16383;
+	private static inline var MAX_NUM_MESH:Int = 16383;
 	public static var LEFT:Int = -10000;
 	public static var RIGHT:Int = -20000;
 	public static var TOP:Int = -10000;
@@ -224,7 +223,7 @@ class Gfx {
 				var rect:Rectangle = new openfl.geom.Rectangle(framex + (i * width), framey + (j * height), width, height);
 				var newtex:Texture = Texture.fromTexture(spritesheet, rect);
 				tiles[currenttileset].tiles.push(new Image(newtex));
-				tiles[currenttileset].tiles[tiles[currenttileset].tiles.length - 1].smoothing = "none";
+				tiles[currenttileset].tiles[tiles[currenttileset].tiles.length - 1].textureSmoothing = "none";
 			}
 		}
 	}
@@ -335,7 +334,7 @@ class Gfx {
 		haxegonimage.contents = new Image(tex);
 		haxegonimage.fetchsize();
 		images.push(haxegonimage);
-		images[images.length - 1].contents.smoothing = "none";
+		images[images.length - 1].contents.textureSmoothing = "none";
 	}		
 	
 	/** Loads an image into the game. */
@@ -356,7 +355,7 @@ class Gfx {
 		imageindex.set(imagename, images.length);
 		haxegonimage = new HaxegonImage(imagename);
 		haxegonimage.contents = new Image(starlingassets.getTexture(imagename));
-		haxegonimage.contents.smoothing = "none";
+		haxegonimage.contents.textureSmoothing = "none";
 		haxegonimage.fetchsize();
 		
 		images.push(haxegonimage);
@@ -369,7 +368,7 @@ class Gfx {
 		var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
 		var img:Image = new Image(tex);
 		img.touchable = false;
-		img.smoothing = "none";
+		img.textureSmoothing = "none";
 
 		var exindex:Null<Int> = imageindex.get(imagename);
 		if (exindex == null) {
@@ -423,7 +422,8 @@ class Gfx {
 
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoscreen() {
-		Gfx.endquadbatch();
+		screenshotdirty = true;
+		Gfx.endmeshbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		drawto = backbuffer;
@@ -433,12 +433,13 @@ class Gfx {
 	
 	/** Tell draw commands to draw to the given image. */
 	public static function drawtoimage(imagename:String) {
+		screenshotdirty = true;
 		if (!imageindex.exists(imagename)) {
 			Debug.log("ERROR: In drawtoimage, cannot find image \"" + imagename + "\".");
 			return;
 		}
 		
-		Gfx.endquadbatch();
+		Gfx.endmeshbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		var imagenum:Int = imageindex.get(imagename);
@@ -450,6 +451,7 @@ class Gfx {
 	
 	/** Tell draw commands to draw to the given tile in the current tileset. */
 	public static function drawtotile(tilesetname:String, tilenum:Int) {
+		screenshotdirty = true;
 		var tileset:Int = 0;
 		if(tilesetindex.exists(tilesetname)){
 			tileset = tilesetindex.get(tilesetname);
@@ -465,7 +467,7 @@ class Gfx {
 			}
 		}
 		
-		endquadbatch();
+		endmeshbatch();
 		if (drawto != null) drawto.bundleunlock();
 		
 		promotetorendertarget(tiles[tileset].tiles[tilenum]);
@@ -550,10 +552,11 @@ class Gfx {
 	}
 	
 	private static function internaldrawimage(x:Float, y:Float, image:Image, imagewidth:Int, imageheight:Int) {
+		screenshotdirty = true;
 		if (!transform && !coltransform) {
 			shapematrix.identity();
 			shapematrix.translate(Std.int(x), Std.int(y));
-			quadbatch.addImage(image, 1.0, shapematrix);
+			meshbatch.addMesh(image, shapematrix, 1.0);
 		}else {
 			tempxalign = 0;	tempyalign = 0;
 			
@@ -578,10 +581,10 @@ class Gfx {
 			shapematrix.translate(x, y);
 			if (coltransform) {
 				image.color = imagecolormult;
-				quadbatch.addImage(image, imagealphamult, shapematrix);
+				meshbatch.addMesh(image, shapematrix, imagealphamult);
 				image.color = Col.WHITE;
 			}else {
-				quadbatch.addImage(image, 1.0, shapematrix);
+				meshbatch.addMesh(image, shapematrix, 1.0);
 			}
 		} 
 	}
@@ -595,8 +598,8 @@ class Gfx {
 		}
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
-		updatequadbatch();
+		endmeshbatch();
+		updatemeshbatch();
 		drawstate = DRAWSTATE_IMAGE;
 		
 		haxegonimage = images[imageindex.get(imagename)];
@@ -604,7 +607,7 @@ class Gfx {
 		internaldrawimage(x, y, haxegonimage.contents, haxegonimage.width, haxegonimage.height);
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
+		endmeshbatch();
 	}
 	
 	/** Draws image by name. 
@@ -619,8 +622,8 @@ class Gfx {
 		}
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
-		updatequadbatch();
+		endmeshbatch();
+		updatemeshbatch();
 		
 		haxegonimage = images[imageindex.get(imagename)];
 		x = imagealignx(haxegonimage.width, x); y = imagealigny(haxegonimage.height, y);
@@ -635,12 +638,12 @@ class Gfx {
 		var subtex:Texture = Texture.fromTexture(haxegonimage.contents.texture, trect);
 		var subimage:Image = new Image(subtex); // alloc. avoidable with pooling?
 		subimage.touchable = false;
-		subimage.smoothing = "none";
+		subimage.textureSmoothing = "none";
 		
 		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
+		endmeshbatch();
 		
 		// all done! clean up
 		subtex.dispose();
@@ -661,7 +664,7 @@ class Gfx {
 		}
 		
 		//Make sure everything's on the screen before we grab it
-		endquadbatch();
+		endmeshbatch();
 		
 		// Acquire SubTexture and build an Image from it.
 		promotetorendertarget(tiles[currenttileset].tiles[tilenumber]);
@@ -692,7 +695,7 @@ class Gfx {
 		}
 		
 		//Make sure everything's on the screen before we grab it
-		endquadbatch();
+		endmeshbatch();
 		
 		// Acquire SubTexture and build an Image from it.
 		promotetorendertarget(tiles[currenttileset].tiles[tilenumber]);
@@ -711,7 +714,7 @@ class Gfx {
 		}
 		
 		//Make sure everything's on the screen before we grab it
-		endquadbatch();
+		endmeshbatch();
 		
 		haxegonimage = images[imageindex.get(imagename)];
 		// Acquire SubTexture and build an Image from it.
@@ -736,7 +739,7 @@ class Gfx {
 		}
 		
 		//Make sure everything's on the screen before we grab it
-		endquadbatch();
+		endmeshbatch();
 		
 		haxegonimage = images[imageindex.get(destinationimage)];
 		var sourceimage:HaxegonImage = images[imageindex.get(sourceimage)];
@@ -773,6 +776,7 @@ class Gfx {
 	 * x1, y1, w1, h1 describe the rectangle of the tile to use.
 	 * */
 	public static function drawsubtile(x:Float, y:Float, tilesetname:String, tilenum:Int, x1:Float, y1:Float, w:Float, h:Float) {
+		screenshotdirty = true;
 		changetileset(tilesetname);
 		
 		if (tilenum >= numberoftiles(tilesetname)) {
@@ -786,8 +790,8 @@ class Gfx {
 		}
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
-		updatequadbatch();
+		endmeshbatch();
+		updatemeshbatch();
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
@@ -805,7 +809,7 @@ class Gfx {
 		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
 		
 		//This could definitely be improved later. See #118
-		endquadbatch();
+		endmeshbatch();
 		
 		// all done! clean up
 		subtex.dispose();
@@ -813,6 +817,7 @@ class Gfx {
 	}
 	
 	public static function drawtile(x:Float, y:Float, tilesetname:String, tilenum:Int) {
+		screenshotdirty = true;
 		changetileset(tilesetname);
 		
 		if (tilenum >= numberoftiles(tilesetname)) {
@@ -827,8 +832,8 @@ class Gfx {
 		
 		//WIP: If we're using a tileset then we can batch draw stuff because it's all on the same texture
 		//(providing we haven't messed with the tileset by creating images)
-		if (drawstate != DRAWSTATE_TILES) endquadbatch();
-		updatequadbatch();
+		if (drawstate != DRAWSTATE_TILES) endmeshbatch();
+		updatemeshbatch();
 		drawstate = DRAWSTATE_TILES;
 		
 		x = tilealignx(x); y = tilealigny(y);
@@ -866,79 +871,84 @@ class Gfx {
 		
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		updatequadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		screenshotdirty = true;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		updatemeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
 		templine.setPosition(x1, y1, x2, y2);
 		templine.thickness = linethickness;
 		templine.color = color;
 		templine.alpha = alpha;
 		
-		quadbatch.addQuad(templine);
+		meshbatch.addMesh(templine);
 	}
 	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
+		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, true, 6, angle);
+		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatequadbatch();
-			quadbatch.addQuad(tempring._polygons[i]);
+			updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i]);
 		}
 	}
 	
 	public static function fillhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
+		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, true, 6, angle);
+		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatequadbatch();
-			quadbatch.addQuad(tempring._polygons[i]);
+			updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i]);
 		}
 	}
 	
 	public static function drawcircle(x:Float, y:Float, radius:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
+		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
 		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatequadbatch();
-			quadbatch.addQuad(tempring._polygons[i]);
+			updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i]);
 		}
 	}
 	
 	public static function fillcircle(x:Float, y:Float, radius:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT || drawto == null) return;
 		if (radius <= 0) return;
+		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
 		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, alpha);
 		
 		for(i in 0 ... tempring._polygons.length){
-		  updatequadbatch();
-			quadbatch.addQuad(tempring._polygons[i]);
+		  updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i]);
 		}
 	}
 	
@@ -952,15 +962,16 @@ class Gfx {
 	
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
-		if (drawstate != DRAWSTATE_POLY4) endquadbatch();
-		updatequadbatch();
+		screenshotdirty = true;
+		if (drawstate != DRAWSTATE_POLY4) endmeshbatch();
+		updatemeshbatch();
 		drawstate = DRAWSTATE_POLY4;
 		
 		temppoly4.setVertexPositions(x1, y1, x2, y2, x3, y3, x3, y3);
 		temppoly4.color = color;
 		temppoly4.alpha = alpha;
 		
-		quadbatch.addQuad(temppoly4);
+		meshbatch.addMesh(temppoly4);
 	}
 	
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
@@ -983,9 +994,10 @@ class Gfx {
 	
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT) return;
-		if (drawstate != DRAWSTATE_QUAD) endquadbatch();
-		updatequadbatch();
-		drawstate = DRAWSTATE_QUAD;
+		screenshotdirty = true;
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		updatemeshbatch();
+		drawstate = DRAWSTATE_MESH;
 		
 		tempquad.x = x;
 		tempquad.y = y;
@@ -994,30 +1006,30 @@ class Gfx {
 		tempquad.color = col;
 		tempquad.alpha = alpha;
 		
-		quadbatch.addQuad(tempquad);
+		meshbatch.addMesh(tempquad);
 	}
 	
-	private inline static function updatequadbatch() {
-		quadbatchcount++;
-	  if (quadbatchcount >= MAX_NUM_QUADS) endquadbatch();	
+	private inline static function updatemeshbatch() {
+		meshbatchcount++;
+	  if (meshbatchcount >= MAX_NUM_MESH) endmeshbatch();	
 	}
 	
-	private static function endquadbatch() {
-		if (quadbatchcount > 0) {
-			drawto.draw(quadbatch);
+	private static function endmeshbatch() {
+		if (meshbatchcount > 0) {
+			drawto.draw(meshbatch);
 			
-			quadbatch.reset();
-			quadbatchcount = 0;
+			meshbatch.clear();
+			meshbatchcount = 0;
 			drawstate = DRAWSTATE_NONE;
 		}
 	}
 	
-	private static function endquadbatchonsurface(d:RenderTexture) {
-		if (quadbatchcount > 0) {
-			d.draw(quadbatch);
+	private static function endmeshbatchonsurface(d:RenderTexture) {
+		if (meshbatchcount > 0) {
+			d.draw(meshbatch);
 			
-			quadbatch.reset();
-			quadbatchcount = 0;
+			meshbatch.clear();
+			meshbatchcount = 0;
 		}
 	}
 
@@ -1039,39 +1051,120 @@ class Gfx {
 	
 	public static function clearscreen(color:Int = 0x000000) {
 		if (drawto == null) return;
-		Gfx.endquadbatch();
+		Gfx.endmeshbatch();
 		
 		if(color == Col.TRANSPARENT){
 			drawto.clear();
 		}else {
-			drawto.clear(color, 1.0);
+			//Not working with starling 2.0, so workaround is:
+			//drawto.clear(color, 1.0);
+			fillbox(0, 0, screenwidth, screenheight, color);
 		}
 	}
 	
 	public static function setpixel(x:Float, y:Float, color:Int, alpha:Float = 1.0) {
-		if (color == Col.TRANSPARENT && drawto != null) return;
-		
 		fillbox(x, y, 1, 1, color, alpha);
 	}
 	
+	private static var screenshot:BitmapData;
+	private static var screenshotdirty:Bool = true;
 	public static function getpixel(x:Float, y:Float):Int {
-		var w:Int;
-		var h:Int;
-		var xs:Float;
-		var ys:Float;
 		var resultpixel:Int = Col.TRANSPARENT;
 		
-		if (drawto == backbuffer) {
-			//To do: caching the screen for repeated getpixel calls
+		var xs:Float = Starling.current.viewPort.width / screenwidth;
+		var ys:Float = Starling.current.viewPort.height / screenheight;
+		
+		if (!screenshotdirty){
+			//If our current screenshot is still good, then this is a LOT simplier
+			
+			var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+			var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+			
+			if (pixelalpha == 0) {
+				resultpixel = Col.TRANSPARENT;
+			}else{
+				resultpixel = pixel;
+			}
+		}else if (backbuffer == null){
+			if(drawto != null){
+				//Weird case: we haven't defined the backbuffer yet because we're trying to call
+				//getpixel in Main.new().
+				endmeshbatch();
+				
+				drawto.bundleunlock();
+				
+				var tempimage:Image = new Image(drawto);
+				Starling.current.stage.addChildAt(tempimage, 0);
+				
+				if (screenshot != null) screenshot.dispose();
+				screenshot = new BitmapData(screenwidth, screenheight);
+				screenshot = Starling.current.stage.drawToBitmapData(screenshot);
+				screenshotdirty = false;
+				
+				var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+				var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+				
+				if (pixelalpha == 0) {
+					resultpixel = Col.TRANSPARENT;
+				}else{
+					resultpixel = pixel;
+				}
+				
+				Starling.current.stage.removeChild(tempimage, false);
+				tempimage.dispose();
+				tempimage = null;
+				
+				drawto.bundlelock();
+			}else{
+				throw("Error: Sorry, Gfx.getpixel() can't be used on the screen in Main.new()!\n" +
+							"If you want to do some drawing in Main.new(), instead try creating a\n" +
+							"surface with Gfx.createimage(), and drawing to and grabbing from that.");
+			}
+		}else	if (drawto == backbuffer) {
 			//Getting a pixel from the screen
 			//First, we take a screenshot
-			w = screenwidth;
-			h = screenheight;
-			xs = Starling.current.viewPort.width / w;
-			ys = Starling.current.viewPort.height / h;
+			if (screenshotdirty){
+				if (screenshot != null) screenshot.dispose();
+				screenshot = new BitmapData(screenwidth, screenheight);
+				screenshot = Starling.current.stage.drawToBitmapData(screenshot);
+				screenshotdirty = false;
+			}
 			
-			var screenshot:BitmapData = new BitmapData(w, h);
-			screenshot = Starling.current.stage.drawToBitmapData(screenshot, false);
+			var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
+			var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
+			
+			if (pixelalpha == 0) {
+				resultpixel = Col.TRANSPARENT;
+			}else{
+				resultpixel = pixel;
+			}
+		}else {
+		  //We're getting a pixel from a rendertexture image. 
+			//Ok, this is the awful worst case, but here's how we do it:
+			//Starling doesn't support drawing an arbitrary texture to a bitmapdata. 
+			//We can only do this with the screen. Therefore, we:
+			// - Grab a screenshot
+			// - Clear the screen, then draw our image to it
+			// - Get the pixel
+			// - Redraw the screenshot over the screen
+			endmeshbatch();
+			
+			drawto.bundleunlock();
+			var originalscreenshot:BitmapData = new BitmapData(screenwidth, screenheight);
+			originalscreenshot = Starling.current.stage.drawToBitmapData(originalscreenshot);
+			
+			//Now, we clear the screen
+			backbuffer.bundlelock();
+			backbuffer.clear();
+			
+			//And we draw our image to this
+			backbuffer.draw(new Image(drawto));
+			backbuffer.bundleunlock();
+			
+			if (screenshot != null) screenshot.dispose();
+			screenshot = new BitmapData(screenwidth, screenheight);
+			screenshot = Starling.current.stage.drawToBitmapData(screenshot);
+			screenshotdirty = false;
 			
 			var pixelalpha:Int = screenshot.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
 			var pixel:Int = screenshot.getPixel(Std.int(x * xs), Std.int(y * ys));
@@ -1082,58 +1175,10 @@ class Gfx {
 				resultpixel = pixel;
 			}
 			
-			screenshot.dispose();
-		}else {
-			//To do: getting a pixel from a static texture loaded from a bitmapdata
-			//To do: caching the screenshots from getpixel on rendertextures
-			
-		  //We're getting a pixel from a rendertexture image. 
-			//Ok, this is the awful worst case, but here's how we do it:
-			//Starling doesn't support drawing an arbitrary texture to a bitmapdata. 
-			//We can only do this with the screen. Therefore, we:
-			// - Grab a screenshot
-			// - Clear the screen, then draw our image to it
-			// - Get the pixel
-			// - Redraw the screenshot over the screen
-			
-			//First, we take a screenshot
-			w = screenwidth;
-			h = screenheight;
-			xs = Starling.current.viewPort.width / w;
-			ys = Starling.current.viewPort.height / h;
-			
-			endquadbatch();
-			drawto.bundleunlock();
-			var screenshot:BitmapData = new BitmapData(w, h);
-			screenshot = Starling.current.stage.drawToBitmapData(screenshot, false);
-			
-			//Now, we clear the screen
-			backbuffer.bundlelock();
-			backbuffer.clear();
-			
-			//And we draw our image to this
-			backbuffer.draw(new Image(drawto));
-			backbuffer.bundleunlock();
-			
-			var screenshot2:BitmapData = new BitmapData(w, h);
-			screenshot2 = Starling.current.stage.drawToBitmapData(screenshot2, true);
-			
-			var pixelalpha:Int = screenshot2.getPixel32(Std.int(x * xs), Std.int(y * ys)) >> 24 & 0xFF;
-			var pixel:Int = screenshot2.getPixel(Std.int(x * xs), Std.int(y * ys));
-			
-			if (pixelalpha == 0) {
-				resultpixel = Col.TRANSPARENT;
-			}else{
-				resultpixel = pixel;
-			}
-			
-			screenshot2.dispose();
-			
 			//Now we redraw the screen
-			backbuffer.draw(new Image(Texture.fromBitmapData(screenshot)));
-			screenshot.dispose();
+			backbuffer.draw(new Image(Texture.fromBitmapData(originalscreenshot)));
+			originalscreenshot.dispose();
 		}
-		
 		return resultpixel;
 	}
 	
@@ -1198,7 +1243,7 @@ class Gfx {
 	public static function resizescreen(width:Float, height:Float) {
 		initgfx(Std.int(width), Std.int(height));
 		Text.init(starstage);
-		updategraphicsmode(Std.int(width), Std.int(height));
+		updategraphicsmode(Std.int(Starling.current.stage.stageWidth), Std.int(Starling.current.stage.stageHeight));
 	}
 	
 	public static var fullscreen(get,set):Bool;
@@ -1234,7 +1279,7 @@ class Gfx {
 		
 		starstage.addEventListener(ResizeEvent.RESIZE, onresize);
 		
-		quadbatch = new QuadBatch();
+		meshbatch = new MeshBatch();
 		
 		linethickness = 1;
 		loadpackedtextures();
@@ -1298,12 +1343,8 @@ class Gfx {
 			screen = new Image(backbuffer);
 			screen.touchable = false;
 			screen.scale = 1;
-			screen.smoothing = "none";
+			screen.textureSmoothing = "none";
 			starstage.addChildAt(screen, 0);
-		}
-		
-		if (!gfxinit) {
-			Filter.init();
 		}
 		
 		gfxinit = true;
@@ -1321,20 +1362,27 @@ class Gfx {
 		drawstate = DRAWSTATE_NONE;
 		drawto.bundlelock();	
 		
+		meshbatch.clear();
+		meshbatchcount = 0;
 		if (clearcolor != Col.TRANSPARENT) clearscreen(clearcolor);
-		quadbatch.reset();
-		quadbatchcount = 0;
+		
+		if (!screenshotdirty){
+			if (screenshot != null) screenshot.dispose();
+			screenshotdirty = true;
+		}
 		
 		Text.resettextfields();
 	}
 	
 	private static function endframe() {
-		endquadbatch();
+		endmeshbatch();
 		drawto.bundleunlock();
+		
+		if(screen != null) screen.setRequiresRedraw();
 	}
 	
-	private static var quadbatchcount:Int = 0;
-	private static var quadbatch:QuadBatch = null;
+	private static var meshbatchcount:Int = 0;
+	private static var meshbatch:MeshBatch = null;
 	
 	private static var backbuffer:RenderTexture;
 	private static var drawto:RenderTexture;
@@ -1345,7 +1393,7 @@ class Gfx {
 	
 	private static var drawstate:Int = 0;
 	private static inline var DRAWSTATE_NONE:Int = 0;
-	private static inline var DRAWSTATE_QUAD:Int = 1;
+	private static inline var DRAWSTATE_MESH:Int = 1;
 	private static inline var DRAWSTATE_POLY4:Int = 2;
 	private static inline var DRAWSTATE_IMAGE:Int = 3;
 	private static inline var DRAWSTATE_TILES:Int = 4;

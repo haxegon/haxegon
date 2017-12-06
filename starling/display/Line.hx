@@ -31,7 +31,7 @@ class Line extends Poly4
 	
 	public var thickness:Float;
 	
-	public function new(x1:Float, y1:Float, x2:Float, y2:Float, thickness:Float, color:Int, premultipliedAlpha:Bool = true) {
+	public function new(x1:Float, y1:Float, x2:Float, y2:Float, thickness:Float, color:Int) {
 		from.setTo(x1, y1);
 		to.setTo(x2, y2);
 		this.thickness = thickness;
@@ -59,7 +59,7 @@ class Line extends Poly4
 		l4.offset(-v.x * halfT, -v.y * halfT);
 		l4.offset(u.x * halfT, u.y * halfT);
 
-		super(l1.x, l1.y, l2.x, l2.y, l3.x, l3.y, l4.x, l4.y, color, premultipliedAlpha);
+		super(l1.x, l1.y, l2.x, l2.y, l3.x, l3.y, l4.x, l4.y, color);
 	}
 	
 	

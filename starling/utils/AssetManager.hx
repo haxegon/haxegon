@@ -10,30 +10,31 @@
 
 package starling.utils;
 
-import flash.display.Bitmap;
-import flash.display.Loader;
-import flash.display.LoaderInfo;
-import flash.display3D.Context3DTextureFormat;
-import flash.errors.ArgumentError;
-import flash.errors.Error;
-import flash.events.HTTPStatusEvent;
-import flash.events.IOErrorEvent;
-import flash.events.ProgressEvent;
-import flash.events.SecurityErrorEvent;
-import flash.media.Sound;
-import flash.media.SoundChannel;
-import flash.media.SoundTransform;
+import haxe.Constraints.Function;
+import openfl.display.Bitmap;
+import openfl.display.Loader;
+import openfl.display.LoaderInfo;
+import openfl.display3D.Context3DTextureFormat;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import openfl.events.HTTPStatusEvent;
+import openfl.events.IOErrorEvent;
+import openfl.events.ProgressEvent;
+import openfl.events.SecurityErrorEvent;
+import openfl.media.Sound;
+import openfl.media.SoundChannel;
+import openfl.media.SoundTransform;
 #if flash
 import flash.net.FileReference;
 #end
-import flash.net.URLLoader;
-import flash.net.URLLoaderDataFormat;
-import flash.net.URLRequest;
+import openfl.net.URLLoader;
+import openfl.net.URLLoaderDataFormat;
+import openfl.net.URLRequest;
 #if flash
 import flash.system.ImageDecodingPolicy;
 #end
-import flash.system.LoaderContext;
-import flash.system.System;
+import openfl.system.LoaderContext;
+import openfl.system.System;
 
 import haxe.Json;
 import haxe.Timer;
@@ -50,7 +51,6 @@ import starling.textures.AtfData;
 import starling.textures.Texture;
 import starling.textures.TextureAtlas;
 import starling.textures.TextureOptions;
-
 
 /** Dispatched when all textures have been restored after a context loss. */
 @:meta(Event(name="texturesRestored", type="starling.events.Event"))
@@ -128,25 +128,25 @@ class AssetManager extends EventDispatcher
     // This HTTPStatusEvent is only available in AIR
     private static inline var HTTP_RESPONSE_STATUS:String = "httpResponseStatus";
 
-    private var mStarling:Starling;
-    private var mNumLostTextures:Int;
-    private var mNumRestoredTextures:Int;
-    private var mNumLoadingQueues:Int = 0;
+    private var __starling:Starling;
+    private var __numLostTextures:Int;
+    private var __numRestoredTextures:Int;
+    private var __numLoadingQueues:Int = 0;
 
-    private var mDefaultTextureOptions:TextureOptions;
-    private var mCheckPolicyFile:Bool;
-    private var mKeepAtlasXmls:Bool;
-    private var mKeepFontXmls:Bool;
-    private var mNumConnections:Int;
-    private var mVerbose:Bool;
-    private var mQueue:Array<QueuedAsset>;
+    private var __defaultTextureOptions:TextureOptions;
+    private var __checkPolicyFile:Bool;
+    private var __keepAtlasXmls:Bool;
+    private var __keepFontXmls:Bool;
+    private var __numConnections:Int;
+    private var __verbose:Bool;
+    private var __queue:Array<QueuedAsset>;
     
-    private var mTextures:Map<String, Texture>;
-    private var mAtlases:Map<String, TextureAtlas>;
-    private var mSounds:Map<String, Sound>;
-    private var mXmls:Map<String, Xml>;
-    private var mObjects:Map<String, Dynamic>;
-    private var mByteArrays:Map<String, ByteArray>;
+    private var __textures:Map<String, Texture>;
+    private var __atlases:Map<String, TextureAtlas>;
+    private var __sounds:Map<String, Sound>;
+    private var __xmls:Map<String, Xml>;
+    private var __objects:Map<String, Dynamic>;
+    private var __byteArrays:Map<String, ByteArray>;
     
     /** helper objects */
     private static var sNames:Vector<String> = new Vector<String>();
@@ -159,16 +159,16 @@ class AssetManager extends EventDispatcher
     public function new(scaleFactor:Float=1, useMipmaps:Bool=false)
     {
         super();
-        mDefaultTextureOptions = new TextureOptions(scaleFactor, useMipmaps);
-        mTextures = new Map();
-        mAtlases = new Map();
-        mSounds = new Map();
-        mXmls = new Map();
-        mObjects = new Map();
-        mByteArrays = new Map();
-        mNumConnections = 3;
-        mVerbose = true;
-        mQueue = [];
+        __defaultTextureOptions = new TextureOptions(scaleFactor, useMipmaps);
+        __textures = new Map();
+        __atlases = new Map();
+        __sounds = new Map();
+        __xmls = new Map();
+        __objects = new Map();
+        __byteArrays = new Map();
+        __numConnections = 3;
+        __verbose = true;
+        __queue = [];
     }
     
     /** Disposes all contained textures, XMLs and ByteArrays.
@@ -179,18 +179,18 @@ class AssetManager extends EventDispatcher
      */
     public function dispose():Void
     {
-        for (texture in mTextures)
+        for (texture in __textures)
             texture.dispose();
         
-        for (atlas in mAtlases)
+        for (atlas in __atlases)
             atlas.dispose();
         
         #if 0
-        for  (xml in mXmls)
+        for  (xml in __xmls)
             System.disposeXML(xml);
         #end
         
-        for (byteArray in mByteArrays)
+        for (byteArray in __byteArrays)
             byteArray.clear();
     }
     
@@ -201,10 +201,10 @@ class AssetManager extends EventDispatcher
      * texture atlases. */
     public function getTexture(name:String):Texture
     {
-        if (mTextures.exists(name)) return mTextures[name];
+        if (__textures.exists(name)) return __textures[name];
         else
         {
-            for (atlas in mAtlases)
+            for (atlas in __atlases)
             {
                 var texture:Texture = atlas.getTexture(name);
                 if (texture != null) return texture;
@@ -215,53 +215,53 @@ class AssetManager extends EventDispatcher
     
     /** Returns all textures that start with a certain string, sorted alphabetically
      * (especially useful for "MovieClip"). */
-    public function getTextures(prefix:String="", result:Vector<Texture>=null):Vector<Texture>
+    public function getTextures(prefix:String="", out:Vector<Texture>=null):Vector<Texture>
     {
-        if (result == null) result = new Vector<Texture>();
+        if (out == null) out = new Vector<Texture>();
         
         for (name in getTextureNames(prefix, sNames))
-            result[result.length] = getTexture(name); // avoid 'push'
+            out[out.length] = getTexture(name); // avoid 'push'
 
         sNames.length = 0;
-        return result;
+        return out;
     }
     
     /** Returns all texture names that start with a certain string, sorted alphabetically. */
-    public function getTextureNames(prefix:String="", result:Vector<String>=null):Vector<String>
+    public function getTextureNames(prefix:String="", out:Vector<String>=null):Vector<String>
     {
-        result = getDictionaryKeys(mTextures, prefix, result);
+        out = getDictionaryKeys(__textures, prefix, out);
         
-        for (atlas in mAtlases)
-            atlas.getNames(prefix, result);
+        for (atlas in __atlases)
+            atlas.getNames(prefix, out);
         
-        result.sort(compare);
-        return result;
+        out.sort(compare);
+        return out;
     }
     
     /** Returns a texture atlas with a certain name, or null if it's not found. */
     public function getTextureAtlas(name:String):TextureAtlas
     {
-        return mAtlases[name];
+        return __atlases[name];
     }
 
     /** Returns all texture atlas names that start with a certain string, sorted alphabetically.
-     * If you pass a result vector, the names will be added to that vector. */
-    public function getTextureAtlasNames(prefix:String="", result:Vector<String>=null):Vector<String>
+     * If you pass an <code>out</code>-vector, the names will be added to that vector. */
+    public function getTextureAtlasNames(prefix:String="", out:Vector<String>=null):Vector<String>
     {
-        return getDictionaryKeys(mAtlases, prefix, result);
+        return getDictionaryKeys(__atlases, prefix, out);
     }
     
     /** Returns a sound with a certain name, or null if it's not found. */
     public function getSound(name:String):Sound
     {
-        return mSounds[name];
+        return __sounds[name];
     }
     
     /** Returns all sound names that start with a certain string, sorted alphabetically.
-     * If you pass a result vector, the names will be added to that vector. */
-    public function getSoundNames(prefix:String="", result:Vector<String>=null):Vector<String>
+     * If you pass an <code>out</code>-vector, the names will be added to that vector. */
+    public function getSoundNames(prefix:String="", out:Vector<String>=null):Vector<String>
     {
-        return getDictionaryKeys(mSounds, prefix, result);
+        return getDictionaryKeys(__sounds, prefix, out);
     }
     
     /** Generates a new SoundChannel object to play back the sound. This method returns a 
@@ -269,7 +269,7 @@ class AssetManager extends EventDispatcher
     public function playSound(name:String, startTime:Float=0, loops:Int=0, 
                               transform:SoundTransform=null):SoundChannel
     {
-        if (mSounds.exists(name))
+        if (__sounds.exists(name))
             return getSound(name).play(startTime, loops, transform);
         else 
             return null;
@@ -278,41 +278,41 @@ class AssetManager extends EventDispatcher
     /** Returns an XML with a certain name, or null if it's not found. */
     public function getXml(name:String):Xml
     {
-        return mXmls[name];
+        return __xmls[name];
     }
     
     /** Returns all XML names that start with a certain string, sorted alphabetically. 
-     * If you pass a result vector, the names will be added to that vector. */
-    public function getXmlNames(prefix:String="", result:Vector<String>=null):Vector<String>
+     * If you pass an <code>out</code>-vector, the names will be added to that vector. */
+    public function getXmlNames(prefix:String="", out:Vector<String>=null):Vector<String>
     {
-        return getDictionaryKeys(mXmls, prefix, result);
+        return getDictionaryKeys(__xmls, prefix, out);
     }
 
     /** Returns an object with a certain name, or null if it's not found. Enqueued JSON
      * data is parsed and can be accessed with this method. */
     public function getObject(name:String):Dynamic
     {
-        return mObjects[name];
+        return __objects[name];
     }
     
     /** Returns all object names that start with a certain string, sorted alphabetically. 
-     * If you pass a result vector, the names will be added to that vector. */
-    public function getObjectNames(prefix:String="", result:Vector<String>=null):Vector<String>
+     * If you pass an <code>out</code>-vector, the names will be added to that vector. */
+    public function getObjectNames(prefix:String="", out:Vector<String>=null):Vector<String>
     {
-        return getDictionaryKeys(mObjects, prefix, result);
+        return getDictionaryKeys(__objects, prefix, out);
     }
     
     /** Returns a byte array with a certain name, or null if it's not found. */
     public function getByteArray(name:String):ByteArray
     {
-        return mByteArrays[name];
+        return __byteArrays[name];
     }
     
     /** Returns all byte array names that start with a certain string, sorted alphabetically. 
-     * If you pass a result vector, the names will be added to that vector. */
-    public function getByteArrayNames(prefix:String="", result:Vector<String>=null):Vector<String>
+     * If you pass an <code>out</code>-vector, the names will be added to that vector. */
+    public function getByteArrayNames(prefix:String="", out:Vector<String>=null):Vector<String>
     {
-        return getDictionaryKeys(mByteArrays, prefix, result);
+        return getDictionaryKeys(__byteArrays, prefix, out);
     }
     
     // direct adding
@@ -324,13 +324,13 @@ class AssetManager extends EventDispatcher
     {
         log("Adding texture '" + name + "'");
         
-        if (mTextures.exists(name))
+        if (__textures.exists(name))
         {
             log("Warning: name was already in use; the previous texture will be replaced.");
-            mTextures[name].dispose();
+            __textures[name].dispose();
         }
         
-        mTextures[name] = texture;
+        __textures[name] = texture;
     }
     
     /** Register a texture atlas under a certain name. It will be available right away. 
@@ -340,13 +340,13 @@ class AssetManager extends EventDispatcher
     {
         log("Adding texture atlas '" + name + "'");
         
-        if (mAtlases.exists(name))
+        if (__atlases.exists(name))
         {
             log("Warning: name was already in use; the previous atlas will be replaced.");
-            mAtlases[name].dispose();
+            __atlases[name].dispose();
         }
         
-        mAtlases[name] = atlas;
+        __atlases[name] = atlas;
     }
     
     /** Register a sound under a certain name. It will be available right away.
@@ -355,10 +355,10 @@ class AssetManager extends EventDispatcher
     {
         log("Adding sound '" + name + "'");
         
-        if (mSounds.exists(name))
+        if (__sounds.exists(name))
             log("Warning: name was already in use; the previous sound will be replaced.");
 
-        mSounds[name] = sound;
+        __sounds[name] = sound;
     }
     
     /** Register an XML object under a certain name. It will be available right away.
@@ -368,15 +368,15 @@ class AssetManager extends EventDispatcher
     {
         log("Adding XML '" + name + "'");
         
-        if (mXmls.exists(name))
+        if (__xmls.exists(name))
         {
             log("Warning: name was already in use; the previous XML will be replaced.");
             #if 0
-            System.disposeXML(mXmls[name]);
+            System.disposeXML(__xmls[name]);
             #end
         }
 
-        mXmls[name] = xml;
+        __xmls[name] = xml;
     }
     
     /** Register an arbitrary object under a certain name. It will be available right away. 
@@ -385,10 +385,10 @@ class AssetManager extends EventDispatcher
     {
         log("Adding object '" + name + "'");
         
-        if (mObjects.exists(name))
+        if (__objects.exists(name))
             log("Warning: name was already in use; the previous object will be replaced.");
         
-        mObjects[name] = object;
+        __objects[name] = object;
     }
     
     /** Register a byte array under a certain name. It will be available right away.
@@ -398,13 +398,13 @@ class AssetManager extends EventDispatcher
     {
         log("Adding byte array '" + name + "'");
         
-        if (mByteArrays.exists(name))
+        if (__byteArrays.exists(name))
         {
             log("Warning: name was already in use; the previous byte array will be replaced.");
-            mByteArrays[name].clear();
+            __byteArrays[name].clear();
         }
         
-        mByteArrays[name] = byteArray;
+        __byteArrays[name] = byteArray;
     }
     
     // removing
@@ -414,10 +414,10 @@ class AssetManager extends EventDispatcher
     {
         log("Removing texture '" + name + "'");
         
-        if (dispose && mTextures.exists(name))
-            mTextures[name].dispose();
+        if (dispose && __textures.exists(name))
+            __textures[name].dispose();
         
-        mTextures.remove(name);
+        __textures.remove(name);
     }
     
     /** Removes a certain texture atlas, optionally disposing it. */
@@ -425,17 +425,17 @@ class AssetManager extends EventDispatcher
     {
         log("Removing texture atlas '" + name + "'");
         
-        if (dispose && mAtlases.exists(name))
-            mAtlases[name].dispose();
+        if (dispose && __atlases.exists(name))
+            __atlases[name].dispose();
         
-        mAtlases.remove(name);
+        __atlases.remove(name);
     }
     
     /** Removes a certain sound. */
     public function removeSound(name:String):Void
     {
         log("Removing sound '"+ name + "'");
-        mSounds.remove(name);
+        __sounds.remove(name);
     }
     
     /** Removes a certain Xml object, optionally disposing it. */
@@ -444,18 +444,18 @@ class AssetManager extends EventDispatcher
         log("Removing xml '"+ name + "'");
         
         #if 0
-        if (dispose && mXmls.exists(name))
-            System.disposeXML(mXmls[name]);
+        if (dispose && __xmls.exists(name))
+            System.disposeXML(__xmls[name]);
         #end
         
-        mXmls.remove(name);
+        __xmls.remove(name);
     }
     
     /** Removes a certain object. */
     public function removeObject(name:String):Void
     {
         log("Removing object '"+ name + "'");
-        mObjects.remove(name);
+        __objects.remove(name);
     }
     
     /** Removes a certain byte array, optionally disposing its memory right away. */
@@ -463,16 +463,16 @@ class AssetManager extends EventDispatcher
     {
         log("Removing byte array '"+ name + "'");
         
-        if (dispose && mByteArrays.exists(name))
-            mByteArrays[name].clear();
+        if (dispose && __byteArrays.exists(name))
+            __byteArrays[name].clear();
         
-        mByteArrays.remove(name);
+        __byteArrays.remove(name);
     }
     
     /** Empties the queue and aborts any pending load operations. */
     public function purgeQueue():Void
     {
-        ArrayUtil.clear(mQueue);
+        ArrayUtil.clear(__queue);
         dispatchEventWith(Event.CANCEL);
     }
     
@@ -485,12 +485,12 @@ class AssetManager extends EventDispatcher
         purgeQueue();
         dispose();
 
-        mTextures = new Map<String, Texture>();
-        mAtlases = new Map<String, TextureAtlas>();
-        mSounds = new Map<String, Sound>();
-        mXmls = new Map<String, Xml>();
-        mObjects = new Map<String, Dynamic>();
-        mByteArrays = new Map<String, ByteArray>();
+        __textures = new Map<String, Texture>();
+        __atlases = new Map<String, TextureAtlas>();
+        __sounds = new Map<String, Sound>();
+        __xmls = new Map<String, Xml>();
+        __objects = new Map<String, Dynamic>();
+        __byteArrays = new Map<String, ByteArray>();
     }
     
     // queued adding
@@ -535,7 +535,7 @@ class AssetManager extends EventDispatcher
                 var typeXml:XML = describeType(rawAsset);
                 var childNode:XML;
                 
-                if (mVerbose)
+                if (__verbose)
                     log("Looking for static embedded assets in '" + 
                         (typeXml.@name).split("::").pop() + "'"); 
                 
@@ -584,18 +584,22 @@ class AssetManager extends EventDispatcher
     public function enqueueWithName(asset:Dynamic, name:String=null,
                                     options:TextureOptions=null):String
     {
-        #if 0
-        if (getQualifiedClassName(asset) == "flash.filesystem::File")
-            asset = decodeURI(asset["url"]);
+        var filename:String = null;
+        
+        #if air
+        if (Std.is(asset, flash.filesystem.File)) {
+            filename = Reflect.field(asset, "name");
+            asset = decodeURI(Reflect.field(asset, "url"));
+        }
         #end
         
         if (name == null)    name = getName(asset);
-        if (options == null) options = mDefaultTextureOptions.clone();
+        if (options == null) options = __defaultTextureOptions.clone();
         else                 options = options.clone();
         
-        log("Enqueuing '" + name + "'");
+        log("Enqueuing '" + (filename != null ? filename : name) + "'");
         
-        mQueue.push({
+        __queue.push({
             name: name,
             asset: asset,
             options: options
@@ -619,15 +623,15 @@ class AssetManager extends EventDispatcher
         if (onProgress == null)
             throw new ArgumentError("Argument 'onProgress' must not be null");
 
-        if (mQueue.length == 0)
+        if (__queue.length == 0)
         {
             onProgress(1.0);
             return;
         }
 
-        mStarling = Starling.current;
+        __starling = Starling.current;
         
-        if (mStarling == null || mStarling.context == null)
+        if (__starling == null || __starling.context == null)
             throw new Error("The Starling instance needs to be ready before assets can be loaded.");
 
         var PROGRESS_PART_ASSETS:Float = 0.9;
@@ -636,8 +640,8 @@ class AssetManager extends EventDispatcher
         var i:Int;
         var canceled:Bool = false;
         var xmls:Vector<Xml> = new Vector<Xml>();
-        var assetInfos:Array<QueuedAsset> = mQueue.copy();
-        var assetCount:Int = mQueue.length;
+        var assetInfos:Array<QueuedAsset> = __queue.copy();
+        var assetCount:Int = __queue.length;
         var assetProgress:Array<Float> = [];
         var assetIndex:Int = 0;
         
@@ -733,7 +737,7 @@ class AssetManager extends EventDispatcher
                     addTextureAtlas(name, new TextureAtlas(texture, xml));
                     removeTexture(name, false);
 
-                    if (mKeepAtlasXmls) addXml(name, xml);
+                    if (__keepAtlasXmls) addXml(name, xml);
                     #if 0
                     else
                         System.disposeXML(xml);
@@ -749,10 +753,10 @@ class AssetManager extends EventDispatcher
                 if (texture != null)
                 {
                     log("Adding bitmap font '" + name + "'");
-                    TextField.registerBitmapFont(new BitmapFont(texture, xml), name);
+                    TextField.registerCompositor(new BitmapFont(texture, xml), name);
                     removeTexture(name, false);
 
-                    if (mKeepFontXmls) addXml(name, xml);
+                    if (__keepFontXmls) addXml(name, xml);
                     #if 0
                     else System.disposeXML(xml);
                     #end
@@ -763,13 +767,13 @@ class AssetManager extends EventDispatcher
                 throw new Error("XML contents not recognized: " + rootNode);
 
             onProgress(PROGRESS_PART_ASSETS + PROGRESS_PART_XMLS * xmlProgress);
-            Timer.delay(function() { processXml(index + 1); }, 1);
+            Timer.delay(processXml.bind(index + 1), 1);
         }
         
         cancel = function():Void
         {
             removeEventListener(Event.CANCEL, cancel);
-            mNumLoadingQueues--;
+            __numLoadingQueues--;
             canceled = true;
         }
 
@@ -792,11 +796,11 @@ class AssetManager extends EventDispatcher
         for (i in 0...assetCount)
             assetProgress[i] = 0.0;
 
-        for (i in 0...mNumConnections)
+        for (i in 0...__numConnections)
             loadNextQueueElement();
 
-        ArrayUtil.clear(mQueue);
-        mNumLoadingQueues++;
+        ArrayUtil.clear(__queue);
+        __numLoadingQueues++;
         addEventListener(Event.CANCEL, cancel);
     }
     
@@ -819,7 +823,7 @@ class AssetManager extends EventDispatcher
             
             // the 'current' instance might have changed by now
             // if we're running in a set-up with multiple instances.
-            mStarling.makeCurrent();
+            __starling.makeCurrent();
             
             if (canceled)
             {
@@ -846,7 +850,7 @@ class AssetManager extends EventDispatcher
                 
                 onComplete();
             }
-            else if (Starling.handleLostContext && mStarling.context.driverInfo == "Disposed")
+            else if (__starling.context.driverInfo == "Disposed")
             {
                 log("Context lost while processing assets, retrying ...");
                 Timer.delay(function():Void{ process(asset); }, 1);
@@ -854,10 +858,16 @@ class AssetManager extends EventDispatcher
             }
             else if (Std.is(asset, Bitmap))
             {
-                texture = Texture.fromData(asset, options);
-                texture.root.onRestore = function():Void
+                options.onReady = prependCallback(options.onReady, function(_):Void
                 {
-                    mNumLostTextures++;
+                    addTexture(name, texture);
+                    onComplete();
+                });
+                
+                texture = Texture.fromData(asset, options);
+                texture.root.onRestore = function(_):Void
+                {
+                    __numLostTextures++;
                     loadRawAsset(rawAsset, null, function(asset:Dynamic):Void
                     {
                         try
@@ -871,16 +881,13 @@ class AssetManager extends EventDispatcher
                             log("Texture restoration failed for '" + name + "': " + e.message);
                         }
 
-                        mNumRestoredTextures++;
+                        __numRestoredTextures++;
+                        Starling.current.stage.setRequiresRedraw();
                         
-                        if (mNumLostTextures == mNumRestoredTextures)
+                        if (__numLostTextures == __numRestoredTextures)
                             dispatchEventWith(Event.TEXTURES_RESTORED);
                     });
                 };
-
-                asset.bitmapData.dispose();
-                addTexture(name, texture);
-                onComplete();
             }
             else if (Std.is(asset, ByteArrayData))
             {
@@ -888,22 +895,22 @@ class AssetManager extends EventDispatcher
                 
                 if (AtfData.isAtfData(bytes))
                 {
-                    options.onReady = prependCallback(options.onReady, function():Void
+                    options.onReady = prependCallback(options.onReady, function(_):Void
                     {
                         addTexture(name, texture);
                         onComplete();
                     });
 
                     texture = Texture.fromData(bytes, options);
-                    texture.root.onRestore = function():Void
+                    texture.root.onRestore = function(_):Void
                     {
-                        mNumLostTextures++;
+                        __numLostTextures++;
                         loadRawAsset(rawAsset, null, function(asset:Dynamic):Void
                         {
                             try
                             {
                                 if (asset == null) throw new Error("Reload failed");
-                                texture.root.uploadAtfData(cast(asset, ByteArrayData), 0, true);
+                                texture.root.uploadAtfData(cast(asset, ByteArrayData), 0, null);
                                 asset.clear();
                             }
                             catch (e:Error)
@@ -911,9 +918,10 @@ class AssetManager extends EventDispatcher
                                 log("Texture restoration failed for '" + name + "': " + e.message);
                             }
                             
-                            mNumRestoredTextures++;
+                            __numRestoredTextures++;
+                            Starling.current.stage.setRequiresRedraw();
                             
-                            if (mNumLostTextures == mNumRestoredTextures)
+                            if (__numLostTextures == __numRestoredTextures)
                                 dispatchEventWith(Event.TEXTURES_RESTORED);
                         });
                     };
@@ -1064,7 +1072,7 @@ class AssetManager extends EventDispatcher
                     bytes.clear();
                     complete(sound);
                 case "jpg", "jpeg", "png", "gif":
-                    var loaderContext:LoaderContext = new LoaderContext(mCheckPolicyFile);
+                    var loaderContext:LoaderContext = new LoaderContext(__checkPolicyFile);
                     var loader:Loader = new Loader();
                     #if flash
                     loaderContext.imageDecodingPolicy = ImageDecodingPolicy.ON_LOAD;
@@ -1188,7 +1196,7 @@ class AssetManager extends EventDispatcher
      * default, it traces 'message' to the console. */
     private function log(message:String):Void
     {
-        if (mVerbose) trace("[AssetManager] " + message);
+        if (__verbose) trace("[AssetManager] " + message);
     }
     
     private function byteArrayStartsWith(bytes:ByteArray, char:String):Bool
@@ -1200,17 +1208,17 @@ class AssetManager extends EventDispatcher
         // recognize BOMs
         
         if (length >= 4 &&
-            (bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2]== 0xfe && bytes[3] == 0xff) ||
-            (bytes[0] == 0xff && bytes[1] == 0xfe && bytes[2]== 0x00 && bytes[3] == 0x00))
+            (bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2] == 0xfe && bytes[3] == 0xff) ||
+            (bytes[0] == 0xff && bytes[1] == 0xfe && bytes[2] == 0x00 && bytes[3] == 0x00))
         {
             start = 4; // UTF-32
         }
-        else if (length >= 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2]== 0xbf)
+        else if (length >= 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf)
         {
             start = 3; // UTF-8
         }
         else if (length >= 2 &&
-            (bytes[0] == 0xfe && bytes[1] == 0xff) || (bytes[0]== 0xff && bytes[1] == 0xfe))
+            (bytes[0] == 0xfe && bytes[1] == 0xff) || (bytes[0] == 0xff && bytes[1] == 0xfe))
         {
             start = 2; // UTF-16
         }
@@ -1228,17 +1236,16 @@ class AssetManager extends EventDispatcher
     }
     
     private function getDictionaryKeys(dictionary:Map<String, Dynamic>, prefix:String="",
-                                       result:Vector<String>=null):Vector<String>
+                                       out:Vector<String>=null):Vector<String>
     {
-        if (result == null) result = new Vector<String>();
+        if (out == null) out = new Vector<String>();
         
         for (name in dictionary.keys())
             if (name.indexOf(prefix) == 0)
-                result[result.length] = name; // avoid 'push'
+                out[out.length] = name; // avoid 'push'
 
-        //result.sort(Array.CASEINSENSITIVE);
-        result.sort(compare);
-        return result;
+        out.sort(compare);
+        return out;
     }
     
     private function getHttpHeader(headers:Array<Dynamic>, headerName:String):String
@@ -1267,17 +1274,17 @@ class AssetManager extends EventDispatcher
         else return null;
     }
 
-    private function prependCallback(oldCallback:Void->Void, newCallback:Void->Void):Void->Void
+    private function prependCallback<T:(Function)>(oldCallback:T, newCallback:T):T
     {
         // TODO: it might make sense to add this (together with "appendCallback")
         //       as a public utility method ("FunctionUtil"?)
 
         if (oldCallback == null) return newCallback;
         else if (newCallback == null) return oldCallback;
-        else return function():Void
+        else return cast function(?_):Void
         {
-            newCallback();
-            oldCallback();
+            (newCallback:Function)();
+            (oldCallback:Function)();
         };
     }
 
@@ -1288,73 +1295,74 @@ class AssetManager extends EventDispatcher
     /** The queue contains one 'Object' for each enqueued asset. Each object has 'asset'
      * and 'name' properties, pointing to the raw asset and its name, respectively. */
     private var queue(get, never):Array<Dynamic>;
-    private function get_queue():Array<Dynamic> { return mQueue; }
+    private function get_queue():Array<Dynamic> { return __queue; }
     
     /** Returns the number of raw assets that have been enqueued, but not yet loaded. */
-    public var numQueuedAssets(get, never):Int;
-    private function get_numQueuedAssets():Int { return mQueue.length; }
+    public var nu__queuedAssets(get, never):Int;
+    private function get_nu__queuedAssets():Int { return __queue.length; }
     
     /** When activated, the class will trace information about added/enqueued assets.
      * @default true */
     public var verbose(get, set):Bool;
-    private function get_verbose():Bool { return mVerbose; }
-    private function set_verbose(value:Bool):Bool { return mVerbose = value; }
+    private function get_verbose():Bool { return __verbose; }
+    private function set_verbose(value:Bool):Bool { return __verbose = value; }
     
     /** Indicates if a queue is currently being loaded. */
     public var isLoading(get, never):Bool;
-    private function get_isLoading():Bool { return mNumLoadingQueues > 0; }
+    private function get_isLoading():Bool { return __numLoadingQueues > 0; }
 
     /** For bitmap textures, this flag indicates if mip maps should be generated when they 
      * are loaded; for ATF textures, it indicates if mip maps are valid and should be
      * used. @default false */
     public var useMipMaps(get, set):Bool;
-    private function get_useMipMaps():Bool { return mDefaultTextureOptions.mipMapping; }
-    private function set_useMipMaps(value:Bool):Bool { return mDefaultTextureOptions.mipMapping = value; }
-    
-    /** Textures that are created from Bitmaps or ATF files will have the repeat setting
-     * assigned here. @default false */
-    public var textureRepeat(get, set):Bool;
-    private function get_textureRepeat():Bool { return mDefaultTextureOptions.repeat; }
-    private function set_textureRepeat(value:Bool):Bool { return mDefaultTextureOptions.repeat = value; }
+    private function get_useMipMaps():Bool { return __defaultTextureOptions.mipMapping; }
+    private function set_useMipMaps(value:Bool):Bool { return __defaultTextureOptions.mipMapping = value; }
 
     /** Textures that are created from Bitmaps or ATF files will have the scale factor 
      * assigned here. @default 1 */
     public var scaleFactor(get, set):Float;
-    private function get_scaleFactor():Float { return mDefaultTextureOptions.scale; }
-    private function set_scaleFactor(value:Float):Float { return mDefaultTextureOptions.scale = value; }
+    private function get_scaleFactor():Float { return __defaultTextureOptions.scale; }
+    private function set_scaleFactor(value:Float):Float { return __defaultTextureOptions.scale = value; }
 
     /** Textures that are created from Bitmaps will be uploaded to the GPU with the
      * <code>Context3DTextureFormat</code> assigned to this property. @default "bgra" */
     public var textureFormat(get, set):Context3DTextureFormat;
-    private function get_textureFormat():Context3DTextureFormat { return mDefaultTextureOptions.format; }
-    private function set_textureFormat(value:Context3DTextureFormat):Context3DTextureFormat { return mDefaultTextureOptions.format = value; }
+    private function get_textureFormat():Context3DTextureFormat { return __defaultTextureOptions.format; }
+    private function set_textureFormat(value:Context3DTextureFormat):Context3DTextureFormat { return __defaultTextureOptions.format = value; }
+    
+    /** Indicates if the underlying Stage3D textures should be created as the power-of-two based
+     *  <code>Texture</code> class instead of the more memory efficient <code>RectangleTexture</code>.
+     *  @default false */
+    public var forcePotTextures(get, set):Bool;
+    private function get_forcePotTextures():Bool { return __defaultTextureOptions.forcePotTexture; }
+    private function set_forcePotTextures(value:Bool):Bool { return __defaultTextureOptions.forcePotTexture = value; }
     
     /** Specifies whether a check should be made for the existence of a URL policy file before
      * loading an object from a remote server. More information about this topic can be found 
      * in the 'flash.system.LoaderContext' documentation. @default false */
     public var checkPolicyFile(get, set):Bool;
-    private function get_checkPolicyFile():Bool { return mCheckPolicyFile; }
-    private function set_checkPolicyFile(value:Bool):Bool { return mCheckPolicyFile = value; }
+    private function get_checkPolicyFile():Bool { return __checkPolicyFile; }
+    private function set_checkPolicyFile(value:Bool):Bool { return __checkPolicyFile = value; }
 
     /** Indicates if atlas XML data should be stored for access via the 'getXml' method.
      * If true, you can access an XML under the same name as the atlas.
      * If false, XMLs will be disposed when the atlas was created. @default false. */
     public var keepAtlasXmls(get, set):Bool;
-    private function get_keepAtlasXmls():Bool { return mKeepAtlasXmls; }
-    private function set_keepAtlasXmls(value:Bool):Bool { return mKeepAtlasXmls = value; }
+    private function get_keepAtlasXmls():Bool { return __keepAtlasXmls; }
+    private function set_keepAtlasXmls(value:Bool):Bool { return __keepAtlasXmls = value; }
 
     /** Indicates if bitmap font XML data should be stored for access via the 'getXml' method.
      * If true, you can access an XML under the same name as the bitmap font.
      * If false, XMLs will be disposed when the font was created. @default false. */
     public var keepFontXmls(get, set):Bool;
-    private function get_keepFontXmls():Bool { return mKeepFontXmls; }
-    private function set_keepFontXmls(value:Bool):Bool { return mKeepFontXmls = value; }
+    private function get_keepFontXmls():Bool { return __keepFontXmls; }
+    private function set_keepFontXmls(value:Bool):Bool { return __keepFontXmls = value; }
 
     /** The maximum number of parallel connections that are spawned when loading the queue.
      * More connections can reduce loading times, but require more memory. @default 3. */
     public var numConnections(get, set):Int;
-    private function get_numConnections():Int { return mNumConnections; }
-    private function set_numConnections(value:Int):Int { return mNumConnections = value; }
+    private function get_numConnections():Int { return __numConnections; }
+    private function set_numConnections(value:Int):Int { return __numConnections = value; }
 }
 
 @:dox(hide) typedef QueuedAsset = {
