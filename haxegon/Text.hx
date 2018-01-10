@@ -32,12 +32,17 @@ class Fontclass {
 		newformat.horizontalAlign = Align.LEFT;
 		newformat.verticalAlign = Align.TOP;
 		
-		var newtf:TextField = new TextField(Gfx.screenwidth, Gfx.screenheight, "???", newformat);
+		var newtf:TextField = new TextField(Gfx.screenwidth, Gfx.screenheight, "XYZ", newformat);
 		newtf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
+		minheight = newtf.height;
 		
 		return newtf;
 	}
 	
+	private function heightoffset():Float{
+		if (tf.height < minheight) return minheight - tf.height;
+		return 0;
+	}
 	
 	private function reset() {
 		currenttextfield = -1;
@@ -94,6 +99,7 @@ class Fontclass {
 	public var type:String;
 	public var size:Float;
 	
+	private var minheight:Float;
 	public var autosize:Bool;
 }
 
@@ -333,7 +339,7 @@ class Text {
 			fontmatrix.translate( tempxpivot, tempypivot);
 		}
 		
-		fontmatrix.translate(x, y);
+		fontmatrix.translate(x, y + typeface[currentindex].heightoffset());
 		if (typeface[currentindex].type == "ttf") {
 			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
 		}else {
