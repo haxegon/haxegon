@@ -123,7 +123,7 @@ class Debug {
 	}
 	
 	private static function render() {
-		if (showlogwindow) {
+		if (showlogwindow && enabledisplay) {
 			var olddrawto:RenderTexture = Gfx.drawto;
 			var oldfontsize:Float = Text.size;
 			var oldfont:String = Text.font;
@@ -150,6 +150,7 @@ class Debug {
 	}
 	
 	private static var showlogwindow:Bool;
+	private static var enabledisplay:Bool = false;
 	private static var history:Array<String> = [];
 	private static var posinfo:Array<haxe.PosInfos> = [];
 	private static var repeatcount:Array<Int> = [];

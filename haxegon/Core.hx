@@ -188,6 +188,8 @@ class Core extends Sprite {
 		
 		// render loop
 		dorender();
+		
+		Debug.enabledisplay = true;
 	}
 
 	private static var currentupdateindex:Int;
