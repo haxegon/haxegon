@@ -22,9 +22,6 @@ import openfl.Assets;
 @:access(haxegon.Filter)
 @:access(haxegon.Debug)
 class Core extends Sprite {
-	private static inline var WINDOW_WIDTH:String = haxe.macro.Compiler.getDefine("windowwidth");
-	private static inline var WINDOW_HEIGHT:String = haxe.macro.Compiler.getDefine("windowheight");
-	
 	public function new() {
 		_fps = TARGETFRAMERATE = Math.round(Starling.current.nativeStage.frameRate);
 		
@@ -85,8 +82,8 @@ class Core extends Sprite {
 		
 		//Before we call Scene.init(), make sure we have some init values for our screen
 		//in the event that we don't create one in Main.new():
-		Gfx.screenwidth = Std.parseInt(WINDOW_WIDTH);
-		Gfx.screenheight = Std.parseInt(WINDOW_HEIGHT);
+		Gfx.screenwidth = Std.int(flash.Lib.current.stage.stageWidth);
+		Gfx.screenheight = Std.int(flash.Lib.current.stage.stageHeight);
 		Gfx.screenwidthmid = Std.int(Gfx.screenwidth / 2); Gfx.screenheightmid = Std.int(Gfx.screenheight / 2);
 		
 		//Some stuff mysteriouly doesn't work correctly unless we wait for a millisecond first!
@@ -99,7 +96,7 @@ class Core extends Sprite {
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
 		if (!Gfx.gfxinit) {
-			Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT));
+			Gfx.resizescreen(Std.int(flash.Lib.current.stage.stageWidth), Std.int(flash.Lib.current.stage.stageHeight));
 			if (Gfx.fullscreen) {
 				Gfx.fullscreen = true;
 			}else {
