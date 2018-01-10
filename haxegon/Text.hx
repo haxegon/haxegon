@@ -121,10 +121,10 @@ class Fontfile {
 			filename = "";
 			typename = "default";
 			sizescale = Std.parseInt(fontxml.elementsNamed("info").next().get("size"));
-		}else	if (Data.assetexists("data/graphics/fonts/" + _file + "/" + _file + ".fnt")) {
+		}else	if (Data.assetexists("data/fonts/" + _file + ".fnt")) {
 			type = "bitmap";
 			
-			var fontdata:String = Data.gettextasset("data/graphics/fonts/" + _file + "/" + _file + ".fnt");
+			var fontdata:String = Data.gettextasset("data/fonts/" + _file + ".fnt");
 			fontxml = Xml.parse(fontdata).firstElement();
 			typename = fontxml.elementsNamed("info").next().get("face");
 			pngname = Xml.parse(fontdata).firstElement()
@@ -137,18 +137,21 @@ class Fontfile {
 			}
 			sizescale = Std.parseInt(fontxml.elementsNamed("info").next().get("size"));
 			
-			if (Gfx.imageindex.exists("fonts/" + _file + "/" + pngname)) {
+			if (Gfx.imageindex.exists("fonts/" + pngname)) {
 			  //We've already loaded in the font png in a packed texture!	
 				fonttex = Gfx.starlingassets.getTexture("fonts/" + _file + "/" + pngname);
 			}else{
-				fonttex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/fonts/" + _file + "/" + pngname + ".png"), false);
+				fonttex = Texture.fromBitmapData(Data.getgraphicsasset("data/fonts/" + pngname + ".png"), false);
 			}
 			bitmapfont = new BitmapFont(fonttex, fontxml);
 			TextField.registerCompositor(bitmapfont, bitmapfont.name);
 		}else {
+			#if !flash
+			throw("Sorry, TTF fonts are not working in version 0.11 of haxegon.\nThis is due to changes in our version of starling. If your project\nrequires TTF fonts, please use 0.10 until this is fixed!");
+			#end
 		  type = "ttf";
 			
-			filename = "data/graphics/fonts/" + _file + "/" + _file + ".ttf";
+			filename = "data/fonts/" + _file + ".ttf";
 			try {
 				font = Data.getfontasset(filename);
 				typename = font.fontName;
