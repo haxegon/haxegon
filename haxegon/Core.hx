@@ -69,6 +69,11 @@ class Core extends Sprite {
 	}
 	
 	private function loaded() {
+		#if js
+		untyped {
+			document.oncontextmenu = document.body.oncontextmenu = function() {return false;}
+		}
+		#end
 		//Init library classes
 		Random.seed = Std.int(Math.random() * 233280);
 		Input.init(this.stage, Starling.current.nativeStage);
