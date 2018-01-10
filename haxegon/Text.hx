@@ -175,6 +175,7 @@ class Text {
 		gfxstage = stage;
 		inputfocus = false;
 		wordwrapwidth = 0;
+		inputmaxlength = 0;
 	}
 	
 	public static function align(a:Int) {
@@ -461,7 +462,13 @@ class Text {
 			Input.keybuffer = "";
 		}
 		
-		if(flash.Lib.getTimer() % 400 > 200){
+		if (inputmaxlength > 0){
+			if (Input.keybuffer.length > inputmaxlength){
+				Input.keybuffer = S.left(Input.keybuffer, inputmaxlength);
+			}
+		}
+		
+		if(flash.Lib.getTimer() % 400 > 200 && (inputmaxlength == 0)?true:(Input.keybuffer.length < inputmaxlength)){
 			Text.display(x, y, Input.keybuffer + "_", col, alpha);
 		}else{
 			Text.display(x, y, Input.keybuffer, col, alpha);
@@ -476,7 +483,7 @@ class Text {
 	public static var inputresult(get, null):String;
 	
 	static function get_inputresult():String {
-		var returnval:String = Input.keybuffer;
+		var returnval:String = (inputmaxlength == 0)?Input.keybuffer:S.left(Input.keybuffer, inputmaxlength);
 		Input.keybuffer = "";
 		inputfocus = false;
 		return returnval;
@@ -511,4 +518,5 @@ class Text {
 	
 	private static var wordwrapwidth:Int = 0;
 	private static var inputfocus:Bool;
+	public static var inputmaxlength:Int;
 }
