@@ -184,28 +184,6 @@ class Music {
 		//Figure this out someday I guess?
 	}
 	
-	private static function processmute() {
-		if (Text.input_show == 0) {
-			if (Input.justpressed(Key.M) && mutebutton <= 0) {
-				mutebutton = 2; if (muted) { muted = false; }else { muted = true;}
-			}
-			if (mutebutton > 0 && !Input.pressed(Key.M)) mutebutton--;
-		}
-		
-		if (muted) {
-			if (globalsound == 1) {
-			  globalsound = 0;
-				updateallvolumes();
-			}
-		}
-		
-		if (!muted && globalsound < 1) {
-			globalsound += 0.05; 
-			if (globalsound > 1.0) globalsound = 1.0;
-			updateallvolumes();
-		}
-	}
-	
 	public static var musicchan:Array<Sound> = new Array<Sound>();	
 	public static var musicchannel:SoundChannel;
 	public static var currentsong:String;

@@ -198,8 +198,7 @@ class Core extends Sprite {
 			Gfx.startframe();
 			
 			Debug.update();
-			Scene.update();	
-			Text.drawstringinput();
+			Scene.update();
 			Debug.render();
 			
 			if (updateextended) {
@@ -227,7 +226,6 @@ class Core extends Sprite {
 		Gfx.startframe();
 		
 		Scene.render();
-		Text.drawstringinput();
 		Debug.render();
 		if (renderextended) extendedrenderfunction();
 		

@@ -173,8 +173,7 @@ class Fontfile {
 class Text {
 	private static function init(stage:Stage) {
 		gfxstage = stage;
-		input_cursorglow = 0;
-		inputmaxlength = 40;
+		inputfocus = false;
 		wordwrapwidth = 0;
 	}
 	
@@ -186,69 +185,6 @@ class Text {
 	  textrotate = a;
 		textrotatexpivot = xpivot;
 		textrotateypivot = ypivot;
-	}
-	
-	private static function input_checkfortext() {
-		inputtext = Input.keybuffer;
-	}
-	
-	public static function input(x:Float, y:Float, prompt:String, questioncolor:Int = 0xFFFFFF, answercolor:Int  = 0xCCCCCC):Bool {
-		input_show = 2;
-		
-		input_font = currentfont;
-		input_textsize = currentsize;
-		typeface[currentindex].tf.text = prompt + inputtext;
-		x = alignx(x); y = aligny(y);
-		input_textxp = x;
-		input_textyp = y;
-		
-		typeface[currentindex].tf.text = prompt;
-		input_responsexp = input_textxp + Math.floor(typeface[currentindex].width);
-		input_responseyp = y;
-		
-		input_text = prompt;
-		input_response = inputtext;
-		input_textcol = questioncolor;
-		input_responsecol = answercolor;
-		input_checkfortext();
-		
-		if (Input.justpressed(Key.ENTER) && inputtext != "") {
-			return true;
-		}
-		return false;
-	}
-	
-	/** Returns the entered string, and resets the input for next time. */
-	public static function getinput():String {
-		var response:String = inputtext;
-		lastentry = inputtext;
-		inputtext = "";
-		Input.keybuffer = "";
-		input_show = 0;
-		
-		return response;
-	}
-	
-	private static function drawstringinput() {
-		if (input_show > 0) {
-			setfont(input_font, input_textsize);
-			input_cursorglow++;
-			if (input_cursorglow >= 96) input_cursorglow = 0;
-			
-			display(input_textxp, input_textyp, input_text, input_textcol);
-			if (input_text.length < inputmaxlength) {
-				if (input_cursorglow % 48 < 24) {
-					display(input_responsexp, input_responseyp, input_response, input_responsecol);
-				}else {
-					display(input_responsexp, input_responseyp, input_response + "_", input_responsecol);
-				}
-			}else{
-				display(input_responsexp, input_responseyp, input_response, input_responsecol);
-			}
-		}
-		
-		input_show--;
-		if (input_show < 0) input_show = 0;
 	}
 	
 	//Text display functions
@@ -519,6 +455,33 @@ class Text {
 		return currentsize;
 	}
 	
+	public static function input(x:Float, y:Float, col:Int = 0xFFFFFF, alpha:Float = 1.0):Bool{
+		if (!inputfocus){
+			inputfocus = true;
+			Input.keybuffer = "";
+		}
+		
+		if(flash.Lib.getTimer() % 400 > 200){
+			Text.display(x, y, Input.keybuffer + "_", col, alpha);
+		}else{
+			Text.display(x, y, Input.keybuffer, col, alpha);
+		}
+		
+		if (Input.justpressed(Key.ENTER) && Input.keybuffer != "") {
+			return true;
+		}
+		return false;
+	}
+	
+	public static var inputresult(get, null):String;
+	
+	static function get_inputresult():String {
+		var returnval:String = Input.keybuffer;
+		Input.keybuffer = "";
+		inputfocus = false;
+		return returnval;
+	}
+	
 	private static var fontfile:Array<Fontfile> = new Array<Fontfile>();
 	private static var fontfileindex:Map<String,Int> = new Map<String,Int>();
 	private static var fontlastsize:Map<String,Float> = new Map<String,Float>();
@@ -546,25 +509,6 @@ class Text {
 	private static var tempxpivot:Float = 0;
 	private static var tempypivot:Float = 0;
 	
-	//Text input variables
-	public static var inputtext:String;
-	private static var lastentry:String;
-	public static var inputmaxlength:Int;
-	
-	private static var input_textxp:Float;
-	private static var input_textyp:Float;
-	private static var input_responsexp:Float;
-	private static var input_responseyp:Float;
-	private static var input_textcol:Int;
-	private static var input_responsecol:Int;
-	private static var input_text:String;
-	private static var input_response:String;
-	private static var input_cursorglow:Int;
-	private static var input_font:String;
-	private static var input_textsize:Float;
-	/** Non zero when an input string is being checked. So that I can use 
-	 * the M and F keys without muting or changing to fullscreen.*/
-	public static var input_show:Int;
-	
 	private static var wordwrapwidth:Int = 0;
+	private static var inputfocus:Bool;
 }

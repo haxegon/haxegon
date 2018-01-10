@@ -368,9 +368,7 @@ class Input {
 		} else {
 			// Ignore all text input that's not valid ANSI text
 			if (charcode >= 32 && charcode <= 126) {
-				if (keybuffer.length < Text.inputmaxlength) {
-					keybuffer += String.fromCharCode(charcode);
-				}
+				keybuffer += String.fromCharCode(charcode);
 			}
 		}
 	}
