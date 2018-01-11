@@ -180,6 +180,7 @@ class Gfx {
 		
 	/** Makes a tile array from a given image. */
 	public static function loadtiles(imagename:String, width:Int, height:Int) {	
+		imagename = imagename.toLowerCase();
 	  var tex:starling.textures.Texture;
 		if (imageindex.exists(imagename)) {
 		  //We've already loaded the image for this somewhere, probably from a packed texture
@@ -339,6 +340,7 @@ class Gfx {
 	
 	/** Loads an image into the game. */
 	public static function loadimage(imagename:String) {
+		imagename = imagename.toLowerCase();
 		if (imageindex.exists(imagename)) return; //This is already loaded, so we're done!
 		
 		var tex:Texture;

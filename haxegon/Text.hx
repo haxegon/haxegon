@@ -12,13 +12,13 @@ import starling.textures.*;
 @:access(haxegon.Text)
 class Fontclass {
 	public function new(_name:String, _size:Float) {
-		type = Text.fontfile[Text.fontfileindex.get(_name)].type;
+		type = Text.fontfile[Text.fontfileindex.get(_name.toLowerCase())].type;
 		loadfont(_name, _size);
 		nexttextfield();
 	}
 	
 	public function loadfont(_name:String, _size:Float) {
-		name = _name;
+		name = _name.toLowerCase();
 		size = _size;
 		
 		fontfile = Text.fontfile[Text.fontfileindex.get(_name)];
@@ -411,7 +411,8 @@ class Text {
 	}
 	
 	static function set_font(fontname:String):String {
-		if (fontname == "" || fontname.toLowerCase() == "default") fontname = "default";
+		fontname = fontname.toLowerCase();
+		if (fontname == "") fontname = "default";
 		if (fontname == currentfont) return currentfont;
 		
 		Gfx.endmeshbatch();

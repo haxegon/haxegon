@@ -10,6 +10,7 @@ class Data {
 	public static var height:Int = 0;
 	
 	public static function loadtext(textfile:String):Array<String> {
+		textfile = textfile.toLowerCase();
 		if (Assets.exists("data/text/" + textfile + ".txt")) {
 			tempstring = Assets.getText("data/text/" + textfile + ".txt");
 		}else {

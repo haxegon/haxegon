@@ -28,6 +28,7 @@ class Music {
 	}
 	
 	public static function loadsound(soundname:String, volumelevel:Float = 1.0):Bool {
+		soundname = soundname.toLowerCase();
 		#if flash
 		if (Data.assetexists("data/sounds/" + soundname + ".mp3")) {
 			efchan.push(Data.getsoundasset("data/sounds/" + soundname + ".mp3"));
@@ -50,6 +51,7 @@ class Music {
 	}
 	
 	public static function loadsong(songname:String, volumelevel:Float = 1.0):Bool {	
+		songname = songname.toLowerCase();
 		#if flash
 		if (Data.assetexists("data/sounds/" + songname + ".mp3")) {
 			musicchan.push(Data.getsoundasset("data/sounds/" + songname + ".mp3"));
