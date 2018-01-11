@@ -106,7 +106,7 @@ class Debug {
 		gui.scrollpos = drawscrollbar(
 		  Std.int(Gfx.screenwidth - (12 * gui.scale)), 0, 
 			Std.int(10 * gui.scale), Std.int(gui.height * gui.scale * 10),
-		  gui.scrollpos, history.length - (gui.height - 1) - 1, 
+		  gui.scrollpos, Std.int(history.length - (gui.height - 1) - 1), 
 		  true, 1);
 		
 		for (j in 0 ... gui.height) {
@@ -154,7 +154,7 @@ class Debug {
 	private static var history:Array<String> = [];
 	private static var posinfo:Array<haxe.PosInfos> = [];
 	private static var repeatcount:Array<Int> = [];
-	private static var gui;
+	private static var gui:Dynamic;
 	
 	private static function init() {
 		gui = { 

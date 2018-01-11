@@ -162,6 +162,7 @@ class Text {
 		inputfocus = false;
 		wordwrapwidth = 0;
 		inputmaxlength = 0;
+		typingsound = "";
 	}
 	
 	public static function align(a:Int) {
@@ -470,6 +471,8 @@ class Text {
 	private static var currentindex:Int = -1;
 	private static var currentfont:String = "null";
 	private static var currentsize:Float = -1;
+	
+	public static var typingsound:String = "";
 
 	private static var gfxstage:Stage;
 	
