@@ -12,7 +12,6 @@ import starling.textures.*;
 @:access(haxegon.Text)
 class Fontclass {
 	public function new(_name:String, _size:Float) {
-		autosize = true;
 		type = Text.fontfile[Text.fontfileindex.get(_name)].type;
 		loadfont(_name, _size);
 		nexttextfield();
@@ -28,13 +27,12 @@ class Fontclass {
 	}
 	
 	private function inittextfield():TextField {
-		var newformat:TextFormat = new TextFormat(fontfile.typename, fontfile.sizescale * size);
-		newformat.horizontalAlign = Align.LEFT;
-		newformat.verticalAlign = Align.TOP;
+		var newtf:TextField = new TextField(Gfx.screenwidth, Gfx.screenheight, "XYZ");
+		newtf.format.setTo(fontfile.typename, (fontfile.sizescale * size));
+		newtf.format.horizontalAlign = Align.LEFT;
+		newtf.format.verticalAlign = Align.TOP;
 		
-		var newtf:TextField = new TextField(Gfx.screenwidth, Gfx.screenheight, "XYZ", newformat);
-		newtf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
-		minheight = newtf.height;
+		minheight = newtf.textBounds.height;
 		
 		return newtf;
 	}
@@ -55,38 +53,21 @@ class Fontclass {
 		tf = tflist[currenttextfield];
 	}
 	
-	public function updatewidth(v:Bool) {
-		autosize = v;
-		if (v) {
-			tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
-		}else {
-		  tf.autoSize = TextFieldAutoSize.VERTICAL;
-			tf.width = Text.wordwrapwidth;		
-		}
+	public function updatewidth() {
+		tf.wordWrap = (Text.wordwrapwidth > 0);
+		tf.width = (Text.wordwrapwidth > 0)?Text.wordwrapwidth:tf.textBounds.width;
 	}
 	
 	public var width(get, never):Float;
 	
 	function get_width():Float {
-		if (autosize) {
-			tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
-		}else {
-		  tf.autoSize = TextFieldAutoSize.VERTICAL;
-			tf.width = Text.wordwrapwidth;
-		}
-		return Std.int(tf.width);
+		return tf.textBounds.width;
 	}
 	
 	public var height(get, never):Float;
 	
 	function get_height():Float {
-		if (autosize) {
-			tf.autoSize = TextFieldAutoSize.BOTH_DIRECTIONS;
-		}else {
-		  tf.autoSize = TextFieldAutoSize.VERTICAL;
-			tf.width = Text.wordwrapwidth;
-		}
-		return Std.int(tf.height);
+		return return tf.textBounds.height;
 	}
 	
 	public var tf:TextField;
@@ -100,7 +81,6 @@ class Fontclass {
 	public var size:Float;
 	
 	private var minheight:Float;
-	public var autosize:Bool;
 }
 
 @:access(haxegon.Gfx)
@@ -147,7 +127,7 @@ class Fontfile {
 			TextField.registerCompositor(bitmapfont, bitmapfont.name);
 		}else {
 			#if !flash
-			throw("Sorry, TTF fonts are not working in version 0.11 of haxegon.\nThis is due to changes in our version of starling. If your project\nrequires TTF fonts, please use 0.10 until this is fixed!");
+			trace("Warning: Sorry, TTF fonts are not working in version 0.11 of haxegon.\nThis is due to changes in our version of starling. If your project\nrequires TTF fonts, please use 0.10 until this is fixed!");
 			#end
 		  type = "ttf";
 			
@@ -155,6 +135,7 @@ class Fontfile {
 			try {
 				font = Data.getfontasset(filename);
 				typename = font.fontName;
+				trace(typename);
 			}catch (e:Dynamic) {
 				Debug.log("ERROR: Cannot set font to \"" + _file + "\", no TTF or Bitmap Font found.");
 			}
@@ -224,11 +205,7 @@ class Text {
 	}
 	
 	public static function width(text:String):Float {
-		if (wordwrapwidth > 0) {
-			typeface[currentindex].updatewidth(false);
-		}else {
-			typeface[currentindex].updatewidth(true);
-		}
+		typeface[currentindex].updatewidth();
 		
 		typeface[currentindex].tf.text = text;
 		return typeface[currentindex].width;
@@ -236,11 +213,7 @@ class Text {
 	
 	public static function height(?text:String):Float {
 		if (text == null) text = "?";
-		if (wordwrapwidth > 0) {
-			typeface[currentindex].updatewidth(false);
-		}else {
-			typeface[currentindex].updatewidth(true);
-		}
+		typeface[currentindex].updatewidth();
 		
 		typeface[currentindex].tf.text = text;
 		return typeface[currentindex].height;
@@ -323,11 +296,7 @@ class Text {
 		if (textalign == LEFT) typeface[currentindex].tf.format.horizontalAlign = Align.LEFT;
 		if (textalign == CENTER) typeface[currentindex].tf.format.horizontalAlign = Align.CENTER;
 		if (textalign == RIGHT)	typeface[currentindex].tf.format.horizontalAlign = Align.RIGHT;
-		if (wordwrapwidth > 0) {
-			typeface[currentindex].updatewidth(false);
-		}else {
-			typeface[currentindex].updatewidth(true);
-		}
+		typeface[currentindex].updatewidth();
 		
 		x = alignx(x); y = aligny(y);
 		x -= aligntextx(text, textalign);
