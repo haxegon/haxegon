@@ -126,16 +126,12 @@ class Fontfile {
 			bitmapfont = new BitmapFont(fonttex, fontxml);
 			TextField.registerCompositor(bitmapfont, bitmapfont.name);
 		}else {
-			#if !flash
-			trace("Warning: Sorry, TTF fonts are not working in version 0.11 of haxegon.\nThis is due to changes in our version of starling. If your project\nrequires TTF fonts, please use 0.10 until this is fixed!");
-			#end
 		  type = "ttf";
 			
 			filename = "data/fonts/" + _file + ".ttf";
 			try {
 				font = Data.getfontasset(filename);
 				typename = font.fontName;
-				trace(typename);
 			}catch (e:Dynamic) {
 				Debug.log("ERROR: Cannot set font to \"" + _file + "\", no TTF or Bitmap Font found.");
 			}
@@ -274,11 +270,6 @@ class Text {
 		return x;
 	}
 	
-	private static function aligntexty(t:String, y:Float):Float {
-		trace("warning: unimplemented function aligntexty");
-		return 0;
-	}
-	
 	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
 		if (text == "") return;
 		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endmeshbatch();
@@ -305,7 +296,7 @@ class Text {
 		
 		if (textrotate != 0) {
 			if (textrotatexpivot != 0.0) tempxpivot = aligntextx(text, textrotatexpivot);
-			if (textrotateypivot != 0.0) tempypivot = aligntexty(text, textrotateypivot);
+			//if (textrotateypivot != 0.0) tempypivot = aligntexty(text, textrotateypivot);
 			fontmatrix.translate( -tempxpivot, -tempypivot);
 			fontmatrix.rotate((textrotate * 3.1415) / 180);
 			fontmatrix.translate( tempxpivot, tempypivot);

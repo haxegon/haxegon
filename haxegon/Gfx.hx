@@ -1206,7 +1206,7 @@ class Gfx {
 		
 		if (windowwidth == 0 && windowheight == 0) {
 			//if returning to windowed mode from fullscreen, don't mess with the
-			//viewport now; leave it to the onresize event to catch
+			//viewport now; leave it to the 3 event to catch
 			return;
 		}
 		
@@ -1240,6 +1240,13 @@ class Gfx {
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
 	public static function resizescreen(width:Float, height:Float) {
+		if (width <= 0 || height <= 0){
+			width = Std.int(flash.Lib.current.stage.stageWidth);
+			height = Std.int(flash.Lib.current.stage.stageHeight);
+			perfectfit = true;
+		}else{
+			perfectfit = false;
+		}
 		initgfx(Std.int(width), Std.int(height));
 		Text.init(starstage);
 		updategraphicsmode(Std.int(Starling.current.stage.stageWidth), Std.int(Starling.current.stage.stageHeight));
@@ -1288,6 +1295,7 @@ class Gfx {
 	
 	private static function onresize(e:ResizeEvent) {
 		updategraphicsmode(e.width, e.height);
+		if (perfectfit) resizescreen(0, 0);
 	}
 	
 	private static function loadpackedtextures() {
@@ -1433,4 +1441,5 @@ class Gfx {
 	private static var currenttileset:Int = -1;
 	
 	private static var gfxinit:Bool = false;
+	private static var perfectfit:Bool = false;
 }
