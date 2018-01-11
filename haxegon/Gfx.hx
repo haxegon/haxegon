@@ -1248,7 +1248,7 @@ class Gfx {
 			perfectfit = false;
 		}
 		initgfx(Std.int(width), Std.int(height));
-		Text.init(starstage);
+		Text.setstage(starstage);
 		updategraphicsmode(Std.int(Starling.current.stage.stageWidth), Std.int(Starling.current.stage.stageHeight));
 	}
 	

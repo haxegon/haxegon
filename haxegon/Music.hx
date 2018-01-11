@@ -30,17 +30,17 @@ class Music {
 	public static function loadsound(soundname:String, volumelevel:Float = 1.0):Bool {
 		soundname = soundname.toLowerCase();
 		#if flash
-		if (Data.assetexists("data/sounds/" + soundname + ".mp3")) {
-			efchan.push(Data.getsoundasset("data/sounds/" + soundname + ".mp3"));
+		if (Data.assetexists("data/audio/" + soundname + ".mp3")) {
+			efchan.push(Data.getsoundasset("data/audio/" + soundname + ".mp3"));
 		}else {
-		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/" + soundname + ".mp3\". (.mp3 files are required for flash targets.)"); 
+		  Debug.log("ERROR: In loadsound, cannot find \"data/audio/" + soundname + ".mp3\". (.mp3 files are required for flash targets.)"); 
 			return false;
 		}
 		#else
-		if (Data.assetexists("data/sounds/" + soundname + ".ogg")) {
-			efchan.push(Data.getsoundasset("data/sounds/" + soundname + ".ogg")); 
+		if (Data.assetexists("data/audio/" + soundname + ".ogg")) {
+			efchan.push(Data.getsoundasset("data/audio/" + soundname + ".ogg")); 
 		}else {
-		  Debug.log("ERROR: In loadsound, cannot find \"data/sounds/" + soundname + ".ogg\". (.ogg files are required on this platform.)"); 
+		  Debug.log("ERROR: In loadsound, cannot find \"data/audio/" + soundname + ".ogg\". (.ogg files are required on this platform.)"); 
 			return false;
 		}
 		#end
@@ -53,17 +53,17 @@ class Music {
 	public static function loadsong(songname:String, volumelevel:Float = 1.0):Bool {	
 		songname = songname.toLowerCase();
 		#if flash
-		if (Data.assetexists("data/sounds/" + songname + ".mp3")) {
-			musicchan.push(Data.getsoundasset("data/sounds/" + songname + ".mp3"));
+		if (Data.assetexists("data/audio/" + songname + ".mp3")) {
+			musicchan.push(Data.getsoundasset("data/audio/" + songname + ".mp3"));
 		}else {
-		  Debug.log("ERROR: In loadsong, cannot find \"data/sounds/" + songname + ".mp3\". (.mp3 files are required for flash targets.)"); 
+		  Debug.log("ERROR: In loadsong, cannot find \"data/audio/" + songname + ".mp3\". (.mp3 files are required for flash targets.)"); 
 			return false;
 		}
 		#else
-		if (Data.assetexists("data/sounds/" + songname + ".ogg")) {
-			musicchan.push(Data.getsoundasset("data/sounds/" + songname + ".ogg")); 
+		if (Data.assetexists("data/audio/" + songname + ".ogg")) {
+			musicchan.push(Data.getsoundasset("data/audio/" + songname + ".ogg")); 
 		}else {
-		  Debug.log("ERROR: In loadsong, cannot find \"data/sounds/" + songname + ".ogg\". (.ogg files are required on this platform.)"); 
+		  Debug.log("ERROR: In loadsong, cannot find \"data/audio/" + songname + ".ogg\". (.ogg files are required on this platform.)"); 
 			return false;
 		}
 		#end
@@ -132,6 +132,8 @@ class Music {
 		numplays = 0;
 		numeffects = 0;
 		numsongs = 0;
+		
+		typingsound = "";
 	}
 	
 	private static function loopmusic(e:Event) { 
@@ -211,4 +213,6 @@ class Music {
 	public static var globalsound:Float;
 	public static var muted:Bool; 
 	public static var mutebutton:Int;
+	
+	public static var typingsound:String = "";
 }

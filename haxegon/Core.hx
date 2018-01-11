@@ -82,6 +82,7 @@ class Core extends Sprite {
 		Debug.init();
 		Gfx.init(this.stage, Starling.current.nativeStage);
 		Filter.init();
+		Text.init();
 		Text.defaultfont();
 		Music.init();
 		
