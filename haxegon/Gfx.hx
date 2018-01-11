@@ -1222,11 +1222,27 @@ class Gfx {
 		if (keeppixelratio)	stretchscale = Math.floor(stretchscale);
 		
 		var viewPortRectangle:Rectangle = new Rectangle();
-		viewPortRectangle.width = screenwidth * stretchscale; 
-		viewPortRectangle.height = screenheight * stretchscale;
 		
-		viewPortRectangle.x = Std.int((windowwidth - Std.int(screenwidth * stretchscale)) / 2);
-		viewPortRectangle.y = Std.int((windowheight - Std.int(screenheight * stretchscale)) / 2);
+		if (perfectfit == 1){
+			viewPortRectangle.width = Std.int(windowwidth); 
+			viewPortRectangle.height = Std.int(windowheight);
+			
+			viewPortRectangle.x = Std.int((windowwidth - Std.int(screenwidth * stretchscaley)) / 2);
+			viewPortRectangle.y = Std.int((windowheight - Std.int(screenheight * stretchscaley)) / 2);
+		}else if (perfectfit == 2){
+			viewPortRectangle.width = Std.int(windowwidth); 
+			viewPortRectangle.height = Std.int(windowheight);
+			
+			viewPortRectangle.x = Std.int((windowwidth - Std.int(screenwidth * stretchscalex)) / 2);
+			viewPortRectangle.y = Std.int((windowheight - Std.int(screenheight * stretchscalex)) / 2);
+		}else{
+			viewPortRectangle.width = screenwidth * stretchscale; 
+			viewPortRectangle.height = screenheight * stretchscale;
+			
+			viewPortRectangle.x = Std.int((windowwidth - Std.int(screenwidth * stretchscale)) / 2);
+			viewPortRectangle.y = Std.int((windowheight - Std.int(screenheight * stretchscale)) / 2);
+		}
+		
 		// resize the viewport:
 		Starling.current.viewPort = viewPortRectangle;
 	}
@@ -1241,16 +1257,32 @@ class Gfx {
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
 	public static function resizescreen(width:Float, height:Float) {
-		if (width <= 0 || height <= 0){
+		if (width <= 0){
+			perfectfit = 1;
+			width = Std.int(flash.Lib.current.stage.stageWidth * (height / flash.Lib.current.stage.stageHeight));
+			dynamicwidth = 0;
+			dynamicheight = Std.int(height);
+		}else if (height <= 0){
+			perfectfit = 2;
+			height = Std.int(flash.Lib.current.stage.stageHeight * (width / flash.Lib.current.stage.stageWidth));
+			dynamicwidth = Std.int(width);
+			dynamicheight = 0;
+		}else if (width <= 0 && height <= 0){
 			width = Std.int(flash.Lib.current.stage.stageWidth);
 			height = Std.int(flash.Lib.current.stage.stageHeight);
-			perfectfit = true;
+			perfectfit = 3;
+			dynamicwidth = 0;
+			dynamicheight = 0;
 		}else{
-			perfectfit = false;
+			perfectfit = 0;
+			dynamicwidth = 0;
+			dynamicheight = 0;
 		}
 		initgfx(Std.int(width), Std.int(height));
 		Text.setstage(starstage);
-		if (perfectfit){
+		if (perfectfit == 1 || perfectfit == 2){
+			updategraphicsmode(Std.int(flash.Lib.current.stage.stageWidth), Std.int(flash.Lib.current.stage.stageHeight));
+		}else if (perfectfit == 3){
 			updategraphicsmode(Std.int(width), Std.int(height));
 		}else{
 			updategraphicsmode(Std.int(Starling.current.stage.stageWidth), Std.int(Starling.current.stage.stageHeight));
@@ -1299,7 +1331,11 @@ class Gfx {
 	}
 	
 	private static function onresize(e:ResizeEvent) {
-		if (perfectfit){
+		if (perfectfit == 1){
+			resizescreen(0, dynamicheight);
+		}else if (perfectfit == 2){
+			resizescreen(dynamicwidth, 0);
+		}else if (perfectfit == 3){
 			resizescreen(0, 0);
 		}else{
 			updategraphicsmode(e.width, e.height);
@@ -1449,6 +1485,8 @@ class Gfx {
 	private static var currenttileset:Int = -1;
 	
 	private static var gfxinit:Bool = false;
-	private static var perfectfit:Bool = false;
+	private static var perfectfit:Int = 0;
+	private static var dynamicwidth:Int = 0;
+	private static var dynamicheight:Int = 0;
 	public static var keeppixelratio:Bool = false;
 }
