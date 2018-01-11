@@ -1219,6 +1219,7 @@ class Gfx {
 		var stretchscalex:Float = Std.int(windowwidth) / screenwidth;
 		var stretchscaley:Float = Std.int(windowheight) / screenheight;
 		var stretchscale:Float = Math.min(stretchscalex, stretchscaley);
+		if (keeppixelratio)	stretchscale = Math.floor(stretchscale);
 		
 		var viewPortRectangle:Rectangle = new Rectangle();
 		viewPortRectangle.width = screenwidth * stretchscale; 
@@ -1249,7 +1250,11 @@ class Gfx {
 		}
 		initgfx(Std.int(width), Std.int(height));
 		Text.setstage(starstage);
-		updategraphicsmode(Std.int(Starling.current.stage.stageWidth), Std.int(Starling.current.stage.stageHeight));
+		if (perfectfit){
+			updategraphicsmode(Std.int(width), Std.int(height));
+		}else{
+			updategraphicsmode(Std.int(Starling.current.stage.stageWidth), Std.int(Starling.current.stage.stageHeight));
+		}
 	}
 	
 	public static var fullscreen(get,set):Bool;
@@ -1294,8 +1299,11 @@ class Gfx {
 	}
 	
 	private static function onresize(e:ResizeEvent) {
-		updategraphicsmode(e.width, e.height);
-		if (perfectfit) resizescreen(0, 0);
+		if (perfectfit){
+			resizescreen(0, 0);
+		}else{
+			updategraphicsmode(e.width, e.height);
+		}
 	}
 	
 	private static function loadpackedtextures() {
@@ -1337,7 +1345,7 @@ class Gfx {
 		devicexres = Std.int(openfl.system.Capabilities.screenResolutionX);
 		deviceyres = Std.int(openfl.system.Capabilities.screenResolutionY);
 		
-		var resizebuffers:Bool = gfxinit && (backbuffer.width < width || backbuffer.height < height);
+		var resizebuffers:Bool = gfxinit && (backbuffer.width != width || backbuffer.height != height);
 
 		if (resizebuffers) {
 			backbuffer.dispose();
@@ -1442,4 +1450,5 @@ class Gfx {
 	
 	private static var gfxinit:Bool = false;
 	private static var perfectfit:Bool = false;
+	public static var keeppixelratio:Bool = false;
 }

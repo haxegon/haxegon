@@ -22,6 +22,9 @@ import openfl.Assets;
 @:access(haxegon.Filter)
 @:access(haxegon.Debug)
 class Core extends Sprite {
+	private static inline var WINDOW_WIDTH:String = haxe.macro.Compiler.getDefine("windowwidth");
+	private static inline var WINDOW_HEIGHT:String = haxe.macro.Compiler.getDefine("windowheight");
+	
 	public function new() {
 		_fps = TARGETFRAMERATE = Math.round(Starling.current.nativeStage.frameRate);
 		
@@ -102,7 +105,7 @@ class Core extends Sprite {
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
 		if (!Gfx.gfxinit) {
-			Gfx.resizescreen(Std.int(flash.Lib.current.stage.stageWidth), Std.int(flash.Lib.current.stage.stageHeight));
+			Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT));
 			if (Gfx.fullscreen) {
 				Gfx.fullscreen = true;
 			}else {
