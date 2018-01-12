@@ -1257,7 +1257,13 @@ class Gfx {
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
 	public static function resizescreen(width:Float, height:Float) {
-		if (width <= 0){
+		if (width <= 0 && height <= 0){
+			width = Std.int(flash.Lib.current.stage.stageWidth);
+			height = Std.int(flash.Lib.current.stage.stageHeight);
+			perfectfit = 3;
+			dynamicwidth = 0;
+			dynamicheight = 0;
+		}else if (width <= 0){
 			perfectfit = 1;
 			width = Std.int(flash.Lib.current.stage.stageWidth * (height / flash.Lib.current.stage.stageHeight));
 			dynamicwidth = 0;
@@ -1266,12 +1272,6 @@ class Gfx {
 			perfectfit = 2;
 			height = Std.int(flash.Lib.current.stage.stageHeight * (width / flash.Lib.current.stage.stageWidth));
 			dynamicwidth = Std.int(width);
-			dynamicheight = 0;
-		}else if (width <= 0 && height <= 0){
-			width = Std.int(flash.Lib.current.stage.stageWidth);
-			height = Std.int(flash.Lib.current.stage.stageHeight);
-			perfectfit = 3;
-			dynamicwidth = 0;
 			dynamicheight = 0;
 		}else{
 			perfectfit = 0;
