@@ -11,6 +11,7 @@ class Data {
 	
 	public static function loadtext(textfile:String):Array<String> {
 		textfile = textfile.toLowerCase();
+		var tempstring:String = "";
 		if (Assets.exists("data/text/" + textfile + ".txt")) {
 			tempstring = Assets.getText("data/text/" + textfile + ".txt");
 		}else {
@@ -25,6 +26,7 @@ class Data {
 	
 	@:generic
 	public static function loadcsv<T>(csvfile:String, delimiter:String = ","):Array<T> {
+		var tempstring:String = "";
 		if (Assets.exists("data/text/" + csvfile + ".csv")) {
 			tempstring = Assets.getText("data/text/" + csvfile + ".csv");
 		}else {
@@ -57,13 +59,14 @@ class Data {
 		return returnedarray;
 	}
 	
-	public static function blank2darray(width:Int, height:Int):Array<Array<Int>> {
-		var returnedarray2d:Array<Array<Int>> = [for (x in 0 ... width) [for (y in 0 ... height) 0]];
-		return returnedarray2d;
+	@:generic
+	public static function create2darray<T>(width:Int, height:Int, value:T):Array<Array<T>> {
+		return [for (x in 0 ... width) [for (y in 0 ... height) value]];
 	}
 	
 	@:generic
 	public static function load2dcsv<T>(csvfile:String, delimiter:String = ","):Array<Array<T>> {
+		var tempstring:String = "";
 		if (Assets.exists("data/text/" + csvfile + ".csv")) {
 			tempstring = Assets.getText("data/text/" + csvfile + ".csv");
 		}else {
@@ -97,8 +100,6 @@ class Data {
 		var returnedarray2d:Array<Array<T>> = [for (x in 0 ... width) [for (y in 0 ... height) returnedarray[x + (y * width)]]];
 		return returnedarray2d;
 	}
-	
-	private static var tempstring:String;
 	
 	/* Data.hx asset loading functions are used internally by haxegon
 	 * to make sure case in-insensitive loading works ok */
