@@ -54,6 +54,40 @@ class HaxegonChannel{
 		channel.soundTransform = new SoundTransform(Geom.clamp(volume * haxegon.Sound._mastervolume, 0, 1), Geom.clamp(panning, -1, 1));	
 	}
 	
+	public function changepan(newpan:Float){
+		panning = newpan;
+		channel.soundTransform = new SoundTransform(Geom.clamp(volume * haxegon.Sound._mastervolume, 0, 1), Geom.clamp(panning, -1, 1));
+	}
+	
+	public var position(get, set):Float;
+	private var _position:Float;
+	function get_position():Float {
+		if (free){
+			return 0;
+		}else{
+			return channel.position / 1000;
+		}
+	}
+	
+	function set_position(newposition:Float):Float {
+		if (!free){
+			_position = newposition * 1000;
+			channel.position = _position;
+		}
+		return _position;
+	}
+	
+	public var length(get, null):Float;
+	private var _length:Float;
+	function get_length():Float {
+		if (free){
+			return 0;
+		}else{
+			return haxegon.Sound.soundfile[haxegon.Sound.soundindex.get(soundname)].asset.length / 1000;
+		}
+		return 0;
+	}
+	
 	public function stop(fadeout:Float = 0){
 		if(fadeout <= 0){
 			channel.stop();
@@ -191,8 +225,14 @@ class Sound{
 		return _mastervolume;
 	}
 	
+	public static function length(soundname:String):Float {
+		soundname = soundname.toLowerCase();
+		
+		return haxegon.Sound.soundfile[haxegon.Sound.soundindex.get(soundname)].asset.length / 1000;
+	}
+	
 	private static function init(){
-		Music.crossfade = true;
+		Music.crossfade = 0;
 		Music._currentsong = "";
 		
 		typingsound = "";
@@ -209,6 +249,15 @@ class Sound{
 				channel[i].updatefade();
 			}
 		}
+	}
+	
+	private static function isplaying(soundname:String):Bool{
+		for (i in 0 ... channel.length){
+			if (!channel[i].free){
+				if (channel[i].soundname == soundname) return true;
+			}
+		}
+		return false;
 	}
 	
 	private static var soundfile:Array<HaxegonSound>;
