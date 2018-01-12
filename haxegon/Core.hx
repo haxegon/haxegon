@@ -15,7 +15,7 @@ import openfl.Assets;
 @:access(haxegon.Data)
 @:access(haxegon.Gfx)
 @:access(haxegon.Text)
-@:access(haxegon.Music)
+@:access(haxegon.Sound)
 @:access(haxegon.Mouse)
 @:access(haxegon.Input)
 @:access(haxegon.Scene)
@@ -87,7 +87,7 @@ class Core extends Sprite {
 		Filter.init();
 		Text.init();
 		Text.defaultfont();
-		Music.init();
+		Sound.init();
 		
 		//Before we call Scene.init(), make sure we have some init values for our screen
 		//in the event that we don't create one in Main.new():
@@ -227,7 +227,7 @@ class Core extends Sprite {
 			}
 		}
 		
-		Music.processmusic();
+		Sound.update();
 	}
 	
 	private function dorender() {

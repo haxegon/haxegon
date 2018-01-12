@@ -369,7 +369,7 @@ class Input {
 			// Ignore all text input that's not valid ANSI text
 			if (charcode >= 32 && charcode <= 126) {
 				keybuffer += String.fromCharCode(charcode);
-				if (Music.typingsound != "") Music.playsound(Music.typingsound);
+				if (Sound.typingsound != "") Sound.play(Sound.typingsound);
 			}
 		}
 	}

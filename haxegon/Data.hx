@@ -102,7 +102,7 @@ class Data {
 	}
 	
 	/* Data.hx asset loading functions are used internally by haxegon
-	 * to make sure case in-insensitive loading works ok */
+	 * to make sure case insensitive loading works ok */
 	private static var embeddedassets_original:Array<String>;
 	private static var embeddedassets:Array<String>;
 	private static function initassets() {
