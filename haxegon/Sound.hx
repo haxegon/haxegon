@@ -31,7 +31,7 @@ class HaxegonChannel{
 		if (_fadeintime <= 0){
 			channel.soundTransform = new SoundTransform(Geom.clamp(volume * haxegon.Sound._mastervolume, 0, 1), Geom.clamp(_panning, -1, 1));	
 		}else{
-			fading = -11;
+			fading = -1; fadevolume = _volume;
 			fadestarttime = flash.Lib.getTimer();
 			fadeendtime = fadestarttime + (_fadeintime * 1000);
 			changevolume(0);
@@ -61,7 +61,7 @@ class HaxegonChannel{
 			free = true;
 			fading = 0;
 		}else{
-			fading = 1;
+			fading = 1; fadevolume = volume;
 			fadestarttime = flash.Lib.getTimer();
 			fadeendtime = fadestarttime + (fadeout * 1000);
 		}
@@ -71,7 +71,7 @@ class HaxegonChannel{
 		if (fading != 0){
 			var now:Float = flash.Lib.getTimer();
 			var newvol:Float = ((fadeendtime - fadestarttime) - (now - fadestarttime)) / (fadeendtime - fadestarttime);
-			changevolume((fading == 1)?newvol:(1 - newvol));
+			changevolume((fading == 1)?newvol * fadevolume:((1 - newvol) * fadevolume));
 			
 			if (now >= fadeendtime){
 				if(fading == 1){
@@ -93,6 +93,7 @@ class HaxegonChannel{
 	
 	public var fadestarttime:Float;
 	public var fadeendtime:Float;
+	public var fadevolume:Float;
 	
 	public var fading:Int;
 	public var free:Bool;
@@ -182,6 +183,10 @@ class Sound{
 	
 	static function set_mastervolume(vol:Float):Float{
 		_mastervolume = vol;
+		
+		for (i in 0 ... channel.length){
+			channel[i].changevolume(channel[i].volume);
+		}
 		
 		return _mastervolume;
 	}

@@ -132,6 +132,7 @@ class Core extends Sprite {
 	private function onEnterFrame(e:Event) {
 		if (!Scene.hasseperaterenderfunction) {
 			//If we don't have a seperate render function, just fall back to onEnterFrame for now
+			if (startframeextended)	extendedstartframefunction();
 			doupdate(0, 1);
 		  return;	
 		}
@@ -155,7 +156,7 @@ class Core extends Sprite {
 			return;
 		}
 		
-		if (startframeextended) extendedstartframefunction();
+		if (startframeextended)	extendedstartframefunction();
 		
 		// How many updates do we want?
 		// Again, this uses a 0.5 frame offset before triggering frameskip.
@@ -216,6 +217,8 @@ class Core extends Sprite {
 			}
 			
 			Gfx.endframe();
+			
+			if (renderextended) extendedrenderfunction();
 		}else {
 			Debug.update();
 		  Scene.update();	
