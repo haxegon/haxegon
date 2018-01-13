@@ -6,15 +6,11 @@ class Scene {
 	private static function init() {
 		scenelist = new Array<Dynamic>();
 		currentscene = 0;
-		#if neko
-		  try{
-		    scenelist.push(Type.createInstance(Main, []));
-			}catch (e:Dynamic) {
-				throw("ERROR: Neko builds require that Main.hx has a \"new()\" function.");
-			}
-		#else
-		  scenelist.push(Type.createInstance(Main, []));
-		#end
+		
+		scenelist.push(Type.createInstance(Main, []));
+		if (Reflect.field(scenelist[currentscene], "init") != null){
+			callscenemethod(scenelist[currentscene], "init");
+		}
 		
 		checkforrenderfunction();
 	}
