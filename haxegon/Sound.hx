@@ -72,7 +72,12 @@ class HaxegonChannel{
 	function set_position(newposition:Float):Float {
 		if (!free){
 			_position = newposition * 1000;
+			#if flash
+			stop();
+			play(soundname, newposition, 0, volume, panning);
+			#else
 			channel.position = _position;
+			#end
 		}
 		return _position;
 	}
@@ -152,14 +157,30 @@ class Sound{
 		if (!soundindex.exists(soundname)){
 			var soundasset:openfl.media.Sound = null;
 			#if flash
-			#else
-			if (Data.assetexists("data/audio/" + soundname + ".ogg")) {
-				soundasset = Data.getsoundasset("data/audio/" + soundname + ".ogg"); 
+			if (Data.assetexists("data/sounds/" + soundname + ".mp3")) {
+				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".mp3"); 
+			}else if (Data.assetexists("data/sounds/" + soundname + ".wav")) {
+				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".wav"); 
+			}else{
+				Debug.log("ERROR: In Sound.load(), cannot find \"data/sounds/" + soundname + ".mp3\" or \"data/sounds/" + soundname + ".wav\". (either .mp3 or .wav files are required for flash.)");
+				return false;
+			}
+			#elseif cpp
+			if (Data.assetexists("data/sounds/" + soundname + ".ogg")) {
+				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".ogg"); 
+			}else if (Data.assetexists("data/sounds/" + soundname + ".wav")) {
+				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".wav"); 
 			}else {
-				//To do: proper file checks and instructions on what to do on each platform:
-				//e.g. on flash, say that you can't find the mp3 or wav. If we CAN detect the .ogg, give a warning about needing to convert the file
-				//ditto for every other platform
-				Debug.log("ERROR: In Sound.load(), cannot find \"data/audio/" + soundname + ".ogg\". (.ogg files are required on this platform.)"); 
+				Debug.log("ERROR: In Sound.load(), cannot find \"data/sounds/" + soundname + ".ogg\" or \"data/sounds/" + soundname + ".wav\". (either .ogg or .wav files are required for native builds.)");
+				return false;
+			}
+			#else
+			if (Data.assetexists("data/sounds/" + soundname + ".ogg")) {
+				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".ogg"); 
+			}else if (Data.assetexists("data/sounds/" + soundname + ".wav")) {
+				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".wav"); 
+			}else {
+				Debug.log("ERROR: In Sound.load(), cannot find \"data/sounds/" + soundname + ".ogg\" or \"data/sounds/" + soundname + ".wav\". (either .ogg or .wav files are required for native builds.)");
 				return false;
 			}
 			#end
@@ -228,7 +249,11 @@ class Sound{
 	public static function length(soundname:String):Float {
 		soundname = soundname.toLowerCase();
 		
-		return haxegon.Sound.soundfile[haxegon.Sound.soundindex.get(soundname)].asset.length / 1000;
+		if (haxegon.Sound.soundindex.exists(soundname)){
+			return haxegon.Sound.soundfile[haxegon.Sound.soundindex.get(soundname)].asset.length / 1000;
+		}else{
+			return 0;
+		}
 	}
 	
 	private static function init(){
