@@ -15,6 +15,27 @@ class Scene {
 		checkforrenderfunction();
 	}
 	
+	public static function restart<T>(scenetorestart:Class<T>) {
+		var sceneid:Int = -1;
+		for (i in 0 ... scenelist.length) {
+			if (scenetorestart == Type.getClass(scenelist[i])) {
+				sceneid = i;
+				break;
+			}
+		}
+		
+		//YOU ARE HERE
+		if (sceneid == -1){
+			//Easy, the scene hasn't been run yet. Do nothing - it'll be init when it's created.
+		}else{
+			//Create a new scene instance replacing the current one
+			scenelist[sceneid] = Type.createInstance(scenetorestart, []);
+			if (Reflect.field(scenelist[currentscene], "init") != null){
+				callscenemethod(scenelist[currentscene], "init");
+			}
+		}
+	}
+	
 	private static function checkforrenderfunction() {
 		//When we change to a scene, check if this class contains a "render" method.
 		//If so, allow seperation of update and render
@@ -65,15 +86,7 @@ class Scene {
 			}
 		}
 		
-		#if neko
-			try{
-				scenelist.push(Type.createInstance(findscene, []));
-			}catch (e:Dynamic) {
-				throw("ERROR: Neko builds require all classes to have a \"new()\" function.");
-			}
-		#else
-			scenelist.push(Type.createInstance(findscene, []));
-		#end
+		scenelist.push(Type.createInstance(findscene, []));
 		
 		return scenelist.length - 1;
 	}
