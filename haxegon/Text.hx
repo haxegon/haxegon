@@ -54,6 +54,8 @@ class Fontclass {
 	}
 	
 	public function updatewidth() {
+		tf.width = Gfx.screenwidth;
+		
 		tf.wordWrap = (Text.wordwrapwidth > 0);
 		tf.width = (Text.wordwrapwidth > 0)?Text.wordwrapwidth:tf.textBounds.width;
 	}
