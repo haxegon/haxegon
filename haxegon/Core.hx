@@ -70,7 +70,7 @@ class Core extends Sprite {
 	}
 	
   private function continueloading() {		
-		//Call Main.new()
+		//Call Main.init()
 		Scene.init();
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...

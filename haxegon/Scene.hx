@@ -4,13 +4,11 @@ import openfl.errors.ArgumentError;
 
 class Scene {
 	private static function init() {
-		scenelist = new Array<Dynamic>();
+		scenelist = [];
 		currentscene = 0;
 		
 		scenelist.push(Type.createInstance(Main, []));
-		if (Reflect.field(scenelist[currentscene], "init") != null){
-			callscenemethod(scenelist[currentscene], "init");
-		}
+		callscenemethod(scenelist[currentscene], "init");
 		
 		checkforrenderfunction();
 	}
@@ -30,9 +28,7 @@ class Scene {
 		}else{
 			//Create a new scene instance replacing the current one
 			scenelist[sceneid] = Type.createInstance(scenetorestart, []);
-			if (Reflect.field(scenelist[currentscene], "init") != null){
-				callscenemethod(scenelist[currentscene], "init");
-			}
+			callscenemethod(scenelist[currentscene], "init");
 		}
 	}
 	
@@ -93,7 +89,11 @@ class Scene {
 	
 	public static function change<T>(newscene:Class<T>):T {
 		currentscene = findscene(newscene);
-		callscenemethod(scenelist[currentscene], "reset");
+		if (currentscene == scenelist.length - 1){
+			callscenemethod(scenelist[currentscene], "init");
+		}else{
+			callscenemethod(scenelist[currentscene], "reset");
+		}
 		
 		checkforrenderfunction();
 		
