@@ -37,36 +37,6 @@ class Core extends Sprite {
 		loaded();
 	}
 	
-	private static function callfunctionstartframe(?f:Function) {
-		if (f == null) {
-			startframeextended = false;
-			extendedstartframefunction = null;
-		}else {
-			startframeextended = true;
-			extendedstartframefunction = f;
-		}
-	}
-	
-	public static function callfunctionafterupdate(?f:Function) {
-		if (f == null) {
-		  updateextended = false;	
-			extendedupdatefunction = null;
-		}else {
-			updateextended = true;
-			extendedupdatefunction = f;
-		}
-	}
-	
-	public static function callfunctionafterrender(?f:Function) {
-		if (f == null) {
-		  renderextended = false;	
-			extendedrenderfunction = null;
-		}else {
-			renderextended = true;
-			extendedrenderfunction = f;
-		}
-	}
-	
 	public static function delaycall(f:Function, time:Float) {
 	  Timer.delay(function() { f(); }, Std.int(time * 1000));	
 	}
@@ -132,7 +102,7 @@ class Core extends Sprite {
 	private function onEnterFrame(e:Event) {
 		if (!Scene.hasseperaterenderfunction) {
 			//If we don't have a seperate render function, just fall back to onEnterFrame for now
-			if (startframeextended)	extendedstartframefunction();
+			execute_extendedstartframe();
 			doupdate(0, 1);
 		  return;	
 		}
@@ -156,7 +126,7 @@ class Core extends Sprite {
 			return;
 		}
 		
-		if (startframeextended)	extendedstartframefunction();
+		execute_extendedstartframe();
 		
 		// How many updates do we want?
 		// Again, this uses a 0.5 frame offset before triggering frameskip.
@@ -210,23 +180,23 @@ class Core extends Sprite {
 			Scene.update();
 			Debug.render();
 			
-			if (updateextended) {
+			if (hasextended_afterupdatebeforerender) {
 				currentupdateindex = updateindex;
 				currentupdatecount = updatecount;
-				extendedupdatefunction();
+				execute_extendedafterupdatebeforerender();
 			}
 			
 			Gfx.endframe();
 			
-			if (renderextended) extendedrenderfunction();
+			execute_extendedendframe();
 		}else {
 			Debug.update();
 		  Scene.update();	
 			
-			if (updateextended) {
+			if (hasextended_afterupdatebeforerender) {
 				currentupdateindex = updateindex;
 				currentupdatecount = updatecount;
-				extendedupdatefunction();
+				execute_extendedafterupdatebeforerender();
 			}
 		}
 		
@@ -238,7 +208,7 @@ class Core extends Sprite {
 		
 		Scene.render();
 		Debug.render();
-		if (renderextended) extendedrenderfunction();
+		execute_extendedendframe();
 		
 		Gfx.endframe();
 	}
@@ -256,17 +226,46 @@ class Core extends Sprite {
 		return _newfps;
 	}
 	
+	private static function extend_startframe(?f:Function) {
+		hasextended_startframe = true;
+		extended_startframe.push(f);
+	}
+	private static function execute_extendedstartframe(){
+		if (hasextended_startframe){
+			for (f in extended_startframe) f();
+		}
+	}
+	private static var extended_startframe:Array<Dynamic> = [];
+	private static var hasextended_startframe:Bool = false;
+	
+	private static function extend_afterupdatebeforerender(?f:Function) {
+		hasextended_afterupdatebeforerender = true;
+		extended_afterupdatebeforerender.push(f);
+	}
+	private static function execute_extendedafterupdatebeforerender(){
+		if (hasextended_afterupdatebeforerender){
+			for (f in extended_afterupdatebeforerender) f();
+		}
+	}
+	private static var extended_afterupdatebeforerender:Array<Dynamic> = [];
+	private static var hasextended_afterupdatebeforerender:Bool = false;
+	
+	private static function extend_endframe(?f:Function) {
+		hasextended_endframe = true;
+		extended_endframe.push(f);
+	}
+	private static function execute_extendedendframe(){
+		if (hasextended_endframe){
+			for (f in extended_endframe) f();
+		}
+	}
+	private static var extended_endframe:Array<Dynamic> = [];
+	private static var hasextended_endframe:Bool = false;
+	
 	// Timing information.
 	private static var TARGETFRAMERATE:Int = 60;
 	private static inline var MAXFRAMESKIP:Int = 4;
 	public static var frameskip:Bool = false;
-
-	private static var extendedstartframefunction:Dynamic = null;
-	private static var extendedupdatefunction:Dynamic = null;
-	private static var extendedrenderfunction:Dynamic = null;
-	private static var startframeextended:Bool = false;
-	private static var updateextended:Bool = false;
-	private static var renderextended:Bool = false;
 	
 	private static var	_rate3:Int; // The time between frames, in thirds of a millisecond.
 	private static var _target3:Int; // The ideal time to start the next frame, in thirds of a millisecond.
