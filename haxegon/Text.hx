@@ -113,7 +113,7 @@ class Fontfile {
 			
 			if (Gfx.imageindex.exists("fonts/" + pngname)) {
 			  //We've already loaded in the font png in a packed texture!	
-				fonttex = Gfx.starlingassets.getTexture("fonts/" + _file + "/" + pngname);
+				fonttex = Gfx.starlingassets.getTexture("fonts/" + pngname);
 			}else{
 				fonttex = Texture.fromBitmapData(Data.getgraphicsasset("data/fonts/" + pngname + ".png"), false);
 			}
