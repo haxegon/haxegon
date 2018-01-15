@@ -46,11 +46,13 @@ class Fontclass {
 		tf = tflist[currenttextfield];
 	}
 	
-	public function updatewidth() {
+	public function updatebounds() {
 		tf.width = Gfx.screenwidth;
+		tf.height = Gfx.screenheight;
 		
 		tf.wordWrap = (Text.wordwrapwidth > 0);
 		tf.width = (Text.wordwrapwidth > 0)?Text.wordwrapwidth:tf.textBounds.width;
+		tf.height = tf.textBounds.height;
 	}
 	
 	public var width(get, never):Float;
@@ -164,7 +166,7 @@ class Text {
 	  textalign = a;
 	}
 	
-	public static function rotation(a:Float, xpivot:Int = -15000, ypivot:Int = -15000) {
+	public static function rotation(a:Float, xpivot:Int = -10000, ypivot:Int = -10000) {
 	  textrotate = a;
 		textrotatexpivot = xpivot;
 		textrotateypivot = ypivot;
@@ -197,7 +199,7 @@ class Text {
 	}
 	
 	public static function width(text:String):Float {
-		typeface[currentindex].updatewidth();
+		typeface[currentindex].updatebounds();
 		
 		typeface[currentindex].tf.text = text;
 		return typeface[currentindex].width;
@@ -205,7 +207,7 @@ class Text {
 	
 	public static function height(?text:String):Float {
 		if (text == null) text = "?";
-		typeface[currentindex].updatewidth();
+		typeface[currentindex].updatebounds();
 		
 		typeface[currentindex].tf.text = text;
 		return typeface[currentindex].height;
@@ -266,6 +268,23 @@ class Text {
 		return x;
 	}
 	
+	private static function aligntexty(t:String, y:Float):Float {
+		if (y <= -5000) {
+			t1 = y - CENTER;
+			t2 = y - TOP;
+			t3 = y - BOTTOM;
+			if (t1 == 0 || (Math.abs(t1) < Math.abs(t2) && Math.abs(t1) < Math.abs(t3))) {
+				return t1 + Math.floor(height(t) / 2);
+			}else if (t2 == 0 || ((Math.abs(t2) < Math.abs(t1) && Math.abs(t2) < Math.abs(t3)))) {
+				return t2;
+			}else {
+				return t3 + height(t);
+			}
+		}
+		
+		return y;
+	}
+	
 	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
 		if (text == "") return;
 		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endmeshbatch();
@@ -283,7 +302,7 @@ class Text {
 		if (textalign == LEFT) typeface[currentindex].tf.format.horizontalAlign = Align.LEFT;
 		if (textalign == CENTER) typeface[currentindex].tf.format.horizontalAlign = Align.CENTER;
 		if (textalign == RIGHT)	typeface[currentindex].tf.format.horizontalAlign = Align.RIGHT;
-		typeface[currentindex].updatewidth();
+		typeface[currentindex].updatebounds();
 		
 		x = alignx(x); y = aligny(y);
 		x -= aligntextx(text, textalign);
@@ -292,7 +311,7 @@ class Text {
 		
 		if (textrotate != 0) {
 			if (textrotatexpivot != 0.0) tempxpivot = aligntextx(text, textrotatexpivot);
-			//if (textrotateypivot != 0.0) tempypivot = aligntexty(text, textrotateypivot);
+			if (textrotateypivot != 0.0) tempypivot = aligntexty(text, textrotateypivot);
 			fontmatrix.translate( -tempxpivot, -tempypivot);
 			fontmatrix.rotate((textrotate * 3.1415) / 180);
 			fontmatrix.translate( tempxpivot, tempypivot);
