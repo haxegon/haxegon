@@ -32,14 +32,7 @@ class Fontclass {
 		newtf.format.horizontalAlign = Align.LEFT;
 		newtf.format.verticalAlign = Align.TOP;
 		
-		minheight = newtf.textBounds.height;
-		
 		return newtf;
-	}
-	
-	private function heightoffset():Float{
-		if (tf.height < minheight) return minheight - tf.height;
-		return 0;
 	}
 	
 	private function reset() {
@@ -81,8 +74,6 @@ class Fontclass {
 	public var name:String;
 	public var type:String;
 	public var size:Float;
-	
-	private var minheight:Float;
 }
 
 @:access(haxegon.Gfx)
@@ -307,7 +298,7 @@ class Text {
 			fontmatrix.translate( tempxpivot, tempypivot);
 		}
 		
-		fontmatrix.translate(x, y + typeface[currentindex].heightoffset());
+		fontmatrix.translate(x, y);
 		if (typeface[currentindex].type == "ttf") {
 			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
 		}else {
@@ -444,7 +435,12 @@ class Text {
 		}
 		
 		if(flash.Lib.getTimer() % 400 > 200 && (inputmaxlength == 0)?true:(Input.keybuffer.length < inputmaxlength)){
-			Text.display(x, y, Input.keybuffer + "_", col, alpha);
+			Text.display(x, y, Input.keybuffer, col, alpha);
+			var oldalign:Int = textalign;
+			align(LEFT);
+			var underscoreoffset:Float = alignx(x) - aligntextx(Input.keybuffer, oldalign);
+			Text.display(underscoreoffset + width(Input.keybuffer), y, "_", col, alpha);
+			align(oldalign);
 		}else{
 			Text.display(x, y, Input.keybuffer, col, alpha);
 		}
