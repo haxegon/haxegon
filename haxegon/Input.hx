@@ -384,7 +384,7 @@ class Input {
 	public static function getchar():String {
 		if (lastcharcode == -1) return "";
 		return String.fromCharCode(lastcharcode);
-	}
+	}	
 	
 	private static function handlekeyup(event:KeyboardEvent) {
 		keycode = event.keyCode;
@@ -598,6 +598,62 @@ class Input {
 			case Key.ANY: return "Any Key";
 		}
 		return "";
+	}
+	
+	public static function getkeyfromcharacter(char:String):Key{
+		char = S.left(char, 1);
+		
+		switch(char){
+			case "A", "a": return Key.A;
+			case "B", "b": return Key.B;
+			case "C", "c": return Key.C;
+			case "D", "d": return Key.D;
+			case "E", "e": return Key.E;
+			case "F", "f": return Key.F;
+			case "G", "g": return Key.G;
+			case "H", "h": return Key.H;
+			case "I", "i": return Key.I;
+			case "J", "j": return Key.J;
+			case "K", "k": return Key.K;
+			case "L", "l": return Key.L;
+			case "M", "m": return Key.M;
+			case "N", "n": return Key.N;
+			case "O", "o": return Key.O;
+			case "P", "p": return Key.P;
+			case "Q", "q": return Key.Q;
+			case "R", "r": return Key.R;
+			case "S", "s": return Key.S;
+			case "T", "t": return Key.T;
+			case "U", "u": return Key.U;
+			case "V", "v": return Key.V;
+			case "W", "w": return Key.W;
+			case "X", "x": return Key.X;
+			case "Y", "y": return Key.Y;
+			case "Z", "z": return Key.Z;
+			case "1": return Key.ONE;
+			case "2": return Key.TWO;
+			case "3": return Key.THREE;
+			case "4": return Key.FOUR;
+			case "5": return Key.FIVE;
+			case "6": return Key.SIX;
+			case "7": return Key.SEVEN;
+			case "8": return Key.EIGHT;
+			case "9": return Key.NINE;
+			case "0": return Key.ZERO;
+			case ",": return Key.COMMA;
+			case ".": return Key.PERIOD;
+			case "-": return Key.MINUS;
+			case "+": return Key.PLUS;
+			case "/": return Key.SLASH;
+			case "\\": return Key.BACKSLASH;
+			case "[": return Key.LBRACKET;
+			case "]": return Key.RBRACKET;
+			case ";": return Key.SEMICOLON;
+			case "'": return Key.QUOTE;
+		}
+		
+		trace("Warning: Cannot find a Key to correspond to \"" + char + "\"");
+		return null;
 	}
 	
 	private static var keymap:Map<Key, Int> = new Map<Key, Int>();
