@@ -51,8 +51,7 @@ class Fontclass {
 		tf.height = Gfx.screenheight;
 		
 		tf.wordWrap = (Text.wordwrapwidth > 0);
-		tf.width = (Text.wordwrapwidth > 0)?Text.wordwrapwidth:tf.textBounds.width;
-		tf.height = tf.textBounds.height;
+		tf.width = (Text.wordwrapwidth > 0)?Text.wordwrapwidth:Gfx.screenwidth;
 	}
 	
 	public var width(get, never):Float;
@@ -299,9 +298,6 @@ class Text {
 		typeface[currentindex].tf.format.color = color;
 		typeface[currentindex].tf.text = text;
 		
-		if (textalign == LEFT) typeface[currentindex].tf.format.horizontalAlign = Align.LEFT;
-		if (textalign == CENTER) typeface[currentindex].tf.format.horizontalAlign = Align.CENTER;
-		if (textalign == RIGHT)	typeface[currentindex].tf.format.horizontalAlign = Align.RIGHT;
 		typeface[currentindex].updatebounds();
 		
 		x = alignx(x); y = aligny(y);
