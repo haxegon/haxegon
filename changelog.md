@@ -1,3 +1,103 @@
+
+0.11.0 (2018-01-16)
+------------------
+### New features
+* This is the biggest update to Haxegon in more than a year! This update will probably break compatibility with your older haxegon projects. I recommend starting over with a new <a href="https://github.com/TerryCavanagh/haxegon/raw/master/blankproject.zip">[blankproject.zip]</a> folder, and transferring your assets and source code across. The main things to watch out for are the new data/ folder structure, and changes to Music/Sound.
+* Haxegon has been updated to work with OpenFL 7.0 and Starling 2.0.
+* The project structure has changed. There is a new `project.xml` file for haxegon projects, and a `data/` folder with a new, flatter, simpler layout. Grab the new <a href="https://github.com/TerryCavanagh/haxegon/raw/master/blankproject.zip">[blankproject.zip]</a> file to get started. The data folder inside contains a guide for adding assets to your haxegon project.
+* `Gfx.resizescreen(width, height)` has had an upgrade, and is now a lot more flexible. The following settings are now possible:
+``` haxe
+  //Create a 640x360 pixel screen, which is streched and letterboxed to the current window.
+  Gfx.resizescreen(640, 360);
+  
+  //Create a screen which MATCHES the current window size. When the window size changes,
+  //update Gfx.screenwidth and Gfx.screenheight to the new values.
+  Gfx.resizescreen(0, 0);
+  
+  //Create a dynamic screen of height 360, but with a floating width that matches the scale
+  //of the current window and updates Gfx.screenwidth to match:
+  Gfx.resizescreen(0, 360);
+  
+  //Create a dynamic screen of width 640, but with a floating height that matches the scale
+  //of the current window and updates Gfx.screenheight to match:
+  Gfx.resizescreen(640, 0);
+```
+* Setting `Gfx.keeppixelratio` to **true** tells haxegon to keep a 1:1 pixel ratio when stretching the screen to fit a window, even if this creates black bars on all sides. Possibly good for very low resolution games!
+* `Text.input()` is now a little simplier:
+``` haxe
+  if(Text.input(x, y)){
+    trace(Text.inputresult);
+  }
+```
+* Added support for **.wav** files.
+* There's a brand new music engine in Haxegon rewritten from scratch. It's now possible to crossfade music, layer multiple looping sounds, control the panning of each sound, as well as lots of other cool complex stuff that wasn't possible before.
+``` haxe
+  //Play an explosion sound effect.
+  Sound.play("explosion");
+  
+  //Stop all sound effects:
+  Sound.stop();
+  
+  //Stop only the "explosion" sound effects, and fade them out over 0.2 seconds:
+  Sound.stop("explosion", 0.2);
+  
+  //Play the "backgroundtheme".
+  Music.play("backgroundtheme");
+  
+  //Play the "backgroundtheme", but fade in over 3 seconds.
+  Music.play("backgroundtheme", 0, 3.0);
+  
+  //Stop the music, fading out over 3 seconds.
+  Music.stop(3);
+  
+  //Set the position of the current song to 15 and a half seconds in:
+  Music.currentposition = 15.5;
+```
+* Replaced `Data.blank2darray(w, h)` with `Data.create2darray(w, h, defaultvalue)`, and made the function work correctly for all types - Ints, Strings, Bools, custom classes, whatever.
+* Added `Scene.restart(Myscene)`, which discards and reloads a named scene.
+
+### Bug fixes/Tweaks
+* The default window size has been changed to a **720p** friendly **1280x720**.
+* On native platforms, on dual Nvidia/Intel devices, Haxegon will now use your Nvidia card instead of your integrated intel one. 
+* Removed `Core` extension functions. They still exist, but now require `@:access(haxegon.Core)` at the start of your class to discourage unnecessary use.
+* Haxegon now works correctly on high dpi devices.
+* `Filter.blur` is now a **Float** instead of a **Bool**, and supports different degrees of bluriness.
+* Speed improvements to `Gfx.getpixel()`.
+* Re-added `Text.setfont(font, size)` to allow you to change font and size at the same time.
+* Right click context menu is disabled in HTML5.
+* Added an `Input.getkeyfromcharacter()` function as a reverse of `Input.getchar()`.
+* `Text.typingsound` lets you associate a sound effect with typing.
+* Fixed alignment on text rotations.
+* Lots and lots of other long running tiny bugs fixed.
+
+0.10.0 (2017-08-26)
+------------------
+### New features
+* This is mostly just a compatibility update for OpenFL 6.0. Haxegon now works with the latest versions of OpenFL and Lime.
+* Added support for `Key.ANY`.  (Thanks to @nachoverdon for the suggestion!):
+``` haxe
+  if(Input.pressed(Key.ANY)) // True if ANY key is being pressed right now
+  if(Input.justpressed(Key.ANY)) // True if ANY key has just been pressed
+```
+* Changed `Gfx.imagealpha` and `Gfx.imagecolor` to variables instead of functions. Also added three new shortcut functions to reset image drawing settings - `Gfx.resetalpha()`, `Gfx.resetcolor()` and `Gfx.reset()`:
+``` haxe
+  Gfx.imagealpha = 0.5;
+  Gfx.imagecolor = Col.GREEN;
+  Gfx.drawimage(x, y, "someimage");
+  
+  Gfx.resetalpha(); //Same as calling Gfx.imagealpha = 1
+  Gfx.resetcolor(); //Same as calling Gfx.imagecolor = Col.WHITE
+  Gfx.reset();      //Resets colour, alpha, rotation and scale
+```
+* Added an optional alpha parameter to `Text.display()`. (Thanks to @nachoverdon for the suggestion!)
+``` haxe
+  Text.display(x, y, "spooky see through text", Col.WHITE, 0.5);
+```
+
+### Bug fixes/Tweaks
+* Removed deprecated `startfullscreen` setting from blankproject.zip.
+* Documentation updates.
+
 0.9.1 (2017-07-16)
 ------------------
 ### Bug fixes/Tweaks
