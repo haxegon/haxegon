@@ -333,7 +333,7 @@ class Text {
 		setfont("default", 1);
 	}
 	
-	public function setfont(fontname:String, size:Float = 1) {
+	public static function setfont(fontname:String, size:Float = 1) {
 		if (!fontfileindex.exists(fontname)) {
 			addfont(fontname, size);
 		}
