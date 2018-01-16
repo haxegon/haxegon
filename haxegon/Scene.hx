@@ -75,7 +75,7 @@ class Scene {
 		// method didn't exist; complain if necessary
 	}
 	
-	public static function findscene<T>(findscene:Class<T>):Int {
+	private static function findscene<T>(findscene:Class<T>):Int {
 		for (i in 0 ... scenelist.length) {
 			if (findscene == Type.getClass(scenelist[i])) {
 				return i;

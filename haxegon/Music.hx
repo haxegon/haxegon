@@ -54,7 +54,7 @@ class Music{
 	
 	public static var crossfade:Float = 0;
 	public static var currentsong(get, set):String;
-	public static var _currentsong:String;
+	private static var _currentsong:String;
 	static function get_currentsong():String {
 		if (Sound.isplaying(_currentsong)) return _currentsong;
 		
