@@ -3,13 +3,10 @@ package haxegon;
 import haxe.Constraints.Function;
 import haxe.Timer;
 import lime.ui.Window;
-import openfl.Lib;
-import openfl.geom.Matrix;
 import starling.events.*;
 import starling.display.*;
 import starling.core.Starling;
 import starling.core.StatsDisplay;
-import openfl.Assets;
 
 @:access(Main)
 @:access(haxegon.Data)
@@ -61,8 +58,8 @@ class Core extends Sprite {
 		
 		//Before we call Scene.init(), make sure we have some init values for our screen
 		//in the event that we don't create one in Main.new():
-		Gfx.screenwidth = Std.int(flash.Lib.current.stage.stageWidth);
-		Gfx.screenheight = Std.int(flash.Lib.current.stage.stageHeight);
+		Gfx.screenwidth = Std.int(Std.parseInt(WINDOW_WIDTH));
+		Gfx.screenheight = Std.int(Std.parseInt(WINDOW_HEIGHT));
 		Gfx.screenwidthmid = Std.int(Gfx.screenwidth / 2); Gfx.screenheightmid = Std.int(Gfx.screenheight / 2);
 		
 		//Some stuff mysteriouly doesn't work correctly unless we wait for a millisecond first!
@@ -93,7 +90,7 @@ class Core extends Sprite {
 		
 		// start game loop
 		_rate3 = Math.round(3000 / TARGETFRAMERATE);
-		_target3 = 3 * Lib.getTimer() + _rate3;
+		_target3 = 3 * flash.Lib.getTimer() + _rate3;
 		
 		starttime = flash.Lib.getTimer();
     stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -107,8 +104,6 @@ class Core extends Sprite {
 		  return;	
 		}
 		
-		var updatecount:Int = 0;
-		
 		// Ready the time!
 		// "_time3", "_target3" and "_rate3" all work in thirds of a millisecond. This is because
 		// frame times use even thirds (30fps = 33 1/3 ms, 60fps = 16 2/3ms) and we want to track
@@ -116,7 +111,7 @@ class Core extends Sprite {
 		// after an hour or so).
 		//
 		// Keep this in mind when working with these values. Divide them by 3 to get milliseconds.
-		var _time3:Int = 3*Lib.getTimer();
+		var _time3:Int = 3 * flash.Lib.getTimer();
 		
 		// Frames too fast? If we got here too soon, quit now and come back next time.
 		// This uses a 0.5 frame offset because we want the hard boundaries that decide frameskip/
@@ -170,7 +165,7 @@ class Core extends Sprite {
 	private static var currentupdateindex:Int;
 	private static var currentupdatecount:Int;
 	private function doupdate(updateindex:Int, updatecount:Int) {
-		Mouse.update(Gfx.getscreenx(Lib.current.mouseX), Gfx.getscreeny(Lib.current.mouseY), updateindex == 0);
+		Mouse.update(Gfx.getscreenx(flash.Lib.current.mouseX), Gfx.getscreeny(flash.Lib.current.mouseY), updateindex == 0);
 		Input.update();
 		
 		if (!Scene.hasseperaterenderfunction) {
