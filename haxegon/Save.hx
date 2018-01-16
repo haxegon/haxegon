@@ -1,7 +1,6 @@
 package haxegon;
 
 import openfl.net.SharedObject;
-import openfl.net.SharedObjectFlushStatus;
 
 class Save {
 	public static function savevalue(key:String, value:Dynamic) {

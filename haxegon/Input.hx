@@ -1,11 +1,7 @@
 package haxegon;
 
-import starling.display.*;
 import starling.events.*;
-import openfl.events.TextEvent;
 import openfl.ui.Keyboard;
-import openfl.external.ExternalInterface;
-import starling.core.Starling;
 
 #if flash
 	import flash.desktop.Clipboard;
@@ -424,8 +420,7 @@ class Input {
 		
 		lastcharcode = -1;
 		
-		//BASIC STORAGE & TRACKING			
-		var i:Int = 0;
+		//BASIC STORAGE & TRACKING	
 		for(i in 0...numletters){
 			current.push(Keystate.notpressed);
 			last.push(Keystate.notpressed);

@@ -2,13 +2,9 @@ package haxegon;
 
 import flash.display.StageDisplayState;
 import flash.display.BitmapData;
-import haxegon.Gfx.HaxegonImage;
 import openfl.geom.Matrix;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import starling.display.*;
-import starling.geom.*;
-import starling.core.StatsDisplay;
 import starling.utils.AssetManager;
 import starling.textures.*;
 import openfl.Assets;
@@ -199,10 +195,8 @@ class Gfx {
 			starlingassets.addTexture(imagename, tex);
 		}
 		
-		//
 		var spritesheet:Texture = starlingassets.getTexture(imagename);
 		
-		var tiles_rect:Rectangle = new Rectangle(0, 0, width, height);
 		tiles.push(new HaxegonTileset(imagename, width, height));
 		tilesetindex.set(imagename, tiles.length - 1);
 		currenttileset = tiles.length - 1;
@@ -1214,8 +1208,6 @@ class Gfx {
     starstage.stageHeight = screenheight;
 		
 		// set rectangle dimensions for viewPort:
-		var stretchscalex:Float;
-		var stretchscaley:Float;
 		var stretchscalex:Float = Std.int(windowwidth) / screenwidth;
 		var stretchscaley:Float = Std.int(windowheight) / screenheight;
 		var stretchscale:Float = Math.min(stretchscalex, stretchscaley);

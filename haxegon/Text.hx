@@ -1,7 +1,6 @@
 package haxegon;
 
 import haxegon.embeddedassets.DefaultFont;
-import openfl.Assets;
 import openfl.geom.Matrix;
 import openfl.text.Font;
 import starling.display.*;
