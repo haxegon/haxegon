@@ -86,6 +86,8 @@ class Core extends Sprite {
 			}
 		}
 		
+		Gfx.endframe();
+		
 		Filter.updatefilters();
 		
 		// start game loop
