@@ -1,9 +1,18 @@
+0.11.1 (2018-01-17)
+------------------
+
+### Bug fixes/Tweaks
+* This is a minor bugfix release for yesterday's big update.
+* Updated to work correctly with the newest versions of OpenFL and Lime (OpenFL 7.0 and Lime 6.0.1).
+* Fixed Debug.log() not displaying if you don't have a render function.
+* Fixed a crash bug if you changed drawing surfaces in Main.init() AFTER resizing the screen.
+* Fixed a bug where the wrong screensize was getting reported in Main.init() on HTML5. (thanks, @TheSpydog)
 
 0.11.0 (2018-01-16)
 ------------------
 ### New features
 * This is the biggest update to Haxegon in more than a year! This update will probably break compatibility with your older haxegon projects. I recommend starting over with a new <a href="https://github.com/TerryCavanagh/haxegon/raw/master/blankproject.zip">[blankproject.zip]</a> folder, and transferring your assets and source code across. The main things to watch out for are the new data/ folder structure, and changes to Music/Sound.
-* Haxegon has been updated to work with OpenFL 7.0 and Starling 2.0.
+* Haxegon has been updated to work with ~~OpenFL 7.0~~ and Starling 2.0.
 * The project structure has changed. There is a new `project.xml` file for haxegon projects, and a `data/` folder with a new, flatter, simpler layout. Grab the new <a href="https://github.com/TerryCavanagh/haxegon/raw/master/blankproject.zip">[blankproject.zip]</a> file to get started. The data folder inside contains a guide for adding assets to your haxegon project.
 * `Gfx.resizescreen(width, height)` has had an upgrade, and is now a lot more flexible. The following settings are now possible:
 ``` haxe
