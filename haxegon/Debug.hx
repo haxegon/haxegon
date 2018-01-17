@@ -123,8 +123,11 @@ class Debug {
 	}
 	
 	private static function render() {
-		if (showlogwindow && enabledisplay) {
-			var olddrawto:RenderTexture = Gfx.drawto;
+		if (showlogwindow) {
+			if (Gfx.drawto != Gfx.backbuffer){
+				//To do: support drawing debug window if we end a frame not drawing to the screen
+				return;
+			}
 			var oldfontsize:Float = Text.size;
 			var oldfont:String = Text.font;
 			var oldalign:Int = Text.textalign;
@@ -135,22 +138,16 @@ class Debug {
 			Text.font = "default"; Text.size = gui.scale;
 			//Draw to our special window
 			Gfx.endmeshbatch();
-			if (Gfx.drawto != null) Gfx.drawto.bundleunlock();
 			
-			Gfx.drawtoscreen();
-		  
 			drawwindow();
 			
-			//Restore the old texture
-			Gfx.drawto = olddrawto;
-			Gfx.drawto.bundlelock();
+			//Restore the old settings
 			Text.font = oldfont; Text.size = oldfontsize;
 			Text.textalign = oldalign;
 		}
 	}
 	
 	private static var showlogwindow:Bool;
-	private static var enabledisplay:Bool = false;
 	private static var history:Array<String> = [];
 	private static var posinfo:Array<haxe.PosInfos> = [];
 	private static var repeatcount:Array<Int> = [];

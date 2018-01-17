@@ -160,8 +160,6 @@ class Core extends Sprite {
 		
 		// render loop
 		dorender();
-		
-		Debug.enabledisplay = true;
 	}
 
 	private static var currentupdateindex:Int;
@@ -189,6 +187,7 @@ class Core extends Sprite {
 		}else {
 			Debug.update();
 		  Scene.update();	
+			Debug.render();
 			
 			if (hasextended_afterupdatebeforerender) {
 				currentupdateindex = updateindex;
