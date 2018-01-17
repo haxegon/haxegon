@@ -298,7 +298,7 @@ class Core extends Sprite {
 			Debug.log("ERROR: Core.window is not available in Flash.");
 			return null;
 		#else
-		return Lib.application.window;
+		return flash.Lib.application.window;
 		#end
 	}
 

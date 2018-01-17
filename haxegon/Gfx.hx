@@ -1388,6 +1388,8 @@ class Gfx {
 			screen.scale = 1;
 			screen.textureSmoothing = "none";
 			starstage.addChildAt(screen, 0);
+			
+			drawto.bundlelock();
 		}
 		
 		gfxinit = true;
