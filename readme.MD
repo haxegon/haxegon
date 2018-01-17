@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/TerryCavanagh/haxegon.svg?branch=master)](https://travis-ci.org/TerryCavanagh/haxegon)
 
-# Haxegon (version 0.11.0 (2018-01-16))
+# Haxegon (version 0.11.1 (2018-01-17))
 
 Haxegon is a tiny haxe programming library aimed at beginners. It's currently in alpha, so things are changing fast and stuff might be broken. 
 
@@ -20,28 +20,22 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 
 # Last Updates
 
+0.11.1 (2018-01-17)
+------------------
+
+### Bug fixes/Tweaks
+* This is a minor bugfix release for yesterday's big update.
+* Updated to work correctly with the newest versions of OpenFL and Lime (OpenFL 7.0 and Lime 6.0.1).
+* Fixed Debug.log() not displaying if you don't have a render function.
+* Fixed a crash bug if you changed drawing surfaces in Main.init() AFTER resizing the screen.
+* Fixed a bug where the wrong screensize was getting reported in Main.init() on HTML5. (thanks, @TheSpydog)
+
 0.11.0 (2018-01-16)
 ------------------
 
-Hey, looks like there are still some open issues with OpenFL 7.0. I'm going to figure them out and make a 0.11.1 update in a few days. In the meantime, everything still works with the previous versions of OpenFL 6.5.3. To use those instead, type the following in your command line:
-
-```
-haxelib install openfl 6.5.3
-haxelib install lime 5.9.1
-haxelib set openfl 6.5.3
-haxelib set lime 5.9.1
-haxelib run openfl setup
-```
-
-To go back to using the up to date versions later, just type:
-```
-haxelib install openfl
-haxelib install lime
-```
-
 ### New features
 * This is the biggest update to Haxegon in more than a year! This update will probably break compatibility with your older haxegon projects. I recommend starting over with a new <a href="https://github.com/TerryCavanagh/haxegon/raw/master/blankproject.zip">[blankproject.zip]</a> folder, and transferring your assets and source code across. The main things to watch out for are the new data/ folder structure, and changes to Music/Sound.
-* Haxegon has been updated to work with ~~OpenFL 7.0~~ and Starling 2.0. (Sorry, I was wrong about OpenFL 7.0. See the note above, and check back in a few days!)
+* Haxegon has been updated to work with ~~OpenFL 7.0~~ and Starling 2.0.
 * The project structure has changed. There is a new `project.xml` file for haxegon projects, and a `data/` folder with a new, flatter, simpler layout. Grab the new <a href="https://github.com/TerryCavanagh/haxegon/raw/master/blankproject.zip">[blankproject.zip]</a> file to get started. The data folder inside contains a guide for adding assets to your haxegon project.
 * `Gfx.resizescreen(width, height)` has had an upgrade, and is now a lot more flexible. The following settings are now possible:
 ``` haxe
