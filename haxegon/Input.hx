@@ -358,13 +358,13 @@ class Input {
 		
 		if (keycode == 8) {
 			//Backspace
-			if (keybuffer.length > 0) {
-				keybuffer = keybuffer.substr(0, keybuffer.length - 1);
+			if (Text.inputbuffer.length > 0) {
+				Text.inputbuffer = Text.inputbuffer.substr(0, Text.inputbuffer.length - 1);
 			}				
 		} else {
 			// Ignore all text input that's not valid ANSI text
 			if (charcode >= 32 && charcode <= 126) {
-				keybuffer += String.fromCharCode(charcode);
+				Text.inputbuffer += String.fromCharCode(charcode);
 				if (Sound.typingsound != "") Sound.play(Sound.typingsound);
 			}
 		}
@@ -671,7 +671,6 @@ class Input {
 	private static var charcode:Int;
 	private static var lastcharcode:Int;
 	
-	private static var keybuffer:String = "";
 	private static var starstage:starling.display.Stage;
 	private static var flashstage:openfl.display.Stage;
 }

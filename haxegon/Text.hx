@@ -439,27 +439,27 @@ class Text {
 	public static function input(x:Float, y:Float, col:Int = 0xFFFFFF, alpha:Float = 1.0):Bool{
 		if (!inputfocus){
 			inputfocus = true;
-			Input.keybuffer = "";
+			inputbuffer = "";
 		}
 		
 		if (inputmaxlength > 0){
-			if (Input.keybuffer.length > inputmaxlength){
-				Input.keybuffer = S.left(Input.keybuffer, inputmaxlength);
+			if (inputbuffer.length > inputmaxlength){
+				inputbuffer = S.left(inputbuffer, inputmaxlength);
 			}
 		}
 		
-		if(flash.Lib.getTimer() % 400 > 200 && (inputmaxlength == 0)?true:(Input.keybuffer.length < inputmaxlength)){
-			Text.display(x, y, Input.keybuffer, col, alpha);
+		if(flash.Lib.getTimer() % 400 > 200 && (inputmaxlength == 0)?true:(inputbuffer.length < inputmaxlength)){
+			Text.display(x, y, inputbuffer, col, alpha);
 			var oldalign:Int = textalign;
 			align(LEFT);
-			var underscoreoffset:Float = alignx(x) - aligntextx(Input.keybuffer, oldalign);
-			Text.display(underscoreoffset + width(Input.keybuffer), y, "_", col, alpha);
+			var underscoreoffset:Float = alignx(x) - aligntextx(inputbuffer, oldalign);
+			Text.display(underscoreoffset + width(inputbuffer), y, "_", col, alpha);
 			align(oldalign);
 		}else{
-			Text.display(x, y, Input.keybuffer, col, alpha);
+			Text.display(x, y, inputbuffer, col, alpha);
 		}
 		
-		if (Input.justpressed(Key.ENTER) && Input.keybuffer != "") {
+		if (Input.justpressed(Key.ENTER) && inputbuffer != "") {
 			return true;
 		}
 		return false;
@@ -468,11 +468,14 @@ class Text {
 	public static var inputresult(get, null):String;
 	
 	static function get_inputresult():String {
-		var returnval:String = (inputmaxlength == 0)?Input.keybuffer:S.left(Input.keybuffer, inputmaxlength);
-		Input.keybuffer = "";
+		var returnval:String = (inputmaxlength == 0)?inputbuffer:S.left(inputbuffer, inputmaxlength);
+		inputbuffer = "";
 		inputfocus = false;
 		return returnval;
 	}
+	
+	
+	public static var inputbuffer:String = "";
 	
 	private static var fontfile:Array<Fontfile> = new Array<Fontfile>();
 	private static var fontfileindex:Map<String,Int> = new Map<String,Int>();
