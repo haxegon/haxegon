@@ -16,11 +16,90 @@ class Data {
 		if (Assets.exists("data/text/" + jsonfile + ".json")) {
 			jfile = Json.parse(Assets.getText("data/text/" + jsonfile + ".json"));
 		}else {
-		  Debug.log("ERROR: In loadtext, cannot find \"data/text/" + jsonfile + ".json\"."); 
+		  Debug.log("ERROR: In loadjson, cannot find \"data/text/" + jsonfile + ".json\"."); 
 		  return null;
 		}
 		
+		//Add helper "_fields" array to every node of the json file
+		populatefields(jfile);
+		
 		return jfile;
+	}
+	
+	private static function populatefields(j:Dynamic){
+		if (!Std.is(j, String)){
+			if (!Reflect.hasField(j, "_fields")){
+				j._fields = Reflect.fields(j);
+				for (i in 0 ... j._fields.length){
+					populatefields(Reflect.field(j, j._fields[i]));
+				}
+			}
+		}
+	}
+	
+	private static function xmltojson(x:Xml):Dynamic{
+		var jsonbit:Dynamic = {};
+		var hasattributes:Bool = false;
+		
+		if (x.nodeType == Xml.Element){
+			var attcount:Int = 0;
+			for (attribute in x.attributes()){
+				attcount++;
+				Reflect.setField(jsonbit, attribute, x.get(attribute));
+			}
+			if (attcount > 0) hasattributes = true;
+		}else if (x.nodeType == Xml.Comment){
+			jsonbit = x.nodeValue;
+		}
+		
+		for (xchild in x.iterator()){
+			if (xchild.nodeType == Xml.Element){
+				if (Reflect.hasField(jsonbit, xchild.nodeName)){
+					//This is an array! Push elements onto it
+					var currentnode:Dynamic = Reflect.field(jsonbit, xchild.nodeName);
+					if (Std.is(currentnode, Array)){
+						currentnode.push(xmltojson(xchild));
+						Reflect.setField(jsonbit, xchild.nodeName, currentnode);
+					}else{
+						var nodearray:Array<Dynamic> = [];
+						nodearray.push(currentnode);
+						nodearray.push(xmltojson(xchild));
+						Reflect.setField(jsonbit, xchild.nodeName, nodearray);
+					}
+				}else{
+					Reflect.setField(jsonbit, xchild.nodeName, xmltojson(xchild));
+				}
+			}else if (xchild.nodeType == Xml.Comment || xchild.nodeType == Xml.PCData){
+				var textval:String = xchild.nodeValue;
+				textval = S.replacechar(textval, "\r", "");
+				textval = S.replacechar(textval, "\n", "");
+				textval = S.trimspaces(textval);
+				if (textval != ""){
+					if(hasattributes){
+						jsonbit._text = textval;
+					}else{
+						jsonbit = textval;
+					}
+				}
+			}
+		}
+		
+		return jsonbit;
+	}
+	
+	public static function loadxml(xmlfile:String):Dynamic {
+		var xfile:Dynamic = {};
+		if (Assets.exists("data/text/" + xmlfile + ".xml")) {
+			xfile = xmltojson(Xml.parse(Assets.getText("data/text/" + xmlfile + ".xml")));
+		}else {
+		  Debug.log("ERROR: In loadxml, cannot find \"data/text/" + xmlfile + ".xml\".");
+		  return null;
+		}
+		
+		//Add helper "_fields" array to every node of the xml file
+		populatefields(xfile);
+		
+		return xfile;
 	}
 	
 	public static function loadtext(textfile:String):Array<String> {
