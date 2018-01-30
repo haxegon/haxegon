@@ -4,10 +4,24 @@ import openfl.display.BitmapData;
 import openfl.media.Sound;
 import openfl.Assets;
 import openfl.text.Font;
+import haxe.Json;
 
 class Data {
 	public static var width:Int = 0;
 	public static var height:Int = 0;
+	
+	public static function loadjson(jsonfile:String):Dynamic {
+		jsonfile = jsonfile.toLowerCase();
+		var jfile:Dynamic;
+		if (Assets.exists("data/text/" + jsonfile + ".json")) {
+			jfile = Json.parse(Assets.getText("data/text/" + jsonfile + ".json"));
+		}else {
+		  Debug.log("ERROR: In loadtext, cannot find \"data/text/" + jsonfile + ".json\"."); 
+		  return null;
+		}
+		
+		return jfile;
+	}
 	
 	public static function loadtext(textfile:String):Array<String> {
 		textfile = textfile.toLowerCase();
