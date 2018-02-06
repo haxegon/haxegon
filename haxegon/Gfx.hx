@@ -1010,7 +1010,7 @@ class Gfx {
 	private static function endmeshbatch() {
 		if (meshbatchcount > 0) {
 			drawto.draw(meshbatch);
-			
+				
 			meshbatch.clear();
 			meshbatchcount = 0;
 			drawstate = DRAWSTATE_NONE;
@@ -1417,7 +1417,7 @@ class Gfx {
 	
 	private static function startframe() {
 		drawstate = DRAWSTATE_NONE;
-		drawto.bundlelock();	
+		if(drawto != null) drawto.bundlelock();	
 		
 		meshbatch.clear();
 		meshbatchcount = 0;
