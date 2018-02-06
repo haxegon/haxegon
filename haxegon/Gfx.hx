@@ -1211,7 +1211,7 @@ class Gfx {
 		var stretchscalex:Float = Std.int(windowwidth) / screenwidth;
 		var stretchscaley:Float = Std.int(windowheight) / screenheight;
 		var stretchscale:Float = Math.min(stretchscalex, stretchscaley);
-		if (keeppixelratio)	stretchscale = Math.floor(stretchscale);
+		if (_keeppixelratio)	stretchscale = Math.floor(stretchscale);
 		
 		var viewPortRectangle:Rectangle = new Rectangle();
 		
@@ -1248,7 +1248,8 @@ class Gfx {
 	}
 	
 	/** Create a screen with a given width, height and scale. Also inits Text. */
-	public static function resizescreen(width:Float, height:Float) {
+	public static function resizescreen(width:Float, height:Float, keeppixelratio:Bool = false) {
+		_keeppixelratio = keeppixelratio;
 		if (width <= 0 && height <= 0){
 			width = Std.int(flash.Lib.current.stage.stageWidth);
 			height = Std.int(flash.Lib.current.stage.stageHeight);
@@ -1482,5 +1483,5 @@ class Gfx {
 	private static var perfectfit:Int = 0;
 	private static var dynamicwidth:Int = 0;
 	private static var dynamicheight:Int = 0;
-	public static var keeppixelratio:Bool = false;
+	private static var _keeppixelratio:Bool = false;
 }
