@@ -181,9 +181,9 @@ class Core extends Sprite {
 				execute_extendedafterupdatebeforerender();
 			}
 			
-			Gfx.endframe();
-			
 			execute_extendedendframe();
+			
+			Gfx.endframe();
 		}else {
 			Debug.update();
 		  Scene.update();	
