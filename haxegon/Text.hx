@@ -160,10 +160,6 @@ class Text {
 		inputmaxlength = 0;
 	}
 	
-	public static function align(a:Int) {
-	  textalign = a;
-	}
-	
 	public static function rotation(a:Float, xpivot:Int = -10000, ypivot:Int = -10000) {
 	  textrotate = a;
 		textrotatexpivot = xpivot;
@@ -300,7 +296,7 @@ class Text {
 		typeface[currentindex].updatebounds();
 		
 		x = alignx(x); y = aligny(y);
-		x -= aligntextx(text, textalign);
+		x -= aligntextx(text, align);
 		
 		fontmatrix.identity();
 		
@@ -450,11 +446,11 @@ class Text {
 		
 		if(flash.Lib.getTimer() % 400 > 200 && (inputmaxlength == 0)?true:(inputbuffer.length < inputmaxlength)){
 			Text.display(x, y, inputbuffer, col, alpha);
-			var oldalign:Int = textalign;
-			align(LEFT);
+			var oldalign:Int = align;
+			align = LEFT;
 			var underscoreoffset:Float = alignx(x) - aligntextx(inputbuffer, oldalign);
 			Text.display(underscoreoffset + width(inputbuffer), y, "_", col, alpha);
-			align(oldalign);
+			align = oldalign;
 		}else{
 			Text.display(x, y, inputbuffer, col, alpha);
 		}
@@ -497,7 +493,7 @@ class Text {
 	public static var BOTTOM:Int = -20000;
 	public static var CENTER:Int = -15000;
 	
-	private static var textalign:Int = -10000;
+	public static var align:Int = -10000;
 	private static var textrotate:Float = 0;
 	private static var textrotatexpivot:Float = 0;
 	private static var textrotateypivot:Float = 0;

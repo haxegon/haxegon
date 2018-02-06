@@ -112,10 +112,10 @@ class Debug {
 		for (j in 0 ... gui.height) {
 			var i:Int = j + gui.scrollpos;
 			if(i >= 0 && i < history.length){
-				Text.align(Text.LEFT);
+				Text.align = Text.LEFT;
 				Text.display(gui.scale * 2, (gui.scale * 2) + (j * (gui.scale * 10)), history[i], 0xcacaca);
 				if (repeatcount[i] > 1) {
-					Text.align(Text.RIGHT);
+					Text.align = Text.RIGHT;
 					Text.display(Std.int(Gfx.screenwidth - (gui.showscrollbar?(14 * gui.scale):(2 * gui.scale))), (j * (gui.scale * 10)), "x" + repeatcount[i], 0xffbaba);
 				}
 			}
@@ -130,7 +130,7 @@ class Debug {
 			}
 			var oldfontsize:Float = Text.size;
 			var oldfont:String = Text.font;
-			var oldalign:Int = Text.textalign;
+			var oldalign:Int = Text.align;
 			
 			//Figure out GUI scale before we draw anything
 			gui.scale = Math.floor(Gfx.screenheight / 300) + 1;
@@ -143,7 +143,7 @@ class Debug {
 			
 			//Restore the old settings
 			Text.font = oldfont; Text.size = oldfontsize;
-			Text.textalign = oldalign;
+			Text.align = oldalign;
 		}
 	}
 	
