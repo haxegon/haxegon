@@ -30,8 +30,12 @@ class Data {
 		if (!Std.is(j, String)){
 			if (!Reflect.hasField(j, "_fields")){
 				j._fields = Reflect.fields(j);
-				for (i in 0 ... j._fields.length){
-					populatefields(Reflect.field(j, j._fields[i]));
+				if (j._fields != null){
+					if(!Std.is(j._fields, String)){
+						for (i in 0 ... j._fields.length){
+							populatefields(Reflect.field(j, j._fields[i]));
+						}
+					}
 				}
 			}
 		}
