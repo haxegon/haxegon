@@ -1324,6 +1324,7 @@ class Gfx {
 	}
 	
 	private static function onresize(e:ResizeEvent) {
+		_onwindowresized = true;
 		if (perfectfit == 1){
 			resizescreen(0, dynamicheight);
 		}else if (perfectfit == 2){
@@ -1334,6 +1335,16 @@ class Gfx {
 			updategraphicsmode(e.width, e.height);
 		}
 	}
+	
+	public static function onwindowresized():Bool{
+		if (_onwindowresized){
+			_onwindowresized = false;
+			return true;
+		}
+		return false;
+	}
+	
+	private static var _onwindowresized:Bool = false;
 	
 	private static function loadpackedtextures() {
 		if(!gfxinit){
