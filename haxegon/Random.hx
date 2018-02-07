@@ -36,6 +36,41 @@ class Random{
 		
 		return arr;
 	}
+	
+	public static function weighted<T>(options:Array<T>, odds:Array<Int>):T{
+		//"weighted" is inspired by, and based on chance.js
+		//http://chancejs.com/#weighted
+		if (options.length != odds.length){
+			trace("Error: in Random.weighted(), both arrays should be the same size.");
+			trace("Returning a random option from the first array instead.");
+			return pick(options);
+		}
+		
+		var result:Int = 0;
+		
+		var totalodds:Int = 0;
+		for (i in 0 ... odds.length) totalodds += odds[i];
+		
+		var r:Int = int(0, totalodds);
+		
+		var lastid:Int = -1;
+		totalodds = 0;
+		for (i in 0 ... options.length) {
+			var current:Int = odds[i];
+			totalodds += current;
+			if (current > 0) {
+				if (r <= totalodds) {
+					result = i;
+					break;
+				}
+				lastid = i;
+			}
+			
+			if (i == (odds.length - 1)) result = lastid;
+		}
+		
+		return options[result];
+	}
 
 	/** Return a random string of a certain length.  You can optionally specify 
 	    which characters to use, otherwise the default is (a-zA-Z0-9) */
