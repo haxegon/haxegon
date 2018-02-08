@@ -99,7 +99,7 @@ class Scene {
 		return cast scenelist[currentscene];
 	}
 	
-	public static function get<T>(requiredscene:Class<T>):T {
+	private static function get<T>(requiredscene:Class<T>):T {
 		return cast scenelist[findscene(requiredscene)];
 	}
 	
