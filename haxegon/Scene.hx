@@ -22,7 +22,6 @@ class Scene {
 			}
 		}
 		
-		//YOU ARE HERE
 		if (sceneid == -1){
 			//Easy, the scene hasn't been run yet. Do nothing - it'll be init when it's created.
 		}else{
@@ -102,10 +101,6 @@ class Scene {
 	
 	public static function get<T>(requiredscene:Class<T>):T {
 		return cast scenelist[findscene(requiredscene)];
-	}
-	
-	public static function name<T>(requiredscene:Class<T>):String {
-		return Type.getClassName(Type.getClass(scenelist[findscene(requiredscene)]));
 	}
 	
 	private static function getcurrentsceneclass():Dynamic {
