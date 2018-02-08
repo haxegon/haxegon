@@ -333,9 +333,9 @@ class Gfx {
 	}		
 	
 	/** Loads an image into the game. */
-	public static function loadimage(imagename:String) {
+	public static function loadimage(imagename:String):Bool {
 		imagename = imagename.toLowerCase();
-		if (imageindex.exists(imagename)) return; //This is already loaded, so we're done!
+		if (imageindex.exists(imagename)) return true; //This is already loaded, so we're done!
 		
 		var tex:Texture;
 		if(Data.assetexists("data/graphics/" + imagename + ".png")){
@@ -344,7 +344,7 @@ class Gfx {
 			tex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/" + imagename + ".jpg"), false);
 		}else {
 			Debug.log("ERROR: In loadimage, cannot find \"data/graphics/" + imagename + ".png\" or \"data/graphics/" + imagename + ".jpg\"");
-			return;
+			return false;
 		}
 		starlingassets.addTexture(imagename, tex);
 		
@@ -355,8 +355,7 @@ class Gfx {
 		haxegonimage.fetchsize();
 		
 		images.push(haxegonimage);
-		
-		//loadimagefrompackedtexture(imagename, getassetpackedtexture(imagename));
+		return true;
 	}
 	
 	/** Creates a blank image, with the name "imagename", with given width and height. */
@@ -590,7 +589,7 @@ class Gfx {
 	 * */
 	public static function drawimage(x:Float, y:Float, imagename:String) {
 		if (!imageindex.exists(imagename)) {
-			loadimage(imagename);
+			if (!loadimage(imagename)) return;
 		}
 		
 		//This could definitely be improved later. See #118

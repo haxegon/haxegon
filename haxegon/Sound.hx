@@ -141,17 +141,17 @@ class HaxegonChannel{
 class HaxegonSound{
 	public function new(_s:openfl.media.Sound, _vol:Float){
 		asset = _s;
-		defaultvolume = _vol;
+		adjustedvolume = _vol;
 	}
 	
-	public var defaultvolume:Float;
+	public var adjustedvolume:Float;
 	public var asset:openfl.media.Sound;
 }
 
 @:access(haxegon.Data)
 @:access(haxegon.Music)
 class Sound{
-	public static function load(soundname:String, defaultvolume:Float = 1.0):Bool{
+	public static function load(soundname:String, adjustvolume:Float = 1.0):Bool{
 		soundname = soundname.toLowerCase();
 		
 		if (!soundindex.exists(soundname)){
@@ -186,7 +186,7 @@ class Sound{
 			#end
 			
 			if (soundasset != null){
-				soundfile.push(new HaxegonSound(soundasset, defaultvolume));
+				soundfile.push(new HaxegonSound(soundasset, adjustvolume));
 				soundindex.set(soundname, soundfile.length - 1); 
 			}
 		}
@@ -194,10 +194,20 @@ class Sound{
 		return true;
 	}
 	
-	public static function play(soundname:String, offsettime:Float = 0, fadeintime:Float = 0, loop:Bool = false, panning:Float = 0){
+	public static function offset(soundname:String, offsettime:Float = 0){
+		soundname = soundname.toLowerCase();
+		offsetindex.set(soundname, offsettime);
+	}
+	
+	public static function play(soundname:String, fadeintime:Float = 0, loop:Bool = false, panning:Float = 0){
 		soundname = soundname.toLowerCase();
 		if (!soundindex.exists(soundname)) {
 			if (!load(soundname)) return;
+		}
+		
+		var offsettime:Float = 0;
+		if (offsetindex.exists(soundname)){
+			offsettime = offsetindex.get(soundname);
 		}
 		
 		var freechannel:Int = -1;
@@ -210,12 +220,11 @@ class Sound{
 		
 		if (freechannel == -1){
 			var h:HaxegonChannel = new HaxegonChannel();
-			h.setto(soundname, offsettime, fadeintime, loop, soundfile[soundindex.get(soundname)].defaultvolume, panning);
+			h.setto(soundname, offsettime, fadeintime, loop, soundfile[soundindex.get(soundname)].adjustedvolume, panning);
 			channel.push(h);
 		}else{
-			channel[freechannel].setto(soundname, offsettime, fadeintime, loop, soundfile[soundindex.get(soundname)].defaultvolume, panning);
+			channel[freechannel].setto(soundname, offsettime, fadeintime, loop, soundfile[soundindex.get(soundname)].adjustedvolume, panning);
 		}
-		
 	}
 	
 	public static function stop(soundname:String = "", fadeout:Float = 0){
@@ -265,6 +274,7 @@ class Sound{
 		
 		soundfile = [];
 		soundindex = new Map<String, Int>();
+		offsetindex = new Map<String, Float>();
 		channel = [];
 	}
 	
@@ -288,4 +298,5 @@ class Sound{
 	private static var soundfile:Array<HaxegonSound>;
 	private static var channel:Array<HaxegonChannel>;
 	private static var soundindex:Map<String, Int>;
+	private static var offsetindex:Map<String, Float>;
 }
