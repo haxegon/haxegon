@@ -2,25 +2,20 @@ package haxegon;
 
 @:access(haxegon.Sound)
 class Music{
-	public static function play(soundname:String, fadeintime:Float = 0, loop:Bool = true, panning:Float = 0){
+	public static function play(soundname:String, fadeintime:Float = 0, loop:Bool = true, volume:Float = 1.0, panning:Float = 0){
 		soundname = soundname.toLowerCase();
 		
 		if (_currentsong == ""){
-			Sound.play(soundname, fadeintime, loop, panning);
+			Sound.play(soundname, fadeintime, loop, volume, panning);
 			_currentsong = soundname;
 		}else	if (Sound.isplaying(_currentsong)){
 			Sound.stop(_currentsong, crossfade);
-			Sound.play(soundname, Std.int(Math.max(fadeintime, crossfade)), loop, panning);
+			Sound.play(soundname, Std.int(Math.max(fadeintime, crossfade)), loop, volume, panning);
 			_currentsong = soundname;
 		}else if (!Sound.isplaying(soundname)){
-			Sound.play(soundname, fadeintime, loop, panning);
+			Sound.play(soundname, fadeintime, loop, volume, panning);
 			_currentsong = soundname;
 		}
-	}
-	
-	public static function offset(soundname:String, offsettime:Float = 0){
-		soundname = soundname.toLowerCase();
-		Sound.offsetindex.set(soundname, offsettime);
 	}
 	
 	public static function stop(fadeout:Float = 0){

@@ -199,7 +199,7 @@ class Sound{
 		offsetindex.set(soundname, offsettime);
 	}
 	
-	public static function play(soundname:String, fadeintime:Float = 0, loop:Bool = false, panning:Float = 0){
+	public static function play(soundname:String, fadeintime:Float = 0, loop:Bool = false, volume:Float = 1.0, panning:Float = 0){
 		soundname = soundname.toLowerCase();
 		if (!soundindex.exists(soundname)) {
 			if (!load(soundname)) return;
@@ -220,10 +220,10 @@ class Sound{
 		
 		if (freechannel == -1){
 			var h:HaxegonChannel = new HaxegonChannel();
-			h.setto(soundname, offsettime, fadeintime, loop, soundfile[soundindex.get(soundname)].adjustedvolume, panning);
+			h.setto(soundname, offsettime, fadeintime, loop, volume * soundfile[soundindex.get(soundname)].adjustedvolume, panning);
 			channel.push(h);
 		}else{
-			channel[freechannel].setto(soundname, offsettime, fadeintime, loop, soundfile[soundindex.get(soundname)].adjustedvolume, panning);
+			channel[freechannel].setto(soundname, offsettime, fadeintime, loop, volume * soundfile[soundindex.get(soundname)].adjustedvolume, panning);
 		}
 	}
 	
