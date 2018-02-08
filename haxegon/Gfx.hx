@@ -162,7 +162,7 @@ class Gfx {
 	}
 	
 	/* Internal function for changing tile index to correct values for tileset */
-	private static function changetileset(tilesetname:String) {
+	private static function changetileset(tilesetname:String):Bool {
 		if (currenttilesetname != tilesetname) {
 			drawstate = DRAWSTATE_NONE;
 			if(tilesetindex.exists(tilesetname)){
@@ -170,8 +170,10 @@ class Gfx {
 				currenttilesetname = tilesetname;
 			}else {
  				Debug.log("ERROR: Cannot change to tileset \"" + tilesetname + "\", no tileset with that name found.");
+				return false;
 			}
 		}
+		return true;
 	}
 		
 	/** Makes a tile array from a given image. */
@@ -813,7 +815,7 @@ class Gfx {
 	
 	public static function drawtile(x:Float, y:Float, tilesetname:String, tilenum:Int) {
 		screenshotdirty = true;
-		changetileset(tilesetname);
+		if (!changetileset(tilesetname)) return;
 		
 		if (tilenum >= numberoftiles(tilesetname)) {
 			if (tilenum == numberoftiles(tilesetname)) {
