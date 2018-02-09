@@ -91,7 +91,6 @@ class Line extends Poly4
 		l4.offset(-v.x * halfT, -v.y * halfT);
 		l4.offset(u.x * halfT, u.y * halfT);
 
-
 		setVertexPositions(l1.x, l1.y, l2.x, l2.y, l3.x, l3.y, l4.x, l4.y);
 	}
 }

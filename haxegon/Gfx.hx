@@ -873,8 +873,8 @@ class Gfx {
 		updatemeshbatch();
 		drawstate = DRAWSTATE_MESH;
 		
+		templine.thickness = _linethickness;
 		templine.setPosition(x1, y1, x2, y2);
-		templine.thickness = linethickness;
 		templine.color = color;
 		
 		meshbatch.addMesh(templine, null, alpha);
