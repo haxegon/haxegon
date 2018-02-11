@@ -4,9 +4,9 @@
 ### Bug fixes/Tweaks
 * This is a minor bugfix release for yesterday's big update.
 * Updated to work correctly with the newest versions of OpenFL and Lime (OpenFL 7.0 and Lime 6.0.1).
-* Fixed Debug.log() not displaying if you don't have a render function.
-* Fixed a crash bug if you changed drawing surfaces in Main.init() AFTER resizing the screen.
-* Fixed a bug where the wrong screensize was getting reported in Main.init() on HTML5. (thanks, @TheSpydog)
+* Fixed `Debug.log()` not displaying if you don't have a render function.
+* Fixed a crash bug if you changed drawing surfaces in `Main.init()` AFTER resizing the screen.
+* Fixed a bug where the wrong screensize was getting reported in `Main.init()` on HTML5. (thanks, @TheSpydog)
 
 0.11.0 (2018-01-16)
 ------------------
