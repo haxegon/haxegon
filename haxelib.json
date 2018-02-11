@@ -5,7 +5,7 @@
 	"tags": ["beginner", "simple", "easy", "tutorial"],
 	"description": "A tiny Haxe programming library for beginners. Powered by OpenFL and Starling.",
 	"version": "0.11.1",
-	"releasenote": "Work in progress, getting more and more stable! See http://www.haxegon.com for documentation and examples, or track the project's development on github: https://github.com/TerryCavanagh/haxegon.",
+	"releasenote": "Work in progress, getting more and more stable! See http://www.haxegon.com for documentation and examples, or track the project's development on github: https://github.com/haxegon/haxegon.",
 	"contributors": [ "TerryCavanagh" ],
 	"dependencies": { "openfl": "" }
 }
