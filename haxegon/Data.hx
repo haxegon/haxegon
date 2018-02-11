@@ -12,11 +12,13 @@ class Data {
 	
 	public static function loadjson(jsonfile:String):Dynamic {
 		jsonfile = jsonfile.toLowerCase();
+		if (!S.isinstring(jsonfile, ".")) jsonfile += ".json";
+		
 		var jfile:Dynamic;
-		if (Assets.exists("data/text/" + jsonfile + ".json")) {
-			jfile = Json.parse(Assets.getText("data/text/" + jsonfile + ".json"));
+		if (Assets.exists("data/text/" + jsonfile)) {
+			jfile = Json.parse(Assets.getText("data/text/" + jsonfile));
 		}else {
-		  Debug.log("ERROR: In loadjson, cannot find \"data/text/" + jsonfile + ".json\"."); 
+		  Debug.log("ERROR: In loadjson, cannot find \"data/text/" + jsonfile + "\"."); 
 		  return null;
 		}
 		
@@ -93,10 +95,12 @@ class Data {
 	
 	public static function loadxml(xmlfile:String):Dynamic {
 		var xfile:Dynamic = {};
-		if (Assets.exists("data/text/" + xmlfile + ".xml")) {
-			xfile = xmltojson(Xml.parse(Assets.getText("data/text/" + xmlfile + ".xml")));
+		if (!S.isinstring(xmlfile, ".")) xmlfile += ".xml";
+		
+		if (Assets.exists("data/text/" + xmlfile)) {
+			xfile = xmltojson(Xml.parse(Assets.getText("data/text/" + xmlfile)));
 		}else {
-		  Debug.log("ERROR: In loadxml, cannot find \"data/text/" + xmlfile + ".xml\".");
+		  Debug.log("ERROR: In loadxml, cannot find \"data/text/" + xmlfile + "\".");
 		  return null;
 		}
 		
@@ -108,11 +112,13 @@ class Data {
 	
 	public static function loadtext(textfile:String):Array<String> {
 		textfile = textfile.toLowerCase();
+		if (!S.isinstring(textfile, ".")) textfile += ".txt";
 		var tempstring:String = "";
-		if (Assets.exists("data/text/" + textfile + ".txt")) {
-			tempstring = Assets.getText("data/text/" + textfile + ".txt");
+		
+		if (Assets.exists("data/text/" + textfile)) {
+			tempstring = Assets.getText("data/text/" + textfile);
 		}else {
-		  Debug.log("ERROR: In loadtext, cannot find \"data/text/" + textfile + ".txt\"."); 
+		  Debug.log("ERROR: In loadtext, cannot find \"data/text/" + textfile + "\"."); 
 		  return [""];
 		}
 		
@@ -124,10 +130,12 @@ class Data {
 	@:generic
 	public static function loadcsv<T>(csvfile:String, delimiter:String = ","):Array<T> {
 		var tempstring:String = "";
-		if (Assets.exists("data/text/" + csvfile + ".csv")) {
-			tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+		if (!S.isinstring(csvfile, ".")) csvfile += ".csv";
+		
+		if (Assets.exists("data/text/" + csvfile)) {
+			tempstring = Assets.getText("data/text/" + csvfile);
 		}else {
-		  Debug.log("ERROR: In loadcsv, cannot find \"data/text/" + csvfile + ".csv\"."); 
+		  Debug.log("ERROR: In loadcsv, cannot find \"data/text/" + csvfile + "\"."); 
 		  tempstring = "";
 		}
 		
@@ -164,10 +172,12 @@ class Data {
 	@:generic
 	public static function load2dcsv<T>(csvfile:String, delimiter:String = ","):Array<Array<T>> {
 		var tempstring:String = "";
-		if (Assets.exists("data/text/" + csvfile + ".csv")) {
-			tempstring = Assets.getText("data/text/" + csvfile + ".csv");
+		if (!S.isinstring(csvfile, ".")) csvfile += ".csv";
+		
+		if (Assets.exists("data/text/" + csvfile)) {
+			tempstring = Assets.getText("data/text/" + csvfile);
 		}else {
-		  Debug.log("ERROR: In load2dcsv, cannot find \"data/text/" + csvfile + ".csv\"."); 
+		  Debug.log("ERROR: In load2dcsv, cannot find \"data/text/" + csvfile + "\"."); 
 		  tempstring = "";
 		}
 		
