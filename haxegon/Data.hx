@@ -24,8 +24,25 @@ class Data {
 		
 		//Add helper "_fields" array to every node of the json file
 		populatefields(jfile);
+		sanatisefields(jfile);
 		
 		return jfile;
+	}
+	
+	private static function sanatisefields(j:Dynamic){
+		if (Std.is(j, String)){
+			j = S.replacechar(j, ":", "_");
+			j = S.replacechar(j, ";", "_");
+			j = S.replacechar(j, "-", "_");
+		}else{
+			for (i in 0 ... j._fields.length){
+				var before:String = j._fields[i];
+				j._fields[i] = S.replacechar(j._fields[i], ":", "_");
+			  j._fields[i] = S.replacechar(j._fields[i], ";", "_");
+			  j._fields[i] = S.replacechar(j._fields[i], "-", "_");
+				sanatisefields(Reflect.field(j, before));
+			}
+		}
 	}
 	
 	private static function populatefields(j:Dynamic){
@@ -51,31 +68,37 @@ class Data {
 			var attcount:Int = 0;
 			for (attribute in x.attributes()){
 				attcount++;
-				Reflect.setField(jsonbit, attribute, x.get(attribute));
+				var attributename:String = attribute;
+				attributename = S.replacechar(attributename, ":", "_");
+				attributename = S.replacechar(attributename, ";", "_");
+				attributename = S.replacechar(attributename, "-", "_");
+				Reflect.setField(jsonbit, attributename, x.get(attribute));
 			}
 			if (attcount > 0) hasattributes = true;
-		}else if (x.nodeType == Xml.Comment){
-			jsonbit = x.nodeValue;
 		}
 		
 		for (xchild in x.iterator()){
 			if (xchild.nodeType == Xml.Element){
-				if (Reflect.hasField(jsonbit, xchild.nodeName)){
+				var nodename:String = xchild.nodeName;
+				nodename = S.replacechar(nodename, ":", "_");
+				nodename = S.replacechar(nodename, ";", "_");
+				nodename = S.replacechar(nodename, "-", "_");
+				if (Reflect.hasField(jsonbit, nodename)){
 					//This is an array! Push elements onto it
-					var currentnode:Dynamic = Reflect.field(jsonbit, xchild.nodeName);
+					var currentnode:Dynamic = Reflect.field(jsonbit, nodename);
 					if (Std.is(currentnode, Array)){
 						currentnode.push(xmltojson(xchild));
-						Reflect.setField(jsonbit, xchild.nodeName, currentnode);
+						Reflect.setField(jsonbit, nodename, currentnode);
 					}else{
 						var nodearray:Array<Dynamic> = [];
 						nodearray.push(currentnode);
 						nodearray.push(xmltojson(xchild));
-						Reflect.setField(jsonbit, xchild.nodeName, nodearray);
+						Reflect.setField(jsonbit, nodename, nodearray);
 					}
 				}else{
-					Reflect.setField(jsonbit, xchild.nodeName, xmltojson(xchild));
+					Reflect.setField(jsonbit, nodename, xmltojson(xchild));
 				}
-			}else if (xchild.nodeType == Xml.Comment || xchild.nodeType == Xml.PCData){
+			}else if (xchild.nodeType == Xml.PCData){
 				var textval:String = xchild.nodeValue;
 				textval = S.replacechar(textval, "\r", "");
 				textval = S.replacechar(textval, "\n", "");
@@ -106,6 +129,7 @@ class Data {
 		
 		//Add helper "_fields" array to every node of the xml file
 		populatefields(xfile);
+		sanatisefields(xfile);
 		
 		return xfile;
 	}
