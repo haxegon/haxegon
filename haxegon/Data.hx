@@ -24,23 +24,25 @@ class Data {
 		
 		//Add helper "_fields" array to every node of the json file
 		populatefields(jfile);
-		sanatisefields(jfile);
+		sanitisefields(jfile);
 		
 		return jfile;
 	}
 	
-	private static function sanatisefields(j:Dynamic){
+	private static function sanitisefields(j:Dynamic){
 		if (Std.is(j, String)){
 			j = S.replacechar(j, ":", "_");
 			j = S.replacechar(j, ";", "_");
 			j = S.replacechar(j, "-", "_");
 		}else{
-			for (i in 0 ... j._fields.length){
-				var before:String = j._fields[i];
-				j._fields[i] = S.replacechar(j._fields[i], ":", "_");
-			  j._fields[i] = S.replacechar(j._fields[i], ";", "_");
-			  j._fields[i] = S.replacechar(j._fields[i], "-", "_");
-				sanatisefields(Reflect.field(j, before));
+			if (j._fields != null){
+				for (i in 0 ... j._fields.length){
+					var before:String = j._fields[i];
+					j._fields[i] = S.replacechar(j._fields[i], ":", "_");
+					j._fields[i] = S.replacechar(j._fields[i], ";", "_");
+					j._fields[i] = S.replacechar(j._fields[i], "-", "_");
+					sanitisefields(Reflect.field(j, before));
+				}
 			}
 		}
 	}
@@ -129,7 +131,7 @@ class Data {
 		
 		//Add helper "_fields" array to every node of the xml file
 		populatefields(xfile);
-		sanatisefields(xfile);
+		sanitisefields(xfile);
 		
 		return xfile;
 	}
