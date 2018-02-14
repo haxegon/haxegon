@@ -171,8 +171,11 @@ class Random{
 	 */
 	private static function randinterval(min:Int, max:Int, ?includeMax:Bool=false)
 	{
-		if (min < 0 || max < 1 || max < min)
-			throw "arguments error";
+		if (min == max) return min;
+		if (max < min) return randinterval(max, min, includeMax);
+		if (min < 0 || max < 1){
+			return rand((max - min) + (includeMax ? 1 : 0)) + min;
+		}
 		return min + rand(max - min + (includeMax ? 1 : 0));
 	}
 	
