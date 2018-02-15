@@ -421,11 +421,17 @@ class Gfx {
 	public static function drawtoscreen() {
 		screenshotdirty = true;
 		Gfx.endmeshbatch();
-		if (drawto != null) drawto.bundleunlock();
+		if (drawto != null){
+			if(drawtolocked) drawto.bundleunlock();
+			drawtolocked = false;
+		}
 		
 		drawto = backbuffer;
 		
-		if (drawto != null) drawto.bundlelock();
+		if (drawto != null){
+			if(!drawtolocked) drawto.bundlelock();
+			drawtolocked = true;
+		}
 	}
 	
 	/** Tell draw commands to draw to the given image. */
@@ -437,13 +443,19 @@ class Gfx {
 		}
 		
 		Gfx.endmeshbatch();
-		if (drawto != null) drawto.bundleunlock();
+		if (drawto != null){
+			if(drawtolocked) drawto.bundleunlock();
+			drawtolocked = false;
+		}
 		
 		var imagenum:Int = imageindex.get(imagename);
 		promotetorendertarget(images[imagenum].contents);
 		drawto = cast(images[imagenum].contents.texture, RenderTexture);
 		
-		if (drawto != null) drawto.bundlelock();
+		if (drawto != null){
+			if(!drawtolocked) drawto.bundlelock();
+			drawtolocked = true;
+		}
 	}
 	
 	/** Tell draw commands to draw to the given tile in the current tileset. */
@@ -465,12 +477,18 @@ class Gfx {
 		}
 		
 		endmeshbatch();
-		if (drawto != null) drawto.bundleunlock();
+		if (drawto != null){
+			if(drawtolocked) drawto.bundleunlock();
+			drawtolocked = false;
+		}
 		
 		promotetorendertarget(tiles[tileset].tiles[tilenum]);
 		drawto = cast(tiles[tileset].tiles[tilenum].texture, RenderTexture);
 		
-		if (drawto != null) drawto.bundlelock();
+		if (drawto != null){
+			if(!drawtolocked) drawto.bundlelock();
+			drawtolocked = true;
+		}
 	}
 	
 	/** Helper function for image drawing functions. */
@@ -1418,7 +1436,10 @@ class Gfx {
 	
 	private static function startframe() {
 		drawstate = DRAWSTATE_NONE;
-		if(drawto != null) drawto.bundlelock();	
+			if (drawto != null){
+			if(!drawtolocked) drawto.bundlelock();
+			drawtolocked = true;
+		}
 		
 		meshbatch.clear();
 		meshbatchcount = 0;
@@ -1434,7 +1455,10 @@ class Gfx {
 	
 	private static function endframe() {
 		endmeshbatch();
-		drawto.bundleunlock();
+		if (drawto != null){
+			if(drawtolocked) drawto.bundleunlock();
+			drawtolocked = false;
+		}
 		
 		if(screen != null) screen.setRequiresRedraw();
 	}
@@ -1496,4 +1520,6 @@ class Gfx {
 	private static var dynamicwidth:Int = 0;
 	private static var dynamicheight:Int = 0;
 	private static var _keeppixelratio:Bool = false;
+	
+	private static var drawtolocked:Bool = false;
 }
