@@ -1,12 +1,9 @@
 package haxegon;
 
-import starling.display.*;
 import starling.events.*;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
 import openfl.ui.Mouse;
-import openfl.net.*;
-import openfl.Lib;
 	
 class Mouse{		
 	private static var _x:Int;
@@ -202,36 +199,16 @@ class Mouse{
 				_mouseoffstage = false;	
 				
 				//There was a touch (same as mouse down event
-				#if flash
-				if (Input.pressed(Key.CONTROL)) {
-					if(_rightcurrent > 0) _rightcurrent = 1;
-					else _rightcurrent = 2;
-					
-					_rightheld = 0;
-				}else{
-					if(_current > 0) _current = 1;
-					else _current = 2;
-					
-					_held = 0;
-				}
-				#else
 				if(_current > 0) _current = 1;
 				else _current = 2;
 				
 				_held = 0;
-				#end
 			}else if(touch.phase == TouchPhase.ENDED){
 				//The Touch ended (same as mouse up event)
-				#if flash
-				if(_rightcurrent > 0) _rightcurrent = -1;
-				else _rightcurrent = 0;
-				#end
-				
 				if(_current > 0) _current = -1;
 				else _current = 0;
 				
 				_held = 0;
-				_rightheld = 0;
 			}else if (touch.phase == TouchPhase.MOVED) {
 				_mouseoffstage = false;	
 				//touch dragging
