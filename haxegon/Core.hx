@@ -19,6 +19,8 @@ import starling.core.StatsDisplay;
 @:access(haxegon.Filter)
 @:access(haxegon.Debug)
 class Core extends Sprite {
+	public static inline var version:String = "0.12.0";
+	
 	private static inline var WINDOW_WIDTH:String = haxe.macro.Compiler.getDefine("windowwidth");
 	private static inline var WINDOW_HEIGHT:String = haxe.macro.Compiler.getDefine("windowheight");
 	
