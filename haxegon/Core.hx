@@ -20,6 +20,7 @@ import starling.core.StatsDisplay;
 @:access(haxegon.Debug)
 class Core extends Sprite {
 	public static inline var version:String = "0.12.0";
+	private static var installedplugins:Map<String, String>;
 	
 	private static inline var WINDOW_WIDTH:String = haxe.macro.Compiler.getDefine("windowwidth");
 	private static inline var WINDOW_HEIGHT:String = haxe.macro.Compiler.getDefine("windowheight");
@@ -29,6 +30,69 @@ class Core extends Sprite {
 		
 		super();
 		addEventListener(Event.ADDED_TO_STAGE, addedtostage);
+	}
+	
+	private static function registerplugin(pluginname:String, pluginversion:String){
+		if (installedplugins == null){
+			installedplugins = new Map<String, String>();
+		}
+		
+		if (installedplugins.exists(pluginname)){
+			throw("Error: Trying to registerplugin \"" + pluginname + "\", but there is already a registered plugin with that name.");
+		}else{
+			installedplugins.set(pluginname, pluginversion);
+			trace("\"" + pluginname + "\" version " + pluginversion + " is ready.");
+		}
+	}
+	
+	private static function checkrequirement(currentplugin:String, requiredplugin:String, requiredversion:String){
+		currentplugin = currentplugin.toLowerCase();
+		requiredplugin = requiredplugin.toLowerCase();
+		var requiredmajor:Int = Std.parseInt(S.getroot(requiredversion, "."));
+		var requiredminor:Int = Std.parseInt(S.getroot(S.getbranch(requiredversion, "."), "."));
+		var requiredbugfix:Int = Std.parseInt(S.getlastbranch(requiredversion, "."));
+		
+		if (requiredplugin == "haxegon"){
+			var haxegonmajor:Int = Std.parseInt(S.getroot(version, "."));
+			var haxegonminor:Int = Std.parseInt(S.getroot(S.getbranch(version, "."), "."));
+			var haxegonbugfix:Int = Std.parseInt(S.getlastbranch(version, "."));
+			
+			if (haxegonmajor >= requiredmajor){
+				if (haxegonminor >= requiredminor){
+					if (haxegonbugfix >= requiredbugfix){
+						//Everything's ok!
+						return;
+					}
+				}
+			}
+			
+			throw("Error: \"" + currentplugin + "\" plugin requires at least version " + requiredversion 
+			    + " of Haxegon, but this is version " + version 
+					+ ". Please update your current version of haxegon to use this plugin!");
+		}else {
+			if (installedplugins.exists(requiredplugin)){
+				var pluginversion:String = installedplugins.get(requiredplugin);
+				var pluginmajor:Int = Std.parseInt(S.getroot(pluginversion, "."));
+				var pluginminor:Int = Std.parseInt(S.getroot(S.getbranch(pluginversion, "."), "."));
+				var pluginbugfix:Int = Std.parseInt(S.getlastbranch(pluginversion, "."));
+				
+				if (pluginmajor >= requiredmajor){
+					if (pluginminor >= requiredminor){
+						if (pluginbugfix >= requiredbugfix){
+							//Everything's ok!
+							return;
+						}
+					}
+				}
+				
+				throw("Error: \"" + currentplugin + "\" plugin requires at least version " + requiredversion 
+						+ " of \"" + requiredplugin + "\", but this is version " + pluginversion 
+						+ ". Please update your current version of \"" + requiredplugin + "\" to use this plugin!");
+			}else{
+				throw("Error: \"" + currentplugin + "\" plugin requires the plugin \"" + requiredplugin 
+			    + "\" to work correctly. If this plugin is installed, try to .enable() it first!");
+			}
+		}
 	}
 	
 	private function addedtostage(e:Event = null) {
