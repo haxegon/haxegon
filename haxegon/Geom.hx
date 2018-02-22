@@ -3,6 +3,26 @@ package haxegon;
 import openfl.geom.Rectangle;
 
 class Geom {
+	public static inline var PI:Float = 3.141592653589793;
+	public static inline function abs(v:Float):Float{ return Math.abs(v); }
+	public static inline function acos(v:Float):Float{ return todegrees(Math.acos(v)); }
+	public static inline function asin(v:Float):Float{ return todegrees(Math.asin(v)); }
+	public static inline function atan(v:Float):Float{ return todegrees(Math.atan(v)); }
+	public static inline function atan2(y:Float, x:Float):Float{ return todegrees(Math.atan2(y, x)); }
+	public static inline function ceil(v:Float):Float{ return Math.ceil(v); }
+	public static inline function cos(v:Float):Float{ return Math.cos(toradians(v)); }
+	public static inline function exp(v:Float):Float{ return Math.exp(v); }
+	public static inline function floor(v:Float):Float{ return Math.floor(v); }
+	public static inline function fround(v:Float):Float{ return Math.fround(v); }
+	public static inline function log(v:Float):Float{ return Math.log(v); }
+	public static inline function max(a:Float, b:Float):Float{ return Math.max(a, b); }
+	public static inline function min(a:Float, b:Float):Float{ return Math.min(a, b); }
+	public static inline function pow(v:Float, exp:Float):Float{ return Math.pow(v, exp); }
+	public static inline function round(v:Float):Float{ return Math.round(v); }
+	public static inline function sin(v:Float):Float{ return Math.sin(toradians(v)); }
+	public static inline function sqrt(v:Float):Float{ return Math.sqrt(v); }
+	public static inline function tan(v:Float):Float{ return Math.tan(toradians(v)); }
+	
   public static function inbox(x:Float, y:Float, rectx:Float, recty:Float, rectw:Float, recth:Float):Bool {
 	  if (x >= rectx) {
 			if (x < rectx + rectw) {
@@ -32,7 +52,7 @@ class Geom {
 	}
 	
 	public static inline function getangle(x1:Float, y1:Float, x2:Float, y2:Float):Float {
-    return ((Math.PI * 2) - Math.atan2(y2 - y1, x2 - x1)) % (Math.PI * 2);
+    return todegrees(((Math.PI * 2) - Math.atan2(y2 - y1, x2 - x1)) % (Math.PI * 2));
   }
 	
 	public static inline function todegrees(rad:Float):Float {
@@ -44,7 +64,7 @@ class Geom {
 	}
 	
 	public static inline function anglebetween(angle1:Float, angle2:Float):Float {
-		return -Math.atan2(Math.sin(angle1 - angle2), Math.cos(angle1 - angle2));
+		return -atan2(sin(angle1 - angle2), cos(angle1 - angle2));
 	}
 	
 	private static var rect1:Rectangle = new Rectangle();
