@@ -16,7 +16,6 @@ import starling.core.StatsDisplay;
 @:access(haxegon.Mouse)
 @:access(haxegon.Input)
 @:access(haxegon.Scene)
-@:access(haxegon.Filter)
 @:access(haxegon.Debug)
 class Core extends Sprite {
 	public static inline var version:String = "0.12.0";
@@ -38,7 +37,7 @@ class Core extends Sprite {
 		}
 		
 		if (installedplugins.exists(pluginname)){
-			throw("Error: Trying to registerplugin \"" + pluginname + "\", but there is already a registered plugin with that name.");
+			throw("Error: Trying to register plugin \"" + pluginname + "\", but there is already a registered plugin with that name.");
 		}else{
 			installedplugins.set(pluginname, pluginversion);
 			trace("\"" + pluginname + "\" version " + pluginversion + " is ready.");
@@ -117,7 +116,6 @@ class Core extends Sprite {
 		Data.initassets();
 		Debug.init();
 		Gfx.init(this.stage, Starling.current.nativeStage);
-		Filter.init();
 		Text.init();
 		Text.defaultfont();
 		Sound.init();
@@ -154,8 +152,6 @@ class Core extends Sprite {
 		}
 		
 		Gfx.endframe();
-		
-		Filter.updatefilters();
 		
 		// start game loop
 		_rate3 = Math.round(3000 / TARGETFRAMERATE);

@@ -50,7 +50,6 @@ class HaxegonTileset {
 @:access(haxegon.Core)
 @:access(haxegon.Data)
 @:access(haxegon.Text)
-@:access(haxegon.Filter)
 class Gfx {
 	private static inline var MAX_NUM_MESH:Int = 16383;
 	public static var LEFT:Int = -10000;
