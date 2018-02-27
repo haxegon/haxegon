@@ -175,12 +175,14 @@ class Sound{
 				return false;
 			}
 			#else
-			if (Data.assetexists("data/sounds/" + soundname + ".ogg")) {
+			if (Data.assetexists("data/sounds/" + soundname + ".mp3")) {
+				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".mp3"); 
+			}else	if (Data.assetexists("data/sounds/" + soundname + ".ogg")) {
 				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".ogg"); 
 			}else if (Data.assetexists("data/sounds/" + soundname + ".wav")) {
 				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".wav"); 
 			}else {
-				Debug.log("ERROR: In Sound.load(), cannot find \"data/sounds/" + soundname + ".ogg\" or \"data/sounds/" + soundname + ".wav\". (either .ogg or .wav files are required for native builds.)");
+				Debug.log("ERROR: In Sound.load(), cannot find \"data/sounds/" + soundname + ".mp3\", \"data/sounds/" + soundname + ".ogg\" or \"data/sounds/" + soundname + ".wav\".");
 				return false;
 			}
 			#end
