@@ -2,6 +2,7 @@ package haxegon;
 
 import starling.events.*;
 import openfl.ui.Keyboard;
+import openfl.events.FocusEvent;
 
 #if flash
 	import flash.desktop.Clipboard;
@@ -127,7 +128,11 @@ class Input {
 		
 		starstage.addEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		starstage.addEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		flashstage.addEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
+		#if desktop
+			flashstage.addEventListener(FocusEvent.FOCUS_OUT, handledeactivate);
+		#else 
+			flashstage.addEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
+		#end
 		
 		clipboardbuffer = [""];
 		cut = false;
@@ -203,7 +208,11 @@ class Input {
 	private static function unload(){
 		starstage.removeEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		starstage.removeEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		flashstage.removeEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
+		#if desktop
+			flashstage.removeEventListener(FocusEvent.FOCUS_OUT, handledeactivate);
+		#else 
+			flashstage.removeEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
+		#end
 
 		#if flash
 			flashstage.removeEventListener(openfl.events.Event.CUT, handlecut);
@@ -239,7 +248,7 @@ class Input {
 	}
 	
 	private static function reset(){
-		for (i in 0...numletters) {
+		for (i in 0 ... numletters) {
 			if (lookup.exists(i)) {
 				current[i] = Keystate.notpressed;
 				last[i] = Keystate.notpressed;

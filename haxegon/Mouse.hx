@@ -2,6 +2,7 @@ package haxegon;
 
 import starling.events.*;
 import openfl.events.Event;
+import openfl.events.FocusEvent;
 import openfl.events.MouseEvent;
 import openfl.ui.Mouse;
 	
@@ -148,18 +149,20 @@ class Mouse{
 		flashstage = _flashstage;
 		
     starstage.addEventListener(TouchEvent.TOUCH, ontouch);
-    #if !flash
     flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, handleRightMouseDown);
-    flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp );
-		#else
-		flashstage.addEventListener(MouseEvent.RIGHT_CLICK, function(event:MouseEvent){});
-    #end
-    flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
+    flashstage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, handleRightMouseUp);
+		flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, handleMiddleMouseDown);
     flashstage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, handleMiddleMouseUp);
     
     flashstage.addEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
     flashstage.addEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
     flashstage.addEventListener(openfl.events.Event.MOUSE_LEAVE, mouseLeave);
+		
+		#if desktop
+			flashstage.addEventListener(FocusEvent.FOCUS_OUT, lostFocus);
+		#else
+			flashstage.addEventListener(Event.DEACTIVATE, lostFocus);
+		#end
 	}
 	
 	private static function unload(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
@@ -216,10 +219,8 @@ class Mouse{
 		}
 	}
 	
-	#if !flash
-		private static function handleRightMouseDown(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
-		private static function handleRightMouseUp(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
-	#end
+	private static function handleRightMouseDown(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = 1; } else { _rightcurrent = 2; } }
+	private static function handleRightMouseUp(event:MouseEvent) { if (_rightcurrent > 0) { _rightcurrent = -1; } else { _rightcurrent = 0; }	}
 	
 	private static function handleMiddleMouseDown(event:MouseEvent) { if (_middlecurrent > 0) { _middlecurrent = 1; } else { _middlecurrent = 2; } }
 	private static function handleMiddleMouseUp(event:MouseEvent) { if (_middlecurrent > 0) { _middlecurrent = -1; _middleheld = 0; } else { _middlecurrent = 0; }	}
@@ -304,5 +305,9 @@ class Mouse{
 		_middlecurrent = 0;
 		_middlelast = 0;
 		_middleheld = 0;
+	}
+	
+	private static function lostFocus(e:Event) : Void {
+		reset();
 	}
 }
