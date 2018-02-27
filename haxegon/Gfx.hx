@@ -52,11 +52,11 @@ class HaxegonTileset {
 @:access(haxegon.Text)
 class Gfx {
 	private static inline var MAX_NUM_MESH:Int = 16383;
-	public static var LEFT:Int = -10000;
-	public static var RIGHT:Int = -20000;
-	public static var TOP:Int = -10000;
-	public static var BOTTOM:Int = -20000;
-	public static var CENTER:Int = -15000;
+	public static var LEFT:Int = 0;
+	public static var TOP:Int = 0;
+	public static var CENTER:Int = -200000;
+	public static var RIGHT:Int = -300000;
+	public static var BOTTOM:Int = -300000;
 	
 	public static var screenwidth:Int;
 	public static var screenheight:Int;
@@ -98,7 +98,7 @@ class Gfx {
 	}
 	
 	/** Rotates image drawing functions. */
-	public static function rotation(angle:Float, xpivot:Float = -15000, ypivot:Float = -15000) {
+	public static function rotation(angle:Float, xpivot:Float = 0, ypivot:Float = 0) {
 		imagerotate = angle;
 		imagerotatexpivot = xpivot;
 		imagerotateypivot = ypivot;
@@ -108,7 +108,7 @@ class Gfx {
 	
 	/** Scales image drawing functions. Optionally takes a second argument 
 	 * to scale X and Y seperately. */
-	public static function scale(?xscale:Float, ?yscale:Float, ?xpivot:Float = -10000, ?ypivot:Float = -10000) {
+	public static function scale(?xscale:Float, ?yscale:Float, ?xpivot:Float = 0, ?ypivot:Float = 0) {
 		if (xscale == null && yscale == null) {
 		  xscale = 1.0; yscale = 1.0;
 		}

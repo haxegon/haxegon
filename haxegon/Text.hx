@@ -160,7 +160,7 @@ class Text {
 		inputmaxlength = 0;
 	}
 	
-	public static function rotation(a:Float, xpivot:Int = -10000, ypivot:Int = -10000) {
+	public static function rotation(a:Float, xpivot:Int = 0, ypivot:Int = 0) {
 	  textrotate = a;
 		textrotatexpivot = xpivot;
 		textrotateypivot = ypivot;
@@ -494,13 +494,13 @@ class Text {
 
 	private static var gfxstage:Stage;
 	
-	public static var LEFT:Int = -10000;
-	public static var RIGHT:Int = -20000;
-	public static var TOP:Int = -10000;
-	public static var BOTTOM:Int = -20000;
-	public static var CENTER:Int = -15000;
+	public static var LEFT:Int = 0;
+	public static var TOP:Int = 0;
+	public static var CENTER:Int = -200000;
+	public static var RIGHT:Int = -300000;
+	public static var BOTTOM:Int = -300000;
 	
-	public static var align:Int = -10000;
+	public static var align:Int = 0;
 	private static var textrotate:Float = 0;
 	private static var textrotatexpivot:Float = 0;
 	private static var textrotateypivot:Float = 0;
