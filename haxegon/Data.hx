@@ -41,6 +41,8 @@ class Data {
 					j._fields[i] = S.replacechar(j._fields[i], ":", "_");
 					j._fields[i] = S.replacechar(j._fields[i], ";", "_");
 					j._fields[i] = S.replacechar(j._fields[i], "-", "_");
+					Reflect.setField(j, j._fields[i], Reflect.getProperty(j, before)); 
+					
 					sanitisefields(Reflect.field(j, before));
 				}
 			}

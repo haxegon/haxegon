@@ -279,7 +279,14 @@ class Text {
 		return y;
 	}
 	
+	#if html5
+	public static function display(x:Float, y:Float, text:Dynamic, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
+		if (!Std.is(text, String)){
+			text = Std.string(text);
+		}
+	#else
 	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
+	#end
 		if (text == "") return;
 		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endmeshbatch();
 		Gfx.updatemeshbatch();
