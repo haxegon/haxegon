@@ -40,7 +40,6 @@ class Core extends Sprite {
 			throw("Error: Trying to register plugin \"" + pluginname + "\", but there is already a registered plugin with that name.");
 		}else{
 			installedplugins.set(pluginname, pluginversion);
-			trace("\"" + pluginname + "\" version " + pluginversion + " is ready.");
 		}
 	}
 	

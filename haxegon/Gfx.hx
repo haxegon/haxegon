@@ -1218,28 +1218,6 @@ class Gfx {
 	}
 	
 	private static function updategraphicsmode(windowwidth:Int, windowheight:Int) {
-		if (!_fullscreen) {
-			if (flashstage.displayState == StageDisplayState.FULL_SCREEN_INTERACTIVE || 
-			    flashstage.displayState==StageDisplayState.FULL_SCREEN){
-				flashstage.displayState=StageDisplayState.NORMAL;
-			}
-		}else {
-			if (flashstage.displayState == StageDisplayState.NORMAL) {
-			  try {
-					flashstage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;	
-				}catch (e:Dynamic) {
-					#if flash
-					if (e.name == "SecurityError") {
-						if (flashstage.loaderInfo.url.indexOf("file://") == 0) {
-						}else {
-							Debug.log("Error: Haxegon is unable to toggle fullscreen in browsers due to Adobe security settings. To do: make haxegon_flash addon!");
-						}
-					}
-					#end
-				}
-			}
-		}
-		
 		if (windowwidth == 0 && windowheight == 0) {
 			//if returning to windowed mode from fullscreen, don't mess with the
 			//viewport now; leave it to the 3 event to catch
@@ -1341,9 +1319,27 @@ class Gfx {
 		if (!gfxinit) return fs;
 		
 		if (_fullscreen) {
+			if (flashstage.displayState == StageDisplayState.NORMAL) {
+			  try {
+					flashstage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;	
+				}catch (e:Dynamic) {
+					#if flash
+					if (e.name == "SecurityError") {
+						if (flashstage.loaderInfo.url.indexOf("file://") == 0) {
+						}else {
+							Debug.log("Error: Haxegon is unable to toggle fullscreen in browsers due to Adobe security settings. To do: make haxegon_flash addon!");
+						}
+					}
+					#end
+				}
+			}
+			
 			updategraphicsmode(devicexres, deviceyres);
 		}else {
-			updategraphicsmode(0, 0);
+			if (flashstage.displayState == StageDisplayState.FULL_SCREEN_INTERACTIVE || 
+			    flashstage.displayState==StageDisplayState.FULL_SCREEN){
+				flashstage.displayState=StageDisplayState.NORMAL;
+			}
 		}
 		
 		return _fullscreen;
