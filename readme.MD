@@ -52,7 +52,7 @@ Here are the main things you'll need to change to migrate to 0.12.0:
  * Added a new function, `Random.weighted([options], [odds])` - inspired by <a href="http://chancejs.com/#weighted">chance.js</a>.
  * Removed `offsettime` as a variable from `Sound` and `Music` functions.
  * Added `volume` as a parameter to `Sound.play()`.
- * Added all previous haxe `Math` function to `Geom`. They're exactly the same, except they use degrees instead of radians. Haxegon now uses degrees everywhere.
+ * Added all previous haxe `Math` function to `Geom`. They're exactly the same, except they use degrees instead of radians. Haxegon now uses degrees everywhere. (e.g. You can call `Geom.sin()` instead of `Math.sin()`)
  * The `Filters` class has been removed. `Filters` is now a plugin, and has several new settings: https://github.com/haxegon/plugin_filters
  * Added `Core.version`.
 
