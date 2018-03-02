@@ -30,33 +30,48 @@ class Data {
 	}
 	
 	private static function sanitisefields(j:Dynamic){
-		if (Std.is(j, String)){
+		if (Std.is(j, Array)){
+			for (i in 0 ... j.length){
+				sanitisefields(j[i]);
+			}
+		}else if (Std.is(j, String)){
 			j = S.replacechar(j, ":", "_");
 			j = S.replacechar(j, ";", "_");
 			j = S.replacechar(j, "-", "_");
 		}else{
-			if (j._fields != null){
-				for (i in 0 ... j._fields.length){
-					var before:String = j._fields[i];
-					j._fields[i] = S.replacechar(j._fields[i], ":", "_");
-					j._fields[i] = S.replacechar(j._fields[i], ";", "_");
-					j._fields[i] = S.replacechar(j._fields[i], "-", "_");
-					Reflect.setField(j, j._fields[i], Reflect.getProperty(j, before)); 
-					
-					sanitisefields(Reflect.field(j, before));
+			if (Reflect.hasField(j, "_fields")){
+				if (j._fields != null){
+					for (i in 0 ... j._fields.length){
+						var before:String = j._fields[i];
+						j._fields[i] = S.replacechar(j._fields[i], ":", "_");
+						j._fields[i] = S.replacechar(j._fields[i], ";", "_");
+						j._fields[i] = S.replacechar(j._fields[i], "-", "_");
+						Reflect.setField(j, j._fields[i], Reflect.getProperty(j, before)); 
+						
+						sanitisefields(Reflect.field(j, before));
+					}
 				}
 			}
 		}
 	}
 	
 	private static function populatefields(j:Dynamic){
-		if (!Std.is(j, String)){
+		if (Std.is(j, Array)){
+			for (i in 0 ... j.length){
+				populatefields(j[i]);
+			}
+		}else	if (!Std.is(j, String)){
 			if (!Reflect.hasField(j, "_fields")){
-				j._fields = Reflect.fields(j);
-				if (j._fields != null){
-					if(!Std.is(j._fields, String)){
-						for (i in 0 ... j._fields.length){
-							populatefields(Reflect.field(j, j._fields[i]));
+				var jfields:Array<String> = Reflect.fields(j);
+				if (jfields != null && jfields != []){
+					if(jfields.length > 0){
+						j._fields = jfields;
+						if (j._fields != null){
+							if(!Std.is(j._fields, String)){
+								for (i in 0 ... j._fields.length){
+									populatefields(Reflect.field(j, j._fields[i]));
+								}
+							}
 						}
 					}
 				}
@@ -91,7 +106,8 @@ class Data {
 					//This is an array! Push elements onto it
 					var currentnode:Dynamic = Reflect.field(jsonbit, nodename);
 					if (Std.is(currentnode, Array)){
-						currentnode.push(xmltojson(xchild));
+						var n:Dynamic = xmltojson(xchild);
+						currentnode.push(n);
 						Reflect.setField(jsonbit, nodename, currentnode);
 					}else{
 						var nodearray:Array<Dynamic> = [];

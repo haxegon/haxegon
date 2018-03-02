@@ -165,7 +165,7 @@ class Sound{
 				Debug.log("ERROR: In Sound.load(), cannot find \"data/sounds/" + soundname + ".mp3\" or \"data/sounds/" + soundname + ".wav\". (either .mp3 or .wav files are required for flash.)");
 				return false;
 			}
-			#elseif cpp
+			#elseif cpp || neko
 			if (Data.assetexists("data/sounds/" + soundname + ".ogg")) {
 				soundasset = Data.getsoundasset("data/sounds/" + soundname + ".ogg"); 
 			}else if (Data.assetexists("data/sounds/" + soundname + ".wav")) {

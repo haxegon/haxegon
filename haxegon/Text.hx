@@ -68,7 +68,7 @@ class Fontclass {
 	public var tf:TextField;
 	
 	private var tflist:Array<TextField>;
-	private var currenttextfield:Int;
+	private var currenttextfield:Int = -1;
 	public var fontfile:Fontfile;
 	
 	public var name:String;
@@ -279,7 +279,14 @@ class Text {
 		return y;
 	}
 	
-	#if html5
+	#if neko
+	public static function display(x:Float, y:Float, text:Dynamic, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
+		if (Std.is(text, Array)){
+			text = text.toString();
+		}else if (!Std.is(text, String)){
+			text = Std.string(text);
+		}
+	#elseif html5
 	public static function display(x:Float, y:Float, text:Dynamic, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
 		if (!Std.is(text, String)){
 			text = Std.string(text);

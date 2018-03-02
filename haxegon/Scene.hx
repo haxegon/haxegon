@@ -7,7 +7,15 @@ class Scene {
 		scenelist = [];
 		currentscene = 0;
 		
-		scenelist.push(Type.createInstance(Main, []));
+		var maininstance:Dynamic = null; 
+		
+		try{
+			maininstance = Type.createInstance(Main, []);
+		}catch (e:Dynamic){
+			maininstance = Type.createEmptyInstance(Main);
+	  }
+		
+		scenelist.push(maininstance);
 		callscenemethod(scenelist[currentscene], "init");
 		
 		checkforrenderfunction();
@@ -81,7 +89,15 @@ class Scene {
 			}
 		}
 		
-		scenelist.push(Type.createInstance(findscene, []));
+		var newscene:Dynamic = null; 
+		
+		try{
+			newscene = Type.createInstance(findscene, []);
+		}catch (e:Dynamic){
+			newscene = Type.createEmptyInstance(findscene);
+	  }
+		
+		scenelist.push(newscene);
 		
 		return scenelist.length - 1;
 	}
