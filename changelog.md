@@ -1,3 +1,12 @@
+0.12.1 (2018-03-02)
+------------------
+
+### New features
+  * This is a minor update that adds support for the **Neko** target. **Neko** is a lightweight virtual machine that behaves very like Native builds, but compiles much faster, so it can be useful for testing. It's included with the default installation of Haxe. If you're interested in **Neko** builds, you'll need to update your <a href="https://github.com/haxegon/haxegon/raw/master/blankproject.zip">blankproject.zip</a> file again!
+  
+### Bug fixes/Tweaks
+  * Updated Starling to 2.2.1.
+
 0.12.0 (2018-02-28)
 ------------------
 
