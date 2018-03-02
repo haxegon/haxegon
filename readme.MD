@@ -1,10 +1,10 @@
-# Haxegon (version 0.12.0 (2018-02-28))
+# Haxegon (version 0.12.1 (2018-03-02))
 
 Haxegon is a tiny haxe programming library aimed at beginners. Haxegon is starting to get pretty stable, so you can expect the API not to change too much more before 1.0!
 
 The current update, 0.12.0, focuses on **plugin support** and **structure**. The next update, 0.13.0, will focus on **documentation**.
 
-Haxegon compiles natively to **HTML5** and **Desktop** (Win, Mac, Linux). **Flash** is also supported as a legacy/development platform.
+Haxegon compiles natively to **HTML5** and **Desktop** (Win, Mac, Linux, Neko). **Flash** is also supported as a legacy/development platform.
 
 ## Trying it out
 
@@ -20,6 +20,15 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 
 # Last Updates
 
+0.12.1 (2018-03-02)
+------------------
+
+### New features
+  * This is a minor update that adds support for the **Neko** target. **Neko** is a lightweight virtual machine that behaves very like Native builds, but compiles much faster, so it can be useful for testing. It's included with the default installation of Haxe. If you're interested in **Neko** builds, you'll need to update your <a href="https://github.com/haxegon/haxegon/raw/master/blankproject.zip">blankproject.zip</a> file again!
+  
+### Bug fixes/Tweaks
+  * Updated Starling to 2.2.1.
+  
 0.12.0 (2018-02-28)
 ------------------
 
