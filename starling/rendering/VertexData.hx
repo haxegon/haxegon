@@ -123,6 +123,25 @@ class VertexData
     private static var sHelperPoint3D:Vector3D = new Vector3D();
     private static var sBytes:ByteArray = new ByteArray();
 
+    #if commonjs
+    private static function __init__ () {
+        
+        untyped Object.defineProperties (VertexData.prototype, {
+            "premultipliedAlpha": { get: untyped __js__ ("function () { return this.get_premultipliedAlpha (); }"), set: untyped __js__ ("function (v) { return this.set_premultipliedAlpha (v); }") },
+            "numVertices": { get: untyped __js__ ("function () { return this.get_numVertices (); }"), set: untyped __js__ ("function (v) { return this.set_numVertices (v); }") },
+            "rawData": { get: untyped __js__ ("function () { return this.get_rawData (); }") },
+            "format": { get: untyped __js__ ("function () { return this.get_format (); }"), set: untyped __js__ ("function (v) { return this.set_format (v); }") },
+            "tinted": { get: untyped __js__ ("function () { return this.get_tinted (); }"), set: untyped __js__ ("function (v) { return this.set_tinted (v); }") },
+            "formatString": { get: untyped __js__ ("function () { return this.get_formatString (); }") },
+            "vertexSize": { get: untyped __js__ ("function () { return this.get_vertexSize (); }") },
+            "vertexSizeIn32Bits": { get: untyped __js__ ("function () { return this.get_vertexSizeIn32Bits (); }") },
+            "size": { get: untyped __js__ ("function () { return this.get_size (); }") },
+            "sizeIn32Bits": { get: untyped __js__ ("function () { return this.get_sizeIn32Bits (); }") },
+        });
+        
+    }
+    #end
+
     /** Creates an empty VertexData object with the given format and initial capacity.
      *
      *  @param format
@@ -801,14 +820,18 @@ class VertexData
         for (i in 0...numVertices)
         {
             alphaPos = colorPos + 3;
-            alpha = _rawData[alphaPos] / 255.0 * factor;
+            alpha = #if commonjs _rawData.get(alphaPos) #else _rawData[alphaPos] #end / 255.0 * factor;
 
             if (alpha > 1.0)      alpha = 1.0;
             else if (alpha < 0.0) alpha = 0.0;
 
             if (alpha == 1.0 || !_premultipliedAlpha)
             {
+                #if commonjs
+                _rawData.set(alphaPos, Std.int(alpha * 255.0));
+                #else
                 _rawData[alphaPos] = Std.int(alpha * 255.0);
+                #end
             }
             else
             {

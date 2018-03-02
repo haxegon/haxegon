@@ -154,6 +154,26 @@ class AssetManager extends EventDispatcher
     /** Regex for name / extension extraction from URL. */
     private static var NAME_REGEX:EReg = ~/([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
 
+    #if commonjs
+    private static function __init__ () {
+        
+        untyped Object.defineProperties (AssetManager.prototype, {
+            "numQueuedAssets": { get: untyped __js__ ("function () { return this.get_numQueuedAssets (); }") },
+            "verbose": { get: untyped __js__ ("function () { return this.get_verbose (); }"), set: untyped __js__ ("function (v) { return this.set_verbose (v); }") },
+            "isLoading": { get: untyped __js__ ("function () { return this.get_isLoading (); }") },
+            "useMipMaps": { get: untyped __js__ ("function () { return this.get_useMipMaps (); }"), set: untyped __js__ ("function (v) { return this.set_useMipMaps (v); }") },
+            "scaleFactor": { get: untyped __js__ ("function () { return this.get_scaleFactor (); }"), set: untyped __js__ ("function (v) { return this.set_scaleFactor (v); }") },
+            "textureFormat": { get: untyped __js__ ("function () { return this.get_textureFormat (); }"), set: untyped __js__ ("function (v) { return this.set_textureFormat (v); }") },
+            "forcePotTextures": { get: untyped __js__ ("function () { return this.get_forcePotTextures (); }"), set: untyped __js__ ("function (v) { return this.set_forcePotTextures (v); }") },
+            "checkPolicyFile": { get: untyped __js__ ("function () { return this.get_checkPolicyFile (); }"), set: untyped __js__ ("function (v) { return this.set_checkPolicyFile (v); }") },
+            "keepAtlasXmls": { get: untyped __js__ ("function () { return this.get_keepAtlasXmls (); }"), set: untyped __js__ ("function (v) { return this.set_keepAtlasXmls (v); }") },
+            "keepFontXmls": { get: untyped __js__ ("function () { return this.get_keepFontXmls (); }"), set: untyped __js__ ("function (v) { return this.set_keepFontXmls (v); }") },
+            "numConnections": { get: untyped __js__ ("function () { return this.get_numConnections (); }"), set: untyped __js__ ("function (v) { return this.set_numConnections (v); }") },
+        });
+        
+    }
+    #end
+
     /** Create a new AssetManager. The 'scaleFactor' and 'useMipmaps' parameters define
      * how enqueued bitmaps will be converted to textures. */
     public function new(scaleFactor:Float=1, useMipmaps:Bool=false)
@@ -364,7 +384,7 @@ class AssetManager extends EventDispatcher
     /** Register an XML object under a certain name. It will be available right away.
      * If the name was already taken, the existing XML will be disposed and replaced
      * by the new one. */
-    public function addXml(name:String, xml:Xml):Void
+    public function addXml(name:String, xml:Dynamic):Void
     {
         log("Adding XML '" + name + "'");
         
@@ -375,7 +395,12 @@ class AssetManager extends EventDispatcher
             System.disposeXML(__xmls[name]);
             #end
         }
-
+        
+        if (xml != null && Std.is(xml, String))
+        {
+            xml = Xml.parse(xml).firstElement();
+        }
+        
         __xmls[name] = xml;
     }
     
@@ -589,7 +614,7 @@ class AssetManager extends EventDispatcher
         #if air
         if (Std.is(asset, flash.filesystem.File)) {
             filename = Reflect.field(asset, "name");
-            asset = decodeURI(Reflect.field(asset, "url"));
+            asset = StringTools.urlDecode(Reflect.field(asset, "url"));
         }
         #end
         
@@ -889,7 +914,7 @@ class AssetManager extends EventDispatcher
                     });
                 };
             }
-            else if (Std.is(asset, ByteArrayData))
+            else if (Std.is(asset, #if commonjs ByteArray #else ByteArrayData #end))
             {
                 bytes = cast asset;
                 
@@ -910,7 +935,7 @@ class AssetManager extends EventDispatcher
                             try
                             {
                                 if (asset == null) throw new Error("Reload failed");
-                                texture.root.uploadAtfData(cast(asset, ByteArrayData), 0, null);
+                                texture.root.uploadAtfData(cast(asset, #if commonjs ByteArray #else ByteArrayData #end), 0, null);
                                 asset.clear();
                             }
                             catch (e:Error)
@@ -1208,17 +1233,17 @@ class AssetManager extends EventDispatcher
         // recognize BOMs
         
         if (length >= 4 &&
-            (bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2] == 0xfe && bytes[3] == 0xff) ||
-            (bytes[0] == 0xff && bytes[1] == 0xfe && bytes[2] == 0x00 && bytes[3] == 0x00))
+            (#if commonjs bytes.get(0) #else bytes[0] #end == 0x00 &&#if commonjs bytes.get(1) #else bytes[1] #end == 0x00 && #if commonjs bytes.get(2) #else bytes[2] #end == 0xfe && #if commonjs bytes.get(3) #else bytes[3] #end == 0xff) ||
+            (#if commonjs bytes.get(0) #else bytes[0] #end == 0xff && #if commonjs bytes.get(1) #else bytes[1] #end == 0xfe && #if commonjs bytes.get(2) #else bytes[2] #end == 0x00 && #if commonjs bytes.get(3) #else bytes[3] #end == 0x00))
         {
             start = 4; // UTF-32
         }
-        else if (length >= 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf)
+        else if (length >= 3 && #if commonjs bytes.get(0) #else bytes[0] #end == 0xef && #if commonjs bytes.get(1) #else bytes[1] #end == 0xbb && #if commonjs bytes.get(2) #else bytes[2] #end == 0xbf)
         {
             start = 3; // UTF-8
         }
         else if (length >= 2 &&
-            (bytes[0] == 0xfe && bytes[1] == 0xff) || (bytes[0] == 0xff && bytes[1] == 0xfe))
+            (#if commonjs bytes.get(0) #else bytes[0] #end == 0xfe && #if commonjs bytes.get(1) #else bytes[1] #end == 0xff) || (#if commonjs bytes.get(0) #else bytes[0] #end == 0xff && #if commonjs bytes.get(1) #else bytes[1] #end == 0xfe))
         {
             start = 2; // UTF-16
         }
@@ -1227,7 +1252,7 @@ class AssetManager extends EventDispatcher
         
         for (i in start...length)
         {
-            var byte:Int = bytes[i];
+            var byte:Int = #if commonjs bytes.get(i) #else bytes[i] #end;
             if (byte == 0 || byte == 10 || byte == 13 || byte == 32) continue; // null, \n, \r, space
             else return byte == wanted;
         }
@@ -1298,8 +1323,8 @@ class AssetManager extends EventDispatcher
     private function get_queue():Array<Dynamic> { return __queue; }
     
     /** Returns the number of raw assets that have been enqueued, but not yet loaded. */
-    public var nu__queuedAssets(get, never):Int;
-    private function get_nu__queuedAssets():Int { return __queue.length; }
+    public var numQueuedAssets(get, never):Int;
+    private function get_numQueuedAssets():Int { return __queue.length; }
     
     /** When activated, the class will trace information about added/enqueued assets.
      * @default true */

@@ -25,12 +25,27 @@ class AtfData
     private var _isCubeMap:Bool;
     private var _data:ByteArray;
     
+    #if commonjs
+    private static function __init__ () {
+        
+        untyped Object.defineProperties (AtfData.prototype, {
+            "format": { get: untyped __js__ ("function () { return this.get_format (); }") },
+            "width": { get: untyped __js__ ("function () { return this.get_width (); }") },
+            "height": { get: untyped __js__ ("function () { return this.get_height (); }") },
+            "numTextures": { get: untyped __js__ ("function () { return this.get_numTextures (); }") },
+            "isCubeMap": { get: untyped __js__ ("function () { return this.get_isCubeMap (); }") },
+            "data": { get: untyped __js__ ("function () { return this.get_data (); }") },
+        });
+        
+    }
+    #end
+    
     /** Create a new instance by parsing the given byte array. */
     public function new(data:ByteArray)
     {
         if (!isAtfData(data)) throw new ArgumentError("Invalid ATF data");
         
-        if (data[6] == 255) data.position = 12; // new file version
+        if (#if commonjs data.get(6) #else data[6] #end == 255) data.position = 12; // new file version
         else                data.position =  6; // old file version
 
         var format:UInt = data.readUnsignedByte();
@@ -51,10 +66,10 @@ class AtfData
         // version 2 of the new file format contains information about
         // the "-e" and "-n" parameters of png2atf
         
-        if (data[5] != 0 && data[6] == 255)
+        if (#if commonjs data.get(5) #else data[5] #end != 0 && #if commonjs data.get(6) #else data[6] #end == 255)
         {
-            var emptyMipmaps:Bool = (data[5] & 0x01) == 1;
-            var numTextures:Int  = data[5] >> 1 & 0x7f;
+            var emptyMipmaps:Bool = (#if commonjs data.get(5) #else data[5] #end & 0x01) == 1;
+            var numTextures:Int  = #if commonjs data.get(5) #else data[5] #end >> 1 & 0x7f;
             _numTextures = emptyMipmaps ? 1 : numTextures;
         }
     }
@@ -65,7 +80,7 @@ class AtfData
         if (data.length < 3) return false;
         else
         {
-            var signature:String = String.fromCharCode(data[0]) + String.fromCharCode(data[1]) + String.fromCharCode(data[2]);
+            var signature:String = String.fromCharCode(#if commonjs data.get(0) #else data[0] #end) + String.fromCharCode(#if commonjs data.get(1) #else data[1] #end) + String.fromCharCode(#if commonjs data.get (2) #else data[2] #end);
             return signature == "ATF";
         }
     }
