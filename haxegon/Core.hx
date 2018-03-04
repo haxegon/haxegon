@@ -1,5 +1,6 @@
 package haxegon;
 
+import flash.events.MouseEvent;
 import haxe.Constraints.Function;
 import haxe.Timer;
 import lime.ui.Window;
@@ -118,6 +119,24 @@ class Core extends Sprite {
 		Text.init();
 		Text.defaultfont();
 		Sound.init();
+		
+		//Create a fullscreen button region
+		flash.Lib.current.stage.addEventListener(MouseEvent.CLICK, function(e:MouseEvent){
+			if(_fullscreenbutton){
+				if (Geom.inbox(
+					Gfx.getscreenx(flash.Lib.current.mouseX), Gfx.getscreeny(flash.Lib.current.mouseY),
+					_fullscreenbuttonx, _fullscreenbuttony, _fullscreenbuttonw, _fullscreenbuttonh)){
+					
+					if (flash.Lib.current.stage.displayState == openfl.display.StageDisplayState.NORMAL){
+						flash.Lib.current.stage.displayState = openfl.display.StageDisplayState.FULL_SCREEN_INTERACTIVE;
+						Gfx._fullscreen = true;
+					}else{
+						flash.Lib.current.stage.displayState = openfl.display.StageDisplayState.NORMAL;
+						Gfx._fullscreen = false;
+					}
+				}
+			}
+		});
 		
 		//Before we call Scene.init(), make sure we have some init values for our screen
 		//in the event that we don't create one in Main.new():
@@ -270,6 +289,25 @@ class Core extends Sprite {
 		
 		Gfx.endframe();
 	}
+	
+	public static function fullscreenbutton(?x:Float, ?y:Float, ?width:Float, ?height:Float){
+		if (x == null || y == null || width == null || height == null){
+			_fullscreenbutton = false;
+		}else{
+			_fullscreenbuttonx = x;
+			_fullscreenbuttony = y;
+			_fullscreenbuttonw = width;
+			_fullscreenbuttonh = height;
+		  _fullscreenbutton = true;
+		}
+	}
+	
+	
+	private static var _fullscreenbutton:Bool = false;
+	private static var _fullscreenbuttonx:Float = 0;
+	private static var _fullscreenbuttony:Float = 0;
+	private static var _fullscreenbuttonw:Float = 0;
+	private static var _fullscreenbuttonh:Float = 0;
 	
 	public static var fps(get,set):Int;
 	private static var _fps:Int;

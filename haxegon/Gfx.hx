@@ -1308,7 +1308,7 @@ class Gfx {
 	static function get_fullscreen():Bool {
 		return _fullscreen;
 	}
-
+	
   static function set_fullscreen(fs:Bool) {
 		#if html5
 		_fullscreen = fs;
