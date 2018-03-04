@@ -30,12 +30,12 @@ class Save {
 		return true;
 	}
 	
-	public static function loadvalue(key:String):Dynamic {
+	public static function loadvalue(key:String, defaultVal:Dynamic = 0):Dynamic {
 	  if (so == null) changesavefile("haxegongame");
 		
 		var returnval:Dynamic = Reflect.field(so.data, key);
 		if (returnval == null) {
-			return 0;
+			return defaultVal;
 		}
 		
 		return returnval;
