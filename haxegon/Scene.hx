@@ -78,8 +78,6 @@ class Scene {
 			}
 			return;
 		}
-		
-		// method didn't exist; complain if necessary
 	}
 	
 	private static function findscene<T>(findscene:Class<T>):Int {

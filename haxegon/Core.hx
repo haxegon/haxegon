@@ -242,6 +242,14 @@ class Core extends Sprite {
 		// render loop
 		dorender();
 	}
+	
+	public static function mobilebrowser():Bool{
+		#if html5
+		return S.isinstring(js.Browser.navigator.userAgent, "Mobi");
+		#else
+		return false;
+		#end
+	}
 
 	private static var currentupdateindex:Int;
 	private static var currentupdatecount:Int;
