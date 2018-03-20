@@ -58,10 +58,10 @@ class Scene {
 	}
 	
 	private static function callscenemethod(scene:Dynamic, method:String) {
-		var instanceFunc:Dynamic = Reflect.field(scenelist[currentscene], method);
+		var instanceFunc:Dynamic = Reflect.field(scene, method);
 		if (instanceFunc != null && Reflect.isFunction(instanceFunc)) {
 			try {
-				Reflect.callMethod(scenelist[currentscene], instanceFunc, []);
+				Reflect.callMethod(scene, instanceFunc, []);
 			} catch ( e:ArgumentError ) {
 				throw( "ERROR: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
 			}
@@ -69,10 +69,10 @@ class Scene {
 		}
 		
 		// Now try the static method
-		var classFunc:Dynamic = Reflect.field(Type.getClass(scenelist[currentscene]), method);
+		var classFunc:Dynamic = Reflect.field(Type.getClass(scene), method);
 		if (classFunc != null && Reflect.isFunction(classFunc)) {
 			try {
-				Reflect.callMethod(scenelist[currentscene], classFunc, []);
+				Reflect.callMethod(scene, classFunc, []);
 			} catch ( e:ArgumentError ) {
 				throw( "ERROR: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
 			}
