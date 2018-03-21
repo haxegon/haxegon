@@ -1312,7 +1312,7 @@ class Gfx {
   static function set_fullscreen(fs:Bool) {
 		#if html5
 		_fullscreen = fs;
-		if(fs) Debug.log("Warning: HTML5 target does not currently support fullscreen. Check again in a later version!");
+		if(fs) Debug.log("Error: HTML5 target cannot set fullscreen this way. See Core.fullscreenbutton() for an alternative.");
 		return fs;
 		#else
 		_fullscreen = fs;
@@ -1327,7 +1327,7 @@ class Gfx {
 					if (e.name == "SecurityError") {
 						if (flashstage.loaderInfo.url.indexOf("file://") == 0) {
 						}else {
-							Debug.log("Error: Haxegon is unable to toggle fullscreen in browsers due to Adobe security settings. To do: make haxegon_flash addon!");
+							Debug.log("Error: Haxegon is unable to toggle fullscreen in browsers due to Adobe security settings. See Core.fullscreenbutton() for an alternative.");
 						}
 					}
 					#end
