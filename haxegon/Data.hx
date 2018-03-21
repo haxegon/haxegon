@@ -15,10 +15,10 @@ class Data {
 		jsonfile = normalizefilename(jsonfile, "data/text/", "json");
 		
 		var jfile:Dynamic;
-		if (Assets.exists("data/text/" + jsonfile)) {
-			jfile = Json.parse(Assets.getText("data/text/" + jsonfile));
+		if (Assets.exists(jsonfile)) {
+			jfile = Json.parse(Assets.getText(jsonfile));
 		}else {
-		  Debug.log("ERROR: In loadjson, cannot find \"data/text/" + jsonfile + "\"."); 
+		  Debug.log("ERROR: In loadjson, cannot find \"" + jsonfile + "\"."); 
 		  return null;
 		}
 		
