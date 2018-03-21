@@ -126,7 +126,6 @@ class Core extends Sprite {
 				if (Geom.inbox(
 					Gfx.getscreenx(flash.Lib.current.mouseX), Gfx.getscreeny(flash.Lib.current.mouseY),
 					_fullscreenbuttonx, _fullscreenbuttony, _fullscreenbuttonw, _fullscreenbuttonh)){
-					
 					if (flash.Lib.current.stage.displayState == openfl.display.StageDisplayState.NORMAL){
 						flash.Lib.current.stage.displayState = openfl.display.StageDisplayState.FULL_SCREEN_INTERACTIVE;
 						Gfx._fullscreen = true;

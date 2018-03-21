@@ -1,5 +1,6 @@
 package haxegon;
 
+import haxe.io.Path;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
 import openfl.Assets;
@@ -11,8 +12,7 @@ class Data {
 	public static var height:Int = 0;
 	
 	public static function loadjson(jsonfile:String):Dynamic {
-		jsonfile = jsonfile.toLowerCase();
-		if (!S.isinstring(jsonfile, ".")) jsonfile += ".json";
+		jsonfile = normalizefilename(jsonfile, "data/text/", "json");
 		
 		var jfile:Dynamic;
 		if (Assets.exists("data/text/" + jsonfile)) {
@@ -138,12 +138,13 @@ class Data {
 	
 	public static function loadxml(xmlfile:String):Dynamic {
 		var xfile:Dynamic = {};
-		if (!S.isinstring(xmlfile, ".")) xmlfile += ".xml";
 		
-		if (Assets.exists("data/text/" + xmlfile)) {
-			xfile = xmltojson(Xml.parse(Assets.getText("data/text/" + xmlfile)));
+		xmlfile = normalizefilename(xmlfile, "data/text/", "xml");
+		
+		if (Assets.exists(xmlfile)) {
+			xfile = xmltojson(Xml.parse(Assets.getText(xmlfile)));
 		}else {
-		  Debug.log("ERROR: In loadxml, cannot find \"data/text/" + xmlfile + "\".");
+		  Debug.log("ERROR: In loadxml, cannot find \"" + xmlfile + "\".");
 		  return null;
 		}
 		
@@ -155,14 +156,14 @@ class Data {
 	}
 	
 	public static function loadtext(textfile:String):Array<String> {
-		textfile = textfile.toLowerCase();
-		if (!S.isinstring(textfile, ".")) textfile += ".txt";
+		textfile = normalizefilename(textfile, "data/text/", "txt");
+		
 		var tempstring:String = "";
 		
-		if (Assets.exists("data/text/" + textfile)) {
-			tempstring = Assets.getText("data/text/" + textfile);
+		if (Assets.exists(textfile)) {
+			tempstring = Assets.getText(textfile);
 		}else {
-		  Debug.log("ERROR: In loadtext, cannot find \"data/text/" + textfile + "\"."); 
+		  Debug.log("ERROR: In loadtext, cannot find \"" + textfile + "\"."); 
 		  return [""];
 		}
 		
@@ -173,13 +174,13 @@ class Data {
 	
 	@:generic
 	public static function loadcsv<T>(csvfile:String, delimiter:String = ","):Array<T> {
+		csvfile = normalizefilename(csvfile, "data/text/", "csv");
 		var tempstring:String = "";
-		if (!S.isinstring(csvfile, ".")) csvfile += ".csv";
 		
-		if (Assets.exists("data/text/" + csvfile)) {
-			tempstring = Assets.getText("data/text/" + csvfile);
+		if (Assets.exists( csvfile)) {
+			tempstring = Assets.getText(csvfile);
 		}else {
-		  Debug.log("ERROR: In loadcsv, cannot find \"data/text/" + csvfile + "\"."); 
+		  Debug.log("ERROR: In loadcsv, cannot find \"" + csvfile + "\"."); 
 		  tempstring = "";
 		}
 		
@@ -215,13 +216,14 @@ class Data {
 	
 	@:generic
 	public static function load2dcsv<T>(csvfile:String, delimiter:String = ","):Array<Array<T>> {
-		var tempstring:String = "";
-		if (!S.isinstring(csvfile, ".")) csvfile += ".csv";
+		csvfile = normalizefilename(csvfile, "data/text/", "csv");
 		
-		if (Assets.exists("data/text/" + csvfile)) {
-			tempstring = Assets.getText("data/text/" + csvfile);
+		var tempstring:String = "";
+		
+		if (Assets.exists(csvfile)) {
+			tempstring = Assets.getText(csvfile);
 		}else {
-		  Debug.log("ERROR: In load2dcsv, cannot find \"data/text/" + csvfile + "\"."); 
+		  Debug.log("ERROR: In load2dcsv, cannot find \"" + csvfile + "\"."); 
 		  tempstring = "";
 		}
 		
@@ -254,6 +256,14 @@ class Data {
 	
 	/* Data.hx asset loading functions are used internally by haxegon
 	 * to make sure case insensitive loading works ok */
+	private static function normalizefilename(filename:String, folder:String, ext:String):String{
+		filename = filename.toLowerCase();
+		filename = folder + filename;
+		if (!S.isinstring(S.getlastbranch(filename, "/"), ".")) filename += "." + ext;
+		filename = Path.normalize(filename);
+		return filename;
+	}
+	 
 	private static var embeddedassets_original:Array<String>;
 	private static var embeddedassets:Array<String>;
 	private static function initassets() {
