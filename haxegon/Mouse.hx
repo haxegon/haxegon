@@ -6,6 +6,7 @@ import openfl.events.FocusEvent;
 import openfl.events.MouseEvent;
 import openfl.ui.Mouse;
 	
+@:access(haxegon.Gfx)
 class Mouse{		
 	private static var _x:Int;
 	private static var _y:Int;
@@ -191,6 +192,7 @@ class Mouse{
 	
 	private static function ontouch(e:TouchEvent) {
 		var touch:Touch = e.getTouch(starstage);
+		
 		_mouseoffstage = true;
 		
 		if (touch != null) {
@@ -201,9 +203,16 @@ class Mouse{
 			if (touch.phase == TouchPhase.BEGAN) {
 				_mouseoffstage = false;	
 				
-				//There was a touch (same as mouse down event
-				if(_current > 0) _current = 1;
+				//There was a touch (same as mouse down event)
+				if (_current > 0){
+					_current = 1;
+				}
 				else _current = 2;
+				
+				_x = previousx = Gfx.getscreenx(touch.globalX);
+				_y = previousy = Gfx.getscreeny(touch.globalY);
+					_cursormoved = false;	
+					deltax = 0; deltay = 0;
 				
 				_held = 0;
 			}else if(touch.phase == TouchPhase.ENDED){
