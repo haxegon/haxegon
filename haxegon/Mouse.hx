@@ -5,8 +5,7 @@ import openfl.events.Event;
 import openfl.events.FocusEvent;
 import openfl.events.MouseEvent;
 import openfl.ui.Mouse;
-	
-@:access(haxegon.Gfx)
+
 class Mouse{		
 	private static var _x:Int;
 	private static var _y:Int;
@@ -207,8 +206,8 @@ class Mouse{
 				if (_current > 0) _current = 1;
 				else _current = 2;
 				
-				_x = previousx = Gfx.getscreenx(touch.globalX);
-				_y = previousy = Gfx.getscreeny(touch.globalY);
+				_x = previousx = Std.int(touch.globalX);
+				_y = previousy = Std.int(touch.globalY);
 				_cursormoved = false;	
 				deltax = 0; deltay = 0;
 				
