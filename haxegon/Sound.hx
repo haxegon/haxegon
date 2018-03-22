@@ -257,6 +257,26 @@ class Sound{
 		return _mastervolume;
 	}
 	
+	
+	public static var volume(get, set):Float;
+	private static var _soundvolume:Float = 1.0;
+	static function get_volume():Float {
+	  return _soundvolume;	
+	}
+	
+	static function set_volume(vol:Float):Float{
+		_soundvolume = vol;
+		
+		for (i in 0 ... channel.length){
+			if(channel[i].soundname != Music.currentsong){
+				channel[i].changevolume(_soundvolume);
+			}
+		}
+		
+		return _soundvolume;
+	}
+	
+	
 	public static function length(soundname:String):Float {
 		soundname = soundname.toLowerCase();
 		
