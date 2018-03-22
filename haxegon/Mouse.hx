@@ -204,15 +204,13 @@ class Mouse{
 				_mouseoffstage = false;	
 				
 				//There was a touch (same as mouse down event)
-				if (_current > 0){
-					_current = 1;
-				}
+				if (_current > 0) _current = 1;
 				else _current = 2;
 				
 				_x = previousx = Gfx.getscreenx(touch.globalX);
 				_y = previousy = Gfx.getscreeny(touch.globalY);
-					_cursormoved = false;	
-					deltax = 0; deltay = 0;
+				_cursormoved = false;	
+				deltax = 0; deltay = 0;
 				
 				_held = 0;
 			}else if(touch.phase == TouchPhase.ENDED){
