@@ -120,23 +120,6 @@ class Core extends Sprite {
 		Text.defaultfont();
 		Sound.init();
 		
-		//Create a fullscreen button region
-		flash.Lib.current.stage.addEventListener(MouseEvent.CLICK, function(e:MouseEvent){
-			if(_fullscreenbutton){
-				if (Geom.inbox(
-					Gfx.getscreenx(flash.Lib.current.mouseX), Gfx.getscreeny(flash.Lib.current.mouseY),
-					_fullscreenbuttonx, _fullscreenbuttony, _fullscreenbuttonw, _fullscreenbuttonh)){
-					if (flash.Lib.current.stage.displayState == openfl.display.StageDisplayState.NORMAL){
-						flash.Lib.current.stage.displayState = openfl.display.StageDisplayState.FULL_SCREEN_INTERACTIVE;
-						Gfx._fullscreen = true;
-					}else{
-						flash.Lib.current.stage.displayState = openfl.display.StageDisplayState.NORMAL;
-						Gfx._fullscreen = false;
-					}
-				}
-			}
-		});
-		
 		//Before we call Scene.init(), make sure we have some init values for our screen
 		//in the event that we don't create one in Main.new():
 		Gfx.screenwidth = Std.int(Std.parseInt(WINDOW_WIDTH));
@@ -297,10 +280,40 @@ class Core extends Sprite {
 		Gfx.endframe();
 	}
 	
-	public static function fullscreenbutton(?x:Float, ?y:Float, ?width:Float, ?height:Float){
-		if (x == null || y == null || width == null || height == null){
+	private static function clickedfullscreenbutton(e:MouseEvent){
+		if(_fullscreenbutton){
+			if (Geom.inbox(
+				Gfx.getscreenx(flash.Lib.current.mouseX), Gfx.getscreeny(flash.Lib.current.mouseY),
+				_fullscreenbuttonx, _fullscreenbuttony, _fullscreenbuttonw, _fullscreenbuttonh)){
+				if (flash.Lib.current.stage.displayState == openfl.display.StageDisplayState.NORMAL){
+					flash.Lib.current.stage.displayState = openfl.display.StageDisplayState.FULL_SCREEN_INTERACTIVE;
+					Gfx._fullscreen = true;
+				}else{
+					flash.Lib.current.stage.displayState = openfl.display.StageDisplayState.NORMAL;
+					Gfx._fullscreen = false;
+				}
+			}
+		}
+	}
+	
+	public static function fullscreenbutton(?x:Float = 0, ?y:Float = 0, ?width:Float = 0, ?height:Float = 0){		
+		if (width == 0 || height == 0){
+			if (_fullscreenbutton){
+				//Remove the fullscreen button region
+				flash.Lib.current.stage.removeEventListener(MouseEvent.CLICK, clickedfullscreenbutton);
+			}
+			
 			_fullscreenbutton = false;
+			_fullscreenbuttonx = 0;
+			_fullscreenbuttony = 0;
+			_fullscreenbuttonw = 0;
+			_fullscreenbuttonh = 0;
 		}else{
+			if (!_fullscreenbutton){
+				//Create a fullscreen button region
+				flash.Lib.current.stage.addEventListener(MouseEvent.CLICK, clickedfullscreenbutton);
+			}
+			
 			_fullscreenbuttonx = x;
 			_fullscreenbuttony = y;
 			_fullscreenbuttonw = width;
