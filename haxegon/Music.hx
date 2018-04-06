@@ -25,7 +25,7 @@ class Music{
 		}
 	}
 	
-	public static var currentposition(get, null):Float;
+	public static var currentposition(get, set):Float;
 	static function get_currentposition():Float{
 		if (_currentsong != ""){
 			if (haxegon.Sound.isplaying(_currentsong)){
