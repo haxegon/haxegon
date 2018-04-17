@@ -965,6 +965,24 @@ class Gfx {
 		}
 	}
 	
+	public static function fillellipse(x:Float, y:Float, xradius:Float, yradius:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT || drawto == null) return;
+		if (xradius <= 0) return;
+		if (yradius <= 0) return;
+		screenshotdirty = true;
+		if (!Geom.inbox(x, y, -xradius, -yradius, screenwidth + (xradius * 2), screenheight + (yradius * 2))) return;
+		
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
+		
+		var tempring:EllipseDisk = new EllipseDisk(x - xradius, y - yradius, xradius, yradius, col, alpha);
+		
+		for(i in 0 ... tempring._polygons.length){
+		  updatemeshbatch();
+			meshbatch.addMesh(tempring._polygons[i], null, alpha);
+		}
+	}
+	
 	public static function drawtri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		
