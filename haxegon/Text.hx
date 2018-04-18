@@ -279,64 +279,6 @@ class Text {
 		return y;
 	}
 	
-	#if neko
-	public static function display(x:Float, y:Float, text:Dynamic, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
-		if (Std.is(text, Array)){
-			text = text.toString();
-		}else if (!Std.is(text, String)){
-			text = Std.string(text);
-		}
-	#elseif html5
-	public static function display(x:Float, y:Float, text:Dynamic, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
-		if (!Std.is(text, String)){
-			text = Std.string(text);
-		}
-	#else
-	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
-	#end
-		if (text == "") return;
-		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endmeshbatch();
-		Gfx.updatemeshbatch();
-		Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
-		
-		if (typeface.length == 0) {
-		  defaultfont();	
-		}
-		
-		typeface[currentindex].nexttextfield();
-		typeface[currentindex].tf.format.color = color;
-		typeface[currentindex].tf.text = text;
-		
-		typeface[currentindex].updatebounds();
-		
-		x = alignx(x); y = aligny(y);
-		x -= aligntextx(text, align);
-		
-		fontmatrix.identity();
-		
-		if (textrotate != 0) {
-			if (textrotatexpivot != 0.0) tempxpivot = aligntextx(text, textrotatexpivot);
-			if (textrotateypivot != 0.0) tempypivot = aligntexty(text, textrotateypivot);
-			fontmatrix.translate( -tempxpivot, -tempypivot);
-			fontmatrix.rotate((textrotate * 3.1415) / 180);
-			fontmatrix.translate( tempxpivot, tempypivot);
-		}
-		
-		fontmatrix.translate(x, y);
-		if (typeface[currentindex].type == "ttf") {
-			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
-		}else {
-			if (alpha != 1.0){
-				Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
-			}else{
-				/* TO DO */
-			  //typeface[currentindex].tf.createComposedContents();
-			  //Gfx.meshbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);
-				Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
-			}
-		}
-	}
-	
 	private static function defaultfont() {
 		addfont(null, 1);
 		setfont("default", 1);
@@ -484,7 +426,6 @@ class Text {
 		return returnval;
 	}
 	
-	
 	public static var inputbuffer:String = "";
 	
 	private static var fontfile:Array<Fontfile> = new Array<Fontfile>();
@@ -517,4 +458,62 @@ class Text {
 	private static var wordwrapwidth:Int = 0;
 	private static var inputfocus:Bool;
 	public static var inputmaxlength:Int;
+	
+	#if neko
+	public static function display(x:Float, y:Float, text:Dynamic, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
+		if (Std.is(text, Array)){
+			text = text.toString();
+		}else if (!Std.is(text, String)){
+			text = Std.string(text);
+		}
+	#elseif html5
+	public static function display(x:Float, y:Float, text:Dynamic, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
+		if (!Std.is(text, String)){
+			text = Std.string(text);
+		}
+	#else
+	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
+	#end
+		if (text == "") return;
+		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endmeshbatch();
+		Gfx.updatemeshbatch();
+		Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
+		
+		if (typeface.length == 0) {
+		  defaultfont();	
+		}
+		
+		typeface[currentindex].nexttextfield();
+		typeface[currentindex].tf.format.color = color;
+		typeface[currentindex].tf.text = text;
+		
+		typeface[currentindex].updatebounds();
+		
+		x = alignx(x); y = aligny(y);
+		x -= aligntextx(text, align);
+		
+		fontmatrix.identity();
+		
+		if (textrotate != 0) {
+			if (textrotatexpivot != 0.0) tempxpivot = aligntextx(text, textrotatexpivot);
+			if (textrotateypivot != 0.0) tempypivot = aligntexty(text, textrotateypivot);
+			fontmatrix.translate( -tempxpivot, -tempypivot);
+			fontmatrix.rotate((textrotate * 3.1415) / 180);
+			fontmatrix.translate( tempxpivot, tempypivot);
+		}
+		
+		fontmatrix.translate(x, y);
+		if (typeface[currentindex].type == "ttf") {
+			Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
+		}else {
+			if (alpha != 1.0){
+				Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
+			}else{
+				/* TO DO */
+			  //typeface[currentindex].tf.createComposedContents();
+			  //Gfx.meshbatch.addQuadBatch(typeface[currentindex].tf.mQuadBatch, 1.0, fontmatrix);
+				Gfx.drawto.draw(typeface[currentindex].tf, fontmatrix, alpha);
+			}
+		}
+	}
 }
