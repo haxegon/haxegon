@@ -27,7 +27,7 @@ import starling.rendering.RenderState;
 
 /** A RenderTexture is a dynamic texture onto which you can draw any display object.
  * 
- *  <p>After creating a render texture, just call the <code>drawObject</code> method to render 
+ *  <p>After creating a render texture, just call the <code>draw</code> method to render 
  *  an object directly onto the texture. The object will be drawn onto the texture at its current
  *  position, adhering its current rotation, scale and alpha properties.</p> 
  *  
@@ -165,8 +165,7 @@ class RenderTexture extends SubTexture
         super.dispose();
     }
     
-    /** Draws an object into the texture. Note that any filters on the object will currently
-     *  be ignored.
+    /** Draws an object into the texture.
      * 
      *  @param object       The object to draw.
      *  @param matrix       If 'matrix' is null, the object will be drawn adhering its 
@@ -206,9 +205,10 @@ class RenderTexture extends SubTexture
     
     private var haxegonpreviousRenderTarget:Texture;
     public function bundlelock(antiAliasing:Int = 0):Void
-    {
-        var painter:Painter = Starling.current.painter;
-        var state:RenderState = painter.state;
+    {   
+        ///
+        thisframepainter = Starling.current.painter;
+        var state:RenderState = thisframepainter.state;
 
         if (!Starling.current.contextValid) return;
 
@@ -221,7 +221,7 @@ class RenderTexture extends SubTexture
             _helperImage.texture = _bufferTexture;
         }
 
-        painter.pushState();
+        thisframepainter.pushState();
 
         var rootTexture:Texture = _activeTexture.root;
         state.setProjectionMatrix(0, 0, rootTexture.width, rootTexture.height, width, height);
@@ -232,29 +232,28 @@ class RenderTexture extends SubTexture
         state.clipRect = sClipRect;
         state.setRenderTarget(_activeTexture, true, antiAliasing);
 
-        painter.prepareToDraw();
-        painter.context.setStencilActions( // should not be necessary, but fixes mask issues
+        thisframepainter.prepareToDraw();
+        thisframepainter.context.setStencilActions( // should not be necessary, but fixes mask issues
             Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS);
 
         if (isDoubleBuffered || !isPersistent || !_bufferReady)
-            painter.clear();
+            thisframepainter.clear();
 
         // draw buffer
         if (isDoubleBuffered && _bufferReady)
-            _helperImage.render(painter);
+            _helperImage.render(thisframepainter);
         else
             _bufferReady = true;
-        
+            
         _drawing = true;
     }
     
-    
+    private var thisframepainter:Painter;
     public function bundleunlock():Void
     {
         _drawing = false;
-				var painter:Painter = Starling.current.painter;
-				painter.popState();
-    }
+        thisframepainter.popState();
+		}
     
     private function __render(object:DisplayObject, matrix:Matrix=null, alpha:Float=1.0):Void
     {
