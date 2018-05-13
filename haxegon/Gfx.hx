@@ -965,6 +965,24 @@ class Gfx {
 		}
 	}
 	
+	public static function drawellipse(x:Float, y:Float, xradius:Float, yradius:Float, col:Int, alpha:Float = 1.0) {
+		if (col == Col.TRANSPARENT || drawto == null) return;
+		if (xradius <= 0) return;
+		if (yradius <= 0) return;
+		screenshotdirty = true;
+		if (!Geom.inbox(x, y, -xradius, -yradius, screenwidth + (xradius * 2), screenheight + (yradius * 2))) return;
+		
+		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
+		drawstate = DRAWSTATE_MESH;
+		
+		tempellipsering.setto(x - xradius, y - yradius, xradius - linethickness, yradius - linethickness, xradius, yradius, col, alpha);
+		
+		for(i in 0 ... tempellipsering._polygons.length){
+		  updatemeshbatch();
+			meshbatch.addMesh(tempellipsering._polygons[i], null, alpha);
+		}
+	}
+	
 	public static function fillellipse(x:Float, y:Float, xradius:Float, yradius:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT || drawto == null) return;
 		if (xradius <= 0) return;
@@ -975,11 +993,11 @@ class Gfx {
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
 		drawstate = DRAWSTATE_MESH;
 		
-		var tempring:EllipseDisk = new EllipseDisk(x - xradius, y - yradius, xradius, yradius, col, alpha);
+		tempellipsedisk.setto(x - xradius, y - yradius, xradius, yradius, col, alpha);
 		
-		for(i in 0 ... tempring._polygons.length){
+		for(i in 0 ... tempellipsedisk._polygons.length){
 		  updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i], null, alpha);
+			meshbatch.addMesh(tempellipsedisk._polygons[i], null, alpha);
 		}
 	}
 	
@@ -1106,7 +1124,6 @@ class Gfx {
 				if(!drawtolocked) drawto.bundlelock();
 				drawtolocked = true;
 			}
-			
 			#end
 		}else {
 			//Not working with starling 2.0, so workaround is:
@@ -1457,6 +1474,12 @@ class Gfx {
 			screen.textureSmoothing = "none";
 			starstage.addChildAt(screen, 0);
 			
+			tempquad = new Quad(1, 1);
+			temppoly4 = new Poly4(0, 0, 1, 0, 1, 1, 0, 1);
+			templine = new Line(1, 1, 2, 2, 1, 0xFFFFFF);
+			tempellipsering = new EllipseRing(0, 0, 1, 1, 2, 2, 0xFFFFFF, 1);
+			tempellipsedisk = new EllipseDisk(0, 0, 1, 1, 0xFFFFFF, 1);
+			
 			drawto.bundlelock();
 		}
 		
@@ -1506,9 +1529,11 @@ class Gfx {
 	private static var backbuffer:RenderTexture;
 	private static var drawto:RenderTexture;
 	private static var screen:Image;
-	private static var tempquad:Quad = new Quad(1, 1);
-	private static var temppoly4:Poly4 = new Poly4(0, 0, 1, 0, 1, 1, 0, 1);
-	private static var templine:Line = new Line(1, 1, 2, 2,1, 0xFFFFFF);
+	private static var tempquad:Quad;
+	private static var temppoly4:Poly4;
+	private static var templine:Line;
+	private static var tempellipsering:EllipseRing;
+	private static var tempellipsedisk:EllipseDisk;
 	
 	private static var drawstate:Int = 0;
 	private static inline var DRAWSTATE_NONE:Int = 0;

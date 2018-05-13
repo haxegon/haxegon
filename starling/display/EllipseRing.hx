@@ -20,18 +20,24 @@ import starling.display.Quad;
 
 class EllipseRing extends Sprite
 {
-  private var _innerRadius:Float;
+  private var _innerRadiusx:Float;
+  private var _innerRadiusy:Float;
   private var _outerRadiusx:Float;
   private var _outerRadius2x:Float;
   private var _outerRadiusy:Float;
   private var _outerRadius2y:Float;
   public var _polygons:Array<Poly4>;
 
-  public function new(xoff:Float, yoff:Float, innerRadius:Float, outerRadiusx:Float, outerRadiusy:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float)
+  public function new(xoff:Float, yoff:Float, innerRadiusx:Float, innerRadiusy:Float, outerRadiusx:Float, outerRadiusy:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float)
   {
 		super();
-    _polygons = new Array<Poly4>();
-    _innerRadius = innerRadius;
+    setto(xoff, yoff, innerRadiusx, innerRadiusy, outerRadiusx, outerRadiusy, color, alpha, nsides, startangle); 
+  }
+	
+	public function setto(xoff:Float, yoff:Float, innerRadiusx:Float, innerRadiusy:Float, outerRadiusx:Float, outerRadiusy:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float){
+		_polygons = new Array<Poly4>();
+    _innerRadiusx = innerRadiusx;
+		_innerRadiusy = innerRadiusy;
     _outerRadiusx = outerRadiusx;
     _outerRadius2x = outerRadiusx * outerRadiusx;
     _outerRadiusy = outerRadiusy;
@@ -40,7 +46,7 @@ class EllipseRing extends Sprite
     var c1:Point = new Point();
     var p0:Point = new Point();
     var p1:Point = new Point();
-    var nParts:Int = Std.int(Math.max(Math.round(outerRadiusx * 1.0), 8));
+    var nParts:Int = Std.int(Math.min(Math.max(Math.round((outerRadiusx + outerRadiusy) * 0.25), 8), 75));
 		if (nsides > -1) nParts = nsides;
     var angle:Float = 0;
 		if (startangle != null) angle = startangle;
@@ -51,10 +57,10 @@ class EllipseRing extends Sprite
       var sa0:Float = Math.sin(a0);
       var ca1:Float = Math.cos(a1);
       var sa1:Float = Math.sin(a1);
-      c0.x = xoff + (outerRadiusx + ca0 * innerRadius);
-      c0.y = yoff + (outerRadiusy + sa0 * innerRadius);
-      c1.x = xoff + (outerRadiusx + ca1 * innerRadius);
-      c1.y = yoff + (outerRadiusy + sa1 * innerRadius);
+      c0.x = xoff + (outerRadiusx + ca0 * innerRadiusx);
+      c0.y = yoff + (outerRadiusy + sa0 * innerRadiusy);
+      c1.x = xoff + (outerRadiusx + ca1 * innerRadiusx);
+      c1.y = yoff + (outerRadiusy + sa1 * innerRadiusy);
       p0.x = xoff + (outerRadiusx + ca0 * outerRadiusx);
       p0.y = yoff + (outerRadiusy + sa0 * outerRadiusy);
       p1.x = xoff + (outerRadiusx + ca1 * outerRadiusx);
@@ -64,7 +70,7 @@ class EllipseRing extends Sprite
       _polygons.push(q);
       addChild(q);
     }
-  }
+	}
 
 	public function setpolycolor(value:Int) {
     for (i in 0 ... _polygons.length) {

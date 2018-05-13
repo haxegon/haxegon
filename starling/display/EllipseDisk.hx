@@ -13,6 +13,6 @@ package starling.display;
 class EllipseDisk extends EllipseRing
 {
 	public function new(xoff:Float, yoff:Float, xradius:Float, yradius:Float, color:Int = 0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float){
-		super(xoff, yoff, 0, xradius, yradius, color, alpha, nsides, startangle);
+		super(xoff, yoff, 0, 0, xradius, yradius, color, alpha, nsides, startangle);
 	}
 }

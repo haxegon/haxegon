@@ -62,7 +62,7 @@ class Fontclass {
 	public var height(get, never):Float;
 	
 	function get_height():Float {
-		return return tf.textBounds.height;
+	  return tf.textBounds.height;
 	}
 	
 	public var tf:TextField;
