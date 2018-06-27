@@ -1,5 +1,6 @@
 package haxegon;
 
+import flash.Vector;
 import haxegon.embeddedassets.DefaultFont;
 import openfl.geom.Matrix;
 import openfl.text.Font;
@@ -26,7 +27,7 @@ class Fontclass {
 	}
 	
 	private function inittextfield():TextField {
-		var newtf:TextField = new TextField(Gfx.screenwidth, Gfx.screenheight, "XYZ");
+		var newtf:TextField = new TextField(1, 1, "XYZ");
 		newtf.format.setTo(fontfile.typename, (fontfile.sizescale * size));
 		newtf.format.horizontalAlign = Align.LEFT;
 		newtf.format.verticalAlign = Align.TOP;
@@ -82,6 +83,7 @@ class Fontclass {
 class Fontfile {
 	public function new(?_file:String) {
 		if (_file == null) {
+			//Use the embeded "default" pixel font
 			type = "bitmap";
 			
 			fontxml = Xml.parse(DefaultFont.xmlstring).firstElement();
@@ -119,6 +121,7 @@ class Fontfile {
 			bitmapfont = new BitmapFont(fonttex, fontxml);
 			TextField.registerCompositor(bitmapfont, bitmapfont.name);
 		}else {
+			//Use ttf font
 		  type = "ttf";
 			
 			filename = "data/fonts/" + _file + ".ttf";
@@ -195,8 +198,22 @@ class Text {
 	public static function width(text:String):Float {
 		typeface[currentindex].updatebounds();
 		
-		typeface[currentindex].tf.text = text;
-		return typeface[currentindex].width;
+		if (typeface[currentindex].type == "bitmap"){
+			var realwidth:Float = 0;
+			
+			var bitmapcharlocations:Vector<BitmapCharLocation> = 
+			typeface[currentindex].fontfile.bitmapfont.arrangeChars(Gfx.screenwidth, Gfx.screenheight, text, typeface[currentindex].tf.format, null);
+			
+			for (i in 0 ... bitmapcharlocations.length){
+			  realwidth += bitmapcharlocations[i].char.xAdvance;
+			}
+			
+			BitmapCharLocation.rechargePool();
+			return realwidth;
+		}else{
+			typeface[currentindex].tf.text = text;
+			return typeface[currentindex].width;
+		}
 	}
 	
 	public static function height(?text:String):Float {
@@ -478,6 +495,9 @@ class Text {
 		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endmeshbatch();
 		Gfx.updatemeshbatch();
 		Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
+		
+		x = Math.ffloor(x);
+		y = Math.ffloor(y);
 		
 		if (typeface.length == 0) {
 		  defaultfont();	

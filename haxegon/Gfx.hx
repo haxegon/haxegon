@@ -834,7 +834,10 @@ class Gfx {
 		screenshotdirty = true;
 		if (!changetileset(tilesetname)) return;
 		
-		if (tilenum >= numberoftiles(tilesetname)) {
+		if (tilenum < 0){
+			Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", which is out of bounds.)");
+			return;
+		}else	if (tilenum >= numberoftiles(tilesetname)) {
 			if (tilenum == numberoftiles(tilesetname)) {
  			  Debug.log("ERROR: Tried to draw tile number " + Std.string(tilenum) + ", but there are only " + Std.string(numberoftiles(tilesetname)) + " tiles in tileset \"" + tiles[currenttileset].name + "\". (Because this includes tile number 0, " + Std.string(tilenum) + " is not a valid tile.)");
 				return;
@@ -993,7 +996,7 @@ class Gfx {
 		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
 		drawstate = DRAWSTATE_MESH;
 		
-		tempellipsedisk.setto(x - xradius, y - yradius, xradius, yradius, col, alpha);
+		tempellipsedisk = new EllipseDisk(x - xradius, y - yradius, xradius, yradius, col, alpha);
 		
 		for(i in 0 ... tempellipsedisk._polygons.length){
 		  updatemeshbatch();
