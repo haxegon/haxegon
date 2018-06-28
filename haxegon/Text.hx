@@ -205,7 +205,7 @@ class Text {
 			typeface[currentindex].fontfile.bitmapfont.arrangeChars(Gfx.screenwidth, Gfx.screenheight, text, typeface[currentindex].tf.format, null);
 			
 			for (i in 0 ... bitmapcharlocations.length){
-			  realwidth += bitmapcharlocations[i].char.xAdvance;
+			  realwidth += bitmapcharlocations[i].char.xAdvance * currentsize;
 			}
 			
 			BitmapCharLocation.rechargePool();
