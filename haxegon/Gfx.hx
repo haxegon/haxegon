@@ -201,6 +201,7 @@ class Gfx {
 		tiles.push(new HaxegonTileset(imagename, width, height));
 		tilesetindex.set(imagename, tiles.length - 1);
 		currenttileset = tiles.length - 1;
+		currenttilesetname = imagename;
 		
 		var tilerows:Int;
 		var tilecolumns:Int;
