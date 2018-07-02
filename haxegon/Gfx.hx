@@ -623,33 +623,53 @@ class Gfx {
 	 * x and y can be: Gfx.CENTER, Gfx.TOP, Gfx.BOTTOM, Gfx.LEFT, Gfx.RIGHT. 
 	 * x1, y1, w1, h1 describe the rectangle of the image to use.
 	 * */
-	public static function drawsubimage(x:Float, y:Float, x1:Float, y1:Float, w1:Float, h1:Float, imagename:String) {
+	@:access(starling.display.Mesh.vertexData)
+	public static function drawsubimage(x:Float, y:Float, x1:Int, y1:Int, w1:Int, h1:Int, imagename:String) {
 		if (!imageindex.exists(imagename)) {
 			Debug.log("ERROR: In drawsubimage, cannot find image \"" + imagename + "\".");
 			return;
 		}
 		
+		//
 		haxegonimage = images[imageindex.get(imagename)];
-		x = imagealignx(haxegonimage.width, x); y = imagealigny(haxegonimage.height, y);
+		var w:Int = haxegonimage.width;
+		var h:Int = haxegonimage.height;
+		x = imagealignx(w1, x); y = imagealigny(h1, y);
 		
-		// Acquire SubTexture and build an Image from it.
-		trect.x = x1;
-		trect.y = y1;
-		trect.width = w1;
-		trect.height = h1;
+		// Get original coords
+		haxegonimage.contents.texture.getTexCoords(haxegonimage.contents.vertexData, 0, "texCoords", tpoint1);
+		haxegonimage.contents.texture.getTexCoords(haxegonimage.contents.vertexData, 3, "texCoords", tpoint2);
+		haxegonimage.contents.getVertexPosition(0, tpoint3);
+		haxegonimage.contents.getVertexPosition(3, tpoint4);
+		
+		// Set coords
+		var tu1:Float = tpoint1.x + (tpoint2.x - tpoint1.x) * (x1 / w);
+		var tu2:Float = tpoint1.x + (tpoint2.x - tpoint1.x) * ((x1 + w1) / w);
+		var tv1:Float = tpoint1.y + (tpoint2.y - tpoint1.y) * (y1 / h);
+		var tv2:Float = tpoint1.y + (tpoint2.y - tpoint1.y) * ((y1 + h1) / h);
 
-		// 2 allocs. avoidable with pooling?
-		var subtex:Texture = Texture.fromTexture(haxegonimage.contents.texture, trect);
-		var subimage:Image = new Image(subtex); // alloc. avoidable with pooling?
-		subimage.touchable = false;
-		subimage.textureSmoothing = "none";
+		haxegonimage.contents.texture.setTexCoords(haxegonimage.contents.vertexData, 0, "texCoords", tu1, tv1);
+		haxegonimage.contents.texture.setTexCoords(haxegonimage.contents.vertexData, 1, "texCoords", tu2, tv1);
+		haxegonimage.contents.texture.setTexCoords(haxegonimage.contents.vertexData, 2, "texCoords", tu1, tv2);
+		haxegonimage.contents.texture.setTexCoords(haxegonimage.contents.vertexData, 3, "texCoords", tu2, tv2);
+
+		haxegonimage.contents.setVertexPosition(0, 0, 0);
+		haxegonimage.contents.setVertexPosition(1, w1, 0);
+		haxegonimage.contents.setVertexPosition(2, 0, h1);
+		haxegonimage.contents.setVertexPosition(3, w1, h1);
 		
-		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
-		
-		
-		// all done! clean up
-		subtex.dispose();
-		subimage.dispose();
+		internaldrawimage(x, y, haxegonimage.contents, w1, h1);
+
+		// Restore coords
+		haxegonimage.contents.texture.setTexCoords(haxegonimage.contents.vertexData, 0, "texCoords", tpoint1.x, tpoint1.y);
+		haxegonimage.contents.texture.setTexCoords(haxegonimage.contents.vertexData, 1, "texCoords", tpoint2.x, tpoint1.y);
+		haxegonimage.contents.texture.setTexCoords(haxegonimage.contents.vertexData, 2, "texCoords", tpoint1.x, tpoint2.y);
+		haxegonimage.contents.texture.setTexCoords(haxegonimage.contents.vertexData, 3, "texCoords", tpoint2.x, tpoint2.y);
+
+		haxegonimage.contents.setVertexPosition(0, tpoint3.x, tpoint3.y);
+		haxegonimage.contents.setVertexPosition(1, tpoint4.x, tpoint3.y);
+		haxegonimage.contents.setVertexPosition(2, tpoint3.x, tpoint4.y);
+		haxegonimage.contents.setVertexPosition(3, tpoint4.x, tpoint4.y);
 	}
 	
 	public static function grabtilefromscreen(tilesetname:String, tilenumber:Int, screenx:Float, screeny:Float) {
@@ -1489,6 +1509,10 @@ class Gfx {
 	
 	private static var starlingassets:AssetManager;
 	private static var trect:Rectangle = new Rectangle();
+	private static var tpoint1:Point = new Point();
+	private static var tpoint2:Point = new Point();
+	private static var tpoint3:Point = new Point();
+	private static var tpoint4:Point = new Point();
 	private static var shapematrix:Matrix = new Matrix();
 	
 	private static var starstage:starling.display.Stage;
