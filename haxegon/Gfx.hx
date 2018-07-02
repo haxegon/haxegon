@@ -1466,7 +1466,6 @@ class Gfx {
 	}
 	
 	private static function startframe() {
-		drawstate = DRAWSTATE_NONE;
 			if (drawto != null){
 			if(!drawtolocked) drawto.bundlelock();
 			drawtolocked = true;
