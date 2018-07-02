@@ -385,8 +385,6 @@ class Text {
 		if (fontname == "") fontname = "default";
 		if (fontname == currentfont) return currentfont;
 		
-		Gfx.endmeshbatch();
-		
 		setfont(fontname, fontlastsize.exists(fontname)?fontlastsize.get(fontname): -1);
 		return currentfont;
 	}
@@ -399,7 +397,6 @@ class Text {
 	
 	static function set_size(fontsize:Float):Float {
 		if (currentsize != fontsize) {
-			Gfx.endmeshbatch();	
       changesize(fontsize);
     }
 		return currentsize;
@@ -492,9 +489,7 @@ class Text {
 	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
 	#end
 		if (text == "") return;
-		if (Gfx.drawstate != Gfx.DRAWSTATE_TEXT) Gfx.endmeshbatch();
-		Gfx.updatemeshbatch();
-		Gfx.drawstate = Gfx.DRAWSTATE_TEXT;
+		Gfx.endmeshbatch(); // We don't use Gfx.meshbatch, so ensure it's finished rendering before we draw any text
 		
 		x = Math.ffloor(x);
 		y = Math.ffloor(y);

@@ -3,8 +3,10 @@ package haxegon;
 import flash.display.StageDisplayState;
 import flash.display.BitmapData;
 import openfl.geom.Matrix;
+import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import starling.display.*;
+import starling.geom.*;
 import starling.utils.AssetManager;
 import starling.textures.*;
 import openfl.Assets;
@@ -163,7 +165,6 @@ class Gfx {
 	/* Internal function for changing tile index to correct values for tileset */
 	private static function changetileset(tilesetname:String):Bool {
 		if (currenttilesetname != tilesetname) {
-			drawstate = DRAWSTATE_NONE;
 			if(tilesetindex.exists(tilesetname)){
 				currenttileset = tilesetindex.get(tilesetname);
 				currenttilesetname = tilesetname;
@@ -571,7 +572,7 @@ class Gfx {
 		if (!transform && !coltransform) {
 			shapematrix.identity();
 			shapematrix.translate(Std.int(x), Std.int(y));
-			meshbatch.addMesh(image, shapematrix, 1.0);
+			addmeshtobatch(image, shapematrix, 1.0);
 		}else {
 			tempxalign = 0;	tempyalign = 0;
 			
@@ -596,10 +597,10 @@ class Gfx {
 			shapematrix.translate(x, y);
 			if (coltransform) {
 				image.color = imagecolormult;
-				meshbatch.addMesh(image, shapematrix, imagealphamult);
+				addmeshtobatch(image, shapematrix, imagealphamult);
 				image.color = Col.WHITE;
 			}else {
-				meshbatch.addMesh(image, shapematrix, 1.0);
+				addmeshtobatch(image, shapematrix, 1.0);
 			}
 		} 
 	}
@@ -612,17 +613,9 @@ class Gfx {
 			if (!loadimage(imagename)) return;
 		}
 		
-		//This could definitely be improved later. See #118
-		endmeshbatch();
-		updatemeshbatch();
-		drawstate = DRAWSTATE_IMAGE;
-		
 		haxegonimage = images[imageindex.get(imagename)];
 		x = imagealignx(haxegonimage.width, x); y = imagealigny(haxegonimage.height, y);
 		internaldrawimage(x, y, haxegonimage.contents, haxegonimage.width, haxegonimage.height);
-		
-		//This could definitely be improved later. See #118
-		endmeshbatch();
 	}
 	
 	/** Draws image by name. 
@@ -635,10 +628,6 @@ class Gfx {
 			Debug.log("ERROR: In drawsubimage, cannot find image \"" + imagename + "\".");
 			return;
 		}
-		
-		//This could definitely be improved later. See #118
-		endmeshbatch();
-		updatemeshbatch();
 		
 		haxegonimage = images[imageindex.get(imagename)];
 		x = imagealignx(haxegonimage.width, x); y = imagealigny(haxegonimage.height, y);
@@ -657,8 +646,6 @@ class Gfx {
 		
 		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
 		
-		//This could definitely be improved later. See #118
-		endmeshbatch();
 		
 		// all done! clean up
 		subtex.dispose();
@@ -804,10 +791,6 @@ class Gfx {
 			}
 		}
 		
-		//This could definitely be improved later. See #118
-		endmeshbatch();
-		updatemeshbatch();
-		
 		x = tilealignx(x); y = tilealigny(y);
 		
 		// Acquire SubTexture and build an Image from it.
@@ -822,9 +805,6 @@ class Gfx {
 		subimage.touchable = false;
 		
 		internaldrawimage(x, y, subimage, Std.int(subimage.width), Std.int(subimage.height));
-		
-		//This could definitely be improved later. See #118
-		endmeshbatch();
 		
 		// all done! clean up
 		subtex.dispose();
@@ -847,12 +827,6 @@ class Gfx {
 				return;
 			}
 		}
-		
-		//WIP: If we're using a tileset then we can batch draw stuff because it's all on the same texture
-		//(providing we haven't messed with the tileset by creating images)
-		if (drawstate != DRAWSTATE_TILES) endmeshbatch();
-		updatemeshbatch();
-		drawstate = DRAWSTATE_TILES;
 		
 		x = tilealignx(x); y = tilealigny(y);
 		
@@ -890,15 +864,13 @@ class Gfx {
 	public static function drawline(x1:Float, y1:Float, x2:Float, y2:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		screenshotdirty = true;
-		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
-		updatemeshbatch();
-		drawstate = DRAWSTATE_MESH;
 		
 		templine.thickness = _linethickness;
 		templine.setPosition(x1, y1, x2, y2);
 		templine.color = color;
+		templine.alpha = alpha;
 		
-		meshbatch.addMesh(templine, null, alpha);
+		addmeshtobatch(templine);
 	}
 	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
@@ -907,14 +879,10 @@ class Gfx {
 		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
-		drawstate = DRAWSTATE_MESH;
-		
-		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, 1.0, 6, angle);
+		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i], null, alpha);
+			addmeshtobatch(tempring._polygons[i]);
 		}
 	}
 	
@@ -924,14 +892,10 @@ class Gfx {
 		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
-		drawstate = DRAWSTATE_MESH;
-		
-		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, 1.0, 6, angle);
+		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i], null, alpha);
+			addmeshtobatch(tempring._polygons[i]);
 		}
 	}
 	
@@ -941,14 +905,10 @@ class Gfx {
 		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
-		drawstate = DRAWSTATE_MESH;
-		
-		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, 1.0);
+		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha);
 		
 		for (i in 0 ... tempring._polygons.length){
-			updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i], null, alpha);
+			addmeshtobatch(tempring._polygons[i]);
 		}
 	}
 	
@@ -958,14 +918,10 @@ class Gfx {
 		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -radius, -radius, screenwidth + (radius * 2), screenheight + (radius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
-		drawstate = DRAWSTATE_MESH;
-		
-		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, 1.0);
+		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, alpha);
 		
 		for(i in 0 ... tempring._polygons.length){
-		  updatemeshbatch();
-			meshbatch.addMesh(tempring._polygons[i], null, alpha);
+			addmeshtobatch(tempring._polygons[i]);
 		}
 	}
 	
@@ -976,14 +932,10 @@ class Gfx {
 		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -xradius, -yradius, screenwidth + (xradius * 2), screenheight + (yradius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
-		drawstate = DRAWSTATE_MESH;
-		
 		tempellipsering.setto(x - xradius, y - yradius, xradius - linethickness, yradius - linethickness, xradius, yradius, col, alpha);
 		
 		for(i in 0 ... tempellipsering._polygons.length){
-		  updatemeshbatch();
-			meshbatch.addMesh(tempellipsering._polygons[i], null, alpha);
+			addmeshtobatch(tempellipsering._polygons[i]);
 		}
 	}
 	
@@ -994,14 +946,10 @@ class Gfx {
 		screenshotdirty = true;
 		if (!Geom.inbox(x, y, -xradius, -yradius, screenwidth + (xradius * 2), screenheight + (yradius * 2))) return;
 		
-		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
-		drawstate = DRAWSTATE_MESH;
-		
 		tempellipsedisk = new EllipseDisk(x - xradius, y - yradius, xradius, yradius, col, alpha);
 		
 		for(i in 0 ... tempellipsedisk._polygons.length){
-		  updatemeshbatch();
-			meshbatch.addMesh(tempellipsedisk._polygons[i], null, alpha);
+			addmeshtobatch(tempellipsedisk._polygons[i]);
 		}
 	}
 	
@@ -1016,14 +964,12 @@ class Gfx {
 	public static function filltri(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, color:Int, alpha:Float = 1.0) {
 		if (color == Col.TRANSPARENT || drawto == null) return;
 		screenshotdirty = true;
-		if (drawstate != DRAWSTATE_POLY4) endmeshbatch();
-		updatemeshbatch();
-		drawstate = DRAWSTATE_POLY4;
 		
 		temppoly4.setVertexPositions(x1, y1, x2, y2, x3, y3, x3, y3);
 		temppoly4.color = color;
+		temppoly4.alpha = alpha;
 		
-		meshbatch.addMesh(temppoly4, null, alpha);
+		addmeshtobatch(temppoly4);
 	}
 	
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
@@ -1047,22 +993,24 @@ class Gfx {
 	public static function fillbox(x:Float, y:Float, width:Float, height:Float, col:Int, alpha:Float = 1.0) {
 		if (col == Col.TRANSPARENT) return;
 		screenshotdirty = true;
-		if (drawstate != DRAWSTATE_MESH) endmeshbatch();
-		updatemeshbatch();
-		drawstate = DRAWSTATE_MESH;
 		
 		tempquad.x = x;
 		tempquad.y = y;
 		tempquad.width = width;
 		tempquad.height = height;
 		tempquad.color = col;
+		tempquad.alpha = alpha;
 		
-		meshbatch.addMesh(tempquad, null, alpha);
+		addmeshtobatch(tempquad);
 	}
 	
-	private inline static function updatemeshbatch() {
+	private static function addmeshtobatch(mesh:Mesh, matrix:Matrix = null, alpha:Float = 1.0) {
+		if (!meshbatch.canAddMesh(mesh)) {
+			endmeshbatch();
+		}
+		meshbatch.addMesh(mesh, matrix, alpha);
 		meshbatchcount++;
-	  if (meshbatchcount >= MAX_NUM_MESH) endmeshbatch();	
+		if (meshbatchcount >= MAX_NUM_MESH) endmeshbatch();	
 	}
 	
 	private static function endmeshbatch() {
@@ -1071,7 +1019,6 @@ class Gfx {
 				
 			meshbatch.clear();
 			meshbatchcount = 0;
-			drawstate = DRAWSTATE_NONE;
 		}
 	}
 	
@@ -1539,13 +1486,6 @@ class Gfx {
 	private static var tempellipsering:EllipseRing;
 	private static var tempellipsedisk:EllipseDisk;
 	
-	private static var drawstate:Int = 0;
-	private static inline var DRAWSTATE_NONE:Int = 0;
-	private static inline var DRAWSTATE_MESH:Int = 1;
-	private static inline var DRAWSTATE_POLY4:Int = 2;
-	private static inline var DRAWSTATE_IMAGE:Int = 3;
-	private static inline var DRAWSTATE_TILES:Int = 4;
-	private static inline var DRAWSTATE_TEXT:Int = 5;
 	
 	private static var starlingassets:AssetManager;
 	private static var trect:Rectangle = new Rectangle();
