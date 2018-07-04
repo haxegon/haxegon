@@ -332,10 +332,15 @@ class Input {
 			#end
 		}
 		#end
-		
 		//Starling.current.nativeStage.focus = flashstage;
 		charcode = event.charCode;
 		keycode = event.keyCode;
+		
+		#if html5
+		if (keycode == 8){
+			event.preventDefault();
+		}
+		#end
 		
 		#if !(flash || js)
 			// Correct inconsistent native keycodes
