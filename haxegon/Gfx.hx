@@ -1021,7 +1021,7 @@ class Gfx {
 		tempquad.color = col;
 		tempquad.alpha = alpha;
 		
-		addmeshtobatch(tempquad);
+		addmeshtobatch(tempquad, null, alpha);
 	}
 	
 	private static function addmeshtobatch(mesh:Mesh, matrix:Matrix = null, alpha:Float = 1.0) {
