@@ -890,7 +890,7 @@ class Gfx {
 		templine.color = color;
 		templine.alpha = alpha;
 		
-		addmeshtobatch(templine);
+		addmeshtobatch(templine, null, alpha);
 	}
 	
 	public static function drawhexagon(x:Float, y:Float, radius:Float, angle:Float, color:Int, alpha:Float = 1.0) {
@@ -902,7 +902,7 @@ class Gfx {
 		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
-			addmeshtobatch(tempring._polygons[i]);
+			addmeshtobatch(tempring._polygons[i], null, alpha);
 		}
 	}
 	
@@ -915,7 +915,7 @@ class Gfx {
 		var tempring:Disk = new Disk(x - radius, y - radius, radius, color, alpha, 6, angle);
 		
 		for (i in 0 ... tempring._polygons.length){
-			addmeshtobatch(tempring._polygons[i]);
+			addmeshtobatch(tempring._polygons[i], null, alpha);
 		}
 	}
 	
@@ -928,7 +928,7 @@ class Gfx {
 		var tempring:Ring = new Ring(x - radius, y - radius, radius - linethickness, radius, color, alpha);
 		
 		for (i in 0 ... tempring._polygons.length){
-			addmeshtobatch(tempring._polygons[i]);
+			addmeshtobatch(tempring._polygons[i], null, alpha);
 		}
 	}
 	
@@ -941,7 +941,7 @@ class Gfx {
 		var tempring:Disk = new Disk(x - radius, y - radius, radius, col, alpha);
 		
 		for(i in 0 ... tempring._polygons.length){
-			addmeshtobatch(tempring._polygons[i]);
+			addmeshtobatch(tempring._polygons[i], null, alpha);
 		}
 	}
 	
@@ -955,7 +955,7 @@ class Gfx {
 		tempellipsering.setto(x - xradius, y - yradius, xradius - linethickness, yradius - linethickness, xradius, yradius, col, alpha);
 		
 		for(i in 0 ... tempellipsering._polygons.length){
-			addmeshtobatch(tempellipsering._polygons[i]);
+			addmeshtobatch(tempellipsering._polygons[i], null, alpha);
 		}
 	}
 	
@@ -969,7 +969,7 @@ class Gfx {
 		tempellipsedisk = new EllipseDisk(x - xradius, y - yradius, xradius, yradius, col, alpha);
 		
 		for(i in 0 ... tempellipsedisk._polygons.length){
-			addmeshtobatch(tempellipsedisk._polygons[i]);
+			addmeshtobatch(tempellipsedisk._polygons[i], null, alpha);
 		}
 	}
 	
@@ -989,7 +989,7 @@ class Gfx {
 		temppoly4.color = color;
 		temppoly4.alpha = alpha;
 		
-		addmeshtobatch(temppoly4);
+		addmeshtobatch(temppoly4, null, alpha);
 	}
 	
 	public static function drawbox(x:Float, y:Float, width:Float, height:Float, color:Int, alpha:Float = 1.0) {
