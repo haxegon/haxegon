@@ -203,6 +203,7 @@ class Sound{
 	
 	public static function play(soundname:String, fadeintime:Float = 0, loop:Bool = false, volume:Float = 1.0, panning:Float = 0){
 		soundname = soundname.toLowerCase();
+		
 		if (!soundindex.exists(soundname)) {
 			if (!load(soundname)) return;
 		}

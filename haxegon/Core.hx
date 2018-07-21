@@ -110,6 +110,7 @@ class Core extends Sprite {
 		}
 		#end
 		//Init library classes
+		enablescreen = true;
 		Random.seed = 0;
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
@@ -136,22 +137,21 @@ class Core extends Sprite {
 		Scene.init();
 		
 		//Did Main.new() already call Gfx.resizescreen? Then we can skip this! Otherwise...
-		if (!Gfx.gfxinit) {
-			Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT));
-			if (Gfx.fullscreen) {
-				Gfx.fullscreen = true;
-			}else {
-				Gfx.fullscreen = false;	
+		if (enablescreen){
+			if (!Gfx.gfxinit) {
+				Gfx.resizescreen(Std.parseInt(WINDOW_WIDTH), Std.parseInt(WINDOW_HEIGHT));				
 			}
-		}else {
-			if (Gfx.fullscreen) {
-				Gfx.fullscreen = true;
-			}else {
-				Gfx.fullscreen = false;	
-			}
+			
+			Gfx.endframe();
+		}else{
+			//We don't want a screen!
 		}
 		
-		Gfx.endframe();
+		if (Gfx.fullscreen) {
+			Gfx.fullscreen = true;
+		}else {
+			Gfx.fullscreen = false;	
+		}
 		
 		// start game loop
 		_rate3 = Math.round(3000 / TARGETFRAMERATE);
@@ -271,13 +271,19 @@ class Core extends Sprite {
 	}
 	
 	private function dorender() {
-		Gfx.startframe();
-		
-		Scene.render();
-		Debug.render();
-		execute_extendedendframe();
-		
-		Gfx.endframe();
+		if(enablescreen){
+			Gfx.startframe();
+			
+			Scene.render();
+			Debug.render();
+			execute_extendedendframe();
+			
+			Gfx.endframe();
+		}else{
+			Scene.render();
+			Debug.render();
+			execute_extendedendframe();
+		}
 	}
 	
 	private static function clickedfullscreenbutton(e:MouseEvent){
@@ -436,4 +442,6 @@ class Core extends Sprite {
 			}
 		#end
 	}
+	
+	public static var enablescreen:Bool;
 }
