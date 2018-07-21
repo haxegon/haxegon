@@ -111,6 +111,8 @@ class Core extends Sprite {
 		#end
 		//Init library classes
 		enablescreen = true;
+		imagesmoothing = false; texturesmoothing = "none";
+		
 		Random.seed = 0;
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
@@ -145,6 +147,7 @@ class Core extends Sprite {
 			Gfx.endframe();
 		}else{
 			//We don't want a screen!
+			Gfx.perfectfit = 3;	Gfx.dynamicwidth = 0;	Gfx.dynamicheight = 0;
 		}
 		
 		if (Gfx.fullscreen) {
@@ -444,4 +447,23 @@ class Core extends Sprite {
 	}
 	
 	public static var enablescreen:Bool;
+	
+	public static var imagesmoothing(get,set):Bool;
+	private static var _imagesmoothing:Bool;
+	
+	static function get_imagesmoothing():Bool {
+		return _imagesmoothing;
+	}
+
+	static function set_imagesmoothing(_newimagesmoothing:Bool) {
+		_imagesmoothing = _newimagesmoothing;
+		if (_imagesmoothing){
+			texturesmoothing = "bilinear"; //trilinear?
+		}else{
+			texturesmoothing = "none";
+		}
+		return _newimagesmoothing;
+	}
+	
+	private static var texturesmoothing:String;
 }

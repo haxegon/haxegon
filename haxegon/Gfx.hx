@@ -221,7 +221,7 @@ class Gfx {
 				var rect:Rectangle = new openfl.geom.Rectangle(framex + (i * width), framey + (j * height), width, height);
 				var newtex:Texture = Texture.fromTexture(spritesheet, rect);
 				tiles[currenttileset].tiles.push(new Image(newtex));
-				tiles[currenttileset].tiles[tiles[currenttileset].tiles.length - 1].textureSmoothing = "none";
+				tiles[currenttileset].tiles[tiles[currenttileset].tiles.length - 1].textureSmoothing = Core.texturesmoothing;
 			}
 		}
 	}
@@ -332,7 +332,7 @@ class Gfx {
 		haxegonimage.contents = new Image(tex);
 		haxegonimage.fetchsize();
 		images.push(haxegonimage);
-		images[images.length - 1].contents.textureSmoothing = "none";
+		images[images.length - 1].contents.textureSmoothing = Core.texturesmoothing;
 	}		
 	
 	/** Loads an image into the game. */
@@ -354,7 +354,7 @@ class Gfx {
 		imageindex.set(imagename, images.length);
 		haxegonimage = new HaxegonImage(imagename);
 		haxegonimage.contents = new Image(starlingassets.getTexture(imagename));
-		haxegonimage.contents.textureSmoothing = "none";
+		haxegonimage.contents.textureSmoothing = Core.texturesmoothing;
 		haxegonimage.fetchsize();
 		
 		images.push(haxegonimage);
@@ -366,7 +366,7 @@ class Gfx {
 		var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
 		var img:Image = new Image(tex);
 		img.touchable = false;
-		img.textureSmoothing = "none";
+		img.textureSmoothing = Core.texturesmoothing;
 
 		var exindex:Null<Int> = imageindex.get(imagename);
 		if (exindex == null) {
@@ -1442,7 +1442,7 @@ class Gfx {
 			screen = new Image(backbuffer);
 			screen.touchable = false;
 			screen.scale = 1;
-			screen.textureSmoothing = "none";
+			screen.textureSmoothing = Core.texturesmoothing;
 			starstage.addChildAt(screen, 0);
 			
 			tempquad = new Quad(1, 1);
