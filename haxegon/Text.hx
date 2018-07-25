@@ -9,6 +9,17 @@ import starling.utils.Align;
 import starling.text.*;
 import starling.textures.*;
 
+class HighResTrueTypeCompositor extends TrueTypeCompositor{
+  public function HighResTrueTypeCompositor(){}
+
+  override public function fillMeshBatch(meshBatch:MeshBatch, width:Float, height:Float,
+																				 text:String, format:TextFormat,
+																				 options:TextOptions = null){
+    options.textureScale *= 2;
+    super.fillMeshBatch(meshBatch, width, height, text, format, options);
+  }
+}
+
 @:access(haxegon.Text)
 class Fontclass {
 	public function new(_name:String, _size:Float) {
@@ -128,6 +139,7 @@ class Fontfile {
 			try {
 				font = Data.getfontasset(filename);
 				typename = font.fontName;
+				TextField.registerCompositor(new HighResTrueTypeCompositor(), typename);
 			}catch (e:Dynamic) {
 				Debug.log("ERROR: Cannot set font to \"" + _file + "\", no TTF or Bitmap Font found.");
 			}

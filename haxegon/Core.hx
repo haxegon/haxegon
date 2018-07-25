@@ -112,6 +112,7 @@ class Core extends Sprite {
 		//Init library classes
 		enablescreen = true;
 		imagesmoothing = false; texturesmoothing = "none";
+		Gfx.customresize = null;
 		
 		Random.seed = 0;
 		Input.init(this.stage, Starling.current.nativeStage);
@@ -243,7 +244,7 @@ class Core extends Sprite {
 		Input.update();
 		
 		if (!Scene.hasseperaterenderfunction) {
-			Gfx.startframe();
+			if(enablescreen) Gfx.startframe();
 			
 			Debug.update();
 			Scene.update();
@@ -257,7 +258,7 @@ class Core extends Sprite {
 			
 			execute_extendedendframe();
 			
-			Gfx.endframe();
+			if(enablescreen) Gfx.endframe();
 		}else {
 			Debug.update();
 		  Scene.update();	

@@ -2,6 +2,7 @@ package haxegon;
 
 import flash.display.StageDisplayState;
 import flash.display.BitmapData;
+import haxe.Constraints.Function;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -1368,15 +1369,19 @@ class Gfx {
 	}
 	
 	private static function onresize(e:ResizeEvent) {
-		_onwindowresized = true;
-		if (perfectfit == 1){
-			resizescreen(0, dynamicheight);
-		}else if (perfectfit == 2){
-			resizescreen(dynamicwidth, 0);
-		}else if (perfectfit == 3){
-			resizescreen(0, 0);
+		if(customresize == null){
+			_onwindowresized = true;
+			if (perfectfit == 1){
+				resizescreen(0, dynamicheight);
+			}else if (perfectfit == 2){
+				resizescreen(dynamicwidth, 0);
+			}else if (perfectfit == 3){
+				resizescreen(0, 0);
+			}else{
+				updategraphicsmode(e.width, e.height);
+			}
 		}else{
-			updategraphicsmode(e.width, e.height);
+			customresize();
 		}
 	}
 	
@@ -1466,7 +1471,7 @@ class Gfx {
 	}
 	
 	private static function startframe() {
-			if (drawto != null){
+		if (drawto != null){
 			if(!drawtolocked) drawto.bundlelock();
 			drawtolocked = true;
 		}
@@ -1549,6 +1554,8 @@ class Gfx {
 	private static var dynamicwidth:Int = 0;
 	private static var dynamicheight:Int = 0;
 	private static var _keeppixelratio:Bool = false;
+	
+	public static var customresize:Function;
 	
 	private static var drawtolocked:Bool = false;
 }
