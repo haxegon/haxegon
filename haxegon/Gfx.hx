@@ -1369,8 +1369,8 @@ class Gfx {
 	}
 	
 	private static function onresize(e:ResizeEvent) {
+		_onwindowresized = true;
 		if(customresize == null){
-			_onwindowresized = true;
 			if (perfectfit == 1){
 				resizescreen(0, dynamicheight);
 			}else if (perfectfit == 2){
