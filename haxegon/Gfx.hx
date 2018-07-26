@@ -1359,6 +1359,9 @@ class Gfx {
 		flashstage = _flashstage;
 		
 		starstage.addEventListener(ResizeEvent.RESIZE, onresize);
+		#if html5
+		onresize(null);
+		#end
 		
 		meshbatch = new MeshBatch();
 		
@@ -1378,7 +1381,9 @@ class Gfx {
 			}else if (perfectfit == 3){
 				resizescreen(0, 0);
 			}else{
-				updategraphicsmode(e.width, e.height);
+				if (e != null){
+					updategraphicsmode(e.width, e.height);
+				}
 			}
 		}else{
 			customresize();
