@@ -25,6 +25,13 @@ class HaxegonImage {
 		height = Std.int(contents.height);
 	}
 	
+	public function dispose(){
+		if(contents != null){
+			contents.dispose();
+			contents = null;
+		}
+	}
+	
 	public var contents:Image;
 	public var name:String;
 	public var width:Int;
@@ -325,7 +332,6 @@ class Gfx {
 		return bd;
 	}
 	
-	
 	/** Loads a packed texture into Gfx. */
 	private static function loadimagefrompackedtexture(imagename:String, tex:Texture) {
 		imageindex.set(imagename, images.length);
@@ -359,6 +365,22 @@ class Gfx {
 		haxegonimage.fetchsize();
 		
 		images.push(haxegonimage);
+		return true;
+	}
+	
+	/* Unload an image, freeing up its resources */ 
+	public static function unloadimage(imagename:String):Bool{
+		imagename = imagename.toLowerCase();
+		if (!imageindex.exists(imagename)) return true; //This is already removed, so we're done!
+		
+		haxegonimage = images[imageindex.get(imagename)];
+		haxegonimage.contents.texture.dispose();
+		haxegonimage.dispose();
+		
+		images[imageindex.get(imagename)] = null;
+		
+		starlingassets.removeTexture(imagename, true);
+		imageindex.remove(imagename);
 		return true;
 	}
 	
