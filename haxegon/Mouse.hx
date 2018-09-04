@@ -5,6 +5,7 @@ import openfl.events.Event;
 import openfl.events.FocusEvent;
 import openfl.events.MouseEvent;
 import openfl.ui.Mouse;
+import lime.app.Application;
 
 class Mouse{		
 	private static var _x:Int;
@@ -27,7 +28,9 @@ class Mouse{
 		#elseif flash
 		Debug.log("ERROR: Cannot set value of Mouse.x in Flash.");
 		#else
-		lime.ui.Mouse.warp(_x, _y, Core.window);
+		for (window in Application.current.windows) {
+			window.warpMouse(_x, _y);
+		}
 		#end
 		return _x;
 	}
@@ -44,7 +47,9 @@ class Mouse{
 		#elseif flash
 		Debug.log("ERROR: Cannot set value of Mouse.y in Flash.");
 		#else
-		lime.ui.Mouse.warp(_x, _y, Core.window);
+		for (window in Application.current.windows) {
+			window.warpMouse(_x, _y);
+		}
 		#end
 		return _y;
 	}

@@ -1096,37 +1096,21 @@ class Gfx {
 	
 	public static function clearscreen(color:Int = 0x000000) {
 		if (drawto == null) return;
-		Gfx.endmeshbatch();
+		endmeshbatch();
+		if (drawto != null){
+			if(drawtolocked) drawto.bundleunlock();
+			drawtolocked = false;
+		}
 		
 		if (color == Col.TRANSPARENT){
-			#if flash
 			drawto.clear(0, 0);
-			#elseif html5
-			trace("Haxegon warning: Clearing an image to transparent is not currently working on HTML5. See issue #232 for updates.");
-			//var cleanup:BitmapData = new BitmapData(Std.int(drawto.width), Std.int(drawto.height), true, 0xFFFF0000);
-			//drawto.root.uploadBitmapData(cleanup, function(texture:starling.textures.ConcreteTexture, error:openfl.events.ErrorEvent):Void{ trace("ok whatever"); });
-			#elseif cpp
-			//Awful temporary work around for #232
-			var drawtowidth:Int = Std.int(drawto.width);
-			var drawtoheight:Int = Std.int(drawto.height);
-			
-			if (drawto != null){
-				if(drawtolocked) drawto.bundleunlock();
-				drawtolocked = false;
-			}
-			
-			drawto.dispose();
-			drawto = new RenderTexture(drawtowidth, drawtoheight);
-			
-			if (drawto != null){
-				if(!drawtolocked) drawto.bundlelock();
-				drawtolocked = true;
-			}
-			#end
 		}else {
-			//Not working with starling 2.0, so workaround is:
-			//drawto.clear(color, 1.0);
-			fillbox(0, 0, screenwidth, screenheight, color);
+			drawto.clear(color, 1.0);
+		}
+		
+		if (drawto != null){
+			if(!drawtolocked) drawto.bundlelock();
+			drawtolocked = true;
 		}
 	}
 	
