@@ -80,7 +80,10 @@ class BatchProcessor
     public function addMesh(mesh:Mesh, state:RenderState, subset:MeshSubset=null,
                             ignoreTransformations:Bool=false):Void
     {
-        if (subset == null)
+			  if (haxegon.Debug.limitdrawcalls > -1){
+					if (_batches.length >= haxegon.Debug.limitdrawcalls) return;
+				}
+				if (subset == null)
         {
             subset = sMeshSubset;
             subset.vertexID = subset.indexID = 0;

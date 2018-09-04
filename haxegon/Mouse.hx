@@ -210,6 +210,7 @@ class Mouse{
 				_y = previousy = Std.int(touch.globalY);
 				_cursormoved = false;	
 				deltax = 0; deltay = 0;
+				Screen.zeromousedelta();
 				
 				_held = 0;
 			}else if(touch.phase == TouchPhase.ENDED){

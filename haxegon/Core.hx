@@ -118,6 +118,7 @@ class Core extends Sprite {
 		Input.init(this.stage, Starling.current.nativeStage);
 		Mouse.init(this.stage, Starling.current.nativeStage);
 		Data.initassets();
+		Debug.limitdrawcalls = -1;
 		Debug.init();
 		Gfx.init(this.stage, Starling.current.nativeStage);
 		Text.init();

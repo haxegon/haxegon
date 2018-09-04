@@ -32,6 +32,10 @@ class HaxegonImage {
 		}
 	}
 	
+	public function toString():String{
+		return name + " [" + width + "x" + height + "]";
+	}
+	
 	public var contents:Image;
 	public var name:String;
 	public var width:Int;

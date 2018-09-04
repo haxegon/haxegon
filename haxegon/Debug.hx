@@ -246,4 +246,6 @@ class Debug {
 		
 		return scrollpos;
 	}
+	
+	public static var limitdrawcalls:Int;
 }

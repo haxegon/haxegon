@@ -250,6 +250,8 @@ class Sound{
 	
 	static function set_mastervolume(vol:Float):Float{
 		_mastervolume = vol;
+		Music.volume = _mastervolume;
+		volume = _mastervolume;
 		
 		for (i in 0 ... channel.length){
 			channel[i].changevolume(channel[i].volume);
