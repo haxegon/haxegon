@@ -110,7 +110,6 @@ class Core extends Sprite {
 		}
 		#end
 		//Init library classes
-		trace("!");
 		enablescreen = true;
 		imagesmoothing = false; texturesmoothing = "none";
 		Gfx.customresize = null;
