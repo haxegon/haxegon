@@ -242,6 +242,7 @@ class Core extends Sprite {
 	private static var currentupdateindex:Int;
 	private static var currentupdatecount:Int;
 	private function doupdate(updateindex:Int, updatecount:Int) {
+		Text.resettextfields();
 		Mouse.update(Gfx.getscreenx(flash.Lib.current.mouseX), Gfx.getscreeny(flash.Lib.current.mouseY), updateindex == 0);
 		Input.update();
 		
