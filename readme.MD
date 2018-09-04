@@ -25,7 +25,7 @@ Documentation is available at <a href="http://haxegon.com">haxegon.com</a>, and 
 
 ### About version 0.13.0
 
-Haxegon hasn't worked with the most recent versions of OpenFL for a couple of months now, so I decided to release this version to get things back up and running. Originally the idea was that this version would focus on documentation, but that's been pushed back. A lot of the changes in this version are advanced features added for OVERWHELM, and for my current project Dicey Dungeons - though there are plenty of other fixes and improvements that will benifit everyone who uses the library!
+Haxegon hasn't worked with the most recent versions of OpenFL for a couple of months now, so I decided to release this version to get things back up and running. Originally the idea was that this version would focus on documentation, but that's been pushed back. A lot of the changes in this version are advanced features added for OVERWHELM, and for my current project Dicey Dungeons - though there are plenty of other fixes and improvements that will benefit everyone who uses the library!
 
 ### New features
   * This version brings support for the latest versions of OpenFL (8.4.1), Lime (7.0.0) and Starling (2.4.1).
