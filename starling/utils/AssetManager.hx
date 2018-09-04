@@ -35,6 +35,7 @@ import flash.system.ImageDecodingPolicy;
 #end
 import openfl.system.LoaderContext;
 import openfl.system.System;
+import openfl.utils.ByteArray;
 
 import haxe.Json;
 import haxe.Timer;
@@ -601,7 +602,11 @@ class AssetManager extends EventDispatcher
     {
         for (rawAsset in rawAssets)
         {
-            if (Std.is(rawAsset, Array))
+            if (rawAsset == null)
+            {
+                continue;
+            }
+            else if (Std.is(rawAsset, Array))
             {
                 enqueue(rawAsset);
             }
@@ -1122,7 +1127,7 @@ class AssetManager extends EventDispatcher
         
         onUrlLoaderComplete = function(event:Dynamic):Void
         {
-            var bytes:ByteArray = transformData(cast(urlLoader.data, ByteArray), url);
+            var bytes:ByteArray = transformData(Std.is(urlLoader.data, #if commonjs ByteArray #else ByteArrayData #end) ? cast urlLoader.data : null, url);
             var sound:Sound;
 
             if (bytes == null)

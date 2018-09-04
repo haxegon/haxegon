@@ -10,9 +10,9 @@
 
 package starling.assets;
 
-import flash.media.Sound;
-import flash.utils.ByteArray;
+import openfl.media.Sound;
 import openfl.errors.Error;
+import openfl.utils.ByteArray;
 
 /** This AssetFactory creates sound assets. */
 class SoundFactory extends AssetFactory
@@ -43,7 +43,7 @@ class SoundFactory extends AssetFactory
                 sound = cast(reference.data, Sound);
             else
             {
-                var bytes:ByteArray = cast(reference.data, ByteArray);
+                var bytes:ByteArray = Std.is(reference.data, #if commonjs ByteArray #else ByteArrayData #end) ? cast reference.data : null;
 
                 if (bytes != null)
                 {

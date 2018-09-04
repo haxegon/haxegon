@@ -23,7 +23,6 @@ import openfl.Lib;
 
 #if lime
 import lime.app.Application;
-import lime.app.Config.WindowConfig;
 #end
 
 /** A utility class with methods related to the current platform and runtime. */
@@ -90,8 +89,11 @@ class SystemUtil
 
             sSupportsDepthAndStencil = (ds == "true");
             #elseif flash
+            #elseif (lime >= "7.0.0")
+            var attributes = Application.current.window.context.attributes;
+            sSupportsDepthAndStencil = (attributes.depth && attributes.stencil);
             #elseif lime
-            var windowConfig:WindowConfig = Application.current.window.config;
+            var windowConfig = Application.current.window.config;
             sSupportsDepthAndStencil = windowConfig.depthBuffer && windowConfig.stencilBuffer;
             #else
             sSupportsDepthAndStencil = true;
@@ -292,6 +294,15 @@ class SystemUtil
     public static var isDesktop(get, never):Bool;
     private static function get_isDesktop():Bool
     {
+        // TODO: It appears this is used as a "not mobile" define, but there should be
+        // a way to know whether something is HTML5 as well. For now, returning true in this
+        // case seems like the right behavior for Starling
+        #if flash
         return platform == "WIN" || platform == "MAC" || platform == "LNX";
+        #elseif !mobile
+        return true;
+        #else
+        return false;
+        #end
     }
 }

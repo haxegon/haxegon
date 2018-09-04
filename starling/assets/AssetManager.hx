@@ -45,7 +45,7 @@ import starling.utils.Execute;
  *
  *  <p>The class can deal with the following media types:
  *  <ul>
- *    <li>Textures (either from Bitmaps or ATF data)</li>
+ *    <li>Texture, either from Bitmaps or ATF data</li>
  *    <li>Texture atlases</li>
  *    <li>Bitmap Fonts</li>
  *    <li>Sounds</li>
@@ -189,7 +189,7 @@ class AssetManager extends EventDispatcher
         _verbose = true;
         _textureOptions = new TextureOptions(scaleFactor);
         _queue = new Vector<AssetReference>();
-        _numConnections = 1;
+        _numConnections = 3;
         _dataLoader = new DataLoader();
         _assetFactories = new Vector<AssetFactory>();
 
@@ -369,9 +369,9 @@ class AssetManager extends EventDispatcher
      *  if you are working with more than one Starling instance, be sure to call
      *  "makeCurrent()" on the appropriate instance before processing the queue.</p>
      *
-     *  @param onComplete   function():Void;
-     *  @param onError      function(error:String):Void;
-     *  @param onProgress   function(ratio:Float):Void;
+     *  @param onComplete   <code>function(manager:AssetManager):void;</code> - parameter is optional!
+     *  @param onError      <code>function(error:String):void;</code>
+     *  @param onProgress   <code>function(ratio:Number):void;</code>
      */
     public function loadQueue(onComplete:Void->Void,
                               onError:String->Void=null, onProgress:Float->Void=null):Void
@@ -380,13 +380,14 @@ class AssetManager extends EventDispatcher
         var canceled:Bool = false;
         var queue:Vector<AssetReference> = _queue.concat();
         var numAssets:Int = queue.length;
+        var numComplete:Int = 0;
         var numConnections:Int = Std.int(MathUtil.min(_numConnections, numAssets));
         var assetProgress:Vector<Float> = new Vector<Float>();
         var postProcessors:Vector<AssetPostProcessor> = new Vector<AssetPostProcessor>();
         var factoryHelper:AssetFactoryHelper = null;
         
         var loadNextAsset:Void->Void = null;
-        var onAssetLoaded:String->Dynamic->Void = null;
+        var onAssetLoaded:?String->?Dynamic->Void = null;
         var onAssetLoadError:String->Void = null;
         var onAssetProgress:Float->Void = null;
         var addPostProcessor:(AssetManager->Void)->Int->Void = null;
@@ -409,21 +410,22 @@ class AssetManager extends EventDispatcher
                 }
                 j++;
             }
-
-            if (j == numAssets)
-            {
-                postProcessors.sort(compareAssetPostProcessorsPriorities);
-                runPostProcessors();
-            }
         }
 
         onAssetLoaded = function (name:String=null, asset:Dynamic=null):Void
         {
-            if (canceled) disposeAsset(asset);
+            if (canceled && asset != null) disposeAsset(asset);
             else
             {
                 if (name != null && asset != null) addAsset(name, asset);
-                Timer.delay(loadNextAsset, 1);
+                numComplete++;
+
+                if (numComplete == numAssets)
+                {
+                    postProcessors.sort(compareAssetPostProcessorsPriorities);
+                    Timer.delay(runPostProcessors, 1);
+                }
+                else Timer.delay(loadNextAsset, 1);
             }
         }
 
@@ -432,7 +434,7 @@ class AssetManager extends EventDispatcher
             if (!canceled)
             {
                 Execute.execute(onError, [error]);
-                Timer.delay(loadNextAsset, 1);
+                onAssetLoaded();
             }
         }
 
@@ -471,7 +473,7 @@ class AssetManager extends EventDispatcher
         {
             onCanceled();
             Execute.execute(onProgress, [1.0]);
-            Execute.execute(onComplete);
+            Execute.execute(onComplete, [self]);
         }
         
         if (_queue.length == 0)
@@ -512,21 +514,24 @@ class AssetManager extends EventDispatcher
         var asset:AssetReference = queue[index];
         progressRatios[index] = 0;
         
-        var onLoadComplete:Dynamic->?String->Void = null;
+        var onLoadComplete:?ByteArray->?String->?String->?String->Void = null;
         var onLoadProgress:Float->Void = null;
         var onLoadError:String->Void = null;
         var onCreateError:String->Void = null;
         var onAnyError:String->Void = null;
         var onManagerComplete:Void->Void = null;
         
-        onLoadComplete = function (data:Dynamic, ?mimeType:String=null):Void
+        onLoadComplete = function (data:ByteArray = null, mimeType:String=null,
+                                   name:String=null, extension:String=null):Void
         {
             if (_starling != null) _starling.makeCurrent();
 
             onLoadProgress(1.0);
-            asset.data = data;
-            if(mimeType != null)
-                asset.mimeType = mimeType;
+
+            if (data != null)      asset.data = data;
+            if (name != null)      asset.name = name;
+            if (extension != null) asset.extension = extension;
+            if (mimeType != null)  asset.mimeType = mimeType;
 
             var assetFactory:AssetFactory = getFactoryFor(asset);
             if (assetFactory == null)
@@ -573,8 +578,8 @@ class AssetManager extends EventDispatcher
             Execute.execute(onComplete, [asset.name, asset.data]);
         }
 
-        if (Std.is(asset.data, String) || (Reflect.hasField(asset.data, "url") && Reflect.field(asset.data, "url") != null))
-            _dataLoader.load(asset.data, onLoadComplete, onLoadError, onLoadProgress);
+        if (asset.url != null)
+            _dataLoader.load(asset.url, onLoadComplete, onLoadError, onLoadProgress);
         else if (Std.is(asset.data, AssetManager))
             (cast(asset.data, AssetManager)).loadQueue(onManagerComplete, onIntermediateError, onLoadProgress);
         else
@@ -637,7 +642,7 @@ class AssetManager extends EventDispatcher
         log("Adding " + type + " '" + name + "'");
 
         var prevAsset:Dynamic = store[name];
-        if (prevAsset && prevAsset != asset)
+        if (prevAsset != null && prevAsset != asset)
         {
             log("Warning: name was already in use; disposing the previous " + type);
             disposeAsset(prevAsset);
@@ -748,7 +753,8 @@ class AssetManager extends EventDispatcher
     /** Returns a texture with a certain name. Includes textures stored inside atlases. */
     public function getTexture(name:String):Texture
     {
-        return cast(getAsset(AssetType.TEXTURE, name), Texture);
+        var asset = getAsset(AssetType.TEXTURE, name);
+        return Std.is(asset, Texture) ? cast asset : null;
     }
 
     /** Returns all textures that start with a certain string, sorted alphabetically
@@ -774,7 +780,8 @@ class AssetManager extends EventDispatcher
     /** Returns a texture atlas with a certain name, or null if it's not found. */
     public function getTextureAtlas(name:String):TextureAtlas
     {
-        return cast(getAsset(AssetType.TEXTURE_ATLAS, name), TextureAtlas);
+        var asset = getAsset(AssetType.TEXTURE_ATLAS, name);
+        return Std.is(asset, TextureAtlas) ? cast asset : null;
     }
 
     /** Returns all texture atlas names that start with a certain string, sorted alphabetically.
@@ -787,7 +794,8 @@ class AssetManager extends EventDispatcher
     /** Returns a sound with a certain name, or null if it's not found. */
     public function getSound(name:String):Sound
     {
-        return cast(getAsset(AssetType.SOUND, name), Sound);
+        var asset = getAsset(AssetType.SOUND, name);
+        return Std.is(asset, Sound) ? cast asset : null;
     }
 
     /** Returns all sound names that start with a certain string, sorted alphabetically.
@@ -810,7 +818,8 @@ class AssetManager extends EventDispatcher
     /** Returns an XML with a certain name, or null if it's not found. */
     public function getXml(name:String):Xml
     {
-        return cast(getAsset(AssetType.XML_DOCUMENT, name), Xml);
+        var asset = getAsset(AssetType.XML_DOCUMENT, name);
+        return Std.is(asset, Xml) ? cast asset : null;
     }
 
     /** Returns all XML names that start with a certain string, sorted alphabetically.
@@ -837,7 +846,8 @@ class AssetManager extends EventDispatcher
     /** Returns a byte array with a certain name, or null if it's not found. */
     public function getByteArray(name:String):ByteArray
     {
-        return cast(getAsset(AssetType.BYTE_ARRAY, name), ByteArray);
+        var asset = getAsset(AssetType.BYTE_ARRAY, name);
+        return Std.is(asset, #if commonjs ByteArray #else ByteArrayData #end) ? cast asset : null;
     }
 
     /** Returns all byte array names that start with a certain string, sorted alphabetically.
@@ -850,7 +860,8 @@ class AssetManager extends EventDispatcher
     /** Returns a bitmap font with a certain name, or null if it's not found. */
     public function getBitmapFont(name:String):BitmapFont
     {
-        return cast(getAsset(AssetType.BITMAP_FONT, name), BitmapFont);
+        var asset = getAsset(AssetType.BITMAP_FONT, name);
+        return Std.is(asset, BitmapFont) ? cast asset : null;
     }
 
     /** Returns all bitmap font names that start with a certain string, sorted alphabetically.
@@ -863,7 +874,8 @@ class AssetManager extends EventDispatcher
     /** Returns an asset manager with a certain name, or null if it's not found. */
     public function getAssetManager(name:String):AssetManager
     {
-        return cast(getAsset(AssetType.ASSET_MANAGER, name), AssetManager);
+        var asset = getAsset(AssetType.ASSET_MANAGER, name);
+        return Std.is(asset, AssetManager) ? cast asset : null;
     }
 
     /** Returns all asset manager names that start with a certain string, sorted alphabetically.
@@ -972,9 +984,18 @@ class AssetManager extends EventDispatcher
      *  Override if you need to add custom cleanup code for a certain asset. */
     private function disposeAsset(asset:Dynamic):Void
     {
-        if (Std.is(asset, ByteArray)) cast(asset, ByteArray).clear();
+        if (Std.is(asset, #if commonjs ByteArray #else ByteArrayData #end))
+        {
+            var byteArray:ByteArray = cast asset;
+            byteArray.clear();
+        }
         //if (Std.is(asset, Xml)) cast (asset, Xml) - no need to do any special disposing of Xml in Haxe, no cross-platform equivalent of AS3's System.disposeXML();
         //if (Reflect.hasField(asset, "dispose")) cast(Reflect.field(asset, "dispose"), Function)();	- cast to Function is not allowed. How should we call dispose()?
+        if (Reflect.hasField(asset, "dispose"))
+        {
+            var disposeMethod = Reflect.field(asset, "dispose");
+            Reflect.callMethod(asset, disposeMethod, []);
+        }
     }
 
     /** This method is called during loading of assets when 'verbose' is activated. Per
