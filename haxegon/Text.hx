@@ -92,7 +92,7 @@ class Fontclass {
 @:access(haxegon.Text)
 @:access(haxegon.Data)
 class Fontfile {
-	public function new(?_file:String) {
+	public function new(?_file:String, usehighrescompositor:Bool = false) {
 		if (_file == null) {
 			//Use the embeded "default" pixel font
 			type = "bitmap";
@@ -138,8 +138,7 @@ class Fontfile {
 			try {
 				font = Data.getfontasset(filename);
 				typename = font.fontName;
-				if (_file == "zcoolkuaile"){
-					//DD kludge!
+				if (usehighrescompositor){
 					TextField.registerCompositor(new HighResTrueTypeCompositor(), typename);
 				}
 			}catch (e:Dynamic) {
@@ -315,9 +314,9 @@ class Text {
 		setfont("default", 1);
 	}
 	
-	public static function setfont(fontname:String, size:Float = 1) {
+	public static function setfont(fontname:String, size:Float = 1, highres:Bool = false) {
 		if (!fontfileindex.exists(fontname)) {
-			addfont(fontname, size);
+			addfont(fontname, size, highres);
 		}
 		
 		if (fontname != currentfont) {
@@ -368,8 +367,8 @@ class Text {
 		}
 	}
 	
-	private static function addfont(fontname:String, defaultsize:Float = -1) {
-		fontfile.push(new Fontfile(fontname));
+	private static function addfont(fontname:String, defaultsize:Float = -1, highres:Bool = false) {
+		fontfile.push(new Fontfile(fontname, highres));
 		if (fontname == null) fontname = "default";
 		fontfileindex.set(fontname, fontfile.length - 1);
 		

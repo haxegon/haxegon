@@ -11,6 +11,7 @@ class Mouse{
 	private static var _y:Int;
 	private static var previousx:Int;
 	private static var previousy:Int;
+	private static var zeromousedelta:Bool;
 	public static var deltax:Int;
 	public static var deltay:Int;
 	
@@ -131,6 +132,7 @@ class Mouse{
 		_y = 0;
 	  previousx = 0;
 		previousy = 0;
+		zeromousedelta = true;
 		_cursormoved = false;
 		
 		_current = 0;
@@ -208,9 +210,9 @@ class Mouse{
 				
 				_x = previousx = Std.int(touch.globalX);
 				_y = previousy = Std.int(touch.globalY);
-				_cursormoved = false;	
+				_cursormoved = false;
 				deltax = 0; deltay = 0;
-				Screen.zeromousedelta();
+				zeromousedelta = true;
 				
 				_held = 0;
 			}else if(touch.phase == TouchPhase.ENDED){
