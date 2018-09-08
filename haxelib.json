@@ -4,8 +4,8 @@
 	"license": "MIT",
 	"tags": ["beginner", "simple", "easy", "tutorial"],
 	"description": "A tiny Haxe programming library for beginners. Powered by OpenFL and Starling.",
-	"version": "0.12.1",
-	"releasenote": "Work in progress, getting more and more stable! 0.12.1 adds support for the Neko target. 0.12.0 focuses on structure and plugin support. See http://www.haxegon.com for documentation and examples, or track the project's development on github: https://github.com/haxegon/haxegon.",
+	"version": "0.13.0",
+	"releasenote": "Work in progress, getting more and more stable! 0.13.0 updates haxegon to be compatible with the latest versions of OpenFL (8.4.1), Lime (7.0.0) and Starling (2.4.1). See http://www.haxegon.com for documentation and examples, or track the project's development on github: https://github.com/haxegon/haxegon.",
 	"contributors": [ "TerryCavanagh" ],
 	"dependencies": { "openfl": "" }
 }
