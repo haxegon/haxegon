@@ -9,24 +9,16 @@
 // =================================================================================================
 package haxegon.starlingshapes;
 
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
 import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.geom.Vector3D;
-
 import starling.display.Sprite;
-import starling.display.Quad;
 
-class Ring extends Sprite
-{
+class Ring extends Sprite {
   private var _innerRadius:Float;
   private var _outerRadius:Float;
   private var _outerRadius2:Float;
   public var _polygons:Array<Poly4>;
 
-  public function new(xoff:Float, yoff:Float, innerRadius:Float, outerRadius:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float)
-  {
+  public function new(xoff:Float, yoff:Float, innerRadius:Float, outerRadius:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float) {
 		super();
     _polygons = new Array<Poly4>();
     _innerRadius = innerRadius;
@@ -68,5 +60,3 @@ class Ring extends Sprite
     }
   }
 }
-
-

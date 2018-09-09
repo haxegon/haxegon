@@ -9,17 +9,10 @@
 // =================================================================================================
 package haxegon.starlingshapes;
 
-import flash.geom.Matrix;
-import flash.geom.Matrix3D;
 import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.geom.Vector3D;
-
 import starling.display.Sprite;
-import starling.display.Quad;
 
-class EllipseRing extends Sprite
-{
+class EllipseRing extends Sprite {
   private var _innerRadiusx:Float;
   private var _innerRadiusy:Float;
   private var _outerRadiusx:Float;
@@ -28,13 +21,12 @@ class EllipseRing extends Sprite
   private var _outerRadius2y:Float;
   public var _polygons:Array<Poly4>;
 
-  public function new(xoff:Float, yoff:Float, innerRadiusx:Float, innerRadiusy:Float, outerRadiusx:Float, outerRadiusy:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float)
-  {
+  public function new(xoff:Float, yoff:Float, innerRadiusx:Float, innerRadiusy:Float, outerRadiusx:Float, outerRadiusy:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float) {
 		super();
     setto(xoff, yoff, innerRadiusx, innerRadiusy, outerRadiusx, outerRadiusy, color, alpha, nsides, startangle); 
   }
 	
-	public function setto(xoff:Float, yoff:Float, innerRadiusx:Float, innerRadiusy:Float, outerRadiusx:Float, outerRadiusy:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float){
+	public function setto(xoff:Float, yoff:Float, innerRadiusx:Float, innerRadiusy:Float, outerRadiusx:Float, outerRadiusy:Float, color:Int=0xffffff, alpha:Float = 1.0, nsides:Int = -1, ?startangle:Float) {
 		_polygons = new Array<Poly4>();
     _innerRadiusx = innerRadiusx;
 		_innerRadiusy = innerRadiusy;
@@ -78,5 +70,3 @@ class EllipseRing extends Sprite
     }
   }
 }
-
-

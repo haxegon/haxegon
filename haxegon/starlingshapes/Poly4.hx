@@ -9,12 +9,8 @@
 // =================================================================================================
 package haxegon.starlingshapes;
 
-import openfl.geom.Matrix;
-import openfl.geom.Matrix3D;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
-import openfl.geom.Vector3D;
-
 import starling.display.Quad;
 import starling.display.DisplayObject;
 
@@ -34,8 +30,7 @@ import starling.display.DisplayObject;
  *
  *  @see Image
  */
-class Poly4 extends Quad
-{
+class Poly4 extends Quad {
 	public var p1:Point = new Point(0, 0);
 	public var p2:Point = new Point(0, 0);
 	public var p3:Point = new Point(0, 0);
@@ -71,8 +66,7 @@ class Poly4 extends Quad
 	
 	
 	public function setVertexPositions(x1:Float = 0, y1:Float = 0, x2:Float = 0, y2:Float = 0, 
-										  x3:Float = 0, y3:Float = 0, x4:Float = 0, y4:Float = 0)
-	{
+										  x3:Float = 0, y3:Float = 0, x4:Float = 0, y4:Float = 0) {
 		p1.setTo(x1, y1);
 		p2.setTo(x2, y2);
 		p3.setTo(x3, y3);
@@ -92,11 +86,9 @@ class Poly4 extends Quad
 		x = xmin;
 		y = ymin;
 		_lowerRight.setTo(xmax - xmin, ymax - ymin);
-		
-		
 	}
 	
-  private var _lowerRight:Point = new Point(0, 0);
+	private var _lowerRight:Point = new Point(0, 0);
 		
 	private inline function min4(a:Float, b:Float, c:Float, d:Float):Float {
 		return Math.min(a, Math.min(b, Math.min(c, d)));	
@@ -106,15 +98,13 @@ class Poly4 extends Quad
 		return Math.max(a, Math.max(b, Math.max(c, d)));	
 	}
 
-	public override function getBounds(targetSpace:DisplayObject, resultRect:Rectangle=null):Rectangle{
+	public override function getBounds(targetSpace:DisplayObject, resultRect:Rectangle=null):Rectangle {
 		if (resultRect == null) resultRect = new Rectangle();
 		
-		if (targetSpace == this) // optimization
-		{
+		if (targetSpace == this) { // optimization 
 				resultRect.setTo(0.0, 0.0, _lowerRight.x, _lowerRight.y);
 		}
-		else if (targetSpace == parent && rotation == 0.0) // optimization
-		{
+		else if (targetSpace == parent && rotation == 0.0) { // optimization
 				var scaleX:Float = this.scaleX;
 				var scaleY:Float = this.scaleY;
 				resultRect.setTo(x - pivotX * scaleX,      y - pivotY * scaleY,
