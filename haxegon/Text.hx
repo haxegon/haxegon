@@ -1,6 +1,6 @@
 package haxegon;
 
-import flash.Vector;
+import openfl.Vector;
 import haxegon.embeddedassets.DefaultFont;
 import openfl.geom.Matrix;
 import openfl.text.Font;
