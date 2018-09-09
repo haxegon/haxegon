@@ -1,5 +1,6 @@
 package haxegon;
 
+import haxegon.starlingshapes.*;
 import flash.display.StageDisplayState;
 import flash.display.BitmapData;
 import haxe.Constraints.Function;
@@ -7,7 +8,6 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import starling.display.*;
-import starling.geom.*;
 import starling.utils.AssetManager;
 import starling.textures.*;
 import openfl.Assets;
@@ -478,7 +478,7 @@ class Gfx {
 		
 		var imagenum:Int = imageindex.get(imagename);
 		promotetorendertarget(images[imagenum].contents);
-		drawto = cast(images[imagenum].contents.texture, RenderTexture);
+		drawto = cast(images[imagenum].contents.texture, HaxegonRenderTexture);
 		
 		if (drawto != null){
 			if(!drawtolocked) drawto.bundlelock();
@@ -511,7 +511,7 @@ class Gfx {
 		}
 		
 		promotetorendertarget(tiles[tileset].tiles[tilenum]);
-		drawto = cast(tiles[tileset].tiles[tilenum].texture, RenderTexture);
+		drawto = cast(tiles[tileset].tiles[tilenum].texture, HaxegonRenderTexture);
 		
 		if (drawto != null){
 			if(!drawtolocked) drawto.bundlelock();
@@ -1457,7 +1457,7 @@ class Gfx {
 		}
 		
 		if (!gfxinit || resizebuffers){
-			backbuffer = new RenderTexture(width, height, true);
+			backbuffer = new HaxegonRenderTexture(width, height, true);
 			drawto = backbuffer;
 			screen = new Image(backbuffer);
 			screen.touchable = false;
@@ -1516,8 +1516,8 @@ class Gfx {
 	private static var meshbatchcount:Int = 0;
 	private static var meshbatch:MeshBatch = null;
 	
-	private static var backbuffer:RenderTexture;
-	private static var drawto:RenderTexture;
+	private static var backbuffer:HaxegonRenderTexture;
+	private static var drawto:HaxegonRenderTexture;
 	private static var screen:Image;
 	private static var tempquad:Quad;
 	private static var temppoly4:Poly4;
@@ -1554,7 +1554,7 @@ class Gfx {
 	private static var tx:Float;
 	private static var ty:Float;
 	private static var tx2:Float;
-  private static var ty2:Float;
+	private static var ty2:Float;
 	private static var haxegonimage:HaxegonImage;
 	
 	private static var imageindex:Map<String, Int> = new Map<String, Int>();
