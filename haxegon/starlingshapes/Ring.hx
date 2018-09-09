@@ -7,7 +7,7 @@
 //	in accordance with the terms of the accompanying license agreement.
 //
 // =================================================================================================
-package starling.display;
+package haxegon.starlingshapes;
 
 import flash.geom.Matrix;
 import flash.geom.Matrix3D;

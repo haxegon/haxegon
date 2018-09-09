@@ -7,7 +7,7 @@
 //	in accordance with the terms of the accompanying license agreement.
 //
 // =================================================================================================
-package starling.display;
+package haxegon.starlingshapes;
 
 import openfl.geom.Matrix;
 import openfl.geom.Matrix3D;
@@ -16,6 +16,7 @@ import openfl.geom.Rectangle;
 import openfl.geom.Vector3D;
 
 import starling.display.Quad;
+import starling.display.DisplayObject;
 
 /** A Poly4 represents an abitrary quad with a uniform color or a color gradient.
  *

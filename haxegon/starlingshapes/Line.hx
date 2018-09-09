@@ -7,8 +7,7 @@
 //	in accordance with the terms of the accompanying license agreement.
 //
 // =================================================================================================
-
-package starling.display;
+package haxegon.starlingshapes;
 
 import flash.geom.Point;
 
