@@ -4,6 +4,7 @@ import flash.Vector;
 import haxegon.embeddedassets.DefaultFont;
 import openfl.geom.Matrix;
 import openfl.text.Font;
+import lime.text.UTF8String;
 import starling.display.*;
 import starling.utils.Align;
 import starling.text.*;
@@ -13,7 +14,7 @@ class HighResTrueTypeCompositor extends TrueTypeCompositor{
   public function HighResTrueTypeCompositor(){}
 
   override public function fillMeshBatch(meshBatch:MeshBatch, width:Float, height:Float,
-																				 text:String, format:TextFormat,
+																				 text:UTF8String, format:TextFormat,
 																				 options:TextOptions = null){
     options.textureScale *= 3;
     super.fillMeshBatch(meshBatch, width, height, text, format, options);
@@ -208,7 +209,7 @@ class Text {
 		return typeface[currentindex].height;
 	}
 	
-	public static function width(text:String):Float {
+	public static function width(text:UTF8String):Float {
 		typeface[currentindex].updatebounds();
 		
 		if (typeface[currentindex].type == "bitmap"){
@@ -229,7 +230,7 @@ class Text {
 		}
 	}
 	
-	public static function height(?text:String):Float {
+	public static function height(?text:UTF8String):Float {
 		if (text == null) text = "?";
 		typeface[currentindex].updatebounds();
 		
@@ -275,7 +276,7 @@ class Text {
 		return Math.floor(y);
 	}
 	
-	private static function aligntextx(t:String, x:Float):Float {
+	private static function aligntextx(t:UTF8String, x:Float):Float {
 		if (x <= -5000) {
 			t1 = x - CENTER;
 			t2 = x - LEFT;
@@ -292,7 +293,7 @@ class Text {
 		return x;
 	}
 	
-	private static function aligntexty(t:String, y:Float):Float {
+	private static function aligntexty(t:UTF8String, y:Float):Float {
 		if (y <= -5000) {
 			t1 = y - CENTER;
 			t2 = y - TOP;
@@ -499,7 +500,7 @@ class Text {
 			text = Std.string(text);
 		}
 	#else
-	public static function display(x:Float, y:Float, text:String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
+	public static function display(x:Float, y:Float, text:UTF8String, color:Int = 0xFFFFFF, alpha:Float = 1.0) {
 	#end
 		if (text == "") return;
 		Gfx.endmeshbatch(); // We don't use Gfx.meshbatch, so ensure it's finished rendering before we draw any text
