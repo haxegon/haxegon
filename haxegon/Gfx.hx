@@ -1,5 +1,6 @@
 package haxegon;
 
+import haxegon.starlingshapes.*;
 import flash.display.StageDisplayState;
 import flash.display.BitmapData;
 import haxe.Constraints.Function;
@@ -7,7 +8,6 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import starling.display.*;
-import starling.geom.*;
 import starling.utils.AssetManager;
 import starling.textures.*;
 import openfl.Assets;
