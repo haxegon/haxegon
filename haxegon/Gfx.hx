@@ -1,6 +1,6 @@
 package haxegon;
 
-import haxegon.starlingshapes.*;
+import haxegon.starlingmods.*;
 import flash.display.StageDisplayState;
 import flash.display.BitmapData;
 import haxe.Constraints.Function;
@@ -295,7 +295,7 @@ class Gfx {
 			// Create tiles, repurposing RenderTexture tiles when available
 			for (i in 0 ... amount) {
 				if (i < tiles[currenttileset].tiles.length && !purge && Std.is(tiles[currenttileset].tiles[i].texture, RenderTexture)) {
-					cast(tiles[currenttileset].tiles[i].texture, RenderTexture).clear();
+					cast(tiles[currenttileset].tiles[i].texture, HaxegonRenderTexture).clear();
 				} else {
 					var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
 					var img:Image = new Image(tex);
@@ -432,8 +432,8 @@ class Gfx {
 	}
 	
 	private static function promotetorendertarget(image:Image) {
-		if (!Std.is(image.texture, RenderTexture)) {
-			var newtexture:RenderTexture = new RenderTexture(Std.int(image.texture.width), Std.int(image.texture.height));
+		if (!Std.is(image.texture, HaxegonRenderTexture)) {
+			var newtexture:HaxegonRenderTexture = new HaxegonRenderTexture(Std.int(image.texture.width), Std.int(image.texture.height));
 			
 			// Copy the old texture to the new RenderTexture
 			shapematrix.identity();
@@ -478,7 +478,7 @@ class Gfx {
 		
 		var imagenum:Int = imageindex.get(imagename);
 		promotetorendertarget(images[imagenum].contents);
-		drawto = cast(images[imagenum].contents.texture, RenderTexture);
+		drawto = cast(images[imagenum].contents.texture, HaxegonRenderTexture);
 		
 		if (drawto != null){
 			if(!drawtolocked) drawto.bundlelock();
@@ -511,7 +511,7 @@ class Gfx {
 		}
 		
 		promotetorendertarget(tiles[tileset].tiles[tilenum]);
-		drawto = cast(tiles[tileset].tiles[tilenum].texture, RenderTexture);
+		drawto = cast(tiles[tileset].tiles[tilenum].texture, HaxegonRenderTexture);
 		
 		if (drawto != null){
 			if(!drawtolocked) drawto.bundlelock();
@@ -722,7 +722,7 @@ class Gfx {
 		shapematrix.identity();
 		shapematrix.translate(-screenx, -screeny);
 		
-		cast(tiles[currenttileset].tiles[tilenumber].texture, RenderTexture).draw(screen, shapematrix);
+		cast(tiles[currenttileset].tiles[tilenumber].texture, HaxegonRenderTexture).draw(screen, shapematrix);
 	}
 	
 	public static function grabtilefromimage(tilesetname:String, tilenumber:Int, imagename:String, imagex:Float, imagey:Float) {
@@ -753,7 +753,7 @@ class Gfx {
 		shapematrix.identity();
 		shapematrix.translate(-imagex, -imagey);
 		
-		cast(tiles[currenttileset].tiles[tilenumber].texture, RenderTexture).draw(images[imageindex.get(imagename)].contents, shapematrix);
+		cast(tiles[currenttileset].tiles[tilenumber].texture, HaxegonRenderTexture).draw(images[imageindex.get(imagename)].contents, shapematrix);
 	}
 	
 	public static function grabimagefromscreen(imagename:String, screenx:Float, screeny:Float) {
@@ -773,7 +773,7 @@ class Gfx {
 		shapematrix.identity();
 		shapematrix.translate(-screenx, -screeny);
 		
-		cast(haxegonimage.contents.texture, RenderTexture).draw(screen, shapematrix);
+		cast(haxegonimage.contents.texture, HaxegonRenderTexture).draw(screen, shapematrix);
 	}
 	
 	public static function grabimagefromimage(destinationimage:String, sourceimage:String, sourceimagex:Float, sourceimagey:Float) {
@@ -800,7 +800,7 @@ class Gfx {
 		shapematrix.identity();
 		shapematrix.translate(-sourceimagex, -sourceimagey);
 		
-		cast(haxegonimage.contents.texture, RenderTexture).draw(sourceimage.contents, shapematrix);
+		cast(haxegonimage.contents.texture, HaxegonRenderTexture).draw(sourceimage.contents, shapematrix);
 	}
 	
 	public static function copytile(totileset:String, totilenumber:Int, fromtileset:String, fromtilenumber:Int) {
@@ -809,7 +809,7 @@ class Gfx {
 				promotetorendertarget(tiles[tilesetindex.get(totileset)].tiles[totilenumber]);
 				
 				shapematrix.identity();
-				cast(tiles[tilesetindex.get(totileset)].tiles[totilenumber].texture, RenderTexture).draw(tiles[tilesetindex.get(fromtileset)].tiles[fromtilenumber], shapematrix);
+				cast(tiles[tilesetindex.get(totileset)].tiles[totilenumber].texture, HaxegonRenderTexture).draw(tiles[tilesetindex.get(fromtileset)].tiles[fromtilenumber], shapematrix);
 			}else {
 				Debug.log("ERROR: Tilesets " + totileset + " (" + Std.string(tilewidth(totileset)) + "x" + Std.string(tileheight(totileset)) + ") and " + fromtileset + " (" + Std.string(tiles[tilesetindex.get(fromtileset)].width) + "x" + Std.string(tiles[tilesetindex.get(fromtileset)].height) + ") are different sizes. Maybe try just drawing to the tile you want instead with Gfx.drawtotile()?");
 				return;
@@ -1069,7 +1069,7 @@ class Gfx {
 		}
 	}
 	
-	private static function endmeshbatchonsurface(d:RenderTexture) {
+	private static function endmeshbatchonsurface(d:HaxegonRenderTexture) {
 		if (meshbatchcount > 0) {
 			d.draw(meshbatch);
 			
@@ -1457,7 +1457,7 @@ class Gfx {
 		}
 		
 		if (!gfxinit || resizebuffers){
-			backbuffer = new RenderTexture(width, height, true);
+			backbuffer = new HaxegonRenderTexture(width, height, true);
 			drawto = backbuffer;
 			screen = new Image(backbuffer);
 			screen.touchable = false;
@@ -1516,8 +1516,8 @@ class Gfx {
 	private static var meshbatchcount:Int = 0;
 	private static var meshbatch:MeshBatch = null;
 	
-	private static var backbuffer:RenderTexture;
-	private static var drawto:RenderTexture;
+	private static var backbuffer:HaxegonRenderTexture;
+	private static var drawto:HaxegonRenderTexture;
 	private static var screen:Image;
 	private static var tempquad:Quad;
 	private static var temppoly4:Poly4;

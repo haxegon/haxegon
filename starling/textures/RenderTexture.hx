@@ -214,58 +214,6 @@ class RenderTexture extends SubTexture
         __renderBundled(renderBlockFunc, null, null, 1.0, antiAliasing, cameraPos);
     }
     
-    private var haxegonpreviousRenderTarget:Texture;
-    public function bundlelock(antiAliasing:Int = 0, cameraPos:Vector3D=null):Void
-    {   
-        thisbundlepainer = Starling.current.painter;
-        var state:RenderState = thisbundlepainer.state;
-
-        if (!Starling.current.contextValid) return;
-
-        // switch buffers
-        if (isDoubleBuffered)
-        {
-            var tmpTexture:Texture = _activeTexture;
-            _activeTexture = _bufferTexture;
-            _bufferTexture = tmpTexture;
-            _helperImage.texture = _bufferTexture;
-        }
-
-        thisbundlepainer.pushState();
-
-        var rootTexture:Texture = _activeTexture.root;
-        state.setProjectionMatrix(0, 0, rootTexture.width, rootTexture.height,
-            width, height, cameraPos);
-
-        // limit drawing to relevant area
-        sClipRect.setTo(0, 0, _activeTexture.width, _activeTexture.height);
-
-        state.clipRect = sClipRect;
-        state.setRenderTarget(_activeTexture, true, antiAliasing);
-
-        thisbundlepainer.prepareToDraw();
-        thisbundlepainer.context.setStencilActions( // should not be necessary, but fixes mask issues
-            Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS);
-
-        if (isDoubleBuffered || !isPersistent || !_bufferReady)
-            thisbundlepainer.clear();
-
-        // draw buffer
-        if (isDoubleBuffered && _bufferReady)
-            _helperImage.render(thisbundlepainer);
-        else
-            _bufferReady = true;
-        
-        _drawing = true;
-    }
-    
-		private var thisbundlepainer:Painter;
-    public function bundleunlock():Void
-    {
-        _drawing = false;
-        thisbundlepainer.popState();
-		}
-    
     private function __render(object:DisplayObject, matrix:Matrix=null, alpha:Float=1.0):Void
     {
         var painter:Painter = Starling.current.painter;
