@@ -1415,6 +1415,12 @@ class Gfx {
 			starlingassets = new AssetManager();
 			starlingassets.verbose = false;
 			
+			var exclusions:Array<String> = [];
+			//Check for packed texture exclusion list
+			if(Assets.exists("data/text/_pack_exclude.txt")) {
+				exclusions = Data.loadtext("_pack_exclude");
+			}
+
 			//Scan for packed textures
 			var atlasnum:Int = 0;
 			for (t in Assets.list(AssetType.TEXT)) {
@@ -1431,9 +1437,12 @@ class Gfx {
 						
 						//Ok, now we work though the XML and load all the images
 						for (i in xml.elementsNamed("SubTexture")) {
-							loadimagefrompackedtexture(i.get("name"), getassetpackedtexture(i.get("name")));
+							var iname = i.get("name");
+							if(exclusions.indexOf(iname) == -1) {
+								//Include all image nodes that aren't explicitly excluded
+								loadimagefrompackedtexture(iname, getassetpackedtexture(iname));
+							}
 						}
-						//for(i in xml.
 					}
 				}
 			}
