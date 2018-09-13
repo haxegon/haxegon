@@ -57,7 +57,7 @@ class Scene {
 		callscenemethod(scenelist[currentscene], "render");
 	}
 	
-	private static function callscenemethod(scene:Dynamic, method:String, ?pos:haxe.PosInfos) {
+	private static function callscenemethod(scene:Dynamic, method:String) {
 		var instanceFunc:Dynamic = Reflect.field(scene, method);
 		if (instanceFunc != null && Reflect.isFunction(instanceFunc)) {
 			try {
