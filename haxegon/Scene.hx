@@ -57,7 +57,7 @@ class Scene {
 		callscenemethod(scenelist[currentscene], "render");
 	}
 	
-	private static function callscenemethod(scene:Dynamic, method:String) {
+	private static function callscenemethod(scene:Dynamic, method:String, ?pos:haxe.PosInfos) {
 		var instanceFunc:Dynamic = Reflect.field(scene, method);
 		if (instanceFunc != null && Reflect.isFunction(instanceFunc)) {
 			try {
@@ -65,7 +65,8 @@ class Scene {
 			} catch ( e:ArgumentError ) {
 				throw( "ERROR in callscenemethod("+scene+","+method+"): Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
 			} catch (msg:Dynamic ) {
-				throw( "ERROR in callscenemethod("+scene+","+method+"): instance " + Type.getClassName(scene) + "." + method + "() threw : " + msg);
+				var stack = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
+				throw( "ERROR in callscenemethod("+scene+","+method+") instance : " + msg + ", stack = " + stack);
 			}
 			return;
 		}
@@ -78,7 +79,8 @@ class Scene {
 			} catch ( e:ArgumentError ) {
 				throw( "ERROR in callscenemethod("+scene+","+method+"): Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
 			} catch ( msg:Dynamic ) {
-				throw( "ERROR in callscenemethod("+scene+","+method+"): static " + Type.getClassName(scene) + "." + method +"() threw : " + msg);
+				var stack = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
+				throw( "ERROR in callscenemethod("+scene+","+method+") static : " + msg + ", stack = " + stack);
 			}
 			return;
 		}
