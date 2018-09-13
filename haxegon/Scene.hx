@@ -63,7 +63,10 @@ class Scene {
 			try {
 				Reflect.callMethod(scene, instanceFunc, []);
 			} catch ( e:ArgumentError ) {
-				throw( "ERROR: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
+				throw( "ERROR in callscenemethod("+scene+","+method+"): Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
+			} catch (msg:Dynamic ) {
+				var stack = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
+				throw( "ERROR in callscenemethod("+scene+","+method+") instance : " + msg + ", stack = " + stack);
 			}
 			return;
 		}
@@ -74,7 +77,10 @@ class Scene {
 			try {
 				Reflect.callMethod(scene, classFunc, []);
 			} catch ( e:ArgumentError ) {
-				throw( "ERROR: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
+				throw( "ERROR in callscenemethod("+scene+","+method+"): Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
+			} catch ( msg:Dynamic ) {
+				var stack = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
+				throw( "ERROR in callscenemethod("+scene+","+method+") static : " + msg + ", stack = " + stack);
 			}
 			return;
 		}
