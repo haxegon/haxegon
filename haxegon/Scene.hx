@@ -63,7 +63,9 @@ class Scene {
 			try {
 				Reflect.callMethod(scene, instanceFunc, []);
 			} catch ( e:ArgumentError ) {
-				throw( "ERROR: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
+				throw( "ERROR in callscenemethod("+scene+","+method+"): Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
+			} catch (msg:Dynamic ) {
+				throw( "ERROR in callscenemethod("+scene+","+method+"): instance " + Type.getClassName(scene) + "." + method + "() threw : " + msg);
 			}
 			return;
 		}
@@ -74,7 +76,9 @@ class Scene {
 			try {
 				Reflect.callMethod(scene, classFunc, []);
 			} catch ( e:ArgumentError ) {
-				throw( "ERROR: Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
+				throw( "ERROR in callscenemethod("+scene+","+method+"): Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
+			} catch ( msg:Dynamic ) {
+				throw( "ERROR in callscenemethod("+scene+","+method+"): static " + Type.getClassName(scene) + "." + method +"() threw : " + msg);
 			}
 			return;
 		}
