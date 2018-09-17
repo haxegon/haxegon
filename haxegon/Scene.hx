@@ -60,6 +60,9 @@ class Scene {
 	private static function callscenemethod(scene:Dynamic, method:String) {
 		var instanceFunc:Dynamic = Reflect.field(scene, method);
 		if (instanceFunc != null && Reflect.isFunction(instanceFunc)) {
+			#if flash
+			Reflect.callMethod(scene, instanceFunc, []);
+			#else
 			try {
 				Reflect.callMethod(scene, instanceFunc, []);
 			} catch ( e:ArgumentError ) {
@@ -68,12 +71,16 @@ class Scene {
 				var stack = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
 				throw( "ERROR in callscenemethod("+scene+","+method+") instance : " + msg + ", stack = " + stack);
 			}
+			#end
 			return;
 		}
 		
 		// Now try the static method
 		var classFunc:Dynamic = Reflect.field(Type.getClass(scene), method);
 		if (classFunc != null && Reflect.isFunction(classFunc)) {
+			#if flash
+			Reflect.callMethod(scene, classFunc, []);
+			#else
 			try {
 				Reflect.callMethod(scene, classFunc, []);
 			} catch ( e:ArgumentError ) {
@@ -82,6 +89,7 @@ class Scene {
 				var stack = haxe.CallStack.toString(haxe.CallStack.exceptionStack());
 				throw( "ERROR in callscenemethod("+scene+","+method+") static : " + msg + ", stack = " + stack);
 			}
+			#end
 			return;
 		}
 	}
