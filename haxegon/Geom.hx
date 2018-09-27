@@ -66,6 +66,21 @@ class Geom {
 	public static inline function anglebetween(angle1:Float, angle2:Float):Float {
 		return -atan2(sin(angle1 - angle2), cos(angle1 - angle2));
 	}
+
+	public static inline function lerp(value:Float, target:Float, f:Float):Float {
+		f = clamp(f, 0, 1);
+		return (value + f * (target - value));
+	}
+
+	public static inline function range_lerp(value:Float, a1:Float, a2:Float, b1:Float, b2:Float):Float {
+		return b1 + (value - a1) * (b2 - b1) / (a2 - a1);
+	}
+
+	public static function wrap(v:Float, min:Float, max:Float):Float {
+    var range = max - min + 1;
+    if (v < min) v += range * ((min - v) / range + 1);
+    return clamp(min + (v - min) % range, min, max);
+	}
 	
 	private static var rect1:Rectangle = new Rectangle();
 	private static var rect2:Rectangle = new Rectangle();
