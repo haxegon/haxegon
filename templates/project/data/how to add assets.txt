@@ -1,0 +1,175 @@
+ ---=== loading assets in haxegon ===--- 
+ 
+Haxegon can currently load in the following assets:
+
+fonts: Truetype fonts (.ttf) or Bitmap fonts (.fnt + .png).
+
+  data/fonts/example_truetype.ttf
+  data/fonts/example_bitmap.fnt
+  data/fonts/example_bitmap_0.png
+  
+  in haxegon:
+    Text.font = "example_truetype";
+    Text.font = "example_bitmap";
+  
+graphics: Supports .png or .jpg format images.
+
+  data/graphics/example.png
+  
+  in haxegon:
+    Gfx.drawimage(x, y, "example");
+  
+sound: Supports .mp3, .ogg or .wav.
+
+  data/sounds/example.mp3
+  
+  in haxegon:
+    Sound.play("example");
+    
+text: Supports .txt, .csv, .json and .xml files.
+
+  data/text/info.txt
+  data/text/books.xml
+  
+  in haxegon:
+    var stringarray:Array<String> = Data.loadtext("info");
+    var bookdata:Dynamic = Data.loadxml("books");
+  
+icon: Supports .png icons.
+
+  replace icon.png in data/ with your own icon file.
+
+Detailed information about file formats follows:
+
+ ---=== fonts ===---
+ 
+  Haxegon supports Truetype fonts (in .ttf format) or Angelcode Bitmap Fonts (a .fnt file with an associated .png file).
+  These assets should be placed in the data/fonts/ folder.
+  
+  about Truetype TTF fonts:
+  =-=-=-=-
+  add ttf files to the fonts/ folder:
+    data/fonts/opensans.ttf
+    data/fonts/arvo-italic.ttf
+    data/fonts/arial-bold.ttf
+  
+  in haxegon, these can be used like this:
+    Text.setfont("opensans", 16);
+  
+    Text.font = "arvo-italic";
+    Text.size = 24;
+  
+  TTF font sizes are given in point sizes (e.g. 8, 16, 24). You can use any size you like, including floats.
+  
+  HTML5 webfont formats (like .svg, .eot, .woff, .woff2) are automatically generated for .ttf files.
+  
+  about bitmap fonts:
+  =-=-=-=-=-
+  add Angelcode Bitmap Fonts with .fnt and associated .png files to the data/fonts/ folder:
+    data/fonts/retrofuture.fnt
+    data/fonts/retrofuture_0.png
+  
+  These are used in the same way as TTF fonts, i.e:
+    Text.font = "retrofuture";
+    Text.size = 1;
+
+  Bitmap font sizes are given in multiples of their original size. 
+  Text.size = 3 will be three times whatever size the bitmap font was originally generated at.
+  
+  There are webtools for converting TTF fonts to bitmap fonts - for example, Littera:
+  http://kvazars.com/littera/
+  
+  Or on windows, you can use AngelCode.com's bitmap font generator, "bmfont":
+  http://www.angelcode.com/products/bmfont/
+  
+  You can use any tool that generates bitmap fonts in the Angelcode format. Use XML for the font descriptor, 
+  PNG for the texture, and use the extension .fnt. In bmfont, use the "white text with alpha" preset.
+  
+  A selection of free to use compatible bitmap fonts can be found here:
+  https://github.com/TerryCavanagh/haxegon-samples/tree/master/simple/04%20-%20Bitmap%20Fonts/data/fonts
+  
+ ---=== graphics ===---
+ 
+  .png or .jpg format images are supported.
+  
+  Add the image files to the data/graphics/ folder:
+    data/graphics/playersprite.png
+    data/graphics/background01.jpg
+    data/graphics/tiles.png
+    
+  They can then be preloaded into haxegon like this:
+    Gfx.loadimage("playersprite");
+    Gfx.loadimage("background01");
+    
+  You can load an image and split it into a tileset with the Gfx.loadtiles() command:
+    Gfx.loadtiles("tiles", 16, 16);
+    
+  You can then display images and tiles like this:
+    Gfx.drawimage(x, y, "playersprite");
+    Gfx.drawtile(x, y, "tiles", tilenum);
+    
+  If your graphics are not preloaded, they will be automatically loaded by haxegon the first time they're drawn.
+  
+  Haxegon also supports packed textures! When using Texture Packing tools, check to see if they have a "starling" setting.
+  Then place the generated .xml and .png files in the data/graphics/ folder, and continue using as normal.
+ 
+  ---=== sound ===---
+ 
+  .mp3, .ogg or .wavs are supported, depending on your platform. Place all sound files in data/sounds/.
+  
+  HTML5:    
+    HTML5 builds can use .mp3 or .wav files on all browsers. .oggs *will* work in some browsers, but support is varied, so .mp3 is recommended.
+
+  Native Destop builds:
+    Native desktop builds on PC, Mac and Linux require .wav or .ogg files, but cannot play .mp3 files.
+    
+    mp3 patent licences finally expired at the end of 2017, so this will probably change soon! mp3 support for native targets is an ongoing
+    project for Haxegon's parent library OpenFL, and Haxegon will support it as soon as OpenFL does.
+  
+  Other:
+    Legacy Flash and AIR builds can play .mp3 or .wav files, but cannot play .oggs.
+    (If you're building a legacy flash project, the maximum .wav file size is 16mb).
+
+  On windows, I use a tool called "FlicFlac" to quickly convert .wav files to .ogg and .mp3 as needed.
+  flicflac: http://www.sector-seven.net/software/flicflac
+
+  Add all your audio files to data/sounds/ to use:
+    data/sounds/backgroundmusic.mp3
+    data/sounds/backgroundmusic.ogg
+    data/sounds/explosion.mp3
+    data/sounds/explosion.ogg  
+  
+  There are two ways to play sounds in haxegon - as sounds, which play once and stop:
+    Sound.play("explosion");
+  
+  Or as background music, which loops until told to stop:
+    Music.play("backgroundmusic");
+    Music.stop();
+    
+  For more advanced usage, including looping sounds, fading and layering music tracks, see the reference guide at haxegon.com.
+ 
+ ---=== text ===---
+ 
+  Haxegon can load .txt, .csv, .json and .xml files.
+  
+  *.txt files are loaded into String arrays, like this: 
+  
+      var stringarray:Array<String> = Data.loadtext("info");           //Loads data/text/info.txt as an array of Strings
+    
+  *.csv files are loaded into either regular arrays, or 2d arrays of any type, like this: 
+    
+      var worldmap:Array<String> = Data.loadcsv("mapdata");            //Loads data/text/mapdata.csv into an array of Strings
+      var worldmap:Array<Array<Float>> = Data.load2dcsv("mapdata");    //Loads data/text/mapdata.csv into a 2d array of Floats
+      
+  *.json and *.xml files are parsed as dynamic objects. This creates an object where the fields correspond to the json or xml file.
+  For more information on how to handle json and xml objects in haxegon, see the full documentation at haxegon.com.
+  
+      var moviedata:Dynamic = Data.loadjson("movies");                 //Loads data/text/movies.json as a dynamic object "moviedata"
+      var bookdata:Dynamic = Data.loadxml("books");                    //Loads data/text/books.xml as a dynamic object "bookdata"
+  
+ ---=== icon ===---
+
+  Your application's icon will be generated from the icon.png file in your data/ folder.
+  
+  This icon file will generate all sizes needed for all platforms, so I recommend making it at least 2048x2048.
+  

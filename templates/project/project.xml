@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+  <set name="windowwidth" value="1280" />
+  <set name="windowheight" value="720" />
+  
+	<meta 
+    title="New Project" 
+    package="com.yournamehere.newproject" 
+    version="1.0.0" 
+    company="Your name here" 
+  />
+  
+  <app swf-version="17.0" if="flash"/>
+	<app 
+      main="haxegon.Load"
+      path="bin" 
+      file="newproject" 
+   />
+
+  <window width="${windowwidth}" height="${windowheight}" if="flash || cpp || neko"></window>
+  <window width="0" height="0" if="html5 || mobile"></window>
+	 
+	<window
+      fps="60"
+      background="0x000000"
+      orientation="landscape"
+      hardware="true"
+      vsync="true"
+      allow-high-dpi="true"
+   ></window>
+   
+	<source path="src" />
+	<source path="plugins" />
+	<haxelib name="openfl" />
+	<haxelib name="haxegon" />
+	<haxedef name="windowwidth" value="${windowwidth}" />
+  <haxedef name="windowheight" value="${windowheight}" />
+  
+	<assets path="data" exclude="*.mp3" if="cpp || neko"/>
+	<assets path="data" exclude="*.ogg" if="flash"/>
+	<assets path="data" if="html5"/>
+	
+	<icon path="data/icon.png"/>
+</project>
