@@ -109,7 +109,9 @@ class Music{
 	
 	static function set_volume(newvol:Float):Float{
 		_volume = newvol;
-		musicaudio.volume = _volume;
+		if(musicaudio != null){
+			musicaudio.volume = _volume;
+		}
 		return _volume;
 	}
 	
@@ -119,7 +121,9 @@ class Music{
 	
 	static function set_panning(newpanning:Float):Float{
 		_panning = newpanning;
-		musicaudio.panning = _panning;
+		if(musicaudio != null){
+			musicaudio.panning = _panning;
+		}
 		return _panning;
 	}
 }
