@@ -10,6 +10,7 @@ class Sound{
 	  soundassets = new Map<String, openfl.media.Sound>();
 	  soundvolumeadjustment = new Map<String, Float>();
 		soundoffsetindex = new Map<String, Point>();
+		soundlengthindex = new Map<String, Float>();
 		addtopool = true;
 		audiopool = new AudioPool(64);
 		addtopool = false;
@@ -71,6 +72,7 @@ class Sound{
 				soundassets.set(soundname, soundasset);
 				soundvolumeadjustment.set(soundname, adjustedvolume);
 				soundoffsetindex.set(soundname, new Point(0, 0));
+				soundlengthindex.set(soundname, soundasset.length / 1000);
 			}
 		}
 		
@@ -143,6 +145,15 @@ class Sound{
 		return _mute;
 	}
 	
+	public static function length(soundname:String):Float{
+		soundname = soundname.toLowerCase();
+		if (soundlengthindex.exists(soundname)){
+			return soundlengthindex.get(soundname);
+		}
+		
+		return 0;
+	}
+	
 	public static var volume(get, set):Float;
 	private static var _volume:Float = 1.0;
 	static function get_volume():Float { return _volume; }
@@ -174,6 +185,7 @@ class Sound{
 	private static var soundassets:Map<String, openfl.media.Sound>;
 	private static var soundvolumeadjustment:Map<String, Float>;
 	private static var soundoffsetindex:Map<String, Point>;
+	private static var soundlengthindex:Map<String, Float>;
 	private static var audiopool:AudioPool;
 	private static var audiolist:AudioList;
 	private static var addtopool:Bool;

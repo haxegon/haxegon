@@ -124,6 +124,10 @@ class Audio{
 	}
 	
 	public function play(_fadeintime:Float = 0){
+		if (_sound == null){
+			trace("Error: cannot play sound \"" + name + "\"");
+			return;
+		}
 		if (_soundchannel != null){
 			//Immediately stop anything that's playing in this Audio object
 			_soundchannel.stop();
