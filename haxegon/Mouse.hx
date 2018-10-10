@@ -81,23 +81,23 @@ class Mouse{
 	public static function cursormoved():Bool { return _cursormoved; }
 	private static var _cursormoved:Bool;
 	
-	public static function leftheld():Bool { return _current > 0; }
-	public static function leftclick():Bool { return _current == 2; }
-	public static function leftreleased():Bool { return _current == -1; }
+	public static function leftheld():Bool { if (Input.suppress) return false; return _current > 0; }
+	public static function leftclick():Bool { if (Input.suppress) return false; return _current == 2; }
+	public static function leftreleased():Bool { if (Input.suppress) return false; return _current == -1; }
 	public static function leftforcerelease():Void { _current = -1; }
-	public static function leftheldpresstime():Int { return _held; }
+	public static function leftheldpresstime():Int { if (Input.suppress) return 0; return _held; }
 	
-	public static function rightheld():Bool { return _rightcurrent > 0; }
-	public static function rightclick():Bool { return _rightcurrent == 2; }	
-	public static function rightreleased():Bool { return _rightcurrent == -1; }
+	public static function rightheld():Bool { if (Input.suppress) return false; return _rightcurrent > 0; }
+	public static function rightclick():Bool { if (Input.suppress) return false; return _rightcurrent == 2; }	
+	public static function rightreleased():Bool { if (Input.suppress) return false; return _rightcurrent == -1; }
 	public static function rightforcerelease():Void { _rightcurrent = -1; }
-	public static function rightheldpresstime():Int { return _rightheld; }
+	public static function rightheldpresstime():Int { if (Input.suppress) return 0; return _rightheld; }
 	
-	public static function middleheld():Bool { return _middlecurrent > 0; }
-	public static function middleclick():Bool { return _middlecurrent == 2; }	
-	public static function middlereleased():Bool { return _middlecurrent == -1; }
+	public static function middleheld():Bool { if (Input.suppress) return false; return _middlecurrent > 0; }
+	public static function middleclick():Bool { if (Input.suppress) return false; return _middlecurrent == 2; }	
+	public static function middlereleased():Bool { if (Input.suppress) return false; return _middlecurrent == -1; }
 	public static function middleforcerelease():Void { _middlecurrent = -1; }
-	public static function middleheldpresstime():Int { return _middleheld; }
+	public static function middleheldpresstime():Int { if (Input.suppress) return 0; return _middleheld; }
 	
 	public static function leftdelaypressed(delay:Int):Bool {
 		if (_held >= 1) {

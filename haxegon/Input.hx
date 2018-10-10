@@ -20,6 +20,8 @@ enum Keystate {
 @:access(haxegon.Text)
 class Input {
 	public static function pressed(k:Key):Bool {
+		if (suppress) return false;
+		
 		if (k == Key.ANY){
 			for (a in keymap.keys()){
 				if (keyheld[keymap.get(a)] >= 0) return true;
@@ -29,7 +31,9 @@ class Input {
 		return keyheld[keymap.get(k)] >= 0;
 	}
 	
-	public static function justpressed(k:Key):Bool { 
+	public static function justpressed(k:Key):Bool {
+		if (suppress) return false;
+		
 		if (k == Key.ANY){
 			for (a in keymap.keys()){
 				if (current[keymap.get(a)] == Keystate.justpressed) return true;
@@ -43,7 +47,9 @@ class Input {
 		}
 	}
 	
-	public static function justreleased(k:Key):Bool { 
+	public static function justreleased(k:Key):Bool {
+		if (suppress) return false;
+		
 		if (k == Key.ANY){
 			for (a in keymap.keys()){
 				if (current[keymap.get(a)] == Keystate.justreleased){
@@ -81,6 +87,8 @@ class Input {
 	}
 	
 	public static function pressheldtime(k:Key):Int {
+		if (suppress) return 0;
+		
 		if (k == Key.ANY){
 			//Get the longest time any key has been pressed
 			var longestkeypress:Int = 0;
@@ -100,6 +108,8 @@ class Input {
 	}
 	
 	public static function delaypressed(k:Key, delay:Int):Bool {
+		if (suppress) return false;
+		
 		if (k == Key.ANY){
 			//Find the FIRST key that's being held down, and use it.
 			for (a in keymap.keys()){
@@ -140,6 +150,7 @@ class Input {
 		selectall = false;
 		undo = false;
 		redo = false;
+		suppress = false;
 
 		#if flash
 			flashstage.addEventListener(openfl.events.Event.CUT, handlecut);
@@ -664,6 +675,8 @@ class Input {
 		trace("Warning: Cannot find a Key to correspond to \"" + char + "\"");
 		return null;
 	}
+	
+	public static var suppress:Bool;
 	
 	private static var keymap:Map<Key, Int> = new Map<Key, Int>();
 	private static var lookup:Map<Int, Key> = new Map<Int, Key>();

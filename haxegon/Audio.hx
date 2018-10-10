@@ -125,7 +125,7 @@ class Audio{
 	
 	public function play(_fadeintime:Float = 0){
 		if (_sound == null){
-			trace("Error: cannot play sound \"" + name + "\"");
+			trace("Error: sound asset named \"" + name + "\" not found");
 			return;
 		}
 		if (_soundchannel != null){
