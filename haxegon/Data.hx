@@ -293,22 +293,22 @@ class Data {
 		return false;
 	}
 	
-	private static function getsoundasset(filename:String):Sound {
+	private static function getsoundasset(filename:String, useCache:Bool = true):Sound {
 		filename = filename.toLowerCase();
 		var realfilename:String = embeddedassets_original[embeddedassets.indexOf(filename)];
-	  return Assets.getSound(realfilename);
+	  return Assets.getSound(realfilename, useCache);
 	}
 	
-	private static function getgraphicsasset(filename:String):BitmapData {
+	private static function getgraphicsasset(filename:String, useCache:Bool = true):BitmapData {
 		filename = filename.toLowerCase();
 		var realfilename:String = embeddedassets_original[embeddedassets.indexOf(filename)];
-	  return Assets.getBitmapData(realfilename);
+	  return Assets.getBitmapData(realfilename, useCache);
 	}
 	
-	private static function getfontasset(filename:String):Font {
+	private static function getfontasset(filename:String, useCache:Bool = true):Font {
 		filename = filename.toLowerCase();
 		var realfilename:String = embeddedassets_original[embeddedassets.indexOf(filename)];
-	  return Assets.getFont(realfilename);
+	  return Assets.getFont(realfilename, useCache);
 	}
 	
 	private static function gettextasset(filename:String):String {
