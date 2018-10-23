@@ -402,7 +402,7 @@ class Input {
 		}
 	}
 	
-	public static function get_char():String {
+	public static function getcharacter():String {
 		if (lastcharcode == -1) return "";
 		return String.fromCharCode(lastcharcode);
 	}	
