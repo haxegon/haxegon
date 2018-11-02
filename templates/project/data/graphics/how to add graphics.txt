@@ -1,0 +1,31 @@
+Haxegon supports .png or .jpg format images.
+
+e.g.
+  data/graphics/example.png
+  
+  in haxegon:
+    Gfx.drawimage(x, y, "example");
+  
+More information:
+
+  Add the image files to the data/graphics/ folder:
+    data/graphics/playersprite.png
+    data/graphics/background01.jpg
+    data/graphics/tiles.png
+    
+  They can then be preloaded into haxegon like this:
+    Gfx.loadimage("playersprite");
+    Gfx.loadimage("background01");
+    
+  You can load an image and split it into a tileset with the Gfx.loadtiles() command:
+    Gfx.loadtiles("tiles", 16, 16);
+    
+  You can then display images and tiles like this:
+    Gfx.drawimage(x, y, "playersprite");
+    Gfx.drawtile(x, y, "tiles", tilenum);
+    
+  If your graphics are not preloaded, they will be automatically loaded by haxegon the first time they're drawn.
+  
+  Haxegon also supports packed textures! When using Texture Packing tools, check to see if they have a "starling" setting.
+  Then place the generated .xml and .png files in the data/graphics/ folder, and continue using as normal.
+ 

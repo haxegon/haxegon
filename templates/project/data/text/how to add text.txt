@@ -1,0 +1,26 @@
+Haxegon can load .txt, .csv, .json and .xml files.
+  
+e.g.
+  data/text/info.txt
+  data/text/books.xml
+  
+  in haxegon:
+    var stringarray:Array<String> = Data.loadtext("info");
+    var bookdata:Dynamic = Data.loadxml("books");
+  
+More information:
+  
+  *.txt files are loaded into String arrays, like this: 
+  
+      var stringarray:Array<String> = Data.loadtext("info");           //Loads data/text/info.txt as an array of Strings
+    
+  *.csv files are loaded into either regular arrays, or 2d arrays of any type, like this: 
+    
+      var worldmap:Array<String> = Data.loadcsv("mapdata");            //Loads data/text/mapdata.csv into an array of Strings
+      var worldmap:Array<Array<Float>> = Data.load2dcsv("mapdata");    //Loads data/text/mapdata.csv into a 2d array of Floats
+      
+  *.json and *.xml files are parsed as dynamic objects. This creates an object where the fields correspond to the json or xml file.
+  For more information on how to handle json and xml objects in haxegon, see the full documentation at haxegon.com.
+  
+      var moviedata:Dynamic = Data.loadjson("movies");                 //Loads data/text/movies.json as a dynamic object "moviedata"
+      var bookdata:Dynamic = Data.loadxml("books");                    //Loads data/text/books.xml as a dynamic object "bookdata"

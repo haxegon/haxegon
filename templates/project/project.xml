@@ -4,17 +4,17 @@
   <set name="windowheight" value="720" />
   
 	<meta 
-    title="New Project" 
-    package="com.yournamehere.newproject" 
-    version="1.0.0" 
-    company="Your name here" 
+    title="::title::" 
+    package="::packageName::" 
+    version="::version::" 
+    company="::company::" 
   />
   
   <app swf-version="17.0" if="flash"/>
 	<app 
       main="haxegon.Load"
       path="bin" 
-      file="newproject" 
+      file="::file::" 
    />
 
   <window width="${windowwidth}" height="${windowheight}" if="flash || cpp || neko"></window>

@@ -1,0 +1,40 @@
+Haxegon supports .mp3, .ogg or .wavs sounds, depending on your platform. Place all sound files in data/sounds/.
+
+e.g.
+  data/sounds/example.mp3
+  
+  in haxegon:
+    Sound.play("example");
+    
+More information:
+  
+  HTML5:    
+    HTML5 builds can use .mp3 or .wav files on all browsers. .oggs *will* work in some browsers, but support is varied, so .mp3 is recommended.
+
+  Native Destop builds:
+    Native desktop builds on PC, Mac and Linux require .wav or .ogg files, but cannot play .mp3 files.
+    
+    mp3 patent licences finally expired at the end of 2017, so this will probably change soon! mp3 support for native targets is an ongoing
+    project for Haxegon's parent library OpenFL, and Haxegon will support it as soon as OpenFL does.
+  
+  Other:
+    Legacy Flash and AIR builds can play .mp3 or .wav files, but cannot play .oggs.
+    (If you're building a legacy flash project, the maximum .wav file size is 16mb).
+
+  On windows, I use a tool called "FlicFlac" to quickly convert .wav files to .ogg and .mp3 as needed.
+  flicflac: http://www.sector-seven.net/software/flicflac
+
+  Add all your audio files to data/sounds/ to use:
+    data/sounds/backgroundmusic.mp3
+    data/sounds/backgroundmusic.ogg
+    data/sounds/explosion.mp3
+    data/sounds/explosion.ogg  
+  
+  There are two ways to play sounds in haxegon - as sounds, which play once and stop:
+    Sound.play("explosion");
+  
+  Or as background music, which loops until told to stop:
+    Music.play("backgroundmusic");
+    Music.stop();
+    
+  For more advanced usage, including looping sounds, fading and layering music tracks, see the reference guide at haxegon.com.
