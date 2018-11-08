@@ -99,7 +99,11 @@ class Gfx {
 		if (imagerotate == 0) {
 		  if (imagexscale == 1.0) {
 				if (imageyscale == 1.0) {
-					transform = false;
+					if (imagextranslate == 0) {
+						if (imageytranslate == 0) {
+							transform = false;
+						}
+					}
 				}
 			}
 		}
@@ -135,7 +139,16 @@ class Gfx {
 		transform = true;
 		reset_ifclear();
 	}
-	
+
+	/** Translates image drawing functions. */
+	public static function translate(xtranslate:Float, ?ytranslate:Float = 0) {
+		imagextranslate = xtranslate;
+		imageytranslate = ytranslate;
+
+		transform = true;
+		reset_ifclear();
+	}
+
 	/** Set an alpha multipler for image drawing functions. */
 	public static var imagealpha(get, set):Float;
 	public static function resetalpha(){ imagealpha = 1.0; }
@@ -619,6 +632,10 @@ class Gfx {
 				shapematrix.translate( -tempxalign * imagexscale, -tempyalign * imageyscale);
 				shapematrix.rotate((imagerotate * 3.1415) / 180);
 				shapematrix.translate( tempxalign * imagexscale, tempyalign * imageyscale);
+			}
+
+			if (imagextranslate != 0.0 || imageytranslate != 0.0) {
+				shapematrix.translate(imagextranslate, imageytranslate);
 			}
 			
 			shapematrix.translate(x, y);
@@ -1555,6 +1572,8 @@ class Gfx {
 	private static var imageyscale:Float;
 	private static var imagescalexpivot:Float;
 	private static var imagescaleypivot:Float;
+	private static var imagextranslate:Float;
+	private static var imageytranslate:Float;
 	private static var imagealphamult:Float;
 	private static var imagecolormult:Int;
 	private static var tempxalign:Float;
@@ -1563,7 +1582,7 @@ class Gfx {
 	private static var tx:Float;
 	private static var ty:Float;
 	private static var tx2:Float;
-  private static var ty2:Float;
+	private static var ty2:Float;
 	private static var haxegonimage:HaxegonImage;
 	
 	private static var imageindex:Map<String, Int> = new Map<String, Int>();
