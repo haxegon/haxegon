@@ -83,22 +83,31 @@ class Sound{
 		soundname = soundname.toLowerCase();
 		soundoffsetindex.set(soundname, new Point(startoffsettime, 0)); // To do: , endoffsettime));
 	}
-	
-	public static function play(soundname:String, fadeintime:Float = 0, loop:Bool = false, volume:Float = 1.0, panning:Float = 0){
+
+	public static function getaudio(soundname:String) {
 		soundname = soundname.toLowerCase();
 		
 		if (!soundassets.exists(soundname)) {
-			if (!load(soundname, 1)) return;
+			if (!load(soundname, 1)) return null;
 		}
 		
 		addtopool = true;
 		var newaudio:Audio = audiopool.get();
 		addtopool = false;
+		newaudio.offset(soundoffsetindex.get(soundname).x); //TO DO: End offsets
+		newaudio.attachsound(soundname);
+
+		return newaudio;
+	}
+	
+	public static function play(soundname:String, fadeintime:Float = 0, loop:Bool = false, volume:Float = 1.0, panning:Float = 0){
+		var newaudio = getaudio(soundname);
+		if (newaudio == null) {
+			return;
+		}
 		newaudio._loop = loop;
 		newaudio._volume = volume;
 		newaudio._panning = panning;
-		newaudio.offset(soundoffsetindex.get(soundname).x); //TO DO: End offsets
-		newaudio.attachsound(soundname);
 		newaudio.play(fadeintime);
 	}
 	
