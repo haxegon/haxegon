@@ -19,6 +19,7 @@ private enum Soundfade{
 class Audio extends EventDispatcher {
 
 	public static inline var AUDIO_LOOP = "audio_loop";
+	public static inline var AUDIO_PLAY = "audio_play";
 
 	public function new(?soundname:String = ""){
 		super();
@@ -155,7 +156,7 @@ class Audio extends EventDispatcher {
 		}
 		if (_soundchannel != null){
 			_soundchannel.addEventListener(Event.SOUND_COMPLETE, oncomplete);
-			
+			dispatchEvent(new Event (AUDIO_PLAY));
 			free = false;
 		}else{
 			free = true;
