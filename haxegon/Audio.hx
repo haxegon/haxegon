@@ -2,6 +2,7 @@ package haxegon;
 
 import flash.geom.Point;
 import openfl.events.Event;
+import openfl.events.EventDispatcher;
 
 private enum Soundfade{
 	FADEIN;
@@ -15,8 +16,13 @@ private enum Soundfade{
 @:access(Soundfade)
 @:access(haxegon.Sound)
 @:access(haxegon.Music)
-class Audio{
+class Audio extends EventDispatcher {
+
+	public static inline var AUDIO_LOOP = "audio_loop";
+	public static inline var AUDIO_PLAY = "audio_play";
+
 	public function new(?soundname:String = ""){
+		super();
 		poolid = -1;
 		if (soundname != null){
 			attachsound(soundname);
@@ -52,6 +58,7 @@ class Audio{
 	public function oncomplete(e:Event){
 		if (loop){
 			play();
+			dispatchEvent(new Event (AUDIO_LOOP));
 		}else{
 			free = true;
 		}
@@ -149,7 +156,7 @@ class Audio{
 		}
 		if (_soundchannel != null){
 			_soundchannel.addEventListener(Event.SOUND_COMPLETE, oncomplete);
-			
+			dispatchEvent(new Event (AUDIO_PLAY));
 			free = false;
 		}else{
 			free = true;
@@ -188,7 +195,7 @@ class Audio{
 		return Math.floor(f * 100) / 100;
 	}
 	
-	public function toString():String{
+	public override function toString():String{
 		if (!free){
 			var returnstring:String = name + " (vol: " + twodigits(_volume * _fadedvolume * _duckedvolume);
 			if (_fademode == Soundfade.FADEIN){
