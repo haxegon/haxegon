@@ -163,13 +163,22 @@ class Core extends Sprite {
 		_target3 = 3 * flash.Lib.getTimer() + _rate3;
 		
 		starttime = flash.Lib.getTimer();
+		delta = 1.0 / fps;
     stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	}
 	
-	private function onEnterFrame(e:Event) {
+	private function onEnterFrame(e:EnterFrameEvent) {
 		if (!Scene.hasseperaterenderfunction) {
 			//If we don't have a seperate render function, just fall back to onEnterFrame for now
 			execute_extendedstartframe();
+
+			totaltime += e.passedTime;
+			if (++framecount % fps == 0) {
+				delta = 1.0 / (framecount / totaltime);
+				framecount = 0;
+				totaltime = 0;
+			}
+
 			doupdate(0, 1);
 		  return;	
 		}
@@ -225,7 +234,14 @@ class Core extends Sprite {
 			// update loop
 			doupdate(upd, frameupdates);
 		}
-		
+
+		totaltime += e.passedTime;
+		if (++framecount % fps == 0) {
+			delta = 1.0 / (framecount / totaltime);
+			framecount = 0;
+			totaltime = 0;
+		}
+
 		// render loop
 		dorender();
 	}
@@ -408,6 +424,18 @@ class Core extends Sprite {
 		starttime = Std.int(flash.Lib.getTimer() - (t * 1000));
 		return flash.Lib.getTimer() - starttime;
 	}
+
+	private static var totaltime:Float = 0;
+	private static var framecount:Int = 0;
+	@:isVar public static var delta(get, set):Float;
+	static function get_delta():Float {
+		return delta;
+	}
+	static function set_delta(dt:Float):Float {
+		delta = dt;
+		return delta;
+	}
+
 	public static var showstats(get,set):Bool;
 	private static var _showstats:Bool;
 	private static var statsdisplay:StatsDisplay;
