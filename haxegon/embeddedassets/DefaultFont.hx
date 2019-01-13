@@ -9,7 +9,7 @@ class DefaultFont {
 	private static var XML_DATA:String = '
 		<font>
 			<info face="default" size="8" bold="0" italic="0" charset="" unicode="1" stretchH="100" smooth="0" aa="1" padding="0,0,0,0" spacing="1,1" outline="0"/>
-			<common lineHeight="8" base="7" scaleW="256" scaleH="22" pages="1" packed="0" alphaChnl="1" redChnl="0" greenChnl="0" blueChnl="0"/>
+			<common lineHeight="9" base="7" scaleW="256" scaleH="22" pages="1" packed="0" alphaChnl="1" redChnl="0" greenChnl="0" blueChnl="0"/>
 			<pages>
 				<page id="0" file="default_0.png" />
 			</pages>
