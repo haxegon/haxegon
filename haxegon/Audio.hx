@@ -20,6 +20,7 @@ class Audio extends EventDispatcher {
 
 	public static inline var AUDIO_LOOP = "audio_loop";
 	public static inline var AUDIO_PLAY = "audio_play";
+	public static inline var AUDIO_FREE = "audio_free";
 
 	public function new(?soundname:String = ""){
 		super();
@@ -312,6 +313,7 @@ class Audio extends EventDispatcher {
 	function get_free():Bool { return _free; }
 	function set_free(newfree:Bool):Bool{
 		if (!_free && newfree){
+			dispatchEvent(new Event (AUDIO_FREE));
 			if (poolid != -1){
 				//Recycle this audio object if it's in the pool
 				Sound.audiopool.recycle(this);
