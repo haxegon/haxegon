@@ -18,7 +18,6 @@ private enum Soundfade{
 @:access(haxegon.Music)
 class Audio extends EventDispatcher {
 
-	public static inline var AUDIO_LOOP = "audio_loop";
 	public static inline var AUDIO_PLAY = "audio_play";
 	public static inline var AUDIO_FREE = "audio_free";
 
@@ -59,7 +58,6 @@ class Audio extends EventDispatcher {
 	public function oncomplete(e:Event){
 		if (loop){
 			play();
-			dispatchEvent(new Event (AUDIO_LOOP));
 		}else{
 			free = true;
 		}
@@ -151,7 +149,7 @@ class Audio extends EventDispatcher {
 			_fadedvolume = 1.0;
 		}
 		
-		_soundchannel = _sound.play(soundoffset.x * 1000, 0, currenttransform());
+		_soundchannel = _sound.play(soundoffset.x * 1000, loop ? 0x7FFFFFFF : 0, currenttransform());
 		if (Music.autoduck != 1.0 && Music.musicaudio != this && poolid != -1){
 			Music.duck(Music.autoduck, length);
 		}
