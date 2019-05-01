@@ -89,6 +89,7 @@ class Gfx {
 		imagerotatexpivot = 0; imagerotateypivot = 0;
 		imagexscale = 1.0; imageyscale = 1.0;
 		imagescalexpivot = 0; imagescaleypivot = 0;
+		imagextranslate = 0; imageytranslate = 0;
 		
 		coltransform = false;
 		imagealphamult = 1.0;	imagecolormult = 0xFFFFFF;
@@ -369,6 +370,10 @@ class Gfx {
 		  tex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/" + imagename + ".png"), false);
 		}else if (Data.assetexists("data/graphics/" + imagename + ".jpg")) {
 			tex = Texture.fromBitmapData(Data.getgraphicsasset("data/graphics/" + imagename + ".jpg"), false);
+		}else if(Data.assetexists(imagename + ".png")){
+		  tex = Texture.fromBitmapData(Data.getgraphicsasset(imagename + ".png"), false);
+		}else if(Data.assetexists(imagename + ".jpg")){
+		  tex = Texture.fromBitmapData(Data.getgraphicsasset(imagename + ".jpg"), false);
 		}else {
 			Debug.log("ERROR: In loadimage, cannot find \"data/graphics/" + imagename + ".png\" or \"data/graphics/" + imagename + ".jpg\"");
 			return false;
@@ -1572,8 +1577,8 @@ class Gfx {
 	private static var imageyscale:Float;
 	private static var imagescalexpivot:Float;
 	private static var imagescaleypivot:Float;
-	private static var imagextranslate:Float;
-	private static var imageytranslate:Float;
+	private static var imagextranslate:Float = 0;
+	private static var imageytranslate:Float = 0;
 	private static var imagealphamult:Float;
 	private static var imagecolormult:Int;
 	private static var tempxalign:Float;
