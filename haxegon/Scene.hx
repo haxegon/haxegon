@@ -57,14 +57,17 @@ class Scene {
 		callscenemethod(scenelist[currentscene], "render");
 	}
 	
-	private static function callscenemethod(scene:Dynamic, method:String) {
+	private static function callscenemethod(scene:Dynamic, method:String, arguments:Array<Dynamic> = null) {
+		if (arguments == null) {
+			arguments = [];
+		}
 		var instanceFunc:Dynamic = Reflect.field(scene, method);
 		if (instanceFunc != null && Reflect.isFunction(instanceFunc)) {
 			#if flash
-			Reflect.callMethod(scene, instanceFunc, []);
+			Reflect.callMethod(scene, instanceFunc, arguments);
 			#else
 			try {
-				Reflect.callMethod(scene, instanceFunc, []);
+				Reflect.callMethod(scene, instanceFunc, arguments);
 			} catch ( e:ArgumentError ) {
 				throw( "ERROR in callscenemethod("+scene+","+method+"): Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
 			} catch (msg:Dynamic ) {
@@ -79,10 +82,10 @@ class Scene {
 		var classFunc:Dynamic = Reflect.field(Type.getClass(scene), method);
 		if (classFunc != null && Reflect.isFunction(classFunc)) {
 			#if flash
-			Reflect.callMethod(scene, classFunc, []);
+			Reflect.callMethod(scene, classFunc, arguments);
 			#else
 			try {
-				Reflect.callMethod(scene, classFunc, []);
+				Reflect.callMethod(scene, classFunc, arguments);
 			} catch ( e:ArgumentError ) {
 				throw( "ERROR in callscenemethod("+scene+","+method+"): Couldn't call " + Type.getClassName(scene) + "." + method + "() without any arguments.");
 			} catch ( msg:Dynamic ) {
