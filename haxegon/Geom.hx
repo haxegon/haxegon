@@ -76,10 +76,9 @@ class Geom {
 		return b1 + (value - a1) * (b2 - b1) / (a2 - a1);
 	}
 
-	public static function wrap(v:Float, min:Float, max:Float):Float {
-    var range = max - min + 1;
-    if (v < min) v += range * ((min - v) / range + 1);
-    return clamp(min + (v - min) % range, min, max);
+	public static inline function wrap(v:Float, min:Float, max:Float):Float {
+    var range = max - min;
+    return range == 0 ? min : min + ((((v - min) % range) + range) % range);
 	}
 	
 	private static var rect1:Rectangle = new Rectangle();
