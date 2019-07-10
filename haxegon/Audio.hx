@@ -315,6 +315,8 @@ class Audio extends EventDispatcher {
 			if (poolid != -1){
 				//Recycle this audio object if it's in the pool
 				Sound.audiopool.recycle(this);
+			} else {
+				dispose();
 			}
 		}
 		
