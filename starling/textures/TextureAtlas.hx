@@ -261,10 +261,19 @@ class TextureAtlas
     public function addRegion(name:String, region:Rectangle, frame:Rectangle=null,
                               rotated:Bool=false):Void
     {
-        __subTextures[name] = new SubTexture(__atlasTexture, region, false, frame, rotated);
-        __subTextureNames = null;
+        addSubTexture(name, new SubTexture(__atlasTexture, region, false, frame, rotated));
     }
     
+    /** Adds a named region for an instance of SubTexture or an instance of its sub-classes.*/
+    public function addSubTexture(name:String, subTexture:SubTexture):Void
+    {
+        if (subTexture.root != __atlasTexture.root)
+            throw new ArgumentError("SubTexture's root must be atlas texture.");
+
+        __subTextures[name] = subTexture;
+        __subTextureNames = null;
+    }
+
     /** Removes a region with a certain name. */
     public function removeRegion(name:String):Void
     {
@@ -272,6 +281,17 @@ class TextureAtlas
         if (subTexture != null) subTexture.dispose();
         __subTextures.remove(name);
         __subTextureNames = null;
+    }
+    
+    /** Removes all regions with names that start with the given prefix.
+     *  If no arguments are given, all regions will be removed. */
+    public function removeRegions(prefix:String=""):Void
+    {
+        for (name in __subTextures.keys())
+        {
+            if (prefix == "" || name.indexOf(prefix) == 0)
+                removeRegion(name);
+        }
     }
     
     /** The base texture that makes up the atlas. */

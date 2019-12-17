@@ -15,8 +15,6 @@ import openfl.geom.Rectangle;
 
 import openfl.Vector;
 
-import lime.text.UTF8String;
-
 import starling.display.Image;
 import starling.display.MeshBatch;
 import starling.display.Sprite;
@@ -266,7 +264,7 @@ class BitmapFont implements ITextCompositor
     }
 
     /** Checks whether a provided string can be displayed with the font. */
-    public function hasChars(text:UTF8String):Bool
+    public function hasChars(text:String):Bool
     {
         if (text == null) return true;
 
@@ -288,7 +286,7 @@ class BitmapFont implements ITextCompositor
     }
 
     /** Creates a sprite that contains a certain text, made up by one image per char. */
-    public function createSprite(width:Float, height:Float, text:UTF8String,
+    public function createSprite(width:Float, height:Float, text:String,
                                  format:TextFormat, options:TextOptions=null):Sprite
     {
         var charLocations:Vector<BitmapCharLocation> = arrangeChars(width, height, text, format, options);
@@ -312,7 +310,7 @@ class BitmapFont implements ITextCompositor
     }
     
     /** Draws text into a QuadBatch. */
-    public function fillMeshBatch(meshBatch:MeshBatch, width:Float, height:Float, text:UTF8String,
+    public function fillMeshBatch(meshBatch:MeshBatch, width:Float, height:Float, text:String,
                                   format:TextFormat, options:TextOptions=null):Void
     {
         var charLocations:Vector<BitmapCharLocation> = arrangeChars(
@@ -366,7 +364,7 @@ class BitmapFont implements ITextCompositor
      *  always call <code>BitmapCharLocation.rechargePool()</code> when you are done processing.
      *  </p>
      */
-    public function arrangeChars(width:Float, height:Float, text:UTF8String,
+    public function arrangeChars(width:Float, height:Float, text:String,
                                   format:TextFormat, options:TextOptions):Vector<BitmapCharLocation>
     {
         if (text == null || text.length == 0) return BitmapCharLocation.vectorFromPool();
@@ -439,6 +437,7 @@ class BitmapFont implements ITextCompositor
                             currentX += char.getKerning(lastCharID);
                         
                         charLocation = BitmapCharLocation.instanceFromPool(char);
+                        charLocation.index = i;
                         charLocation.x = currentX + char.xOffset;
                         charLocation.y = currentY + char.yOffset;
                         currentLine[currentLine.length] = charLocation; // push
