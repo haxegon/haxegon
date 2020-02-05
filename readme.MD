@@ -4,15 +4,19 @@ I started creating Haxegon to provide a beginner friendly and powerful game prot
 
 If you're looking for ways to get started programming that have a similar vibe to what I wanted Haxegon to be, then I can recommend looking into the following projects:
 
-[LÖVE](https://love2d.org/) - A free 2D game engine based on Lua.
+*Free:*
 
-[Pico8](https://www.lexaloffle.com/pico-8.php) - An 8-bit fantasy console with an excellent HTML5 exporter. Also Lua based. Commercial. 
+[LÖVE](https://love2d.org/) - A free 2D game engine based on Lua.
 
 [openFrameworks](https://openframeworks.cc/) - A collection of C++ libraries aimed at visual artists, billed as a "toolkit for creative coding". A major inspiration for Haxegon, and was used in the creation of Super Hexagon.
 
-[Godot](https://godotengine.org/) A free and open source game engine, rivaling the power of engines like Unity.
+[Godot](https://godotengine.org/) - A free and open source game engine, rivaling the power of engines like Unity.
 
-[GameMaker](https://www.yoyogames.com/gamemaker) This classic game making tool is still one of the best game making toolkits around. Used for the creation of several high profile indie hits, including Hyper Light Drifter, Hotline Miami and Nuclear Throne.
+*Commercial:*
+
+[Pico8](https://www.lexaloffle.com/pico-8.php) - An 8-bit fantasy console with an excellent HTML5 exporter. Lua based.
+
+[GameMaker](https://www.yoyogames.com/gamemaker) - This classic game making tool is still one of the best game making toolkits around. Used for the creation of several high profile indie hits, including Hyper Light Drifter, Hotline Miami and Nuclear Throne.
 
 Original (and out of date) readme for haxegon follows:
 
