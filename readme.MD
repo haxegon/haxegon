@@ -10,6 +10,8 @@ If you're looking for ways to get started programming that have a similar vibe t
 
 [openFrameworks](https://openframeworks.cc/) - A collection of C++ libraries aimed at visual artists, billed as a "toolkit for creative coding". A major inspiration for Haxegon, and was used in the creation of Super Hexagon.
 
+[HaxeFlixel](https://haxeflixel.com/) - An excellent, widely used 2D game engine, powered by Haxe!
+
 [Godot](https://godotengine.org/) - A free and open source game engine, rivaling the power of engines like Unity.
 
 *Commercial:*
