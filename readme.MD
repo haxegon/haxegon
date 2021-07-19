@@ -1,3 +1,15 @@
+Haxegon currently doesn't work with the up to date versions of openfl/lime (https://github.com/haxegon/haxegon/issues/332), but you can still use it with the following old versions of the library:
+
+    Haxe 3.4.4
+    Neko 2.1.0
+    Openfl 8.4.1
+    Lime 7.0.0
+    hxcpp: 4.0.4
+    
+These libraries are about two years out of date, but they still work fine. For anyone out there still using haxegon, later this year I'll do a little update to get things up and running on the latest versions again.
+
+---
+
 A quick, overdue note about the current status of Haxegon:
 
 I started creating Haxegon to provide a beginner friendly and powerful game prototyping library to new programmers, but I haven't had the time needed to put into making that a reality. Haxegon, in it's current state, is basically just a personal framework that I can't really recommend to new programmers, and this is unlikely to change for the foreseeable future.
