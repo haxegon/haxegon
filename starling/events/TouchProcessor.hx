@@ -262,6 +262,7 @@ class TouchProcessor
         // if the target of a hovering touch changed, we dispatch the event to the previous
         // target to notify it that it's no longer being hovered over.
         for (touchData in sHoveringTouchData){
+            //Note from Terry: I've hacked in a null check here for haxegon because it was causing a crash on native platforms
 						var temptouch:Touch = cast(Reflect.field(touchData, "touch"), Touch);
 						if(temptouch != null){
 							if (temptouch.target != Reflect.field(touchData, "target"))
