@@ -96,7 +96,7 @@ class Random{
 	static function set_seed(s:Dynamic) {
 		if (s == null){
 			_seed = Std.int(1 + Math.random() * (INT_MAX - 1));
-		}else	if (Std.is(s, String)){
+		}else	if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(s, String)){
 			if (s == ""){
 				s = Date.now().toString();
 			}
@@ -105,7 +105,7 @@ class Random{
 			for (i in 0 ... s.length){
 				_seed += s.charCodeAt(i) * ((i + 1) ^ 2);
 			}
-		}else if (Std.is(s, Int)){
+		}else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(s, Int)){
 			if (s == 0){
 				_seed = Std.int(1 + Math.random() * (INT_MAX - 1));
 			}else{

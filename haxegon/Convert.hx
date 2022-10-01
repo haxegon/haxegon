@@ -6,9 +6,9 @@ class Convert {
 	}
 
 	public static function toint(?value:Dynamic):Int {
-		if (Std.is(value, Int)){
+		if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(value, Int)){
 			return value;
-		}else if(Std.is(value, Float)){
+		}else if(#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(value, Float)){
 			return Std.int(value);
 		}
 		return Std.parseInt(Std.string(value));

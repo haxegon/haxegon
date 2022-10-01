@@ -30,11 +30,11 @@ class Data {
 	}
 	
 	private static function sanitisefields(j:Dynamic){
-		if (Std.is(j, Array)){
+		if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(j, Array)){
 			for (i in 0 ... j.length){
 				sanitisefields(j[i]);
 			}
-		}else if (Std.is(j, String)){
+		}else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(j, String)){
 			j = S.replacechar(j, ":", "_");
 			j = S.replacechar(j, ";", "_");
 			j = S.replacechar(j, "-", "_");
@@ -56,18 +56,18 @@ class Data {
 	}
 	
 	private static function populatefields(j:Dynamic){
-		if (Std.is(j, Array)){
+		if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(j, Array)){
 			for (i in 0 ... j.length){
 				populatefields(j[i]);
 			}
-		}else	if (!Std.is(j, String)){
+		}else	if (!#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(j, String)){
 			if (!Reflect.hasField(j, "_fields")){
 				var jfields:Array<String> = Reflect.fields(j);
 				if (jfields != null && jfields != []){
 					if(jfields.length > 0){
 						j._fields = jfields;
 						if (j._fields != null){
-							if(!Std.is(j._fields, String)){
+							if(!#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(j._fields, String)){
 								for (i in 0 ... j._fields.length){
 									populatefields(Reflect.field(j, j._fields[i]));
 								}
@@ -105,7 +105,7 @@ class Data {
 				if (Reflect.hasField(jsonbit, nodename)){
 					//This is an array! Push elements onto it
 					var currentnode:Dynamic = Reflect.field(jsonbit, nodename);
-					if (Std.is(currentnode, Array)){
+					if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(currentnode, Array)){
 						var n:Dynamic = xmltojson(xchild);
 						currentnode.push(n);
 						Reflect.setField(jsonbit, nodename, currentnode);
