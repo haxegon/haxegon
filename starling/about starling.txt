@@ -1,9 +1,0 @@
-Haxegon is built on top of an in-development branch of starling, v2.5.1, included here to keep dependencies simplier! There are some small changes to starling for Haxegon.
-
-https://github.com/openfl/starling
-
-as of this commit
-https://github.com/openfl/starling/tree/1fd5399a361e59729390357ea14ae6a2be98d702
-
-Haxegon also uses a modified Starling extension:
- - Starling Shapes by Fovea
