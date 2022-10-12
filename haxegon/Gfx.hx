@@ -308,7 +308,7 @@ class Gfx {
 			
 			// Create tiles, repurposing RenderTexture tiles when available
 			for (i in 0 ... amount) {
-				if (i < tiles[currenttileset].tiles.length && !purge && Std.is(tiles[currenttileset].tiles[i].texture, RenderTexture)) {
+				if (i < tiles[currenttileset].tiles.length && !purge && #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(tiles[currenttileset].tiles[i].texture, RenderTexture)) {
 					cast(tiles[currenttileset].tiles[i].texture, HaxegonRenderTexture).clear();
 				} else {
 					var tex:Texture = Texture.fromBitmapData(new BitmapData(Math.floor(width), Math.floor(height), true, 0), false);
@@ -450,7 +450,7 @@ class Gfx {
 	}
 	
 	private static function promotetorendertarget(image:Image) {
-		if (!Std.is(image.texture, HaxegonRenderTexture)) {
+		if (!#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(image.texture, HaxegonRenderTexture)) {
 			var newtexture:HaxegonRenderTexture = new HaxegonRenderTexture(Std.int(image.texture.width), Std.int(image.texture.height));
 			
 			// Copy the old texture to the new RenderTexture
